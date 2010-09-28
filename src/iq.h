@@ -45,7 +45,7 @@ public:
 	inline IQ &operator =(const IQ &stanza)
 		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }
 	Type subtype() const;
-	QDomElement node() const;
+	void writeXml(QXmlStreamWriter *writer) const;
 	void accept() const;
 	bool accepted() const;
 };

@@ -59,7 +59,7 @@ public:
 	void resetStatus();
 	int priority() const;
 	void setPriority(int priority);
-	QDomElement node() const;
+	void writeXml(QXmlStreamWriter *writer) const;
 };
 
 }

@@ -52,7 +52,7 @@ public:
 	void setThread(const QString &thread);
 	void setID(const QString &id);
 	const DelayedDelivery *when() const;
-	QDomElement node() const;
+	void writeXml(QXmlStreamWriter *writer) const;
 };
 
 }

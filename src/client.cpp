@@ -14,6 +14,7 @@
 *****************************************************************************/
 
 #include "client_p.h"
+#include "stanza_p.h"
 #include "tcpconnection.h"
 #include "nonsaslauth.h"
 #include "delayeddelivery.h"
@@ -101,27 +102,24 @@ void Client::send(const Stanza &stanza)
 {
 	if(!impl->conn || !impl->conn->isOpen())
 		return;
-	QDomElement node = stanza;
-	if(stanza.id().isEmpty())
-		node.setAttribute(ConstString::id, getID());
-	node.setAttribute(ConstString::xmlns, ConstString::ns_client);
-	impl->send(node);
+	impl->send(stanza);
+//	QDomElement node = stanza;
+//	if(stanza.id().isEmpty())
+//		node.setAttribute(ConstString::id, getID());
+//	impl->send(node);
 }
 
 void Client::send(const IQ &iq, QObject *handler, const char *member, int context)
 {
 	if(!impl->conn || !impl->conn->isOpen())
 		return;
-	QString id = iq.id();
-	QDomElement node = iq;
-	if(id.isEmpty())
-	{
-		id = getID();
-		node.setAttribute(ConstString::id, id);
+	if (iq.id().isEmpty()) {
+		const StanzaPrivate *p = StanzaPrivate::get(iq);
+		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
+	QString id = iq.id();
 	impl->iq_tracks.insert(id, new IQTrack(handler, member, context));
-	node.setAttribute(ConstString::xmlns, ConstString::ns_client);
-	impl->send(node);
+	impl->send(iq);
 }
 
 void Client::setConnectionImpl(Connection *conn)

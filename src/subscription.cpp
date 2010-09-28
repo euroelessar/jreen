@@ -65,19 +65,15 @@ const QString &Subscription::status(const QString &lang) const
 	return d->status.value(lang);
 }
 
-QDomElement Subscription::node() const
+void Subscription::writeXml(QXmlStreamWriter *writer) const
 {
 	Q_D(const Subscription);
-	if(!d->node.isNull())
-		return d->node;
-	QDomElement node = DomCreater::instance().createElement(presence_str);
-	d->setAttributes(node);
-	if(d->subtype == Invalid)
-		return node;
-	d->status.fillNode(node, status_str);
-	node.setAttribute(ConstString::type, s10n_types.at(d->subtype));
-	d->addExtensions(node);
-	return node;
+	writer->writeStartElement(presence_str);
+	d->setAttributes(writer);
+	if (d->subtype != Invalid) {
+		writer->writeAttribute(ConstString::type, s10n_types.at(d->subtype));
+		d->addExtensions(writer);
+	}
+	writer->writeEndElement();
 }
-
 }

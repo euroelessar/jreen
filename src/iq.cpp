@@ -58,18 +58,16 @@ IQ::Type IQ::subtype() const
 	return d->subtype;
 }
 
-QDomElement IQ::node() const
+void IQ::writeXml(QXmlStreamWriter *writer) const
 {
 	Q_D(const IQ);
-	if(!d->node.isNull())
-		return d->node;
-	QDomElement node = DomCreater::instance().createElement(iq_str);
-	d->setAttributes(node);
-	if(d->subtype == Invalid)
-		return node;
-	node.setAttribute(ConstString::type, iq_types.at(d->subtype));
-	d->addExtensions(node);
-	return node;
+	writer->writeStartElement(iq_str);
+	d->setAttributes(writer);
+	if (d->subtype != Invalid) {
+		writer->writeAttribute(ConstString::type, iq_types.at(d->subtype));
+		d->addExtensions(writer);
+	}
+	writer->writeEndElement();
 }
 
 void IQ::accept() const

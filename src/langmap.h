@@ -22,6 +22,7 @@
 #else
 # include <QHash>
 #endif
+class QXmlStreamWriter;
 #include "jreen.h"
 
 namespace jreen
@@ -38,7 +39,7 @@ struct JREEN_EXPORT LangMapData
 	QString base;
 	Base other;
 
-	void fillNode(QDomElement &node, const QString &name, const QString &uri) const;
+	void fillNode(QXmlStreamWriter *writer, const QString &name, const QString &uri) const;
 	const QString &value(const QString &lang) const;
 	const QString &value(const QString &lang, const QString &default_value) const;
 
@@ -86,7 +87,7 @@ public:
 	inline QStringList values() const;
 	inline QStringList values(const QString &lang = QString()) const;
 
-	inline void fillNode(QDomElement &elem, const QString &name, const QString &uri = QString()) const;
+	inline void fillNode(QXmlStreamWriter *writer, const QString &name, const QString &uri = QString()) const;
 
 	inline int count() const;
 	inline int size() const { return count(); }
@@ -174,9 +175,9 @@ inline QStringList LangMap::values(const QString &lang) const
 	return d->base.isEmpty() ? d->other.values(lang) : (d->other.values() << d->base);
 }
 
-inline void LangMap::fillNode(QDomElement &node, const QString &name, const QString &uri) const
+inline void LangMap::fillNode(QXmlStreamWriter *writer, const QString &name, const QString &uri) const
 {
-	d->fillNode(node, name, uri);
+	d->fillNode(writer, name, uri);
 }
 
 inline int LangMap::count() const

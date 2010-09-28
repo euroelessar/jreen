@@ -15,26 +15,25 @@
 
 #include "langmap.h"
 #include "jstrings.h"
+#include <QXmlStreamWriter>
 
 namespace jreen
 {
 
 LangMapData LangMapData::shared_null = { Q_BASIC_ATOMIC_INITIALIZER(1), QString(), LangMapData::Base() };
 
-void LangMapData::fillNode(QDomElement &node, const QString &name, const QString &uri) const
+void LangMapData::fillNode(QXmlStreamWriter *writer, const QString &name, const QString &uri) const
 {
-	QDomDocument doc = node.ownerDocument();
-	if(node.isNull() || doc.isNull())
+	if (!writer)
 		return;
-	if(!base.isEmpty())
-		node.appendChild(createElement(&doc, name, base));
-	for(LangMapData::Base::const_iterator i = other.begin(); i != other.end(); i++)
-	{
-		QDomElement elem = createElement(&doc, name, i.value());
-		elem.setAttribute(ConstString::lang, i.key());
-		if(!uri.isEmpty())
-			elem.setAttribute(ConstString::xmlns, uri);
-		node.appendChild(elem);
+	if (!base.isEmpty())
+		writer->writeTextElement(name, base);
+	for (LangMapData::Base::const_iterator i = other.begin(); i != other.end(); i++) {
+		writer->writeStartElement(name);
+		writer->writeAttribute(ConstString::lang, i.key());
+		if (!uri.isEmpty())
+			writer->writeAttribute(ConstString::xmlns, uri);
+		writer->writeEndElement();
 	}
 }
 

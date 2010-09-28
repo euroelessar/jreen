@@ -16,6 +16,7 @@
 #ifndef CLIENT_P_H
 #define CLIENT_P_H
 #include <QDebug>
+#include <QXmlStreamWriter>
 
 #include "client.h"
 #include "jid.h"
@@ -108,9 +109,9 @@ public:
 		qDebug("%s", qPrintable(xml));
 		return xml;
 	}
-	void send(const QDomElement &node)
+	void send(const Stanza &stanza)
 	{
-		send(elementToString(node));
+		stanza.writeXml(writer);
 	}
 	void send(const QString &data)
 	{
@@ -220,6 +221,7 @@ public:
 	Disco *disco;
 	StreamFeature *current_stream_feature;
 	QHash<QString,IQTrack *> iq_tracks;
+	QXmlStreamWriter *writer;
 public slots:
 	void newData()
 	{
@@ -229,7 +231,7 @@ public slots:
 	}
 	void readMore()
 	{
-		qDebug("readMore");
+//		qDebug("readMore");
 		Parser::Event ev = parser->readNext();
 		if(!ev)
 			return;
@@ -253,11 +255,19 @@ public slots:
 	}
 	void connected()
 	{
-		QString head = "<?xml version='1.0' ?>"
-		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
-		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
-		"version='1.0'>";
-		conn->write(head.toUtf8());
+		writer = new QXmlStreamWriter(conn);
+		writer->writeStartDocument(QLatin1String("1.0"));
+		writer->writeStartElement(QLatin1String("stream:stream"));
+		writer->writeAttribute(ConstString::to, jid.domain());
+		writer->writeAttribute(ConstString::xmlns, QLatin1String("jabber:client"));
+		writer->writeAttribute("stream", "xmlns", "http://etherx.jabber.org/streams");
+		writer->writeAttribute("xml", "lang", "en");
+		writer->writeAttribute("version", "1.0");
+//		QString head = "<?xml version='1.0' ?>"
+//		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
+//		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
+//		"version='1.0'>";
+//		conn->write(head.toUtf8());
 		client->handleConnect();
 	}
 	void disconnected()

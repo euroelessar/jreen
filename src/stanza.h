@@ -20,6 +20,8 @@
 #include "jid.h"
 #include <QMap>
 
+class QXmlStreamWriter;
+
 namespace jreen
 {
 
@@ -44,8 +46,7 @@ public:
 	inline bool containsExtension() const
 		{ return extensions().contains(static_cast<T *>(0)->meta().type); }
 	void removeExtensions();
-	virtual QDomElement node() const = 0;
-	inline operator QDomElement() const { return node(); }
+	virtual void writeXml(QXmlStreamWriter *writer) const = 0;
 protected:
 	Stanza(const JID &to);
 	Stanza(const QDomElement &node, StanzaPrivate *sp = 0);

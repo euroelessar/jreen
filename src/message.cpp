@@ -125,23 +125,19 @@ const DelayedDelivery *Message::when() const
 	return findExtension<DelayedDelivery>().data();
 }
 
-QDomElement Message::node() const
+void Message::writeXml(QXmlStreamWriter *writer) const
 {
 	Q_D(const Message);
-	if(!d->node.isNull())
-		return d->node;
-	QDomElement node = DomCreater::instance().createElement(message_str);
-	d->setAttributes(node);
-	if(d->subtype == Invalid)
-		return node;
-	d->subject.fillNode(node, subject_str);
-	d->body.fillNode(node, body_str);
-	if(!d->thread.isEmpty())
-		createElement(node, thread_str, d->thread);
-	node.setAttribute(ConstString::type, message_types.at(d->subtype));
-	d->addExtensions(node);
-	return node;
+	writer->writeStartElement(message_str);
+	d->setAttributes(writer);
+	if (d->subtype != Invalid) {
+		d->subject.fillNode(writer, subject_str);
+		d->body.fillNode(writer, body_str);
+		if(!d->thread.isEmpty())
+			writer->writeTextElement(thread_str, d->thread);
+		writer->writeAttribute(ConstString::type, message_types.at(d->subtype));
+		d->addExtensions(writer);
+	}
+	writer->writeEndElement();
 }
-
-
 }

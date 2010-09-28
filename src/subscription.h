@@ -41,7 +41,7 @@ public:
 		{ return *static_cast<Subscription *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const QString &status(const QString &lang = QString()) const;
-	QDomElement node() const;
+	void writeXml(QXmlStreamWriter *writer) const;
 };
 
 }

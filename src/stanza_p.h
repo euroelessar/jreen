@@ -18,6 +18,7 @@
 
 #include <QHash>
 #include <QMap>
+#include <QXmlStreamWriter>
 #include "jstrings.h"
 #include "stanza.h"
 #include "jid.h"
@@ -82,22 +83,24 @@ struct StanzaPrivate
 	{
 		ref = 1;
 	}
-	void addExtensions(QDomElement &node) const
+	void addExtensions(QXmlStreamWriter *writer) const
 	{
-		foreach(const StanzaExtensionPointer &stanza_extension, extensions)
-		{
-			node.appendChild(stanza_extension->node(DomCreater::instance().document()));
-		}
+		Q_UNUSED(writer);
+//		foreach(const StanzaExtensionPointer &stanza_extension, extensions)
+//			node.appendChild(stanza_extension->node(DomCreater::instance().document()));
 	}
-	void setAttributes(QDomElement &node) const
+	void setAttributes(QXmlStreamWriter *writer) const
 	{
 		if(from.isValid())
-			node.setAttribute(ConstString::from, from);
+			writer->writeAttribute(ConstString::from, from);
 		if(to.isValid())
-			node.setAttribute(ConstString::to, to);
+			writer->writeAttribute(ConstString::to, to);
 		if(!id.isEmpty())
-			node.setAttribute(ConstString::id, id);
+			writer->writeAttribute(ConstString::id, id);
+		writer->writeAttribute(ConstString::xmlns, ConstString::ns_client);
 	}
+	static StanzaPrivate *get(Stanza &stanza) { return stanza.d_func(); }
+	static const StanzaPrivate *get(const Stanza &stanza) { return stanza.d_func(); }
 	QAtomicInt ref;
 	JID from;
 	JID to;

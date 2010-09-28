@@ -148,40 +148,36 @@ void Presence::setPriority(int priority)
 	d->priority = priority;
 }
 
-QDomElement Presence::node() const
+void Presence::writeXml(QXmlStreamWriter *writer) const
 {
 	Q_D(const Presence);
-	if(!d->node.isNull())
-		return d->node;
-	QDomElement node = DomCreater::instance().createElement(presence_str);
-	d->setAttributes(node);
-	switch(d->subtype)
-	{
+	writer->writeStartElement(presence_str);
+	d->setAttributes(writer);
+	switch (d->subtype) {
 	case Available:
 		break;
 	case Chat:
-		node.appendChild(DomCreater::instance().createElement(show_str, chat_str));
+		writer->writeTextElement(show_str, chat_str);
 		break;
 	case Away:
-		node.appendChild(DomCreater::instance().createElement(show_str, away_str));
+		writer->writeTextElement(show_str, away_str);
 		break;
 	case DND:
-		node.appendChild(DomCreater::instance().createElement(show_str, dnd_str));
+		writer->writeTextElement(show_str, dnd_str);
 		break;
 	case XA:
-		node.appendChild(DomCreater::instance().createElement(show_str, xa_str));
+		writer->writeTextElement(show_str, xa_str);
 		break;
 	case Unavailable:
-		node.setAttribute(ConstString::type, unavailable_str);
+		writer->writeAttribute(ConstString::type, unavailable_str);
 		break;
 	default:
-		return node;
+		writer->writeEndElement();
+		return;
 	}
-	node.appendChild(DomCreater::instance().createElement(priority_str, QString::number(d->priority)));
-	d->status.fillNode(node, status_str);
-	d->addExtensions(node);
-	return node;
+	writer->writeTextElement(priority_str, QString::number(d->priority));
+	d->status.fillNode(writer, status_str);
+	d->addExtensions(writer);
+	writer->writeEndElement();
 }
-
-
 }
