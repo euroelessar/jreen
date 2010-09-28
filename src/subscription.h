@@ -35,12 +35,12 @@ public:
 		Unsubscribed,               /**< An unsubscription notification. */
 		Invalid                     /**< The stanza is invalid. */
 	};
-	Subscription( const QDomElement &node );
-	Subscription( Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString() );
-	inline Subscription &operator =( const Subscription &stanza )
-		{ return *static_cast<Subscription *>( &jreen::Stanza::operator =( stanza ) ); }
+	Subscription(const QDomElement &node);
+	Subscription(Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString());
+	inline Subscription &operator =(const Subscription &stanza)
+		{ return *static_cast<Subscription *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
-	const QString &status( const QString &lang = QString() ) const;
+	const QString &status(const QString &lang = QString()) const;
 	QDomElement node() const;
 };
 

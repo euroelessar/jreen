@@ -32,20 +32,20 @@ struct SubscriptionPrivate : public StanzaPrivate
 	LangMap status;
 };
 
-Subscription::Subscription( const QDomElement &node ) : Stanza(node, new SubscriptionPrivate)
+Subscription::Subscription(const QDomElement &node) : Stanza(node, new SubscriptionPrivate)
 {
 	Q_D(Subscription);
-	int type = s10n_types.indexOf( node.attribute( ConstString::type ) );
-	d->subtype = type < 0 ? Invalid : static_cast<Type>( type );
-	forelements( const QDomElement &elem, node )
-		if(  elem.nodeName() == status_str )
+	int type = s10n_types.indexOf(node.attribute(ConstString::type));
+	d->subtype = type < 0 ? Invalid : static_cast<Type>(type);
+	forelements(const QDomElement &elem, node)
+		if( elem.nodeName() == status_str)
 		{
-			QString lang = elem.attribute( ConstString::lang );
+			QString lang = elem.attribute(ConstString::lang);
 			d->status[lang] = elem.text();
 		}
 }
 
-Subscription::Subscription( Type type, const JID& to, const QString &status, const QString &xmllang ) : Stanza(new SubscriptionPrivate)
+Subscription::Subscription(Type type, const JID& to, const QString &status, const QString &xmllang) : Stanza(new SubscriptionPrivate)
 {
 	Q_D(Subscription);
 	d->subtype = type;
@@ -59,24 +59,24 @@ Subscription::Type Subscription::subtype() const
 	return d->subtype;
 }
 
-const QString &Subscription::status( const QString &lang ) const
+const QString &Subscription::status(const QString &lang) const
 {
 	Q_D(const Subscription);
-	return d->status.value( lang );
+	return d->status.value(lang);
 }
 
 QDomElement Subscription::node() const
 {
 	Q_D(const Subscription);
-	if( !d->node.isNull() )
+	if(!d->node.isNull())
 		return d->node;
-	QDomElement node = DomCreater::instance().createElement( presence_str );
-	d->setAttributes( node );
-	if( d->subtype == Invalid )
+	QDomElement node = DomCreater::instance().createElement(presence_str);
+	d->setAttributes(node);
+	if(d->subtype == Invalid)
 		return node;
-	d->status.fillNode( node, status_str );
-	node.setAttribute( ConstString::type, s10n_types.at( d->subtype ) );
-	d->addExtensions( node );
+	d->status.fillNode(node, status_str);
+	node.setAttribute(ConstString::type, s10n_types.at(d->subtype));
+	d->addExtensions(node);
 	return node;
 }
 

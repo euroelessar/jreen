@@ -38,19 +38,19 @@ public:
 	};
 	NonSaslAuth();
 	int priority() { return 10; }
-	void setStreamInfo( StreamInfo *info );
+	void setStreamInfo(StreamInfo *info);
 	void reset();
-	void processElement( const QDomElement &node );
+	void processElement(const QDomElement &node);
 public slots:
-	void handleIq( const IQ &iq, int context );
+	void handleIq(const IQ &iq, int context);
 private:
 	class Query : public StanzaExtension
 	{
 		J_EXTENSION(Query,"/iq/query[@xmlns='jabber:iq:auth']")
 	public:
-		Query( const QDomElement &node = QDomElement() );
-		QDomElement node( QDomDocument *document ) const;
-		Query *instance( const JID &jid, const QString &password, const QString &sid ) const;
+		Query(const QDomElement &node = QDomElement());
+		QDomElement node(QDomDocument *document) const;
+		Query *instance(const JID &jid, const QString &password, const QString &sid) const;
 	private:
 		QString m_username;
 		QString m_password;

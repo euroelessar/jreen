@@ -26,14 +26,14 @@ class JID;
 
 namespace Util
 {
-	JREEN_EXPORT QDateTime fromStamp( const QString &stamp );
-	JREEN_EXPORT QString toStamp( const QDateTime &date_time );
-	JREEN_EXPORT QString randomHash( const JID &jid );
-	inline int log2( register uint n )
+	JREEN_EXPORT QDateTime fromStamp(const QString &stamp);
+	JREEN_EXPORT QString toStamp(const QDateTime &date_time);
+	JREEN_EXPORT QString randomHash(const JID &jid);
+	inline int log2(register uint n)
 	{
 		register int pos = 0;
-		while( n > 1 ) { ++pos; n >>= 1; }
-		return ( n == 0 ) ? (-1) : pos;
+		while(n > 1) { ++pos; n >>= 1; }
+		return (n == 0) ? (-1) : pos;
 	}
 }
 

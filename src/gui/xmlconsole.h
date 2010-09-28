@@ -30,7 +30,7 @@ class XmlConsole : public QWidget {
     Q_OBJECT
     Q_DISABLE_COPY(XmlConsole)
 public:
-	explicit XmlConsole( QWidget *parent = 0 );
+	explicit XmlConsole(QWidget *parent = 0);
     virtual ~XmlConsole();
 
 protected:

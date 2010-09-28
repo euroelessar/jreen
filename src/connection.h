@@ -72,17 +72,17 @@ signals:
 	void hostFound();
 	void connected();
 	void disconnected();
-	void stateChanged( SocketState );
-	void error( SocketError );
+	void stateChanged(SocketState);
+	void error(SocketError);
 #ifndef QT_NO_NETWORKPROXY
 	void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
 #endif
 
 protected:
-	virtual qint64 readData( char *data, qint64 maxlen ) = 0;
-	virtual qint64 writeData( const char *data, qint64 len ) = 0;
+	virtual qint64 readData(char *data, qint64 maxlen) = 0;
+	virtual qint64 writeData(const char *data, qint64 len) = 0;
 private:
-	bool open( OpenMode ) { return false; }
+	bool open(OpenMode) { return false; }
 };
 
 class ConnectionListener : public QObject

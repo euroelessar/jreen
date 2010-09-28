@@ -35,15 +35,15 @@ typedef QLinkedList<StreamFeaturePointer> StreamFeatureList;
 class XQueryElement
 {
 public:
-	XQueryElement( const QChar *xpath = 0, XQueryElement *parent = 0 );
-	XQueryElement( const QString &namespace_uri, const QString &node_name, const QXmlAttributes &attributes, XQueryElement *parent = 0 );
+	XQueryElement(const QChar *xpath = 0, XQueryElement *parent = 0);
+	XQueryElement(const QString &namespace_uri, const QString &node_name, const QXmlAttributes &attributes, XQueryElement *parent = 0);
 	~XQueryElement();
 	inline XQueryElement *parent() { return m_parent; }
-	XQueryElement *addChild( const QChar *xpath, Disco *disco );
-	void removeChild( XQueryElement *element );
-	void addXQueryElement( XQueryElement *xquery );
-	void parseElement( Stanza &stanza, const QDomElement &node );
-	StreamFeature *findStreamFeature( const QDomElement &node );
+	XQueryElement *addChild(const QChar *xpath, Disco *disco);
+	void removeChild(XQueryElement *element);
+	void addXQueryElement(XQueryElement *xquery);
+	void parseElement(Stanza &stanza, const QDomElement &node);
+	StreamFeature *findStreamFeature(const QDomElement &node);
 private:
 	enum XType
 	{
@@ -62,11 +62,11 @@ private:
 		XNotEqual     = 0x08
 	};
 	Q_DECLARE_FLAGS(XOperators,XOperator);
-	bool check( const QDomElement &node );
-	void addStanzaExtension( const StanzaExtensionPointer &stanza_extension );
-	void addStreamFeature( const StreamFeaturePointer &stream_feature );
-	const QChar *parseXPath( const QChar *xpath, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes );
-	void closeToken( XType type, QString &token, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes );
+	bool check(const QDomElement &node);
+	void addStanzaExtension(const StanzaExtensionPointer &stanza_extension);
+	void addStreamFeature(const StreamFeaturePointer &stream_feature);
+	const QChar *parseXPath(const QChar *xpath, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes);
+	void closeToken(XType type, QString &token, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes);
 	typedef QLinkedList<StanzaExtensionPointer> StanzaExtensionList;
 	StanzaExtensionList m_stanza_extensions;
 	StreamFeatureList m_stream_features;

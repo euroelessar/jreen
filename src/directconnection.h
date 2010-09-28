@@ -39,10 +39,10 @@ public:
 	SocketError socketError() const;
 
 protected:
-	DirectConnection( QAbstractSocket *socket, const QString &host_name, quint16 port = -1 );
-	DirectConnection( QAbstractSocket *socket, const QHostAddress &address, quint16 port );
-	qint64 readData( char *data, qint64 maxlen );
-	qint64 writeData( const char *data, qint64 len );
+	DirectConnection(QAbstractSocket *socket, const QString &host_name, quint16 port = -1);
+	DirectConnection(QAbstractSocket *socket, const QHostAddress &address, quint16 port);
+	qint64 readData(char *data, qint64 maxlen);
+	qint64 writeData(const char *data, qint64 len);
 	QScopedPointer<DirectConnectionPrivate> d_ptr;
 };
 

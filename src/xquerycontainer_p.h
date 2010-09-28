@@ -29,10 +29,10 @@ class XQueryContainer : public XQueryElement
 public:
 	XQueryContainer();
 	~XQueryContainer();
-	void registerStanzaExtension( StanzaExtension *stanza_extension, Disco *disco );
-	void registerStreamFeature( StreamFeature *stream_feature );
-	void parseElement( Stanza &stanza, const QDomElement &node );
-	StreamFeature *findStreamFeature( const QDomElement &node );
+	void registerStanzaExtension(StanzaExtension *stanza_extension, Disco *disco);
+	void registerStreamFeature(StreamFeature *stream_feature);
+	void parseElement(Stanza &stanza, const QDomElement &node);
+	StreamFeature *findStreamFeature(const QDomElement &node);
 	void resetFeatures();
 };
 

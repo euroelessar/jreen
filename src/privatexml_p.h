@@ -31,12 +31,12 @@ class PrivateXmlTrack : public QObject
 {
 	Q_OBJECT
 	friend class PrivateXml;
-	inline PrivateXmlTrack( QObject *handler, const char *member )
+	inline PrivateXmlTrack(QObject *handler, const char *member)
 	{
-		connect( this, SIGNAL(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>)), handler, member );
+		connect(this, SIGNAL(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>)), handler, member);
 	}
 signals:
-	void newResult( const QDomElement &node, PrivateXml::Result result, QSharedPointer<Error> error );
+	void newResult(const QDomElement &node, PrivateXml::Result result, QSharedPointer<Error> error);
 };
 
 struct PrivateXmlPrivate
@@ -49,23 +49,23 @@ class PrivateXml::Query : public StanzaExtension
 {
 	J_EXTENSION(Query,"/iq/query[@xmlns='jabber:iq:private']");
 public:
-	Query( const QDomElement &node = QDomElement() )
+	Query(const QDomElement &node = QDomElement())
 	{
-		if( node.nodeName() == ConstString::query && node.namespaceURI() == ConstString::xmlns_private_xml )
+		if(node.nodeName() == ConstString::query && node.namespaceURI() == ConstString::xmlns_private_xml)
 			m_node = node.firstChildElement();
 		else
 			m_node = node;
 	}
-	Query( const QString &name, const QString &xmlns )
+	Query(const QString &name, const QString &xmlns)
 	{
-		m_node = DomCreater::instance().createElement( name );
-		m_node.setAttribute( ConstString::xmlns, xmlns );
+		m_node = DomCreater::instance().createElement(name);
+		m_node.setAttribute(ConstString::xmlns, xmlns);
 	}
-	QDomElement node( QDomDocument *document ) const
+	QDomElement node(QDomDocument *document) const
 	{
-		QDomElement node = createElement( document, ConstString::query );
-		node.setAttribute( ConstString::xmlns, ConstString::xmlns_private_xml );
-		node.appendChild( m_node );
+		QDomElement node = createElement(document, ConstString::query);
+		node.setAttribute(ConstString::xmlns, ConstString::xmlns_private_xml);
+		node.appendChild(m_node);
 		return node;
 	}
 	inline const QDomElement &xml() { return m_node; }

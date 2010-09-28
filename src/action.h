@@ -29,10 +29,10 @@ class JREEN_EXPORT Action : public QObject
 	Q_OBJECT
 	Q_DISABLE_COPY(Action)
 public:
-	Action( QObject *parent );
+	Action(QObject *parent);
 	void trigger();
-	void setData( const QVariant &data, int role = 0 );
-	QVariant data( int role = 0 );
+	void setData(const QVariant &data, int role = 0);
+	QVariant data(int role = 0);
 signals:
 	void triggered();
 private:

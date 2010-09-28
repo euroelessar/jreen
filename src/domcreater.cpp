@@ -20,21 +20,21 @@ namespace jreen
 
 QDomDocument DomCreater::m_document = QDomDocument();
 
-QDomElement createElement( QDomDocument *doc, const QString &name, const QString &value )
+QDomElement createElement(QDomDocument *doc, const QString &name, const QString &value)
 {
-	QDomElement node = doc->createElement( name );
-	if( !value.isEmpty() )
-		node.appendChild( doc->createTextNode( value ) );
+	QDomElement node = doc->createElement(name);
+	if(!value.isEmpty())
+		node.appendChild(doc->createTextNode(value));
 	return node;
 }
 
-QDomElement createElement( QDomElement parent, const QString &name, const QString &value )
+QDomElement createElement(QDomElement parent, const QString &name, const QString &value)
 {
 	QDomDocument doc = parent.ownerDocument();
-	QDomElement node = doc.createElement( name );
-	if( !value.isEmpty() )
-		node.appendChild( doc.createTextNode( value ) );
-	parent.appendChild( node );
+	QDomElement node = doc.createElement(name);
+	if(!value.isEmpty())
+		node.appendChild(doc.createTextNode(value));
+	parent.appendChild(node);
 	return node;
 }
 

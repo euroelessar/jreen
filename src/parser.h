@@ -41,14 +41,14 @@ public:
 		enum Type { DocumentOpen = 0, DocumentClose = 1, Element = 2, Error = 3 };
 
 		Event();
-		Event( const Event &e );
-		Event &operator=( const Event &e );
+		Event(const Event &e);
+		Event &operator=(const Event &e);
 		~Event();
 
 		Type type();
 
 		// for document open
-		const QString &nsprefix( const QString &s = QString() ) const;
+		const QString &nsprefix(const QString &s = QString()) const;
 
 		// for document open / close
 		const QString &namespaceURI() const;
@@ -63,12 +63,12 @@ public:
 		const QString actualString() const;
 
 		// setup
-		void setDocumentOpen( const QString &namespaceURI, const QString &localName, const QString &qName,
-							  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues );
-		void setDocumentClose( const QString &namespaceURI, const QString &localName, const QString &qName );
-		void setElement( const QDomElement &elem );
+		void setDocumentOpen(const QString &namespaceURI, const QString &localName, const QString &qName,
+							  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues);
+		void setDocumentClose(const QString &namespaceURI, const QString &localName, const QString &qName);
+		void setElement(const QDomElement &elem);
 		void setError();
-		void setActualString( const QString &str );
+		void setActualString(const QString &str);
 
 		bool isNull() const;
 		inline operator bool() const { return !isNull(); }

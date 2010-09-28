@@ -45,20 +45,20 @@ public:
 		Online = Available,
 		Offline = Unavailable
 	};
-	Presence( Type type, const JID& to, const QString &status = QString(),
-			  int priority = 0, const QString &xmllang = QString() );
-	Presence( const QDomElement &node );
-	inline Presence &operator =( const Presence &stanza )
-		{ return *static_cast<Presence *>( &jreen::Stanza::operator =( stanza ) ); }
+	Presence(Type type, const JID& to, const QString &status = QString(),
+			  int priority = 0, const QString &xmllang = QString());
+	Presence(const QDomElement &node);
+	inline Presence &operator =(const Presence &stanza)
+		{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const Capabilities *capabilities() const;
 	Type presence() const;
-	void setPresence( Type type );
-	const QString &status( const QString &lang = QString() ) const;
-	void addStatus( const QString &status, const QString &lang = QString() );
+	void setPresence(Type type);
+	const QString &status(const QString &lang = QString()) const;
+	void addStatus(const QString &status, const QString &lang = QString());
 	void resetStatus();
 	int priority() const;
-	void setPriority( int priority );
+	void setPriority(int priority);
 	QDomElement node() const;
 };
 

@@ -23,9 +23,9 @@
 namespace jreen
 {
 
-static QString prepare( const QString &s, bool *ok, const Stringprep_profile* profile )
+static QString prepare(const QString &s, bool *ok, const Stringprep_profile* profile)
 {
-	if( s.isEmpty() || s.size() > JID_PORTION_SIZE )
+	if(s.isEmpty() || s.size() > JID_PORTION_SIZE)
 	{
 		*ok = false;
 		return QString();
@@ -33,7 +33,7 @@ static QString prepare( const QString &s, bool *ok, const Stringprep_profile* pr
 
 	QByteArray in = s.toUtf8();
 	in.resize(JID_PORTION_SIZE);
-	int rc = stringprep( in.data(), JID_PORTION_SIZE, (Stringprep_profile_flags)0, profile );
+	int rc = stringprep(in.data(), JID_PORTION_SIZE, (Stringprep_profile_flags)0, profile);
 	*ok = rc == STRINGPREP_OK;
 	if(*ok)
 		return QString::fromUtf8(in);
@@ -41,24 +41,24 @@ static QString prepare( const QString &s, bool *ok, const Stringprep_profile* pr
 		return QString();
 }
 
-QString Prep::nodePrep( const QString &node, bool *ok )
+QString Prep::nodePrep(const QString &node, bool *ok)
 {
-	return prepare( node, ok, stringprep_xmpp_nodeprep );
+	return prepare(node, ok, stringprep_xmpp_nodeprep);
 }
 
-QString Prep::namePrep( const QString &domain, bool *ok )
+QString Prep::namePrep(const QString &domain, bool *ok)
 {
-	return prepare( domain, ok, stringprep_nameprep );
+	return prepare(domain, ok, stringprep_nameprep);
 }
 
-QString Prep::resourcePrep( const QString &resource, bool *ok )
+QString Prep::resourcePrep(const QString &resource, bool *ok)
 {
-	return prepare( resource, ok, stringprep_xmpp_resourceprep );
+	return prepare(resource, ok, stringprep_xmpp_resourceprep);
 }
 
-QString Prep::idna( const QString &domain, bool *ok )
+QString Prep::idna(const QString &domain, bool *ok)
 {
-	if( domain.isEmpty() || domain.size() > JID_PORTION_SIZE )
+	if(domain.isEmpty() || domain.size() > JID_PORTION_SIZE)
 	{
 		if(ok) *ok = false;
 		return QString();
@@ -67,9 +67,9 @@ QString Prep::idna( const QString &domain, bool *ok )
 	QByteArray out;
 	char *data = out.data();
 
-	int rc = idna_to_ascii_8z( in.constData(), &data, (Idna_flags)IDNA_USE_STD3_ASCII_RULES );
-	//int rc = idna_to_unicode_8z8z( in.constData(), &data, (Idna_flags)IDNA_USE_STD3_ASCII_RULES );
-	if( rc == IDNA_SUCCESS )
+	int rc = idna_to_ascii_8z(in.constData(), &data, (Idna_flags)IDNA_USE_STD3_ASCII_RULES);
+	//int rc = idna_to_unicode_8z8z(in.constData(), &data, (Idna_flags)IDNA_USE_STD3_ASCII_RULES);
+	if(rc == IDNA_SUCCESS)
 	{
 		if(ok) *ok = true;
 		return QString::fromUtf8(out);

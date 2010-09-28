@@ -19,18 +19,18 @@
 namespace jreen
 {
 
-void JidValidator::fixup( QString &input ) const
+void JidValidator::fixup(QString &input) const
 {
-	input = JID( input );
+	input = JID(input);
 }
 
-QValidator::State JidValidator::validate( QString &input, int &pos ) const
+QValidator::State JidValidator::validate(QString &input, int &pos) const
 {
 	Q_UNUSED(pos);
-	JID jid( input );
-	if( jid == input )
+	JID jid(input);
+	if(jid == input)
 		return QValidator::Acceptable;
-	if( jid.isValid() )
+	if(jid.isValid())
 	{
 		input = jid;
 		return QValidator::Intermediate;
@@ -38,31 +38,31 @@ QValidator::State JidValidator::validate( QString &input, int &pos ) const
 	return QValidator::Intermediate;
 }
 
-JidEdit::JidEdit( QWidget *parent ) : QWidget(parent), d_ptr(new JidEditPrivate)
+JidEdit::JidEdit(QWidget *parent) : QWidget(parent), d_ptr(new JidEditPrivate)
 {
 	Q_D(JidEdit);
-	d->line_edit = new LineEditHelper( QString(), this );
-	d->validator = new JidValidator( this );
-	d->line_edit->setValidator( d->validator );
+	d->line_edit = new LineEditHelper(QString(), this);
+	d->validator = new JidValidator(this);
+	d->line_edit->setValidator(d->validator);
 }
 
-JidEdit::JidEdit( const JID &jid, QWidget *parent ) : QWidget(parent), d_ptr(new JidEditPrivate)
+JidEdit::JidEdit(const JID &jid, QWidget *parent) : QWidget(parent), d_ptr(new JidEditPrivate)
 {
 	Q_D(JidEdit);
-	d->line_edit = new LineEditHelper( jid, this );
+	d->line_edit = new LineEditHelper(jid, this);
 	d->jid = jid;
-	d->validator = new JidValidator( this );
-	d->line_edit->setValidator( d->validator );
+	d->validator = new JidValidator(this);
+	d->line_edit->setValidator(d->validator);
 }
 
 JidEdit::~JidEdit()
 {
 }
 
-void JidEdit::resizeEvent( QResizeEvent *event )
+void JidEdit::resizeEvent(QResizeEvent *event)
 {
 	Q_D(JidEdit);
-	d->line_edit->resize( event->size() );
+	d->line_edit->resize(event->size());
 }
 
 const JID &JidEdit::jid() const
@@ -71,17 +71,17 @@ const JID &JidEdit::jid() const
 	return d->jid;
 }
 
-void JidEdit::setJid( const JID &jid )
+void JidEdit::setJid(const JID &jid)
 {
 	Q_D(JidEdit);
 	d->jid = jid;
-	d->line_edit->setText( jid );
+	d->line_edit->setText(jid);
 }
 
-void JidEdit::setFrame( bool b )
+void JidEdit::setFrame(bool b)
 {
 	Q_D(JidEdit);
-	d->line_edit->setFrame( b );
+	d->line_edit->setFrame(b);
 }
 
 bool JidEdit::hasFrame() const
@@ -96,10 +96,10 @@ bool JidEdit::isReadOnly() const
 	return d->line_edit->isReadOnly();
 }
 
-void JidEdit::setReadOnly( bool b )
+void JidEdit::setReadOnly(bool b)
 {
 	Q_D(JidEdit);
-	d->line_edit->setReadOnly( b );
+	d->line_edit->setReadOnly(b);
 }
 
 QSize JidEdit::sizeHint() const
@@ -120,22 +120,22 @@ int JidEdit::cursorPosition() const
 	return d->line_edit->cursorPosition();
 }
 
-void JidEdit::setCursorPosition( int i )
+void JidEdit::setCursorPosition(int i)
 {
 	Q_D(JidEdit);
-	return d->line_edit->setCursorPosition( i );
+	return d->line_edit->setCursorPosition(i);
 }
 
-int JidEdit::cursorPositionAt( const QPoint &pos )
+int JidEdit::cursorPositionAt(const QPoint &pos)
 {
 	Q_D(JidEdit);
-	return d->line_edit->cursorPositionAt( pos );
+	return d->line_edit->cursorPositionAt(pos);
 }
 
-void JidEdit::setAlignment( Qt::Alignment flag )
+void JidEdit::setAlignment(Qt::Alignment flag)
 {
 	Q_D(JidEdit);
-	d->line_edit->setAlignment( flag );
+	d->line_edit->setAlignment(flag);
 }
 
 Qt::Alignment JidEdit::alignment() const
@@ -145,28 +145,28 @@ Qt::Alignment JidEdit::alignment() const
 }
 
 
-void JidEdit::cursorForward( bool mark, int steps )
+void JidEdit::cursorForward(bool mark, int steps)
 {
 	Q_D(JidEdit);
-	d->line_edit->cursorForward( mark, steps );
+	d->line_edit->cursorForward(mark, steps);
 }
 
-void JidEdit::cursorBackward( bool mark, int steps )
+void JidEdit::cursorBackward(bool mark, int steps)
 {
 	Q_D(JidEdit);
-	d->line_edit->cursorBackward( mark, steps );
+	d->line_edit->cursorBackward(mark, steps);
 }
 
-void JidEdit::cursorWordForward( bool mark )
+void JidEdit::cursorWordForward(bool mark)
 {
 	Q_D(JidEdit);
-	d->line_edit->cursorWordForward( mark );
+	d->line_edit->cursorWordForward(mark);
 }
 
-void JidEdit::cursorWordBackward( bool mark )
+void JidEdit::cursorWordBackward(bool mark)
 {
 	Q_D(JidEdit);
-	d->line_edit->cursorWordBackward( mark );
+	d->line_edit->cursorWordBackward(mark);
 }
 
 void JidEdit::backspace()
@@ -181,16 +181,16 @@ void JidEdit::del()
 	d->line_edit->del();
 }
 
-void JidEdit::home( bool mark )
+void JidEdit::home(bool mark)
 {
 	Q_D(JidEdit);
-	d->line_edit->home( mark );
+	d->line_edit->home(mark);
 }
 
-void JidEdit::end( bool mark )
+void JidEdit::end(bool mark)
 {
 	Q_D(JidEdit);
-	d->line_edit->end( mark );
+	d->line_edit->end(mark);
 }
 
 bool JidEdit::isModified() const
@@ -199,16 +199,16 @@ bool JidEdit::isModified() const
 	return d->line_edit->isModified();
 }
 
-void JidEdit::setModified( bool b )
+void JidEdit::setModified(bool b)
 {
 	Q_D(JidEdit);
-	d->line_edit->setModified( b );
+	d->line_edit->setModified(b);
 }
 
-void JidEdit::setSelection( int start, int length )
+void JidEdit::setSelection(int start, int length)
 {
 	Q_D(JidEdit);
-	d->line_edit->setSelection( start, length );
+	d->line_edit->setSelection(start, length);
 }
 
 bool JidEdit::hasSelectedText() const
@@ -241,10 +241,10 @@ bool JidEdit::isRedoAvailable() const
 	return d->line_edit->isRedoAvailable();
 }
 
-void JidEdit::setDragEnabled( bool b )
+void JidEdit::setDragEnabled(bool b)
 {
 	Q_D(JidEdit);
-	d->line_edit->setDragEnabled( b );
+	d->line_edit->setDragEnabled(b);
 }
 
 bool JidEdit::dragEnabled() const
@@ -253,16 +253,16 @@ bool JidEdit::dragEnabled() const
 	return d->line_edit->dragEnabled();
 }
 
-void JidEdit::setTextMargins( int left, int top, int right, int bottom )
+void JidEdit::setTextMargins(int left, int top, int right, int bottom)
 {
 	Q_D(JidEdit);
-	return d->line_edit->setTextMargins( left, top, right, bottom );
+	return d->line_edit->setTextMargins(left, top, right, bottom);
 }
 
-void JidEdit::getTextMargins( int *left, int *top, int *right, int *bottom ) const
+void JidEdit::getTextMargins(int *left, int *top, int *right, int *bottom) const
 {
 	Q_D(const JidEdit);
-	return d->line_edit->getTextMargins( left, top, right, bottom );
+	return d->line_edit->getTextMargins(left, top, right, bottom);
 }
 
 void JidEdit::clear()
@@ -315,10 +315,10 @@ void JidEdit::deselect()
 	d->line_edit->deselect();
 }
 
-void JidEdit::insert( const QString &text )
+void JidEdit::insert(const QString &text)
 {
 	Q_D(JidEdit);
-	d->line_edit->insert( text );
+	d->line_edit->insert(text);
 }
 
 #ifndef QT_NO_CONTEXTMENU

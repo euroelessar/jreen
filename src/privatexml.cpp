@@ -18,55 +18,55 @@
 namespace jreen
 {
 
-PrivateXml::PrivateXml( Client *client ) : QObject(client), d_ptr(new PrivateXmlPrivate)
+PrivateXml::PrivateXml(Client *client) : QObject(client), d_ptr(new PrivateXmlPrivate)
 {
 	Q_D(PrivateXml);
 	d->client = client;
-	d->client->registerStanzaExtension( new Query );
+	d->client->registerStanzaExtension(new Query);
 }
 
 PrivateXml::~PrivateXml()
 {
 }
 
-void PrivateXml::request( const QString &name, const QString &xmlns, QObject *handler, const char *member )
+void PrivateXml::request(const QString &name, const QString &xmlns, QObject *handler, const char *member)
 {
 	Q_D(PrivateXml);
 	QString id = d->client->getID();
-	IQ iq( IQ::Get, JID(), id );
-	iq.addExtension( new Query( name, xmlns ) );
-	d->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
-	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), Request );
+	IQ iq(IQ::Get, JID(), id);
+	iq.addExtension(new Query(name, xmlns));
+	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
+	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), Request);
 }
 
-void PrivateXml::store( const QDomElement &node, QObject *handler, const char *member )
+void PrivateXml::store(const QDomElement &node, QObject *handler, const char *member)
 {
 	Q_D(PrivateXml);
 	QString id = d->client->getID();
-	IQ iq( IQ::Get, JID(), id );
-	iq.addExtension( new Query( node ) );
-	d->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
-	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), Store );
+	IQ iq(IQ::Get, JID(), id);
+	iq.addExtension(new Query(node));
+	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
+	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), Store);
 }
 
-void PrivateXml::handleIQ( const IQ &iq, int context )
+void PrivateXml::handleIQ(const IQ &iq, int context)
 {
 	Q_D(PrivateXml);
-	PrivateXmlTrack *track = d->tracks.take( iq.id() );
-	if( !track )
+	PrivateXmlTrack *track = d->tracks.take(iq.id());
+	if(!track)
 		return;
 	const QSharedPointer<Error> error = iq.findExtension<Error>();
 	const QSharedPointer<Query> query = iq.findExtension<Query>();
 	bool is_error = !query;
-	if( query )
+	if(query)
 	{
-		if( iq.subtype() == IQ::Result )
-			track->newResult( query->xml(), context == Store ? StoreOk : RequestOk, error );
-		else if( iq.subtype() == IQ::Error )
+		if(iq.subtype() == IQ::Result)
+			track->newResult(query->xml(), context == Store ? StoreOk : RequestOk, error);
+		else if(iq.subtype() == IQ::Error)
 			is_error = true;
 	}
-	if( is_error )
-		track->newResult( QDomElement(), context == Store ? StoreError : RequestError, error );
+	if(is_error)
+		track->newResult(QDomElement(), context == Store ? StoreError : RequestError, error);
 	delete track;
 }
 

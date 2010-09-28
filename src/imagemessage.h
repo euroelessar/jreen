@@ -25,10 +25,10 @@ class ImageMessage : public StanzaExtension
 {
 	J_EXTENSION(ImageMessage,"/message/img[@xmlns='qutim:img']")
 public:
-	ImageMessage( const QDomElement &node = QDomElement() );
-	ImageMessage( const QByteArray &data );
+	ImageMessage(const QDomElement &node = QDomElement());
+	ImageMessage(const QByteArray &data);
 	inline const QByteArray &data() { return m_data; }
-	QDomElement node( QDomDocument *doc ) const;
+	QDomElement node(QDomDocument *doc) const;
 private:
 	QByteArray m_data;
 };

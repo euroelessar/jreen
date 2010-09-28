@@ -32,16 +32,16 @@ Parser::Event::Event()
 	d_ptr = 0;
 }
 
-Parser::Event::Event( const Parser::Event &e )
+Parser::Event::Event(const Parser::Event &e)
 {
 	e.d_ptr->ref.ref();
 	d_ptr = e.d_ptr;
 }
 
-Parser::Event &Parser::Event::operator=( const Parser::Event &e )
+Parser::Event &Parser::Event::operator=(const Parser::Event &e)
 {
 	e.d_ptr->ref.ref();
-	if( d_ptr && !d_ptr->ref.deref() )
+	if(d_ptr && !d_ptr->ref.deref())
 		delete d_ptr;
 	d_ptr = e.d_ptr;
 	return *this;
@@ -49,7 +49,7 @@ Parser::Event &Parser::Event::operator=( const Parser::Event &e )
 
 Parser::Event::~Event()
 {
-	if( d_ptr && !d_ptr->ref.deref() )
+	if(d_ptr && !d_ptr->ref.deref())
 		delete d_ptr;
 }
 
@@ -60,7 +60,7 @@ Parser::Event::Type Parser::Event::type()
 	return d->type;
 }
 
-const QString &Parser::Event::nsprefix( const QString &s ) const
+const QString &Parser::Event::nsprefix(const QString &s) const
 {
 	Q_D(const Parser::Event);
 	QStringList::ConstIterator it = d->nsnames.begin();
@@ -110,8 +110,8 @@ const QString Parser::Event::actualString() const
 	return d->str;
 }
 
-void Parser::Event::setDocumentOpen( const QString &namespaceURI, const QString &localName, const QString &qName,
-					  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues )
+void Parser::Event::setDocumentOpen(const QString &namespaceURI, const QString &localName, const QString &qName,
+					  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues)
 {
 	if(!d_ptr)
 		d_ptr = new Parser::EventPrivate;
@@ -125,7 +125,7 @@ void Parser::Event::setDocumentOpen( const QString &namespaceURI, const QString 
 	d->nsvalues = nsvalues;
 }
 
-void Parser::Event::setDocumentClose( const QString &namespaceURI, const QString &localName, const QString &qName )
+void Parser::Event::setDocumentClose(const QString &namespaceURI, const QString &localName, const QString &qName)
 {
 	if(!d_ptr)
 		d_ptr = new Parser::EventPrivate;
@@ -136,7 +136,7 @@ void Parser::Event::setDocumentClose( const QString &namespaceURI, const QString
 	d->qn = qName;
 }
 
-void Parser::Event::setElement( const QDomElement &elem )
+void Parser::Event::setElement(const QDomElement &elem)
 {
 	if(!d_ptr)
 		d_ptr = new Parser::EventPrivate;
@@ -153,7 +153,7 @@ void Parser::Event::setError()
 	d->type = Error;
 }
 
-void Parser::Event::setActualString( const QString &str )
+void Parser::Event::setActualString(const QString &str)
 {
 	if(!d_ptr)
 		d_ptr = new Parser::EventPrivate;

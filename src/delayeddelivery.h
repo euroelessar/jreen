@@ -31,9 +31,9 @@ class DelayedDelivery : public StanzaExtension
 		   "|/presence/x[@xmlns='jabber:x:delay']"
 		   "|/message/x[@xmlns='jabber:x:delay']")
 public:
-	DelayedDelivery( const JID& from, const QDateTime &date_time, const QString &reason = QString() );
-	DelayedDelivery( const QDomElement &node = QDomElement() );
-	QDomElement node( QDomDocument *document ) const;
+	DelayedDelivery(const JID& from, const QDateTime &date_time, const QString &reason = QString());
+	DelayedDelivery(const QDomElement &node = QDomElement());
+	QDomElement node(QDomDocument *document) const;
 	inline const JID &from() const { return m_from; }
 	inline const QString &reason() const { return m_reason; }
 	inline const QDateTime &dateTime() const { return m_date_time; }

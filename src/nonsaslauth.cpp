@@ -24,43 +24,43 @@ namespace jreen
 
 J_STRING(auth)
 
-NonSaslAuth::Query::Query( const QDomElement &node ) : m_is_digest(false)
+NonSaslAuth::Query::Query(const QDomElement &node) : m_is_digest(false)
 {
-	forelements( const QDomElement &elem, node )
-		if( elem.nodeName() == QLatin1String("digest") )
+	forelements(const QDomElement &elem, node)
+		if(elem.nodeName() == QLatin1String("digest"))
 		{
 			m_is_digest = true;
 			return;
 		}
 }
 
-QDomElement NonSaslAuth::Query::node( QDomDocument *document ) const
+QDomElement NonSaslAuth::Query::node(QDomDocument *document) const
 {
-	QDomElement node = document->createElement( ConstString::query );
-	node.setAttribute( ConstString::xmlns, "jabber:iq:auth" );
-	if( !m_username.isEmpty() )
-		node.appendChild( createElement( document, "username", m_username ) );
-	if( !m_password.isEmpty() )
+	QDomElement node = document->createElement(ConstString::query);
+	node.setAttribute(ConstString::xmlns, "jabber:iq:auth");
+	if(!m_username.isEmpty())
+		node.appendChild(createElement(document, "username", m_username));
+	if(!m_password.isEmpty())
 	{
-		if( m_is_digest )
-			node.appendChild( createElement( document, "digest",   m_password ) );
+		if(m_is_digest)
+			node.appendChild(createElement(document, "digest",   m_password));
 		else
-			node.appendChild( createElement( document, "password", m_password ) );
+			node.appendChild(createElement(document, "password", m_password));
 	}
-	if( !m_resource.isEmpty() )
-		node.appendChild( createElement( document, "resource", m_resource ) );
+	if(!m_resource.isEmpty())
+		node.appendChild(createElement(document, "resource", m_resource));
 	return node;
 }
 
-NonSaslAuth::Query *NonSaslAuth::Query::instance( const JID &jid, const QString &password, const QString &sid ) const
+NonSaslAuth::Query *NonSaslAuth::Query::instance(const JID &jid, const QString &password, const QString &sid) const
 {
 	Query *q = new Query();
-	if( m_is_digest )
+	if(m_is_digest)
 	{
-		QCryptographicHash hash( QCryptographicHash::Sha1 );
-		hash.addData( sid.toUtf8() );
-		hash.addData( password.toUtf8() );
-		q->m_password = QString::fromLatin1( hash.result().toHex() );
+		QCryptographicHash hash(QCryptographicHash::Sha1);
+		hash.addData(sid.toUtf8());
+		hash.addData(password.toUtf8());
+		q->m_password = QString::fromLatin1(hash.result().toHex());
 	}
 	else
 	{
@@ -77,11 +77,11 @@ NonSaslAuth::NonSaslAuth() : StreamFeature(SimpleAuthorization)
 	reset();
 }
 
-void NonSaslAuth::setStreamInfo( StreamInfo *info )
+void NonSaslAuth::setStreamInfo(StreamInfo *info)
 {
-	StreamFeature::setStreamInfo( info );
-	if( m_client )
-		m_client->registerStanzaExtension( new Query );
+	StreamFeature::setStreamInfo(info);
+	if(m_client)
+		m_client->registerStanzaExtension(new Query);
 }
 
 void NonSaslAuth::reset()
@@ -89,17 +89,17 @@ void NonSaslAuth::reset()
 	m_current_step = RequestFields;
 }
 
-void NonSaslAuth::processElement( const QDomElement &node )
+void NonSaslAuth::processElement(const QDomElement &node)
 {
-	if( m_current_step == Completed )
+	if(m_current_step == Completed)
 		return;
 	Q_UNUSED(node);
-	switch( m_current_step )
+	switch(m_current_step)
 	{
 	case RequestFields:{
-		IQ iq( IQ::Get, m_client->jid().domain() );
-		iq.addExtension( new Query );
-		m_client->send( iq, this, SLOT(handleIq(IQ,int)), RequestFields );
+		IQ iq(IQ::Get, m_client->jid().domain());
+		iq.addExtension(new Query);
+		m_client->send(iq, this, SLOT(handleIq(IQ,int)), RequestFields);
 		m_current_step = ProvideInformation;
 		break;}
 	case ProvideInformation:
@@ -112,16 +112,16 @@ void NonSaslAuth::processElement( const QDomElement &node )
 	}
 }
 
-void NonSaslAuth::handleIq( const IQ &iq, int context )
+void NonSaslAuth::handleIq(const IQ &iq, int context)
 {
-	switch( context )
+	switch(context)
 	{
 	case RequestFields:{
 		iq.accept();
 		const Query *query = iq.findExtension<Query>().data();
-		IQ iq( IQ::Set, m_client->jid().domain() );
-		iq.addExtension( query->instance( m_client->jid(), m_info->password(), m_info->streamID() ) );
-		m_client->send( iq, this, SLOT(handleIq(IQ,int)), ProvideInformation );
+		IQ iq(IQ::Set, m_client->jid().domain());
+		iq.addExtension(query->instance(m_client->jid(), m_info->password(), m_info->streamID()));
+		m_client->send(iq, this, SLOT(handleIq(IQ,int)), ProvideInformation);
 		break;}
 	case ProvideInformation:
 		iq.accept();

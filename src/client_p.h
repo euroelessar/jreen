@@ -44,13 +44,13 @@ class IQTrack : public QObject
 	Q_OBJECT
 	friend class ClientPrivate;
 public:
-	inline IQTrack( QObject *handler, const char *member, int ctx ) : context(ctx)
+	inline IQTrack(QObject *handler, const char *member, int ctx) : context(ctx)
 	{
-		connect( this, SIGNAL(newIQ(IQ,int)), handler, member );
+		connect(this, SIGNAL(newIQ(IQ,int)), handler, member);
 	}
 	int context;
 signals:
-	void newIQ( const IQ &iq, int context );
+	void newIQ(const IQ &iq, int context);
 };
 
 class PresenceTrack : public QObject
@@ -58,15 +58,15 @@ class PresenceTrack : public QObject
 	Q_OBJECT
 	friend class ClientPrivate;
 public:
-	PresenceTrack( QObject *handler, const char *member ) : QObject(handler)
+	PresenceTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect( this, SIGNAL(newPresence(Presence)), handler, member );
+		connect(this, SIGNAL(newPresence(Presence)), handler, member);
 	}
 	virtual ~PresenceTrack()
 	{
 	}
 signals:
-	void newPresence( const Presence &presence );
+	void newPresence(const Presence &presence);
 };
 
 class MessageTrack : public QObject
@@ -74,22 +74,22 @@ class MessageTrack : public QObject
 	Q_OBJECT
 	friend class ClientPrivate;
 public:
-	MessageTrack( QObject *handler, const char *member ) : QObject(handler)
+	MessageTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect( this, SIGNAL(newMessage(Message)), handler, member );
+		connect(this, SIGNAL(newMessage(Message)), handler, member);
 	}
 	virtual ~MessageTrack()
 	{
 	}
 signals:
-	void newMessage( const Message &presence );
+	void newMessage(const Message &presence);
 };
 
 class ClientPrivate : public QObject
 {
 	Q_OBJECT
 public:
-	ClientPrivate( const Presence &p, Client *parent )
+	ClientPrivate(const Presence &p, Client *parent)
 		: QObject(parent), presence(p), current_id(0), parser(new Parser), conn(0)
 	{
 		disco = 0;
@@ -97,105 +97,105 @@ public:
 		authorized = false;
 		client = parent;
 	}
-	QString elementToString( const QDomElement &element )
+	QString elementToString(const QDomElement &element)
 	{
-		static QTextCodec *utf = QTextCodec::codecForName( "utf-8" );
+		static QTextCodec *utf = QTextCodec::codecForName("utf-8");
 		QString xml;
 		QTextStream *stream = new QTextStream(&xml, QIODevice::WriteOnly);
-		stream->setCodec( utf );
-		element.save( *stream, 0, QDomNode::EncodingFromTextStream );
+		stream->setCodec(utf);
+		element.save(*stream, 0, QDomNode::EncodingFromTextStream);
 		delete stream;
-		qDebug( "%s", qPrintable(xml) );
+		qDebug("%s", qPrintable(xml));
 		return xml;
 	}
-	void send( const QDomElement &node )
+	void send(const QDomElement &node)
 	{
-		send( elementToString( node ) );
+		send(elementToString(node));
 	}
-	void send( const QString &data )
+	void send(const QString &data)
 	{
-		if( conn && conn->isOpen() )
-			conn->write( data.toUtf8() );
+		if(conn && conn->isOpen())
+			conn->write(data.toUtf8());
 	}
-	void processStreamFeature( StreamFeature *stream_feature, const QDomElement &node )
+	void processStreamFeature(StreamFeature *stream_feature, const QDomElement &node)
 	{
 		current_stream_feature = stream_feature;
-		stream_feature->processElement( node );
+		stream_feature->processElement(node);
 	}
-	void registerPresenceHandler( const JID &jid, QObject *handler, const char *member )
+	void registerPresenceHandler(const JID &jid, QObject *handler, const char *member)
 	{
 		Q_UNUSED(jid);
 		Q_UNUSED(handler);
 		Q_UNUSED(member);
 	}
-//	void registerMessageHandler( const JID &jid, QObject *handler, const char *member );
+//	void registerMessageHandler(const JID &jid, QObject *handler, const char *member);
 
-	void elementParsed( const QDomElement &node )
+	void elementParsed(const QDomElement &node)
 	{
-		elementToString( node );
-		static const QString stream_features_str( "stream:features" );
-		if( current_stream_feature )
+		elementToString(node);
+		static const QString stream_features_str("stream:features");
+		if(current_stream_feature)
 		{
-			processStreamFeature( current_stream_feature, node );
+			processStreamFeature(current_stream_feature, node);
 		}
-		else if( node.nodeName() == stream_features_str && node.namespaceURI() == ConstString::ns_etherx )
+		else if(node.nodeName() == stream_features_str && node.namespaceURI() == ConstString::ns_etherx)
 		{
-			StreamFeature *stream = security_layers.findStreamFeature( node );
-			if( !stream )
-				stream = compressions.findStreamFeature( node );
-			if( !stream )
-				stream = sasl_auths.findStreamFeature( node );
-			if( !stream )
-				stream = compressions.findStreamFeature( node );
-			if( !stream )
-				stream = non_sasl_auths.findStreamFeature( node );
-			if( stream )
-				processStreamFeature( stream, node );
+			StreamFeature *stream = security_layers.findStreamFeature(node);
+			if(!stream)
+				stream = compressions.findStreamFeature(node);
+			if(!stream)
+				stream = sasl_auths.findStreamFeature(node);
+			if(!stream)
+				stream = compressions.findStreamFeature(node);
+			if(!stream)
+				stream = non_sasl_auths.findStreamFeature(node);
+			if(stream)
+				processStreamFeature(stream, node);
 			return;
 		}
 
-		if( node.nodeName() == QLatin1String("iq") )
+		if(node.nodeName() == QLatin1String("iq"))
 		{
-			IQ stanza( node );
-			xquery.parseElement( stanza, node );
-			IQTrack *track = iq_tracks.take( stanza.id() );
-			if( track )
+			IQ stanza(node);
+			xquery.parseElement(stanza, node);
+			IQTrack *track = iq_tracks.take(stanza.id());
+			if(track)
 			{
-				emit track->newIQ( stanza, track->context );
+				emit track->newIQ(stanza, track->context);
 				delete track;
 			}
 			else
 			{
-				client->handleIQ( stanza );
-				if( !stanza.accepted() && ( stanza.subtype() == IQ::Set || stanza.subtype() == IQ::Get ) )
+				client->handleIQ(stanza);
+				if(!stanza.accepted() && (stanza.subtype() == IQ::Set || stanza.subtype() == IQ::Get))
 				{
-					IQ error( IQ::Error, stanza.from(), stanza.id() );
-					error.addExtension( new Error( Error::Cancel, Error::ServiceUnavailable ) );
-					send( error );
+					IQ error(IQ::Error, stanza.from(), stanza.id());
+					error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
+					send(error);
 				}
 			}
 		}
-		else if( node.nodeName() == QLatin1String("message") )
+		else if(node.nodeName() == QLatin1String("message"))
 		{
-			Message stanza( node );
-			xquery.parseElement( stanza, node );
-			client->handleMessage( stanza );
+			Message stanza(node);
+			xquery.parseElement(stanza, node);
+			client->handleMessage(stanza);
 		}
-		else if( node.nodeName() == QLatin1String("presence") )
+		else if(node.nodeName() == QLatin1String("presence"))
 		{
-			QString type = node.attribute( ConstString::type );
-			if( type == QLatin1String("subscribe")  || type == QLatin1String("unsubscribe")
-				|| type == QLatin1String("subscribed") || type == QLatin1String("unsubscribed") )
+			QString type = node.attribute(ConstString::type);
+			if(type == QLatin1String("subscribe")  || type == QLatin1String("unsubscribe")
+				|| type == QLatin1String("subscribed") || type == QLatin1String("unsubscribed"))
 			{
-				Subscription stanza( node );
-				xquery.parseElement( stanza, node );
-				client->handleSubscription( stanza );
+				Subscription stanza(node);
+				xquery.parseElement(stanza, node);
+				client->handleSubscription(stanza);
 			}
 			else
 			{
-				Presence stanza( node );
-				xquery.parseElement( stanza, node );
-				client->handlePresence( stanza );
+				Presence stanza(node);
+				xquery.parseElement(stanza, node);
+				client->handlePresence(stanza);
 			}
 		}
 	}
@@ -224,32 +224,32 @@ public slots:
 	void newData()
 	{
 		QByteArray data = conn->readAll();
-		parser->appendData( data );
+		parser->appendData(data);
 		readMore();
 	}
 	void readMore()
 	{
-		qDebug( "readMore" );
+		qDebug("readMore");
 		Parser::Event ev = parser->readNext();
-		if( !ev )
+		if(!ev)
 			return;
-		switch( ev.type() )
+		switch(ev.type())
 		{
 		case Parser::Event::Element:
-			elementParsed( ev.element() );
+			elementParsed(ev.element());
 			break;
 		case Parser::Event::DocumentOpen:{
-			sid = ev.atts().value( ConstString::id );
-			QString version = ev.atts().value( QLatin1String("version") );
-			int major = version.isEmpty() ? 0 : version.section( '.', 0, 0 ).toInt();
-			int minor = version.isEmpty() ? 0 : version.section( '.', 1, 1 ).toInt();
+			sid = ev.atts().value(ConstString::id);
+			QString version = ev.atts().value(QLatin1String("version"));
+			int major = version.isEmpty() ? 0 : version.section('.', 0, 0).toInt();
+			int minor = version.isEmpty() ? 0 : version.section('.', 1, 1).toInt();
 			Q_UNUSED(major);
 			Q_UNUSED(minor);
 			break;}
 		default:
 			break;
 		}
-		QTimer::singleShot( 0, this, SLOT(readMore()) );
+		QTimer::singleShot(0, this, SLOT(readMore()));
 	}
 	void connected()
 	{
@@ -257,7 +257,7 @@ public slots:
 		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
 		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
 		"version='1.0'>";
-		conn->write( head.toUtf8() );
+		conn->write(head.toUtf8());
 		client->handleConnect();
 	}
 	void disconnected()
@@ -268,7 +268,7 @@ public slots:
 		security_layers.resetFeatures();
 		authorized = false;
 		current_stream_feature = 0;
-		presence.setPresence( Presence::Unavailable );
+		presence.setPresence(Presence::Unavailable);
 		client->handleDisconnect();
 	}
 	inline void emitAuthorized() { client->handleAuthorized(); }
@@ -277,33 +277,33 @@ public slots:
 class StreamInfoImpl : public StreamInfo
 {
 public:
-	StreamInfoImpl( ClientPrivate *client_private )
+	StreamInfoImpl(ClientPrivate *client_private)
 	{
 		m_client_private = client_private;
 	}
 	QString streamID()
 	{
-		if( !m_client_private->current_stream_feature )
+		if(!m_client_private->current_stream_feature)
 			return QString();
 		return m_client_private->sid;
 	}
 	QString connectionServer()
 	{
-		if( !m_client_private->current_stream_feature )
+		if(!m_client_private->current_stream_feature)
 			return QString();
 		return m_client_private->server;
 	}
 	JID jid()
 	{
-		if( !m_client_private->current_stream_feature )
+		if(!m_client_private->current_stream_feature)
 			return JID();
 		return m_client_private->jid;
 	}
 	QString password()
 	{
-		if( !m_client_private->current_stream_feature
-			|| ( m_client_private->current_stream_feature->type() != StreamFeature::SASL
-			&& m_client_private->current_stream_feature->type() != StreamFeature::SimpleAuthorization ) )
+		if(!m_client_private->current_stream_feature
+			|| (m_client_private->current_stream_feature->type() != StreamFeature::SASL
+			&& m_client_private->current_stream_feature->type() != StreamFeature::SimpleAuthorization))
 			return QString();
 		return m_client_private->password;
 	}
@@ -313,12 +313,12 @@ public:
 	}
 	void completed()
 	{
-		if( m_client_private->current_stream_feature->type() == StreamFeature::SASL
-			|| m_client_private->current_stream_feature->type() == StreamFeature::SimpleAuthorization )
+		if(m_client_private->current_stream_feature->type() == StreamFeature::SASL
+			|| m_client_private->current_stream_feature->type() == StreamFeature::SimpleAuthorization)
 			m_client_private->emitAuthorized();
 		m_client_private->current_stream_feature = 0;
 	}
-	void addDataStream( DataStream *data_stream ) { Q_UNUSED(data_stream); }
+	void addDataStream(DataStream *data_stream) { Q_UNUSED(data_stream); }
 private:
 	ClientPrivate *m_client_private;
 };

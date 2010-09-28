@@ -43,13 +43,13 @@ class JREEN_EXPORT JidEdit : public QWidget
 	Q_PROPERTY(bool redoAvailable READ isRedoAvailable)
 
 public:
-	JidEdit( QWidget *parent = 0 );
-	JidEdit( const JID &jid, QWidget *parent = 0 );
+	JidEdit(QWidget *parent = 0);
+	JidEdit(const JID &jid, QWidget *parent = 0);
 	virtual ~JidEdit();
 
 	const JID &jid() const;
 
-	void setFrame( bool );
+	void setFrame(bool);
 	bool hasFrame() const;
 
 	bool isReadOnly() const;
@@ -60,24 +60,24 @@ public:
 
 	int cursorPosition() const;
 	void setCursorPosition(int);
-	int cursorPositionAt( const QPoint &pos );
+	int cursorPositionAt(const QPoint &pos);
 
-	void setAlignment( Qt::Alignment flag );
+	void setAlignment(Qt::Alignment flag);
 	Qt::Alignment alignment() const;
 
-	void cursorForward( bool mark, int steps = 1 );
-	void cursorBackward( bool mark, int steps = 1 );
-	void cursorWordForward( bool mark );
-	void cursorWordBackward( bool mark );
+	void cursorForward(bool mark, int steps = 1);
+	void cursorBackward(bool mark, int steps = 1);
+	void cursorWordForward(bool mark);
+	void cursorWordBackward(bool mark);
 	void backspace();
 	void del();
-	void home( bool mark );
-	void end( bool mark );
+	void home(bool mark);
+	void end(bool mark);
 
 	bool isModified() const;
-	void setModified( bool );
+	void setModified(bool);
 
-	void setSelection( int, int );
+	void setSelection(int, int);
 	bool hasSelectedText() const;
 	QString selectedText() const;
 	int selectionStart() const;
@@ -85,14 +85,14 @@ public:
 	bool isUndoAvailable() const;
 	bool isRedoAvailable() const;
 
-	void setDragEnabled( bool b );
+	void setDragEnabled(bool b);
 	bool dragEnabled() const;
 
-	void setTextMargins( int left, int top, int right, int bottom );
-	void getTextMargins( int *left, int *top, int *right, int *bottom ) const;
+	void setTextMargins(int left, int top, int right, int bottom);
+	void getTextMargins(int *left, int *top, int *right, int *bottom) const;
 
 public slots:
-	void setJid( const JID & );
+	void setJid(const JID &);
 	void clear();
 	void selectAll();
 	void undo();
@@ -105,21 +105,21 @@ public slots:
 
 public:
 	void deselect();
-	void insert( const QString & );
+	void insert(const QString &);
 #ifndef QT_NO_CONTEXTMENU
 	QMenu *createStandardContextMenu();
 #endif
 
 signals:
-	void jidChanged( const JID & );
-	void jidEdited( const JID & );
-	void cursorPositionChanged( int, int );
+	void jidChanged(const JID &);
+	void jidEdited(const JID &);
+	void cursorPositionChanged(int, int);
 	void returnPressed();
 	void editingFinished();
 	void selectionChanged();
 
 protected:
-	void resizeEvent( QResizeEvent *event );
+	void resizeEvent(QResizeEvent *event);
 	QRect cursorRect() const;
 
 private:

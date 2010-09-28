@@ -20,15 +20,15 @@
 namespace jreen
 {
 
-XQueryElement::XQueryElement( const QChar *xpath, XQueryElement *parent ) : m_parent(parent)
+XQueryElement::XQueryElement(const QChar *xpath, XQueryElement *parent) : m_parent(parent)
 {
-	if( !xpath )
+	if(!xpath)
 		return;
-	parseXPath( xpath, m_namespace_uri, m_node_name, m_attributes );
+	parseXPath(xpath, m_namespace_uri, m_node_name, m_attributes);
 }
 
-XQueryElement::XQueryElement( const QString &namespace_uri, const QString &node_name,
-							  const QXmlAttributes &attributes, XQueryElement *parent )
+XQueryElement::XQueryElement(const QString &namespace_uri, const QString &node_name,
+							  const QXmlAttributes &attributes, XQueryElement *parent)
 		: m_parent(parent), m_namespace_uri(namespace_uri), m_node_name(node_name), m_attributes(attributes)
 {
 }
@@ -37,76 +37,76 @@ XQueryElement::~XQueryElement()
 {
 	m_stanza_extensions.clear();
 	m_stream_features.clear();
-	qDeleteAll( m_xquery_elements );
+	qDeleteAll(m_xquery_elements);
 	m_xquery_elements.clear();
 }
 
-void XQueryElement::removeChild( XQueryElement *element )
+void XQueryElement::removeChild(XQueryElement *element)
 {
 	delete element;
-	m_xquery_elements.removeAll( element );
-	if( m_parent && m_xquery_elements.isEmpty() && m_stanza_extensions.isEmpty() )
-		m_parent->removeChild( this );
+	m_xquery_elements.removeAll(element);
+	if(m_parent && m_xquery_elements.isEmpty() && m_stanza_extensions.isEmpty())
+		m_parent->removeChild(this);
 }
 
-XQueryElement *XQueryElement::addChild( const QChar *xpath, Disco *disco )
+XQueryElement *XQueryElement::addChild(const QChar *xpath, Disco *disco)
 {
-	if( (*xpath).isNull() )
+	if((*xpath).isNull())
 		return this;
 	QString node_name, namespace_uri;
 	QXmlAttributes attributes;
-	const QChar *cur = XQueryElement::parseXPath( xpath, namespace_uri, node_name, attributes );
-	if( disco && !namespace_uri.isEmpty() )
+	const QChar *cur = XQueryElement::parseXPath(xpath, namespace_uri, node_name, attributes);
+	if(disco && !namespace_uri.isEmpty())
 		disco->features() << namespace_uri;
 	XQueryElementList::iterator i = m_xquery_elements.begin();
 	XQueryElement *element = 0;
-	for( ; i != m_xquery_elements.end(); i++ )
+	for(; i != m_xquery_elements.end(); i++)
 	{
 		// TODO: Add compare of attributes
-		if( node_name == (*i)->m_node_name && namespace_uri == (*i)->m_namespace_uri && attributes.count() == (*i)->m_attributes.count() )
+		if(node_name == (*i)->m_node_name && namespace_uri == (*i)->m_namespace_uri && attributes.count() == (*i)->m_attributes.count())
 		{
 			element = *i;
 			break;
 		}
 	}
-	if( element == 0 )
+	if(element == 0)
 	{
-		element = new XQueryElement( namespace_uri, node_name, attributes, this );
-		m_xquery_elements.append( element );
+		element = new XQueryElement(namespace_uri, node_name, attributes, this);
+		m_xquery_elements.append(element);
 	}
-	return element->addChild( cur, disco );
+	return element->addChild(cur, disco);
 }
 
-const QChar *XQueryElement::parseXPath( const QChar *c, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes )
+const QChar *XQueryElement::parseXPath(const QChar *c, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes)
 {
-	if( (*c).isNull() )
+	if((*c).isNull())
 		return c;
 	QString token;
 	XType type = XNodeName;
 	bool first_quote = false;
 	bool second_quote = false;
 #ifdef XQUERY_DEBUG
-	qDebug( "begin parse" );
+	qDebug("begin parse");
 #endif
-	while( !(*++c).isNull() && ( ( (*c) != '/' && (*c) != '|' ) || first_quote || second_quote ) )
+	while(!(*++c).isNull() && (((*c) != '/' && (*c) != '|') || first_quote || second_quote))
 	{
 #ifdef XQUERY_DEBUG
-		qDebug( "new char: ['%lc']", *(const ushort*)c );
+		qDebug("new char: ['%lc']", *(const ushort*)c);
 #endif
-		if( ( first_quote && (*c).unicode() != L'\'' )
-			|| ( second_quote && (*c).unicode() != L'"' ) )
+		if((first_quote && (*c).unicode() != L'\'')
+			|| (second_quote && (*c).unicode() != L'"'))
 		{
-			token.append( *c );
+			token.append(*c);
 			continue;
 		}
-		switch( (*c).unicode() )
+		switch((*c).unicode())
 		{
 		case L'[':
-			closeToken( type, token, namespace_uri, node_name, attributes );
+			closeToken(type, token, namespace_uri, node_name, attributes);
 			type = XInteger;
 			break;
 		case L']':
-			closeToken( type, token, namespace_uri, node_name, attributes );
+			closeToken(type, token, namespace_uri, node_name, attributes);
 			type = XNoneType;
 			break;
 		case L'@':
@@ -114,31 +114,31 @@ const QChar *XQueryElement::parseXPath( const QChar *c, QString &namespace_uri, 
 			break;
 		case L'\'':
 			first_quote = !first_quote;
-			token.append( *c );
+			token.append(*c);
 			break;
 		case L'"':
 			second_quote = !second_quote;
-			token.append( *c );
+			token.append(*c);
 			break;
 		default:
-			if( type == XInteger && !(*c).isDigit() )
+			if(type == XInteger && !(*c).isDigit())
 				type = XLeftBracket;
-			token.append( *c );
+			token.append(*c);
 		}
 	}
-	closeToken( type, token, namespace_uri, node_name, attributes );
+	closeToken(type, token, namespace_uri, node_name, attributes);
 #ifdef XQUERY_DEBUG
-	qDebug( "end parse: <%s xmlns='%s'/>", qPrintable(node_name), qPrintable(namespace_uri) );
+	qDebug("end parse: <%s xmlns='%s'/>", qPrintable(node_name), qPrintable(namespace_uri));
 #endif
 	return c;
 }
 
-void XQueryElement::closeToken( XType type, QString &token, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes )
+void XQueryElement::closeToken(XType type, QString &token, QString &namespace_uri, QString &node_name, QXmlAttributes &attributes)
 {
 #ifdef XQUERY_DEBUG
-	qDebug( "close token: %d %s", (int)type, qPrintable(token) );
+	qDebug("close token: %d %s", (int)type, qPrintable(token));
 #endif
-	switch( type )
+	switch(type)
 	{
 	case XNodeName:
 		node_name = token == QLatin1String("*") ? QString() : token;
@@ -153,22 +153,22 @@ void XQueryElement::closeToken( XType type, QString &token, QString &namespace_u
 		bool have_colon = false;
 		XOperators opers;
 		const QChar *c = token.constData();
-		while( !(*c).isNull() )
+		while(!(*c).isNull())
 		{
 #ifdef XQUERY_DEBUG
-			qDebug( "new char at token: ['%lc']", *(const ushort*)c );
+			qDebug("new char at token: ['%lc']", *(const ushort*)c);
 #endif
-			if( ( first_quote && (*c).unicode() != L'\'' )
-				|| ( second_quote && (*c).unicode() != L'"' ) )
+			if((first_quote && (*c).unicode() != L'\'')
+				|| (second_quote && (*c).unicode() != L'"'))
 			{
-				if( !opers )
-					qname.append( *c );
+				if(!opers)
+					qname.append(*c);
 				else
-					value.append( *c );
+					value.append(*c);
 				c++;
 				continue;
 			}
-			switch( (*c).unicode() )
+			switch((*c).unicode())
 			{
 			case L'>':
 				opers |= XGreater;
@@ -189,32 +189,32 @@ void XQueryElement::closeToken( XType type, QString &token, QString &namespace_u
 				second_quote = !second_quote;
 				break;
 			case L':':
-				if( !have_colon && !opers )
+				if(!have_colon && !opers)
 					have_colon = true;
 			default:
-				if( !opers )
+				if(!opers)
 				{
-					if( have_colon )
-						lname.append( *c );
-					qname.append( *c );
+					if(have_colon)
+						lname.append(*c);
+					qname.append(*c);
 				}
 				else
-					value.append( *c );
+					value.append(*c);
 			}
 			c++;
 		}
-		if( lname.isEmpty() )
+		if(lname.isEmpty())
 			lname = qname;
 //		xml:lang='en'
 //		xml:lang http://www.w3.org/XML/1998/namespace lang en
 //		qName    uri                                  ln   value
 #ifdef XQUERY_DEBUG
-		qDebug( "attribute parsed: %s='%s'", qPrintable(qname), qPrintable(value) );
+		qDebug("attribute parsed: %s='%s'", qPrintable(qname), qPrintable(value));
 #endif
-		if( qname == QLatin1String("xmlns") || qname.startsWith( QLatin1String("xmlns:") ) )
+		if(qname == QLatin1String("xmlns") || qname.startsWith(QLatin1String("xmlns:")))
 			namespace_uri = value;
 		else
-			attributes.append( qname, QLatin1String(""), lname, value );
+			attributes.append(qname, QLatin1String(""), lname, value);
 		token.clear();
 		break;}
 	default:
@@ -223,73 +223,73 @@ void XQueryElement::closeToken( XType type, QString &token, QString &namespace_u
 	}
 }
 
-void XQueryElement::addXQueryElement( XQueryElement *xquery )
+void XQueryElement::addXQueryElement(XQueryElement *xquery)
 {
-	if( xquery )
-		m_xquery_elements.append( xquery );
+	if(xquery)
+		m_xquery_elements.append(xquery);
 }
 
-void XQueryElement::addStanzaExtension( const StanzaExtensionPointer &stanza_extension )
+void XQueryElement::addStanzaExtension(const StanzaExtensionPointer &stanza_extension)
 {
-	m_stanza_extensions.append( stanza_extension );
+	m_stanza_extensions.append(stanza_extension);
 }
-void XQueryElement::addStreamFeature( const StreamFeaturePointer &stream_feature )
+void XQueryElement::addStreamFeature(const StreamFeaturePointer &stream_feature)
 {
-	m_stream_features.append( stream_feature );
+	m_stream_features.append(stream_feature);
 }
 
-bool XQueryElement::check( const QDomElement &node )
+bool XQueryElement::check(const QDomElement &node)
 {
 #ifdef XQUERY_DEBUG
-	qDebug( "name: %s %s\nuri:  %s %s", m_node_name.isEmpty() ? "*" : qPrintable(m_node_name), qPrintable(node.nodeName()),
-			m_namespace_uri.isEmpty() ? "*" : qPrintable(m_namespace_uri), qPrintable(node.namespaceURI()) );
+	qDebug("name: %s %s\nuri:  %s %s", m_node_name.isEmpty() ? "*" : qPrintable(m_node_name), qPrintable(node.nodeName()),
+			m_namespace_uri.isEmpty() ? "*" : qPrintable(m_namespace_uri), qPrintable(node.namespaceURI()));
 #endif
-	if( !m_node_name.isEmpty() && node.nodeName() != m_node_name )
+	if(!m_node_name.isEmpty() && node.nodeName() != m_node_name)
 		return false;
-	if( !m_namespace_uri.isEmpty() && node.namespaceURI() != m_namespace_uri )
+	if(!m_namespace_uri.isEmpty() && node.namespaceURI() != m_namespace_uri)
 		return false;
-	for( int k = 0; k < m_attributes.count(); k++ )
+	for(int k = 0; k < m_attributes.count(); k++)
 	{
-		if( node.attribute( m_attributes.qName( k ) ) != m_attributes.value( k ) )
+		if(node.attribute(m_attributes.qName(k)) != m_attributes.value(k))
 			return false;
 	}
 	return true;
 }
 
-StreamFeature *XQueryElement::findStreamFeature( const QDomElement &node )
+StreamFeature *XQueryElement::findStreamFeature(const QDomElement &node)
 {
-	if( !check( node ) )
+	if(!check(node))
 		return 0;
-	if( m_stream_features.size() )
+	if(m_stream_features.size())
 		return m_stream_features.first().data();
-	forelements( const QDomElement &element, node )
+	forelements(const QDomElement &element, node)
 	{
 		XQueryElementList::iterator j = m_xquery_elements.begin();
-		for( ; j != m_xquery_elements.end(); j++ )
+		for(; j != m_xquery_elements.end(); j++)
 		{
-			StreamFeature *stream_feature = (*j)->findStreamFeature( element );
-			if( stream_feature )
+			StreamFeature *stream_feature = (*j)->findStreamFeature(element);
+			if(stream_feature)
 				return stream_feature;
 		}
 	}
 	return 0;
 }
 
-void XQueryElement::parseElement( Stanza &stanza, const QDomElement &node )
+void XQueryElement::parseElement(Stanza &stanza, const QDomElement &node)
 {
-	if( !check( node ) )
+	if(!check(node))
 		return;
 	StanzaExtensionList::iterator i = m_stanza_extensions.begin();
-	for( ; i != m_stanza_extensions.end(); i++ )
+	for(; i != m_stanza_extensions.end(); i++)
 	{
-		stanza.addExtension( (*i)->fromNode( node ) );
+		stanza.addExtension((*i)->fromNode(node));
 	}
-	forelements( const QDomElement &element, node )
+	forelements(const QDomElement &element, node)
 	{
 		XQueryElementList::iterator j = m_xquery_elements.begin();
-		for( ; j != m_xquery_elements.end(); j++ )
+		for(; j != m_xquery_elements.end(); j++)
 		{
-			(*j)->parseElement( stanza, element );
+			(*j)->parseElement(stanza, element);
 		}
 	}
 }

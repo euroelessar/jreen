@@ -38,9 +38,9 @@ struct JREEN_EXPORT LangMapData
 	QString base;
 	Base other;
 
-	void fillNode( QDomElement &node, const QString &name, const QString &uri ) const;
-	const QString &value( const QString &lang ) const;
-	const QString &value( const QString &lang, const QString &default_value ) const;
+	void fillNode(QDomElement &node, const QString &name, const QString &uri) const;
+	const QString &value(const QString &lang) const;
+	const QString &value(const QString &lang, const QString &default_value) const;
 
 	static LangMapData shared_null;
 };
@@ -51,48 +51,48 @@ class LangMap
 	LangMapData *d;
 public:
 	inline LangMap() : d(&LangMapData::shared_null) { d->ref.ref(); }
-	inline LangMap( const QString &value ) : d(new LangMapData) { d->ref = 1; d->base = value; }
-	inline LangMap( const LangMap &other ) : d(other.d) { d->ref.ref(); }
-	inline ~LangMap() { if( !d->ref.deref() ) delete d; }
+	inline LangMap(const QString &value) : d(new LangMapData) { d->ref = 1; d->base = value; }
+	inline LangMap(const LangMap &other) : d(other.d) { d->ref.ref(); }
+	inline ~LangMap() { if(!d->ref.deref()) delete d; }
 
-	LangMap &operator =( const LangMap &other )
+	LangMap &operator =(const LangMap &other)
 	{
-		if( d != other.d )
+		if(d != other.d)
 		{
 			other.d->ref.ref();
-			if( !d->ref.deref() )
+			if(!d->ref.deref())
 				delete d;
 			d = other.d;
 		}
 		return *this;
 	}
-	inline bool operator ==( const LangMap &other ) const;
+	inline bool operator ==(const LangMap &other) const;
 
 	inline void clear();
 
-	inline bool contains( const QString &lang ) const;
-	inline void insert( const QString &lang, const QString &value );
+	inline bool contains(const QString &lang) const;
+	inline void insert(const QString &lang, const QString &value);
 
-	inline const QString lang( const QString &value ) const;
-	inline const QString lang( const QString &value, const QString &default_lang ) const;
-	inline const QString &value( const QString &lang = QString() ) const;
-	inline const QString &value( const QString &lang, const QString &default_value ) const;
+	inline const QString lang(const QString &value) const;
+	inline const QString lang(const QString &value, const QString &default_lang) const;
+	inline const QString &value(const QString &lang = QString()) const;
+	inline const QString &value(const QString &lang, const QString &default_value) const;
 
-	inline QString &operator[]( const QString &lang );
-	inline const QString operator[]( const QString &lang ) const;
+	inline QString &operator[](const QString &lang);
+	inline const QString operator[](const QString &lang) const;
 
 	inline QStringList langs() const;
-	inline QStringList langs( const QString &value ) const;
+	inline QStringList langs(const QString &value) const;
 	inline QStringList values() const;
-	inline QStringList values( const QString &lang = QString() ) const;
+	inline QStringList values(const QString &lang = QString()) const;
 
-	inline void fillNode( QDomElement &elem, const QString &name, const QString &uri = QString() ) const;
+	inline void fillNode(QDomElement &elem, const QString &name, const QString &uri = QString()) const;
 
 	inline int count() const;
 	inline int size() const { return count(); }
 	inline bool isEmpty() const { return count() == 0; }
 protected:
-	inline void detach() { if( d->ref != 1 ) detach_helper(); }
+	inline void detach() { if(d->ref != 1) detach_helper(); }
 	void detach_helper()
 	{
 		d->ref.deref();
@@ -104,9 +104,9 @@ protected:
 	}
 };
 
-inline bool LangMap::operator ==( const LangMap &other ) const
+inline bool LangMap::operator ==(const LangMap &other) const
 {
-	return d == other.d || ( d->base == other.d->base && d->other == other.d->other );
+	return d == other.d || (d->base == other.d->base && d->other == other.d->other);
 }
 
 inline void LangMap::clear()
@@ -114,74 +114,74 @@ inline void LangMap::clear()
 	*this = LangMap();
 }
 
-inline bool LangMap::contains( const QString &lang ) const
+inline bool LangMap::contains(const QString &lang) const
 {
-	return lang.isEmpty() ? !d->base.isEmpty() : d->other.contains( lang );
+	return lang.isEmpty() ? !d->base.isEmpty() : d->other.contains(lang);
 }
 
-inline void LangMap::insert( const QString &lang, const QString &value )
+inline void LangMap::insert(const QString &lang, const QString &value)
 {
-	detach(); ( lang.isEmpty() ? d->base : d->other[lang] ) = value;
+	detach(); (lang.isEmpty() ? d->base : d->other[lang]) = value;
 }
 
 inline const QString LangMap::lang(const QString &value) const
 {
-	return value == d->base ? QString() : d->other.key( value );
+	return value == d->base ? QString() : d->other.key(value);
 }
 
-inline const QString LangMap::lang(const QString &value, const QString &default_lang ) const
+inline const QString LangMap::lang(const QString &value, const QString &default_lang) const
 {
-	return value == d->base ? QString() : d->other.key( value, default_lang );
+	return value == d->base ? QString() : d->other.key(value, default_lang);
 }
 
-inline const QString &LangMap::value(const QString &lang ) const
+inline const QString &LangMap::value(const QString &lang) const
 {
-	return d->value( lang );
+	return d->value(lang);
 }
 
 inline const QString &LangMap::value(const QString &lang, const QString &default_value) const
 {
-	return d->value( lang, default_value );
+	return d->value(lang, default_value);
 }
 
-inline QString &LangMap::operator[](const QString &lang )
+inline QString &LangMap::operator[](const QString &lang)
 {
-	detach(); return lang.isEmpty() ? d->base : d->other.operator []( lang );
+	detach(); return lang.isEmpty() ? d->base : d->other.operator [](lang);
 }
 
-inline const QString LangMap::operator[](const QString &lang ) const
+inline const QString LangMap::operator[](const QString &lang) const
 {
-	return lang.isEmpty() ? d->base : d->other.operator []( lang );
+	return lang.isEmpty() ? d->base : d->other.operator [](lang);
 }
 
 inline QStringList LangMap::langs() const
 {
-	return d->base.isEmpty() ? d->other.keys() : ( d->other.keys() << QString() );
+	return d->base.isEmpty() ? d->other.keys() : (d->other.keys() << QString());
 }
 
 inline QStringList LangMap::langs(const QString &value) const
 {
-	return ( d->base.isEmpty() || d->base != value ) ? d->other.keys( value ) : ( d->other.keys( value ) << QString() );
+	return (d->base.isEmpty() || d->base != value) ? d->other.keys(value) : (d->other.keys(value) << QString());
 }
 
 inline QStringList LangMap::values() const
 {
-	return d->base.isEmpty() ? d->other.values() : ( d->other.values() << d->base );
+	return d->base.isEmpty() ? d->other.values() : (d->other.values() << d->base);
 }
 
-inline QStringList LangMap::values(const QString &lang ) const
+inline QStringList LangMap::values(const QString &lang) const
 {
-	return d->base.isEmpty() ? d->other.values( lang ) : ( d->other.values() << d->base );
+	return d->base.isEmpty() ? d->other.values(lang) : (d->other.values() << d->base);
 }
 
-inline void LangMap::fillNode( QDomElement &node, const QString &name, const QString &uri ) const
+inline void LangMap::fillNode(QDomElement &node, const QString &name, const QString &uri) const
 {
-	d->fillNode( node, name, uri );
+	d->fillNode(node, name, uri);
 }
 
 inline int LangMap::count() const
 {
-	return d->other.count() + ( d->base.isEmpty() ? 0 : 1 );
+	return d->other.count() + (d->base.isEmpty() ? 0 : 1);
 }
 
 }

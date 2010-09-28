@@ -20,48 +20,48 @@
 namespace jreen
 {
 
-Stanza::Stanza( const Stanza &stanza )
+Stanza::Stanza(const Stanza &stanza)
 {
-	if( stanza.d_ptr )
+	if(stanza.d_ptr)
 		stanza.d_ptr->ref.ref();
 	d_ptr = stanza.d_ptr;
 }
 
-Stanza::Stanza( const JID &to ) : d_ptr(new StanzaPrivate)
+Stanza::Stanza(const JID &to) : d_ptr(new StanzaPrivate)
 {
 	d_ptr->to = to;
 }
 
-Stanza &Stanza::operator =( const Stanza &stanza )
+Stanza &Stanza::operator =(const Stanza &stanza)
 {
-	if( stanza.d_ptr )
+	if(stanza.d_ptr)
 		stanza.d_ptr->ref.ref();
-	if( !d_ptr->ref.deref() )
+	if(!d_ptr->ref.deref())
 		delete d_ptr;
 	d_ptr = stanza.d_ptr;
 	return *this;
 }
 
-Stanza::Stanza( const QDomElement &node, StanzaPrivate *sp ) : d_ptr(sp ? sp : new StanzaPrivate)
+Stanza::Stanza(const QDomElement &node, StanzaPrivate *sp) : d_ptr(sp ? sp : new StanzaPrivate)
 {
 	d_ptr->node = node;
-	d_ptr->from = node.attribute( ConstString::from );
-	d_ptr->to = node.attribute( ConstString::to );
-	d_ptr->id = node.attribute( ConstString::id );
+	d_ptr->from = node.attribute(ConstString::from);
+	d_ptr->to = node.attribute(ConstString::to);
+	d_ptr->id = node.attribute(ConstString::id);
 }
 
-Stanza::Stanza( StanzaPrivate *sp )
+Stanza::Stanza(StanzaPrivate *sp)
 {
 	d_ptr = sp;
 }
 
 Stanza::~Stanza()
 {
-	if( d_ptr && !d_ptr->ref.deref() )
+	if(d_ptr && !d_ptr->ref.deref())
 		delete d_ptr;
 }
 
-void Stanza::setFrom( const JID &jid )
+void Stanza::setFrom(const JID &jid)
 {
 	d_ptr->from = jid;
 }
@@ -81,9 +81,9 @@ const QString &Stanza::id() const
 	return d_ptr->id;
 }
 
-void Stanza::addExtension( StanzaExtension *se )
+void Stanza::addExtension(StanzaExtension *se)
 {
-	d_ptr->extensions.insert( se->extensionType(), StanzaExtensionPointer( se ) );
+	d_ptr->extensions.insert(se->extensionType(), StanzaExtensionPointer(se));
 }
 
 const StanzaExtensionList &Stanza::extensions() const

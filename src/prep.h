@@ -25,10 +25,10 @@ class JREEN_EXPORT Prep
 {
 	J_SINGLETON(Prep)
 public:
-	QString nodePrep( const QString &node, bool *ok = 0 );
-	QString namePrep( const QString &domain, bool *ok = 0 );
-	QString resourcePrep( const QString &resource, bool *ok = 0 );
-	QString idna( const QString &domain, bool *ok = 0 );
+	QString nodePrep(const QString &node, bool *ok = 0);
+	QString namePrep(const QString &domain, bool *ok = 0);
+	QString resourcePrep(const QString &resource, bool *ok = 0);
+	QString idna(const QString &domain, bool *ok = 0);
 };
 
 }

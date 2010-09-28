@@ -3,7 +3,7 @@
 namespace jreen
 {
 
-MucRoom::MucRoom( Client *client, const JID &jid )
+MucRoom::MucRoom(Client *client, const JID &jid)
 {
 }
 

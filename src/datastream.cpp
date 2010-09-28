@@ -26,14 +26,14 @@ DataStream::~DataStream()
 {
 }
 
-void DataStream::write( const QByteArray &data )
+void DataStream::write(const QByteArray &data)
 {
-	emit readOutgoing( data );
+	emit readOutgoing(data);
 }
 
-void DataStream::writeIncoming( const QByteArray &data )
+void DataStream::writeIncoming(const QByteArray &data)
 {
-	emit read( data );
+	emit read(data);
 }
 
 }

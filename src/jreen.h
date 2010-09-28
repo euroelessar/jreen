@@ -44,7 +44,7 @@ public: \
 	static Class &instance() \
 	{ \
 		static Class *pointer = 0; \
-		if( !pointer ) \
+		if(!pointer) \
 			pointer = new Class; \
 		return *pointer; \
 	} \
@@ -55,13 +55,13 @@ private:
 	Class() {} \
 	virtual ~Class() {}
 
-# define J_STRING(text) static const QString text##_str( QLatin1String( #text ) );
+# define J_STRING(text) static const QString text##_str(QLatin1String(#text));
 
 #define J_PURE_EXTENSION(Extension,XPath) \
 	public: \
 		inline static const StanzaExtensionMeta &meta() \
 		{ \
-			static StanzaExtensionMeta staticExtensionMeta( #Extension , XPath ); \
+			static StanzaExtensionMeta staticExtensionMeta(#Extension , XPath); \
 			return staticExtensionMeta; \
 		} \
 		virtual QString xPath() const { return meta().xpath; } \
@@ -71,14 +71,14 @@ private:
 
 #define J_EXTENSION(Extension,XPath) \
 	public: \
-		virtual StanzaExtension *fromNode( const QDomElement &node ) const { return new Extension( node ); } \
+		virtual StanzaExtension *fromNode(const QDomElement &node) const { return new Extension(node); } \
 		J_PURE_EXTENSION(Extension,XPath)
 
 #define J_FEATURE(XPath) \
 	public: \
 		const QString &xPath() const \
 		{ \
-			static const QString xpath( XPath ); \
+			static const QString xpath(XPath); \
 			return xpath; \
 		}
 
@@ -87,7 +87,7 @@ private:
 class ForElementContainer
 {
 public:
-	inline ForElementContainer( const QDomNode &parent ) : list(parent.childNodes()), current(list.item(0).toElement()), i(0), test(true) {}
+	inline ForElementContainer(const QDomNode &parent) : list(parent.childNodes()), current(list.item(0).toElement()), i(0), test(true) {}
 	QDomNodeList list;
 	QDomElement current;
 	uint i;
@@ -95,9 +95,9 @@ public:
 	inline void check() { while((current=list.item(++i).toElement()).isNull() && i<list.length()) {} test=true; }
 };
 
-# define J_FORELEMENTS( _node_, _parent_ ) \
-	for( ForElementContainer _container_(_parent_); _container_.i<_container_.list.length(); _container_.check() ) \
-		for( _node_=_container_.current; _container_.test; _container_.test=false )
+# define J_FORELEMENTS(_node_, _parent_) \
+	for(ForElementContainer _container_(_parent_); _container_.i<_container_.list.length(); _container_.check()) \
+		for(_node_=_container_.current; _container_.test; _container_.test=false)
 
 # endif // J_FORELEMENTS
 
@@ -107,8 +107,8 @@ public:
 
 namespace jreen
 {
-	JREEN_EXPORT QDomElement createElement( QDomDocument *doc, const QString &name, const QString &value = QString() );
-	JREEN_EXPORT QDomElement createElement( QDomElement parent, const QString &name, const QString &value = QString() );
+	JREEN_EXPORT QDomElement createElement(QDomDocument *doc, const QString &name, const QString &value = QString());
+	JREEN_EXPORT QDomElement createElement(QDomElement parent, const QString &name, const QString &value = QString());
 }
 
 #endif // JREEN_H

@@ -39,7 +39,7 @@ public:
 	struct Identity
 	{
 		inline Identity() {}
-		inline Identity( const QString &category, const QString &type, const QString &name, const QString &lang = QString() )
+		inline Identity(const QString &category, const QString &type, const QString &name, const QString &lang = QString())
 		: category(category), type(type), name(name), lang(lang) {}
 		QString category;
 		QString type;
@@ -52,10 +52,10 @@ public:
 	{
 		J_EXTENSION(Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
 	public:
-		inline Info( const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>() )
+		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
 		: m_node(node), m_identities(identities), m_features(features), m_form(form) {}
-		Info( const QDomElement &node );
-		QDomElement node( QDomDocument *document ) const;
+		Info(const QDomElement &node);
+		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
 		inline const IdentityList &identities() const { return m_identities; }
 		inline const QSet<QString> &features() const { return m_features; }
@@ -70,7 +70,7 @@ public:
 	struct Item
 	{
 		inline Item() {}
-		inline Item( const JID &jid, const QString &node, const QString &name )
+		inline Item(const JID &jid, const QString &node, const QString &name)
 		: jid(jid), node(node), name(name) {}
 		JID jid;
 		QString node;
@@ -82,10 +82,10 @@ public:
 	{
 		J_EXTENSION(Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
 	public:
-		inline Items( const QString &node = QString(), const ItemList &items = ItemList() )
+		inline Items(const QString &node = QString(), const ItemList &items = ItemList())
 				: m_items(items), m_node(node) {}
-		Items( const QDomElement &node );
-		QDomElement node( QDomDocument *document ) const;
+		Items(const QDomElement &node);
+		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
 		inline const ItemList &items() const { return m_items; }
 		inline ItemList &items() { return m_items; }
@@ -94,19 +94,19 @@ public:
 		QString m_node;
 	};
 
-	Disco( Client *client );
+	Disco(Client *client);
 	virtual ~Disco();
 	const IdentityList &identities() const;
 	IdentityList &identities();
 	const QSet<QString> &features() const;
 	QSet<QString> &features();
-	void setSoftwareVersion( const QString &name, const QString &version, const QString &os = QString() );
+	void setSoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
 	const DataForm *form() const;
-	void setForm( DataForm *form );
+	void setForm(DataForm *form);
 
 public slots:
 private slots:
-	void handleIQ( const IQ &iq );
+	void handleIQ(const IQ &iq);
 protected:
 	QScopedPointer<DiscoPrivate> d_ptr;
 };

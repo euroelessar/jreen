@@ -28,12 +28,12 @@ class DomCreater
 	static QDomDocument m_document;
 public:
 	inline QDomDocument *document() { return &m_document; }
-	inline QDomElement createElement( const QString &name, const QString &value = QString() );
+	inline QDomElement createElement(const QString &name, const QString &value = QString());
 };
 
-inline QDomElement DomCreater::createElement( const QString &name, const QString &value )
+inline QDomElement DomCreater::createElement(const QString &name, const QString &value)
 {
-	return jreen::createElement( &m_document, name, value );
+	return jreen::createElement(&m_document, name, value);
 }
 
 }

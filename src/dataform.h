@@ -79,31 +79,31 @@ public:
 		None,
 		Invalid
 	};
-	inline DataFormField( Type type = TextSingle ) : m_type(type), m_required(false) {}
-	inline DataFormField( const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle )
+	inline DataFormField(Type type = TextSingle) : m_type(type), m_required(false) {}
+	inline DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle)
 			: m_type(type), m_var(var), m_label(label), m_values(QStringList()<<value), m_required(false) {}
-	inline DataFormField( const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle )
+	inline DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle)
 			: m_type(type), m_var(var), m_label(label), m_values(values), m_required(false) {}
-	inline DataFormField( const QString &var, const QString &label, Type type )
+	inline DataFormField(const QString &var, const QString &label, Type type)
 			: m_type(type), m_var(var), m_label(label), m_required(false) {}
 //	inline ~DataFormField() {}
 	inline Type type() const { return m_type; }
 	inline bool isValid() const { return m_type != Invalid; }
 	inline const DataFormOptionList &options() const { return m_options; }
 	inline DataFormOptionList &options() { return m_options; }
-	inline void setOptions( const DataFormOptionList &options ) { m_options = options; }
+	inline void setOptions(const DataFormOptionList &options) { m_options = options; }
 	inline QStringList &values() { return m_values; }
 	inline const QStringList &values() const { return m_values; }
-	inline void setValues( const QStringList &values ) { m_values = values; }
+	inline void setValues(const QStringList &values) { m_values = values; }
 	inline const QString &var() const { return m_var; }
-	inline void setVar( const QString &var ) { m_var = var; }
+	inline void setVar(const QString &var) { m_var = var; }
 	inline bool required() const { return m_required; }
-	inline void setRequired( bool required ) { m_required = required; }
+	inline void setRequired(bool required) { m_required = required; }
 	inline const QString &desc() const { return m_desc; }
-	inline void setDesc( const QString &desc ) { m_desc = desc; }
-	QDomElement node( QDomDocument *doc ) const;
+	inline void setDesc(const QString &desc) { m_desc = desc; }
+	QDomElement node(QDomDocument *doc) const;
 protected:
-	DataFormField( const QDomElement &node );
+	DataFormField(const QDomElement &node);
 	Type m_type;
 	QString m_var;
 	QString m_desc;
@@ -116,31 +116,31 @@ protected:
 //class DataFormFieldBoolean : public DataFormField
 //{
 //public:
-//	inline DataFormFieldBoolean( const QString &var, bool value = false, const QString &label = QString() )
+//	inline DataFormFieldBoolean(const QString &var, bool value = false, const QString &label = QString())
 //			: DataFormField(var,label,Boolean) { m_values = QStringList() << QLatin1String(value?"1":"0"); }
-//	inline DataFormFieldBoolean( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldBoolean(const QDomElement &node) : DataFormField(node) {}
 //	inline bool value() const { return m_values.at(0) == QLatin1String("1") || m_values.at(0) == QLatin1String("true"); }
-//	inline void setValue( bool value ) { m_values[0] = QLatin1String( value ? "1" : "0" ); }
+//	inline void setValue(bool value) { m_values[0] = QLatin1String(value ? "1" : "0"); }
 //};
 //
 //class DataFormFieldFixed : public DataFormField
 //{
 //public:
-//	inline DataFormFieldFixed( const QString &var, const QString &value = QString(), const QString &label = QString() )
+//	inline DataFormFieldFixed(const QString &var, const QString &value = QString(), const QString &label = QString())
 //			: DataFormField(var,label,Fixed) { m_values = QStringList() << value; }
-//	inline DataFormFieldFixed( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldFixed(const QDomElement &node) : DataFormField(node) {}
 //	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 //
 //class DataFormFieldHidden : public DataFormField
 //{
 //public:
-//	inline DataFormFieldHidden( const QString &var, const QString &value = QString() )
+//	inline DataFormFieldHidden(const QString &var, const QString &value = QString())
 //			: DataFormField(var,QString(),Hidden) { m_values = QStringList() << value; }
-//	inline DataFormFieldHidden( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldHidden(const QDomElement &node) : DataFormField(node) {}
 //	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 //
 ////JidMulti
@@ -148,12 +148,12 @@ protected:
 //class DataFormFieldJidSingle : public DataFormField
 //{
 //public:
-//	inline DataFormFieldJidSingle( const QString &var, const JID &value = JID(), const QString &label = QString() )
+//	inline DataFormFieldJidSingle(const QString &var, const JID &value = JID(), const QString &label = QString())
 //			: DataFormField(var,label,JidSingle) { m_values = QStringList() << value; }
-//	inline DataFormFieldJidSingle( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldJidSingle(const QDomElement &node) : DataFormField(node) {}
 //	inline JID value() const { return m_values.at(0); }
-//	inline void setValue( const JID &value ) { m_values[0] = value; }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const JID &value) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 //
 ////ListMulti
@@ -163,31 +163,31 @@ protected:
 //class DataFormFieldTextPrivate : public DataFormField
 //{
 //public:
-//	inline DataFormFieldTextPrivate( const QString &var, const QString &value = QString(), const QString &label = QString() )
+//	inline DataFormFieldTextPrivate(const QString &var, const QString &value = QString(), const QString &label = QString())
 //			: DataFormField(var,label,TextPrivate) { m_values = QStringList() << value; }
-//	inline DataFormFieldTextPrivate( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldTextPrivate(const QDomElement &node) : DataFormField(node) {}
 //	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 //
 //class DataFormFieldTextSingle : public DataFormField
 //{
 //public:
-//	inline DataFormFieldTextSingle( const QString &var, const QString &value = QString(), const QString &label = QString() )
+//	inline DataFormFieldTextSingle(const QString &var, const QString &value = QString(), const QString &label = QString())
 //			: DataFormField(var,label,TextSingle) { m_values = QStringList() << value; }
-//	inline DataFormFieldTextSingle( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldTextSingle(const QDomElement &node) : DataFormField(node) {}
 //	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 //
 //class DataFormFieldNone : public DataFormField
 //{
 //public:
-//	inline DataFormFieldNone( const QString &var, const QString &value = QString(), const QString &label = QString() )
+//	inline DataFormFieldNone(const QString &var, const QString &value = QString(), const QString &label = QString())
 //			: DataFormField(var,label,None) { m_values = QStringList() << value; }
-//	inline DataFormFieldNone( const QDomElement &node ) : DataFormField(node) {}
+//	inline DataFormFieldNone(const QDomElement &node) : DataFormField(node) {}
 //	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue( const QString &value ) { m_values[0] = value; }
+//	inline void setValue(const QString &value) { m_values[0] = value; }
 //};
 
 typedef QSharedPointer<DataFormField> DataFormFieldPointer;
@@ -199,10 +199,10 @@ class JREEN_EXPORT DataFormFieldContainer
 public:
 	const DataFormFieldList &fields() const { return m_fields_list; }
 	DataFormFieldList &fields() { return m_fields_list; }
-	inline void setFields( const DataFormFieldList &fields ) { m_fields_list = fields; }
-//	inline void appendField( DataFormField *field );
-//	inline QSharedPointer<DataFormField> appendField( DataFormField *field );
-//	QSharedPointer<DataFormField> addField( DataFormField::Type,
+	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
+//	inline void appendField(DataFormField *field);
+//	inline QSharedPointer<DataFormField> appendField(DataFormField *field);
+//	QSharedPointer<DataFormField> addField(DataFormField::Type,
 protected:
 	DataFormFieldList m_fields_list;
 	DataFormFieldHash m_fields_hash;
@@ -234,9 +234,9 @@ public:
 		Result,  // The form-processing entity is returning data (e.g., search results) to the form-submitting entity, or the data is a generic data set.
 		Invalid
 	};
-	DataForm( const QDomElement &node = QDomElement() );
+	DataForm(const QDomElement &node = QDomElement());
 	const QString &title() { return m_title; }
-	QDomElement node( QDomDocument *document ) const;
+	QDomElement node(QDomDocument *document) const;
 private:
 	QString m_title;
 	DataFormReportedList m_reported;

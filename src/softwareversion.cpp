@@ -23,36 +23,36 @@ J_STRING(name)
 J_STRING(version)
 J_STRING(os)
 
-SoftwareVersion::SoftwareVersion( const QString &name, const QString &version, const QString &os )
+SoftwareVersion::SoftwareVersion(const QString &name, const QString &version, const QString &os)
 	: m_name(name), m_version(version), m_os(os)
 {
 }
 
-SoftwareVersion::SoftwareVersion( const QDomElement &node )
+SoftwareVersion::SoftwareVersion(const QDomElement &node)
 {
-	if( node.isNull() )
+	if(node.isNull())
 		return;
-	forelements( const QDomElement &elem, node )
+	forelements(const QDomElement &elem, node)
 	{
-		if( elem.nodeName() == name_str )
+		if(elem.nodeName() == name_str)
 			m_name = elem.text();
-		else if( elem.nodeName() == version_str )
+		else if(elem.nodeName() == version_str)
 			m_version = elem.text();
-		else if( elem.nodeName() == os_str )
+		else if(elem.nodeName() == os_str)
 			m_os = elem.text();
 	}
 }
 
-QDomElement SoftwareVersion::node( QDomDocument *document ) const
+QDomElement SoftwareVersion::node(QDomDocument *document) const
 {
-	QDomElement node = createElement( document, ConstString::query );
-	node.setAttribute( ConstString::xmlns, ConstString::xmlns_version );
-	if( !m_name.isEmpty() )
-		node.appendChild( createElement( document, name_str, m_name ) );
-	if( !m_version.isEmpty() )
-		node.appendChild( createElement( document, version_str, m_version ) );
-	if( !m_os.isEmpty() )
-		node.appendChild( createElement( document, os_str, m_os ) );
+	QDomElement node = createElement(document, ConstString::query);
+	node.setAttribute(ConstString::xmlns, ConstString::xmlns_version);
+	if(!m_name.isEmpty())
+		node.appendChild(createElement(document, name_str, m_name));
+	if(!m_version.isEmpty())
+		node.appendChild(createElement(document, version_str, m_version));
+	if(!m_os.isEmpty())
+		node.appendChild(createElement(document, os_str, m_os));
 	return node;
 }
 

@@ -27,10 +27,10 @@ class Nickname : public StanzaExtension
 		   "/presence/nick[@xmlns='http://jabber.org/protocol/nick']"
 		   "|/message/nick[@xmlns='http://jabber.org/protocol/nick']")
 public:
-	Nickname( const QDomElement &node = QDomElement() );
-	Nickname( const QString &nick );
+	Nickname(const QDomElement &node = QDomElement());
+	Nickname(const QString &nick);
 	const QString &nick() { return m_nick; }
-	QDomElement node( QDomDocument *doc ) const;
+	QDomElement node(QDomDocument *doc) const;
 private:
 	QString m_nick;
 };

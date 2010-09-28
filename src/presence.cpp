@@ -40,7 +40,7 @@ struct PresencePrivate : public StanzaPrivate
 	int priority;
 };
 
-Presence::Presence( Type type, const JID& to, const QString &status, int priority, const QString &xmllang )
+Presence::Presence(Type type, const JID& to, const QString &status, int priority, const QString &xmllang)
 	: Stanza(new PresencePrivate)
 {
 	Q_D(Presence);
@@ -50,44 +50,44 @@ Presence::Presence( Type type, const JID& to, const QString &status, int priorit
 	d->status[xmllang] = status;
 }
 
-Presence::Presence( const QDomElement &node ) : Stanza(node, new PresencePrivate)
+Presence::Presence(const QDomElement &node) : Stanza(node, new PresencePrivate)
 {
 	Q_D(Presence);
 	d->priority = 0;
-	if( node.nodeName() != presence_str )
+	if(node.nodeName() != presence_str)
 	{
 		d->subtype = Invalid;
 		return;
 	}
 	d->subtype = Available;
-	QString type = node.attribute( ConstString::type );
-	if( type == unavailable_str )
+	QString type = node.attribute(ConstString::type);
+	if(type == unavailable_str)
 		d->subtype = Unavailable;
-	else if( type == error_str )
+	else if(type == error_str)
 		d->subtype = Error;
-	else if( type == probe_str )
+	else if(type == probe_str)
 		d->subtype = Probe;
-	forelements( const QDomElement &elem, node )
+	forelements(const QDomElement &elem, node)
 	{
 		QString name = elem.nodeName();
-		if( d->subtype == Available && name == show_str )
+		if(d->subtype == Available && name == show_str)
 		{
 			QString text = elem.text();
-			if( text == away_str )
+			if(text == away_str)
 				d->subtype = Away;
-			else if( text == chat_str )
+			else if(text == chat_str)
 				d->subtype = Chat;
-			else if( text == dnd_str )
+			else if(text == dnd_str)
 				d->subtype = DND;
-			else if( text == xa_str )
+			else if(text == xa_str)
 				d->subtype = XA;
 		}
-		else if( name == status_str )
+		else if(name == status_str)
 		{
-			QString lang = elem.attribute( ConstString::lang );
+			QString lang = elem.attribute(ConstString::lang);
 			d->status[lang] = elem.text();
 		}
-		else if( name == priority_str )
+		else if(name == priority_str)
 		{
 			d->priority = elem.text().toInt();
 		}
@@ -111,19 +111,19 @@ Presence::Type Presence::presence() const
 	return d->subtype;
 }
 
-void Presence::setPresence( Type type )
+void Presence::setPresence(Type type)
 {
 	Q_D(Presence);
 	d->subtype = type;
 }
 
-const QString &Presence::status( const QString &lang ) const
+const QString &Presence::status(const QString &lang) const
 {
 	Q_D(const Presence);
-	return d->status.value( lang );
+	return d->status.value(lang);
 }
 
-void Presence::addStatus( const QString &status, const QString &lang )
+void Presence::addStatus(const QString &status, const QString &lang)
 {
 	Q_D(Presence);
 	d->status[lang] = status;
@@ -142,7 +142,7 @@ int Presence::priority() const
 	return d->priority;
 }
 
-void Presence::setPriority( int priority )
+void Presence::setPriority(int priority)
 {
 	Q_D(Presence);
 	d->priority = priority;
@@ -151,35 +151,35 @@ void Presence::setPriority( int priority )
 QDomElement Presence::node() const
 {
 	Q_D(const Presence);
-	if( !d->node.isNull() )
+	if(!d->node.isNull())
 		return d->node;
-	QDomElement node = DomCreater::instance().createElement( presence_str );
-	d->setAttributes( node );
-	switch( d->subtype )
+	QDomElement node = DomCreater::instance().createElement(presence_str);
+	d->setAttributes(node);
+	switch(d->subtype)
 	{
 	case Available:
 		break;
 	case Chat:
-		node.appendChild( DomCreater::instance().createElement( show_str, chat_str ));
+		node.appendChild(DomCreater::instance().createElement(show_str, chat_str));
 		break;
 	case Away:
-		node.appendChild( DomCreater::instance().createElement( show_str, away_str ));
+		node.appendChild(DomCreater::instance().createElement(show_str, away_str));
 		break;
 	case DND:
-		node.appendChild( DomCreater::instance().createElement( show_str, dnd_str ));
+		node.appendChild(DomCreater::instance().createElement(show_str, dnd_str));
 		break;
 	case XA:
-		node.appendChild( DomCreater::instance().createElement( show_str, xa_str ));
+		node.appendChild(DomCreater::instance().createElement(show_str, xa_str));
 		break;
 	case Unavailable:
-		node.setAttribute( ConstString::type, unavailable_str );
+		node.setAttribute(ConstString::type, unavailable_str);
 		break;
 	default:
 		return node;
 	}
-	node.appendChild( DomCreater::instance().createElement( priority_str, QString::number(d->priority) ) );
-	d->status.fillNode( node, status_str );
-	d->addExtensions( node );
+	node.appendChild(DomCreater::instance().createElement(priority_str, QString::number(d->priority)));
+	d->status.fillNode(node, status_str);
+	d->addExtensions(node);
 	return node;
 }
 

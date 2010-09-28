@@ -18,7 +18,7 @@
 namespace jreen
 {
 
-Action::Action( QObject *parent ) : QObject(parent)
+Action::Action(QObject *parent) : QObject(parent)
 {
 }
 
@@ -27,14 +27,14 @@ void Action::trigger()
 	emit triggered();
 }
 
-void Action::setData( const QVariant &data, int role )
+void Action::setData(const QVariant &data, int role)
 {
-	m_data.insert( role, data );
+	m_data.insert(role, data);
 }
 
-QVariant Action::data( int role )
+QVariant Action::data(int role)
 {
-	return m_data.value( role, QVariant() );
+	return m_data.value(role, QVariant());
 }
 
 }

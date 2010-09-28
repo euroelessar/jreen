@@ -37,7 +37,7 @@ namespace jreen
 //#else
 //struct StanzaExtensionPointerPrivate
 //{
-//	StanzaExtensionPointerPrivate( StanzaExtension *ext )
+//	StanzaExtensionPointerPrivate(StanzaExtension *ext)
 //	{
 //		ref = 1;
 //		ptr = ext;
@@ -49,23 +49,23 @@ namespace jreen
 //{
 //	StanzaExtensionPointerPrivate *impl;
 //public:
-//	inline StanzaExtensionPointer( StanzaExtension *ext ) : impl(new StanzaExtensionPointerPrivate(ext)) {}
-//	StanzaExtensionPointer( const StanzaExtensionPointer &pointer )
+//	inline StanzaExtensionPointer(StanzaExtension *ext) : impl(new StanzaExtensionPointerPrivate(ext)) {}
+//	StanzaExtensionPointer(const StanzaExtensionPointer &pointer)
 //	{
 //		pointer.impl->ref.ref();
-//		if( !impl->ref.deref() )
+//		if(!impl->ref.deref())
 //			delete impl;
 //		impl = pointer.impl;
 //	}
 //	~StanzaExtensionPointer()
 //	{
-//		if( !impl->ref.deref() )
+//		if(!impl->ref.deref())
 //			delete impl->ptr;
 //	}
-//	StanzaExtensionPointer &operator =( const StanzaExtensionPointer &pointer )
+//	StanzaExtensionPointer &operator =(const StanzaExtensionPointer &pointer)
 //	{
 //		pointer.impl->ref.ref();
-//		if( !impl->ref.deref() )
+//		if(!impl->ref.deref())
 //			delete impl;
 //		impl = pointer.impl;
 //		return *this;
@@ -82,21 +82,21 @@ struct StanzaPrivate
 	{
 		ref = 1;
 	}
-	void addExtensions( QDomElement &node ) const
+	void addExtensions(QDomElement &node) const
 	{
-		foreach( const StanzaExtensionPointer &stanza_extension, extensions )
+		foreach(const StanzaExtensionPointer &stanza_extension, extensions)
 		{
-			node.appendChild( stanza_extension->node( DomCreater::instance().document() ) );
+			node.appendChild(stanza_extension->node(DomCreater::instance().document()));
 		}
 	}
-	void setAttributes( QDomElement &node ) const
+	void setAttributes(QDomElement &node) const
 	{
-		if( from.isValid() )
-			node.setAttribute( ConstString::from, from );
-		if( to.isValid() )
-			node.setAttribute( ConstString::to, to );
-		if( !id.isEmpty() )
-			node.setAttribute( ConstString::id, id );
+		if(from.isValid())
+			node.setAttribute(ConstString::from, from);
+		if(to.isValid())
+			node.setAttribute(ConstString::to, to);
+		if(!id.isEmpty())
+			node.setAttribute(ConstString::id, id);
 	}
 	QAtomicInt ref;
 	JID from;

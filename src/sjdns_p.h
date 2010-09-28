@@ -35,20 +35,20 @@ class SJDns : QObject
 	~SJDns() {}
 public:
 	static SJDns &instance();
-	void doLookup( const QString &host, QObject *receiver, const char *member )
+	void doLookup(const QString &host, QObject *receiver, const char *member)
 	{
-		int id = qjdns->queryStart( QString( "_xmpp-client._tcp." + host ).toUtf8(), QJDns::Srv );
-		Action *action = new Action( this );
-		action->setData( host );
-		connect( action, SIGNAL(triggered()), receiver, member );
-		m_actions.insert( id, action );
+		int id = qjdns->queryStart(QString("_xmpp-client._tcp." + host).toUtf8(), QJDns::Srv);
+		Action *action = new Action(this);
+		action->setData(host);
+		connect(action, SIGNAL(triggered()), receiver, member);
+		m_actions.insert(id, action);
 	}
-	const QJDns::Response *servers( const QString &host );
+	const QJDns::Response *servers(const QString &host);
 private slots:
 	void resultsReady(int id, const QJDns::Response &results);
 	void published(int id)
 	{
-		Q_UNUSED( id );
+		Q_UNUSED(id);
 	}
 	void error(int id, QJDns::Error e);
 private:

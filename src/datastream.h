@@ -30,11 +30,11 @@ public:
 	DataStream();
 	virtual ~DataStream();
 public slots:
-	virtual void write( const QByteArray &data );
-	virtual void writeIncoming( const QByteArray &data );
+	virtual void write(const QByteArray &data);
+	virtual void writeIncoming(const QByteArray &data);
 signals:
-	void read( const QByteArray &data );
-	void readOutgoing( const QByteArray &data );
+	void read(const QByteArray &data);
+	void readOutgoing(const QByteArray &data);
 };
 
 }

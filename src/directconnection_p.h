@@ -37,7 +37,7 @@ public:
 		int weight;
 		int priority;
 	};
-	DirectConnectionPrivate( const QString &hn, int p, DirectConnection *par )
+	DirectConnectionPrivate(const QString &hn, int p, DirectConnection *par)
 			: host_name(hn), port(p), dns_lookup_id(-1), parent(par)
 	{
 		do_lookup = p < 0 || QHostAddress(host_name).isNull();
@@ -46,16 +46,16 @@ public:
 	}
 	void connectSocket()
 	{
-		connect( socket, SIGNAL(connected()), parent, SIGNAL(connected()) );
-		connect( socket, SIGNAL(disconnected()), parent, SIGNAL(disconnected()) );
-		connect( socket, SIGNAL(readyRead()), parent, SIGNAL(readyRead()) );
-		connect( socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)) );
-		connect( socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)) );
+		connect(socket, SIGNAL(connected()), parent, SIGNAL(connected()));
+		connect(socket, SIGNAL(disconnected()), parent, SIGNAL(disconnected()));
+		connect(socket, SIGNAL(readyRead()), parent, SIGNAL(readyRead()));
+		connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
+		connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
 	}
 	void doLookup()
 	{
-		stateChanged( QAbstractSocket::HostLookupState );
-		SJDns::instance().doLookup( host_name, this, SLOT(lookupResultsReady()) );
+		stateChanged(QAbstractSocket::HostLookupState);
+		SJDns::instance().doLookup(host_name, this, SLOT(lookupResultsReady()));
 	}
 	QAbstractSocket *socket;
 	QString host_name;
@@ -69,9 +69,9 @@ public:
 public slots:
 	void lookupResultsReady()
 	{
-		const QJDns::Response *response = SJDns::instance().servers( host_name );
+		const QJDns::Response *response = SJDns::instance().servers(host_name);
 		dns_records.clear();
-		if( !response || !response->answerRecords.size() )
+		if(!response || !response->answerRecords.size())
 		{
 			Record record;
 			record.host = host_name;
@@ -79,10 +79,10 @@ public slots:
 		}
 		else
 		{
-			foreach( const QJDns::Record &qrecord, response->answerRecords )
+			foreach(const QJDns::Record &qrecord, response->answerRecords)
 			{
 				Record record;
-				record.host = QString::fromUtf8( qrecord.name );
+				record.host = QString::fromUtf8(qrecord.name);
 				record.port = qrecord.port;
 				record.weight = qrecord.weight;
 				record.priority = qrecord.priority;
@@ -91,26 +91,26 @@ public slots:
 		}
 		Record &record = dns_records[0];
 		qDebug() << "use:" << record.host << record.port;
-		socket->connectToHost( record.host, record.port );
+		socket->connectToHost(record.host, record.port);
 	}
-	void stateChanged( QAbstractSocket::SocketState ss )
+	void stateChanged(QAbstractSocket::SocketState ss)
 	{
 		qDebug() << ss;
-		if( socket_state == ss )
+		if(socket_state == ss)
 			return;
-		if( ss == QAbstractSocket::ConnectedState )
+		if(ss == QAbstractSocket::ConnectedState)
 		{
 			socket_state = QAbstractSocket::ListeningState;
 			parent->open();
 			return;
 		}
 		socket_state = ss;
-		emit parent->stateChanged( static_cast<Connection::SocketState>( ss ) );
+		emit parent->stateChanged(static_cast<Connection::SocketState>(ss));
 	}
-	void error( QAbstractSocket::SocketError se )
+	void error(QAbstractSocket::SocketError se)
 	{
 		socket_error = se;
-		emit parent->error( static_cast<Connection::SocketError>( se ) );
+		emit parent->error(static_cast<Connection::SocketError>(se));
 	}
 };
 

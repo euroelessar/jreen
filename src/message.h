@@ -40,17 +40,17 @@ public:
 		Normal,       /**< A normal message. */
 		Invalid	      /**< The message stanza is invalid. */
 	};
-	Message( Type type, const JID& to, const QString &body = QString(), const QString &subject = QString(),
-			   const QString &thread = QString(), const QString &xmllang = QString() );
-	Message( const QDomElement &node );
-	inline Message &operator =( const Message &stanza )
-		{ return *static_cast<Message *>( &jreen::Stanza::operator =( stanza ) ); }
+	Message(Type type, const JID& to, const QString &body = QString(), const QString &subject = QString(),
+			   const QString &thread = QString(), const QString &xmllang = QString());
+	Message(const QDomElement &node);
+	inline Message &operator =(const Message &stanza)
+		{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
-	const QString &body( const QString &lang = QString() ) const;
-	const QString &subject( const QString &lang = QString() ) const;
+	const QString &body(const QString &lang = QString()) const;
+	const QString &subject(const QString &lang = QString()) const;
 	const QString &thread() const;
-	void setThread( const QString &thread );
-	void setID( const QString &id );
+	void setThread(const QString &thread);
+	void setID(const QString &id);
 	const DelayedDelivery *when() const;
 	QDomElement node() const;
 };

@@ -147,10 +147,10 @@ public:
 //		XmlNotWellFormed,
 //		Undefined
 //	};
-	Error( const QDomElement &node = QDomElement() );
-	Error( Type type, Condition condition, const QDomElement &app_element = QDomElement() );
+	Error(const QDomElement &node = QDomElement());
+	Error(Type type, Condition condition, const QDomElement &app_element = QDomElement());
 	~Error();
-	QDomElement node( QDomDocument *document ) const;
+	QDomElement node(QDomDocument *document) const;
 private:
 	QScopedPointer<ErrorPrivate> d_ptr;
 };

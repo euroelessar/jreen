@@ -105,7 +105,7 @@ public:
 
 	QChar next()
 	{
-		if( paused )
+		if(paused)
 			return EndOfData;
 		else
 			return readNext();
@@ -116,12 +116,12 @@ public:
 	QChar readNext(bool peek=false)
 	{
 		QChar c;
-		if( mightChangeEncoding )
+		if(mightChangeEncoding)
 			c = EndOfData;
 		else {
-			if( out.isEmpty() ) {
+			if(out.isEmpty()) {
 				QString s;
-				if( !tryExtractPart(&s) )
+				if(!tryExtractPart(&s))
 					c = EndOfData;
 				else {
 					out = s;
@@ -130,10 +130,10 @@ public:
 			}
 			else
 				c = out[0];
-			if( !peek )
+			if(!peek)
 				out.remove(0, 1);
 		}
-		if( c == EndOfData ) {
+		if(c == EndOfData) {
 #ifdef XMPP_PARSER_DEBUG
 			printf("next() = EOD\n");
 #endif
@@ -188,25 +188,25 @@ private:
 #ifdef XMPP_PARSER_DEBUG
 		printf("processing.  size=%d, at=%d\n", in.size(), at);
 #endif
-		if( !dec ) {
+		if(!dec) {
 			QTextCodec *codec = 0;
 			uchar *p = (uchar *)in.data() + at;
 			int size = in.size() - at;
 
 			// do we have enough information to determine the encoding?
-			if( size == 0 )
+			if(size == 0)
 				return;
 			bool utf16 = false;
-			if( p[0] == 0xfe || p[0] == 0xff ) {
+			if(p[0] == 0xfe || p[0] == 0xff) {
 				// probably going to be a UTF-16 byte order mark
-				if( size < 2 )
+				if(size < 2)
 					return;
-				if( (p[0] == 0xfe && p[1] == 0xff) || (p[0] == 0xff && p[1] == 0xfe) ) {
+				if((p[0] == 0xfe && p[1] == 0xff) || (p[0] == 0xff && p[1] == 0xfe)) {
 					// ok it is UTF-16
 					utf16 = true;
 				}
 			}
-			if( utf16 )
+			if(utf16)
 				codec = QTextCodec::codecForMib(1000); // UTF-16
 			else
 				codec = QTextCodec::codecForMib(106); // UTF-8
@@ -215,28 +215,28 @@ private:
 			dec = codec->makeDecoder();
 
 			// for utf16, put in the byte order mark
-			if( utf16 ) {
+			if(utf16) {
 				out += dec->toUnicode((const char *)p, 2);
 				at += 2;
 			}
 		}
 
-		if( mightChangeEncoding ) {
+		if(mightChangeEncoding) {
 			while(1) {
 				int n = out.indexOf('<');
-				if( n != -1 ) {
+				if(n != -1) {
 					// we need a closing bracket
 					int n2 = out.indexOf('>', n);
-					if( n2 != -1 ) {
+					if(n2 != -1) {
 						++n2;
 						QString h = out.mid(n, n2-n);
 						QString enc = processXmlHeader(h);
 						QTextCodec *codec = 0;
-						if( !enc.isEmpty() )
+						if(!enc.isEmpty())
 							codec = QTextCodec::codecForName(enc.toLatin1());
 
 						// changing codecs
-						if( codec) {
+						if(codec) {
 							v_encoding = codec->name();
 							delete dec;
 							dec = codec->makeDecoder();
@@ -249,9 +249,9 @@ private:
 					}
 				}
 				QString s;
-				if( !tryExtractPart(&s) )
+				if(!tryExtractPart(&s))
 					break;
-				if( checkBad && checkForBadChars(s) ) {
+				if(checkBad && checkForBadChars(s)) {
 					// go to the parser
 					mightChangeEncoding = false;
 					out.truncate(0);
@@ -266,16 +266,16 @@ private:
 
 	QString processXmlHeader(const QString &h)
 	{
-		if( h.left(5) != "<?xml" )
+		if(h.left(5) != "<?xml")
 			return "";
 
 		int endPos = h.indexOf(">");
 		int startPos = h.indexOf("encoding");
-		if( startPos < endPos && startPos != -1 ) {
+		if(startPos < endPos && startPos != -1) {
 			QString encoding;
 			do {
 				startPos++;
-				if( startPos > endPos ) {
+				if(startPos > endPos) {
 					return "";
 				}
 			} while(h[startPos] != '"' && h[startPos] != '\'');
@@ -283,7 +283,7 @@ private:
 			while(h[startPos] != '"' && h[startPos] != '\'') {
 				encoding += h[startPos];
 				startPos++;
-				if( startPos > endPos ) {
+				if(startPos > endPos) {
 					return "";
 				}
 			}
@@ -296,7 +296,7 @@ private:
 	bool tryExtractPart(QString *s)
 	{
 		int size = in.size() - at;
-		if( size == 0 )
+		if(size == 0)
 			return false;
 		uchar *p = (uchar *)in.data() + at;
 		QString nextChars;
@@ -304,16 +304,16 @@ private:
 			nextChars = dec->toUnicode((const char *)p, 1);
 			++p;
 			++at;
-			if( !nextChars.isEmpty() )
+			if(!nextChars.isEmpty())
 				break;
-			if( at == (int)in.size() )
+			if(at == (int)in.size())
 				return false;
 		}
 		last_string += nextChars;
 		*s = nextChars;
 
 		// free processed data?
-		if( at >= 1024 ) {
+		if(at >= 1024) {
 			char *p = in.data();
 			int size = in.size() - at;
 			memmove(p, p + at, size);
@@ -327,12 +327,12 @@ private:
 	bool checkForBadChars(const QString &s)
 	{
 		int len = s.indexOf('<');
-		if( len == -1 )
+		if(len == -1)
 			len = s.length();
 		else
 			checkBad = false;
 		for(int n = 0; n < len; ++n) {
-			if( !s.at(n).isSpace() )
+			if(!s.at(n).isSpace())
 				return true;
 		}
 		return false;
@@ -371,7 +371,7 @@ public:
 
 	bool startPrefixMapping(const QString &prefix, const QString &uri)
 	{
-		if( depth == 0 ) {
+		if(depth == 0) {
 			nsnames += prefix;
 			nsvalues += uri;
 		}
@@ -380,13 +380,13 @@ public:
 
 	bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
 	{
-		if( depth == 0)  {
+		if(depth == 0)  {
 			Parser::Event *e = new Parser::Event;
 			QXmlAttributes a;
 			for(int n = 0; n < atts.length(); ++n) {
 				QString uri = atts.uri(n);
 				QString ln = atts.localName(n);
-				if( a.index(uri, ln) == -1 )
+				if(a.index(uri, ln) == -1)
 					a.append(atts.qName(n), uri, ln, atts.value(n));
 			}
 			e->setDocumentOpen(namespaceURI, localName, qName, a, nsnames, nsvalues);
@@ -404,16 +404,16 @@ public:
 				QString uri = atts.uri(n);
 				QString ln = atts.localName(n);
 				bool have;
-				if( !uri.isEmpty() ) {
+				if(!uri.isEmpty()) {
 					have = e.hasAttributeNS(uri, ln);
 				}
 				else
 					have = e.hasAttribute(ln);
-				if( !have )
+				if(!have)
 					e.setAttributeNS(uri, atts.qName(n), atts.value(n));
 			}
 
-			if( depth == 1 ) {
+			if(depth == 1) {
 				elem = e;
 				current = e;
 			}
@@ -429,7 +429,7 @@ public:
 	bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
 	{
 		--depth;
-		if( depth == 0 ) {
+		if(depth == 0) {
 			Parser::Event *e = new Parser::Event;
 			e->setDocumentClose(namespaceURI, localName, qName);
 			e->setActualString(in->lastString());
@@ -439,7 +439,7 @@ public:
 		}
 		else {
 			// done with a depth 1 element?
-			if( depth == 1 ) {
+			if(depth == 1) {
 				Parser::Event *e = new Parser::Event;
 				e->setElement(elem);
 				e->setActualString(in->lastString());
@@ -454,7 +454,7 @@ public:
 				current = current.parentNode().toElement();
 		}
 
-		if( in->lastRead() == '/' )
+		if(in->lastRead() == '/')
 			checkNeedMore();
 
 		return true;
@@ -462,12 +462,12 @@ public:
 
 	bool characters(const QString &str)
 	{
-		if( depth >= 1 ) {
+		if(depth >= 1) {
 			QString content = str;
-			if( content.isEmpty() )
+			if(content.isEmpty())
 				return true;
 
-			if( !current.isNull() ) {
+			if(!current.isNull()) {
 				QDomText text = doc->createTextNode(content);
 				current.appendChild(text);
 			}
@@ -494,7 +494,7 @@ public:
 		// QXmlSimpleReader can still read it.  To do this, we call StreamInput::readNext
 		// with 'peek' mode.
 		QChar c = in->readNext(true); // peek
-		if( c == QXmlInputSource::EndOfData ) {
+		if(c == QXmlInputSource::EndOfData) {
 			needMore = true;
 		}
 		else {
@@ -507,9 +507,9 @@ public:
 
 	Parser::Event *takeEvent()
 	{
-		if( needMore)
+		if(needMore)
 			return 0;
-		if( eventList.isEmpty() )
+		if(eventList.isEmpty())
 			return 0;
 
 		Parser::Event *e = eventList.takeFirst();
@@ -556,7 +556,7 @@ public:
 		delete in;
 		delete doc;
 
-		if( create ) {
+		if(create) {
 			doc = new QDomDocument;
 			in = new StreamInput;
 			handler = new ParserHandler(in, doc);

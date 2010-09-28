@@ -28,7 +28,7 @@ namespace jreen
 
 struct JREEN_EXPORT StanzaExtensionMeta
 {
-	StanzaExtensionMeta( const char *name = 0, const char *xpath = 0 );
+	StanzaExtensionMeta(const char *name = 0, const char *xpath = 0);
 	const QByteArray name;
 	const QString xpath;
 	const int type;
@@ -41,8 +41,8 @@ public:
 	inline StanzaExtension() {}
 	virtual ~StanzaExtension() {}
 	virtual QString xPath() const = 0;
-	virtual StanzaExtension *fromNode( const QDomElement &node ) const = 0;
-	virtual QDomElement node( QDomDocument *document ) const = 0;
+	virtual StanzaExtension *fromNode(const QDomElement &node) const = 0;
+	virtual QDomElement node(QDomDocument *document) const = 0;
 	virtual int extensionType() const = 0;
 	virtual QByteArray extensionName() const = 0;
 };

@@ -32,7 +32,7 @@ struct IQPrivate : public StanzaPrivate
 	mutable bool accepted;
 };
 
-IQ::IQ( Type type, const JID& to, const QString& id ) : Stanza(new IQPrivate)
+IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(new IQPrivate)
 {
 	Q_D(IQ);
 	d->subtype = type;
@@ -40,16 +40,16 @@ IQ::IQ( Type type, const JID& to, const QString& id ) : Stanza(new IQPrivate)
 	d->id = id;
 }
 
-IQ::IQ( const QDomElement &node ) : Stanza(node, new IQPrivate)
+IQ::IQ(const QDomElement &node) : Stanza(node, new IQPrivate)
 {
 	Q_D(IQ);
-	if( node.nodeName() != iq_str )
+	if(node.nodeName() != iq_str)
 	{
 		d->subtype = Invalid;
 		return;
 	}
-	int type = iq_types.indexOf( node.attribute( ConstString::type ) );
-	d->subtype = type < 0 ? Invalid : static_cast<Type>( type );
+	int type = iq_types.indexOf(node.attribute(ConstString::type));
+	d->subtype = type < 0 ? Invalid : static_cast<Type>(type);
 }
 
 IQ::Type IQ::subtype() const
@@ -61,14 +61,14 @@ IQ::Type IQ::subtype() const
 QDomElement IQ::node() const
 {
 	Q_D(const IQ);
-	if( !d->node.isNull() )
+	if(!d->node.isNull())
 		return d->node;
-	QDomElement node = DomCreater::instance().createElement( iq_str );
-	d->setAttributes( node );
-	if( d->subtype == Invalid )
+	QDomElement node = DomCreater::instance().createElement(iq_str);
+	d->setAttributes(node);
+	if(d->subtype == Invalid)
 		return node;
-	node.setAttribute( ConstString::type, iq_types.at( d->subtype ) );
-	d->addExtensions( node );
+	node.setAttribute(ConstString::type, iq_types.at(d->subtype));
+	d->addExtensions(node);
 	return node;
 }
 

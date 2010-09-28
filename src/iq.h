@@ -40,10 +40,10 @@ public:
 									 * previously-sent get or set (see Stanza Errors (Section 9.3)). */
 		Invalid                     /**< The stanza is invalid */
 	};
-	IQ( Type type, const JID& to, const QString& id = QString() );
-	IQ( const QDomElement &node );
-	inline IQ &operator =( const IQ &stanza )
-		{ return *static_cast<IQ *>( &Stanza::operator =( stanza ) ); }
+	IQ(Type type, const JID& to, const QString& id = QString());
+	IQ(const QDomElement &node);
+	inline IQ &operator =(const IQ &stanza)
+		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }
 	Type subtype() const;
 	QDomElement node() const;
 	void accept() const;

@@ -21,23 +21,23 @@ namespace jreen
 
 J_STRING(img)
 
-ImageMessage::ImageMessage( const QDomElement &node )
+ImageMessage::ImageMessage(const QDomElement &node)
 {
-	if( node.isNull() )
+	if(node.isNull())
 		return;
-	m_data = QByteArray::fromBase64( node.text().toLatin1() );
+	m_data = QByteArray::fromBase64(node.text().toLatin1());
 }
 
-ImageMessage::ImageMessage( const QByteArray &data ) : m_data(data)
+ImageMessage::ImageMessage(const QByteArray &data) : m_data(data)
 {
 }
 
-QDomElement ImageMessage::node( QDomDocument *doc ) const
+QDomElement ImageMessage::node(QDomDocument *doc) const
 {
-	if( m_data.isEmpty() )
+	if(m_data.isEmpty())
 		return QDomElement();
-	QDomElement node = createElement( doc, img_str, m_data.toBase64() );
-	node.setAttribute( ConstString::xmlns, ConstString::xmlns_qutim_img );
+	QDomElement node = createElement(doc, img_str, m_data.toBase64());
+	node.setAttribute(ConstString::xmlns, ConstString::xmlns_qutim_img);
 	return node;
 }
 

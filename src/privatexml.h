@@ -40,13 +40,13 @@ public:
 		RequestError,
 		RequestOk
 	};
-	PrivateXml( Client *client );
+	PrivateXml(Client *client);
 	~PrivateXml();
 	// SLOT(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>))
-	void request( const QString &name, const QString &xmlns, QObject *handler, const char *member );
-	void store( const QDomElement &node, QObject *handler, const char *member );
+	void request(const QString &name, const QString &xmlns, QObject *handler, const char *member);
+	void store(const QDomElement &node, QObject *handler, const char *member);
 private slots:
-	void handleIQ( const IQ &iq, int context );
+	void handleIQ(const IQ &iq, int context);
 private:
 	class Query;
 	QScopedPointer<PrivateXmlPrivate> d_ptr;
