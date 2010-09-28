@@ -19,7 +19,8 @@
 #include "jreen.h"
 #include <QDateTime>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JID;
 
@@ -36,6 +37,6 @@ namespace Util
 	}
 }
 
-J_END_NAMESPACE
+}
 
 #endif // UTIL_H

@@ -22,7 +22,8 @@
 #include <QVector>
 #include <QMap>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class MessageSession;
 class MessageSessionManager;
@@ -146,6 +147,6 @@ inline void MessageSession::decorate( Message &message )
 		filter->decorate( message );
 }
 
-J_END_NAMESPACE
+}
 
 #endif // MESSAGESESSION_H

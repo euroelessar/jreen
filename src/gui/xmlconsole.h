@@ -23,7 +23,8 @@ namespace Ui {
     class XmlConsole;
 }
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class XmlConsole : public QWidget {
     Q_OBJECT
@@ -39,6 +40,6 @@ private:
     Ui::XmlConsole *m_ui;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // XMLCONSOLE_H

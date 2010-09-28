@@ -18,7 +18,8 @@
 
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JREEN_EXPORT Prep
 {
@@ -30,6 +31,6 @@ public:
 	QString idna( const QString &domain, bool *ok = 0 );
 };
 
-J_END_NAMESPACE
+}
 
 #endif // PREP_H

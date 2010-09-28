@@ -19,7 +19,8 @@
 #include "dataform.h"
 #include "softwareversion.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(category)
 J_STRING(item)
@@ -128,57 +129,56 @@ QDomElement Disco::Items::node( QDomDocument *document ) const
 	return node;
 }
 
-Disco::Disco( Client *client ) : j_ptr(new DiscoPrivate)
+Disco::Disco( Client *client ) : d_ptr(new DiscoPrivate)
 {
-	J_D(Disco);
-	j->client = client;
-	j->client->registerStanzaExtension( new Info );
-	j->client->registerStanzaExtension( new Items );
-	j->features << ConstString::xmlns_disco_info
+	Q_D(Disco);
+	d->client = client;
+	d->client->registerStanzaExtension( new Info );
+	d->client->registerStanzaExtension( new Items );
+	d->features << ConstString::xmlns_disco_info
 			<< ConstString::xmlns_disco_items;
-	connect( j->client, SIGNAL(newIQ(IQ)), this, SLOT(handleIQ(IQ)) );
+	connect( d->client, SIGNAL(newIQ(IQ)), this, SLOT(handleIQ(IQ)) );
 }
 
 Disco::~Disco()
 {
-	delete j_ptr;
 }
 
 const Disco::IdentityList &Disco::identities() const
 {
-	J_D(const Disco);
-	return j->identities;
+	Q_D(const Disco);
+	return d->identities;
 }
 
 Disco::IdentityList &Disco::identities()
 {
-	J_D(Disco);
-	return j->identities;
+	Q_D(Disco);
+	return d->identities;
 }
 
 const QSet<QString> &Disco::features() const
 {
-	J_D(const Disco);
-	return j->features;
+	Q_D(const Disco);
+	return d->features;
 }
 
 QSet<QString> &Disco::features()
 {
-	J_D(Disco);
-	return j->features;
+	Q_D(Disco);
+	return d->features;
 }
 
 void Disco::handleIQ( const IQ &iq )
 {
-	J_D(Disco);
+	Q_D(Disco);
 	const Info *info = iq.findExtension<Info>().data();
 	if( info )
 	{
 		if( iq.subtype() == IQ::Get )
 		{
 			IQ receipt( IQ::Result, iq.from(), iq.id() );
-			receipt.addExtension( new Info( info->node(), j->identities, j->features, j->form ) );
-			j->client->send( receipt );
+			receipt.addExtension( new Info( info->node(), d->identities, d->features, d->form ) );
+			d->client->send( receipt );
 			iq.accept();
 		}
 	}
@@ -189,7 +189,7 @@ void Disco::handleIQ( const IQ &iq )
 		{
 			IQ receipt( IQ::Result, iq.from(), iq.id() );
 			receipt.addExtension( new Items( items->node() ) );
-			j->client->send( receipt );
+			d->client->send( receipt );
 			iq.accept();
 		}
 	}
@@ -199,8 +199,8 @@ void Disco::handleIQ( const IQ &iq )
 		if( iq.subtype() == IQ::Get )
 		{
 			IQ receipt( IQ::Result, iq.from(), iq.id() );
-			receipt.addExtension( new SoftwareVersion( j->software_name, j->software_version, j->os ) );
-			j->client->send( receipt );
+			receipt.addExtension( new SoftwareVersion( d->software_name, d->software_version, d->os ) );
+			d->client->send( receipt );
 			iq.accept();
 		}
 	}
@@ -208,10 +208,10 @@ void Disco::handleIQ( const IQ &iq )
 
 void Disco::setSoftwareVersion( const QString &name, const QString &version, const QString &os )
 {
-	J_D(Disco);
-	j->software_name = name;
-	j->software_version = version;
-	j->os = os;
+	Q_D(Disco);
+	d->software_name = name;
+	d->software_version = version;
+	d->os = os;
 	QSharedPointer<DataForm> form( new DataForm );
 	DataFormFieldList fields;
 	fields.append( QSharedPointer<DataFormField>( new DataFormField(FORM_TYPE_str, ConstString::xmlns_softwareinfo, QString(), DataFormField::Hidden ) ) );
@@ -220,19 +220,19 @@ void Disco::setSoftwareVersion( const QString &name, const QString &version, con
 	fields.append( QSharedPointer<DataFormField>( new DataFormField(software_str, name, QString(), DataFormField::None ) ) );
 	fields.append( QSharedPointer<DataFormField>( new DataFormField(software_version_str, version, QString(), DataFormField::None ) ) );
 	form->setFields( fields );
-	j->form = form;
+	d->form = form;
 }
 
 const DataForm *Disco::form() const
 {
-	J_D(const Disco);
-	return j->form.data();
+	Q_D(const Disco);
+	return d->form.data();
 }
 
 void Disco::setForm( DataForm *form )
 {
-	J_D(Disco);
-	j->form = QSharedPointer<DataForm>( form );
+	Q_D(Disco);
+	d->form = QSharedPointer<DataForm>( form );
 }
 
-J_END_NAMESPACE
+}

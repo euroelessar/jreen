@@ -20,7 +20,8 @@
 #include "jid.h"
 #include <QDateTime>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class DelayedDelivery : public StanzaExtension
 {
@@ -42,6 +43,6 @@ private:
 	JID m_from;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // DELAYEDDELIVERY_H

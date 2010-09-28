@@ -19,7 +19,8 @@
 #include <QObject>
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JREEN_EXPORT DataStream : public QObject
 {
@@ -36,6 +37,6 @@ signals:
 	void readOutgoing( const QByteArray &data );
 };
 
-J_END_NAMESPACE
+}
 
 #endif // DATASTREAM_H

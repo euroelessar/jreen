@@ -18,13 +18,14 @@
 
 #include "stanza.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct SubscriptionPrivate;
 
 class JREEN_EXPORT Subscription : public Stanza
 {
-	J_DECLARE_PRIVATE(Subscription)
+	Q_DECLARE_PRIVATE(Subscription)
 public:
 	enum Type
 	{
@@ -37,12 +38,12 @@ public:
 	Subscription( const QDomElement &node );
 	Subscription( Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString() );
 	inline Subscription &operator =( const Subscription &stanza )
-		{ return *static_cast<Subscription *>( &J_NAMESPACE::Stanza::operator =( stanza ) ); }
+		{ return *static_cast<Subscription *>( &jreen::Stanza::operator =( stanza ) ); }
 	Type subtype() const;
 	const QString &status( const QString &lang = QString() ) const;
 	QDomElement node() const;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // SUBSCRIPTION_H

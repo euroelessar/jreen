@@ -17,7 +17,8 @@
 #include "util.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(delay)
 J_STRING(stamp)
@@ -53,4 +54,4 @@ QDomElement DelayedDelivery::node( QDomDocument *document ) const
 	return node;
 }
 
-J_END_NAMESPACE
+}

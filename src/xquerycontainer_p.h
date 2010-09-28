@@ -19,7 +19,8 @@
 #include "xqueryelement_p.h"
 #include <QMap>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class XQueryContainer : public XQueryElement
 {
@@ -35,6 +36,6 @@ public:
 	void resetFeatures();
 };
 
-J_END_NAMESPACE
+}
 
 #endif // XQUERYCONTAINER_H

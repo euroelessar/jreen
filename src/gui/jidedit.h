@@ -22,7 +22,8 @@
 class QMenu;
 class QResizeEvent;
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JidEditPrivate;
 
@@ -122,11 +123,11 @@ protected:
 	QRect cursorRect() const;
 
 private:
-	J_DECLARE_PRIVATE(JidEdit)
+	Q_DECLARE_PRIVATE(JidEdit)
 	Q_DISABLE_COPY(JidEdit)
-	JidEditPrivate *j_ptr;
+	QScopedPointer<JidEditPrivate> d_ptr;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // JIDEDIT_H

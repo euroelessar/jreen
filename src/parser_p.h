@@ -29,7 +29,8 @@
  * without any notification.
  */
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Parser::EventPrivate
 {
@@ -577,6 +578,6 @@ private:
 	QObject *m_parent;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // PARSER_P_H

@@ -18,7 +18,8 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Nickname : public StanzaExtension
 {
@@ -34,6 +35,6 @@ private:
 	QString m_nick;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // NICKNAME_H

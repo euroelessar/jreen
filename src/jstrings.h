@@ -18,7 +18,7 @@
 
 #include "jreen.h"
 
-namespace J_NAMESPACE {
+namespace jreen {
 	namespace ConstString
 	{
 		static const QString from                   ( QLatin1String("from") );

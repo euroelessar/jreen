@@ -6,7 +6,8 @@
 #include "error.h"
 #include "disco.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class MucRoom : public QObject
 {
@@ -78,6 +79,6 @@ protected:
 	Role m_role;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // MUCROOM_H

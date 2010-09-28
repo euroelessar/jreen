@@ -18,7 +18,8 @@
 #include "util.h"
 #include <QDebug>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(MessageSession)
 
@@ -199,4 +200,4 @@ void MessageSessionManager::handleMessage( const Message &message )
 	session->handleMessage( message );
 }
 
-J_END_NAMESPACE
+}

@@ -24,7 +24,8 @@
 #endif
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct JREEN_EXPORT LangMapData
 {
@@ -47,21 +48,21 @@ struct JREEN_EXPORT LangMapData
 
 class LangMap
 {
-	LangMapData *j;
+	LangMapData *d;
 public:
-	inline LangMap() : j(&LangMapData::shared_null) { j->ref.ref(); }
-	inline LangMap( const QString &value ) : j(new LangMapData) { j->ref = 1; j->base = value; }
-	inline LangMap( const LangMap &other ) : j(other.j) { j->ref.ref(); }
-	inline ~LangMap() { if( !j->ref.deref() ) delete j; }
+	inline LangMap() : d(&LangMapData::shared_null) { d->ref.ref(); }
+	inline LangMap( const QString &value ) : d(new LangMapData) { d->ref = 1; d->base = value; }
+	inline LangMap( const LangMap &other ) : d(other.d) { d->ref.ref(); }
+	inline ~LangMap() { if( !d->ref.deref() ) delete d; }
 
 	LangMap &operator =( const LangMap &other )
 	{
-		if( j != other.j )
+		if( d != other.d )
 		{
-			other.j->ref.ref();
-			if( !j->ref.deref() )
-				delete j;
-			j = other.j;
+			other.d->ref.ref();
+			if( !d->ref.deref() )
+				delete d;
+			d = other.d;
 		}
 		return *this;
 	}
@@ -91,21 +92,21 @@ public:
 	inline int size() const { return count(); }
 	inline bool isEmpty() const { return count() == 0; }
 protected:
-	inline void detach() { if( j->ref != 1 ) detach_helper(); }
+	inline void detach() { if( d->ref != 1 ) detach_helper(); }
 	void detach_helper()
 	{
-		j->ref.deref();
-		LangMapData *d = j;
-		j = new LangMapData;
-		j->ref = 1;
-		j->base = d->base;
-		j->other = d->other;
+		d->ref.deref();
+		LangMapData *p = d;
+		d = new LangMapData;
+		d->ref = 1;
+		d->base = p->base;
+		d->other = p->other;
 	}
 };
 
 inline bool LangMap::operator ==( const LangMap &other ) const
 {
-	return j == other.j || ( j->base == other.j->base && j->other == other.j->other );
+	return d == other.d || ( d->base == other.d->base && d->other == other.d->other );
 }
 
 inline void LangMap::clear()
@@ -115,74 +116,74 @@ inline void LangMap::clear()
 
 inline bool LangMap::contains( const QString &lang ) const
 {
-	return lang.isEmpty() ? !j->base.isEmpty() : j->other.contains( lang );
+	return lang.isEmpty() ? !d->base.isEmpty() : d->other.contains( lang );
 }
 
 inline void LangMap::insert( const QString &lang, const QString &value )
 {
-	detach(); ( lang.isEmpty() ? j->base : j->other[lang] ) = value;
+	detach(); ( lang.isEmpty() ? d->base : d->other[lang] ) = value;
 }
 
 inline const QString LangMap::lang(const QString &value) const
 {
-	return value == j->base ? QString() : j->other.key( value );
+	return value == d->base ? QString() : d->other.key( value );
 }
 
 inline const QString LangMap::lang(const QString &value, const QString &default_lang ) const
 {
-	return value == j->base ? QString() : j->other.key( value, default_lang );
+	return value == d->base ? QString() : d->other.key( value, default_lang );
 }
 
 inline const QString &LangMap::value(const QString &lang ) const
 {
-	return j->value( lang );
+	return d->value( lang );
 }
 
 inline const QString &LangMap::value(const QString &lang, const QString &default_value) const
 {
-	return j->value( lang, default_value );
+	return d->value( lang, default_value );
 }
 
 inline QString &LangMap::operator[](const QString &lang )
 {
-	detach(); return lang.isEmpty() ? j->base : j->other.operator []( lang );
+	detach(); return lang.isEmpty() ? d->base : d->other.operator []( lang );
 }
 
 inline const QString LangMap::operator[](const QString &lang ) const
 {
-	return lang.isEmpty() ? j->base : j->other.operator []( lang );
+	return lang.isEmpty() ? d->base : d->other.operator []( lang );
 }
 
 inline QStringList LangMap::langs() const
 {
-	return j->base.isEmpty() ? j->other.keys() : ( j->other.keys() << QString() );
+	return d->base.isEmpty() ? d->other.keys() : ( d->other.keys() << QString() );
 }
 
 inline QStringList LangMap::langs(const QString &value) const
 {
-	return ( j->base.isEmpty() || j->base != value ) ? j->other.keys( value ) : ( j->other.keys( value ) << QString() );
+	return ( d->base.isEmpty() || d->base != value ) ? d->other.keys( value ) : ( d->other.keys( value ) << QString() );
 }
 
 inline QStringList LangMap::values() const
 {
-	return j->base.isEmpty() ? j->other.values() : ( j->other.values() << j->base );
+	return d->base.isEmpty() ? d->other.values() : ( d->other.values() << d->base );
 }
 
 inline QStringList LangMap::values(const QString &lang ) const
 {
-	return j->base.isEmpty() ? j->other.values( lang ) : ( j->other.values() << j->base );
+	return d->base.isEmpty() ? d->other.values( lang ) : ( d->other.values() << d->base );
 }
 
 inline void LangMap::fillNode( QDomElement &node, const QString &name, const QString &uri ) const
 {
-	j->fillNode( node, name, uri );
+	d->fillNode( node, name, uri );
 }
 
 inline int LangMap::count() const
 {
-	return j->other.count() + ( j->base.isEmpty() ? 0 : 1 );
+	return d->other.count() + ( d->base.isEmpty() ? 0 : 1 );
 }
 
-J_END_NAMESPACE
+}
 
 #endif // LANGMAP_H

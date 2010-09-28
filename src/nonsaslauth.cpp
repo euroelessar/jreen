@@ -19,7 +19,8 @@
 #include "client.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(auth)
 
@@ -129,4 +130,4 @@ void NonSaslAuth::handleIq( const IQ &iq, int context )
 	}
 }
 
-J_END_NAMESPACE
+}

@@ -21,7 +21,8 @@
 #include <QStringList>
 #include <QHash>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 // XEP-0004
 
@@ -243,6 +244,6 @@ private:
 	Type m_form_type;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // DATAFORM_H

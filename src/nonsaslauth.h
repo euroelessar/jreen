@@ -19,7 +19,8 @@
 #include "streamfeature.h"
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class IQ;
 
@@ -59,6 +60,6 @@ private:
 	Step m_current_step;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // NONSASLAUTH_H

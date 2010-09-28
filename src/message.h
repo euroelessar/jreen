@@ -18,14 +18,15 @@
 
 #include "stanza.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct MessagePrivate;
 class DelayedDelivery;
 
 class JREEN_EXPORT Message : public Stanza
 {
-	J_DECLARE_PRIVATE(Message)
+	Q_DECLARE_PRIVATE(Message)
 public:
 	/**
 	 * Describes the different valid message types.
@@ -43,7 +44,7 @@ public:
 			   const QString &thread = QString(), const QString &xmllang = QString() );
 	Message( const QDomElement &node );
 	inline Message &operator =( const Message &stanza )
-		{ return *static_cast<Message *>( &J_NAMESPACE::Stanza::operator =( stanza ) ); }
+		{ return *static_cast<Message *>( &jreen::Stanza::operator =( stanza ) ); }
 	Type subtype() const;
 	const QString &body( const QString &lang = QString() ) const;
 	const QString &subject( const QString &lang = QString() ) const;
@@ -54,6 +55,6 @@ public:
 	QDomElement node() const;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // MESSAGE_H

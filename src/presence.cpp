@@ -18,7 +18,8 @@
 #include "langmap.h"
 #include "capabilities.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(show)
 J_STRING(status)
@@ -42,61 +43,61 @@ struct PresencePrivate : public StanzaPrivate
 Presence::Presence( Type type, const JID& to, const QString &status, int priority, const QString &xmllang )
 	: Stanza(new PresencePrivate)
 {
-	J_D(Presence);
-	j->subtype = type;
-	j->to = to;
-	j->priority = priority;
-	j->status[xmllang] = status;
+	Q_D(Presence);
+	d->subtype = type;
+	d->to = to;
+	d->priority = priority;
+	d->status[xmllang] = status;
 }
 
 Presence::Presence( const QDomElement &node ) : Stanza(node, new PresencePrivate)
 {
-	J_D(Presence);
-	j->priority = 0;
+	Q_D(Presence);
+	d->priority = 0;
 	if( node.nodeName() != presence_str )
 	{
-		j->subtype = Invalid;
+		d->subtype = Invalid;
 		return;
 	}
-	j->subtype = Available;
+	d->subtype = Available;
 	QString type = node.attribute( ConstString::type );
 	if( type == unavailable_str )
-		j->subtype = Unavailable;
+		d->subtype = Unavailable;
 	else if( type == error_str )
-		j->subtype = Error;
+		d->subtype = Error;
 	else if( type == probe_str )
-		j->subtype = Probe;
+		d->subtype = Probe;
 	forelements( const QDomElement &elem, node )
 	{
 		QString name = elem.nodeName();
-		if( j->subtype == Available && name == show_str )
+		if( d->subtype == Available && name == show_str )
 		{
 			QString text = elem.text();
 			if( text == away_str )
-				j->subtype = Away;
+				d->subtype = Away;
 			else if( text == chat_str )
-				j->subtype = Chat;
+				d->subtype = Chat;
 			else if( text == dnd_str )
-				j->subtype = DND;
+				d->subtype = DND;
 			else if( text == xa_str )
-				j->subtype = XA;
+				d->subtype = XA;
 		}
 		else if( name == status_str )
 		{
 			QString lang = elem.attribute( ConstString::lang );
-			j->status[lang] = elem.text();
+			d->status[lang] = elem.text();
 		}
 		else if( name == priority_str )
 		{
-			j->priority = elem.text().toInt();
+			d->priority = elem.text().toInt();
 		}
 	}
 }
 
 Presence::Type Presence::subtype() const
 {
-	J_D(const Presence);
-	return j->subtype;
+	Q_D(const Presence);
+	return d->subtype;
 }
 
 const Capabilities *Presence::capabilities() const
@@ -106,55 +107,55 @@ const Capabilities *Presence::capabilities() const
 
 Presence::Type Presence::presence() const
 {
-	J_D(const Presence);
-	return j->subtype;
+	Q_D(const Presence);
+	return d->subtype;
 }
 
 void Presence::setPresence( Type type )
 {
-	J_D(Presence);
-	j->subtype = type;
+	Q_D(Presence);
+	d->subtype = type;
 }
 
 const QString &Presence::status( const QString &lang ) const
 {
-	J_D(const Presence);
-	return j->status.value( lang );
+	Q_D(const Presence);
+	return d->status.value( lang );
 }
 
 void Presence::addStatus( const QString &status, const QString &lang )
 {
-	J_D(Presence);
-	j->status[lang] = status;
+	Q_D(Presence);
+	d->status[lang] = status;
 }
 
 void Presence::resetStatus()
 {
-	J_D(Presence);
-	j->status.clear();
-	j->status.clear();
+	Q_D(Presence);
+	d->status.clear();
+	d->status.clear();
 }
 
 int Presence::priority() const
 {
-	J_D(const Presence);
-	return j->priority;
+	Q_D(const Presence);
+	return d->priority;
 }
 
 void Presence::setPriority( int priority )
 {
-	J_D(Presence);
-	j->priority = priority;
+	Q_D(Presence);
+	d->priority = priority;
 }
 
 QDomElement Presence::node() const
 {
-	J_D(const Presence);
-	if( !j->node.isNull() )
-		return j->node;
+	Q_D(const Presence);
+	if( !d->node.isNull() )
+		return d->node;
 	QDomElement node = DomCreater::instance().createElement( presence_str );
-	j->setAttributes( node );
-	switch( j->subtype )
+	d->setAttributes( node );
+	switch( d->subtype )
 	{
 	case Available:
 		break;
@@ -176,11 +177,11 @@ QDomElement Presence::node() const
 	default:
 		return node;
 	}
-	node.appendChild( DomCreater::instance().createElement( priority_str, QString::number(j->priority) ) );
-	j->status.fillNode( node, status_str );
-	j->addExtensions( node );
+	node.appendChild( DomCreater::instance().createElement( priority_str, QString::number(d->priority) ) );
+	d->status.fillNode( node, status_str );
+	d->addExtensions( node );
 	return node;
 }
 
 
-J_END_NAMESPACE
+}

@@ -17,7 +17,8 @@
 #include "jid.h"
 #include <QCryptographicHash>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 static const QString full_stamp_str( QLatin1String("yyyy-MM-ddThh:mm:ss.zzz") );
 static const QString fullz_stamp_str( QLatin1String("yyyy-MM-ddThh:mm:ss.zzzZ") );
@@ -83,4 +84,4 @@ QString Util::randomHash( const JID &jid )
 	return QLatin1String(hash.result().toHex());
 }
 
-J_END_NAMESPACE
+}

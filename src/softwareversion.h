@@ -18,7 +18,8 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 /*
  * Implementation of XEP-0092
@@ -41,6 +42,6 @@ private:
 	QString m_os;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // SOFTWAREVERSION_H

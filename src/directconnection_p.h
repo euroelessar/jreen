@@ -22,7 +22,8 @@
 #include "directconnection.h"
 #include "sjdns_p.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class DirectConnectionPrivate : public QObject
 {
@@ -113,6 +114,6 @@ public slots:
 	}
 };
 
-J_END_NAMESPACE
+}
 
 #endif // DIRECTCONNECTION_P_H

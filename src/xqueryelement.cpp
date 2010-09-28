@@ -17,7 +17,8 @@
 
 //#define XQUERY_DEBUG
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 XQueryElement::XQueryElement( const QChar *xpath, XQueryElement *parent ) : m_parent(parent)
 {
@@ -293,4 +294,4 @@ void XQueryElement::parseElement( Stanza &stanza, const QDomElement &node )
 	}
 }
 
-J_END_NAMESPACE
+}

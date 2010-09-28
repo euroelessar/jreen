@@ -20,7 +20,8 @@
 #include "jreen.h"
 #include "presence.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class ClientPrivate;
 class JID;
@@ -79,6 +80,6 @@ protected:
 	virtual void handleMessage( const Message &message ) { emit newMessage( message ); }
 };
 
-J_END_NAMESPACE
+}
 
 #endif // CLIENT_H

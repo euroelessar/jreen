@@ -18,7 +18,8 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Receipt : public StanzaExtension
 {
@@ -40,6 +41,6 @@ private:
 	Type m_type;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // RECEIPT_H

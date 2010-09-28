@@ -19,7 +19,8 @@
 #include "iq.h"
 #include "jid.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(group)
 J_STRING(subscription)
@@ -54,46 +55,44 @@ QDomElement AbstractRoster::Query::node( QDomDocument *document ) const
 }
 
 AbstractRosterItem::AbstractRosterItem( const QDomElement &node, AbstractRoster *roster, AbstractRosterItemPrivate *data )
+	: d_ptr(data ? data : new AbstractRosterItemPrivate())
 {
 	m_roster = roster;
-	j_ptr = data ? data : new AbstractRosterItemPrivate();
 	if( node.isNull() )
 		return;
-	J_D(AbstractRosterItem);
-	j->groups.clear();
+	Q_D(AbstractRosterItem);
+	d->groups.clear();
 	forelements( const QDomElement &elem, node )
 	{
 		if( elem.nodeName() == group_str )
 		{
-			j->groups << elem.text();
+			d->groups << elem.text();
 		}
 	}
-	j->ask = node.attribute( ask_str );
+	d->ask = node.attribute( ask_str );
 	int sub = roster_subscriptions.indexOf( node.attribute( subscription_str ) );
-	j->subscription = sub == -1 ? None : static_cast<SubscriptionType>( sub );
-	j->jid = node.attribute( ConstString::jid );
-	j->name = node.attribute( ConstString::name );
+	d->subscription = sub == -1 ? None : static_cast<SubscriptionType>( sub );
+	d->jid = node.attribute( ConstString::jid );
+	d->name = node.attribute( ConstString::name );
 }
 
 AbstractRosterItem::~AbstractRosterItem()
 {
-	if( j_ptr )
-		delete j_ptr;
 }
 
 QDomElement AbstractRosterItem::node( QDomDocument *doc ) const
 {
-	J_D(const AbstractRosterItem);
+	Q_D(const AbstractRosterItem);
 	QDomElement node = createElement( doc, ConstString::item );
-	node.setAttribute( ConstString::jid, j->jid );
-	node.setAttribute( subscription_str, j->subscription == None ? QString() : roster_subscriptions[j->subscription] );
-	if( j->subscription != Remove )
+	node.setAttribute( ConstString::jid, d->jid );
+	node.setAttribute( subscription_str, d->subscription == None ? QString() : roster_subscriptions[d->subscription] );
+	if( d->subscription != Remove )
 	{
-		if( !j->ask.isEmpty() )
-			node.setAttribute( ask_str, j->ask );
-		if( !j->name.isEmpty() )
-			node.setAttribute( ConstString::name, j->name );
-		foreach( const QString &group, j->groups )
+		if( !d->ask.isEmpty() )
+			node.setAttribute( ask_str, d->ask );
+		if( !d->name.isEmpty() )
+			node.setAttribute( ConstString::name, d->name );
+		foreach( const QString &group, d->groups )
 		{
 			node.appendChild( createElement( doc, group_str, group ) );
 		}
@@ -103,77 +102,77 @@ QDomElement AbstractRosterItem::node( QDomDocument *doc ) const
 
 void AbstractRosterItem::setData( const QSharedPointer<AbstractRosterItem> &item )
 {
-	J_D(AbstractRosterItem);
-	const AbstractRosterItemPrivate *d = item->j_ptr;
-	j->ask = d->ask;
-	j->groups = d->groups;
-	j->subscription = d->subscription;
-	j->name = d->name;
+	Q_D(AbstractRosterItem);
+	const AbstractRosterItemPrivate *p = item->d_ptr.data();
+	d->ask = p->ask;
+	d->groups = p->groups;
+	d->subscription = p->subscription;
+	d->name = p->name;
 }
 
- AbstractRoster::AbstractRoster( Client *client, AbstractRosterPrivate *data ) : QObject(client), j_ptr(data?data:new AbstractRosterPrivate)
+ AbstractRoster::AbstractRoster( Client *client, AbstractRosterPrivate *data ) : QObject(client), d_ptr(data?data:new AbstractRosterPrivate)
  {
-	 j_ptr->client = client;
+	 d_ptr->client = client;
 	 m_self = createItem();
-	 AbstractRosterItemPrivate *j = m_self->j_ptr;
-	 j->jid = client->jid().bare();
-	 j->subscription = AbstractRosterItem::Both;
+	 AbstractRosterItemPrivate *d = m_self->d_ptr.data();
+	 d->jid = client->jid().bare();
+	 d->subscription = AbstractRosterItem::Both;
 	 connect( client, SIGNAL(newPresence(Presence)), this, SLOT(handlePresence(Presence)) );
 	 init();
  }
 
 void AbstractRoster::load()
 {
-	J_D(AbstractRoster);
-	IQ iq( IQ::Get, JID(), j->client->getID() );
+	Q_D(AbstractRoster);
+	IQ iq( IQ::Get, JID(), d->client->getID() );
 	iq.addExtension( new Query( this ) );
-	j->client->send( iq, this, SLOT(handleIQ(IQ,int)), LoadRoster );
+	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), LoadRoster );
 }
 
 void AbstractRoster::synchronize()
 {
-	J_D(AbstractRoster);
+	Q_D(AbstractRoster);
 	foreach( const QSharedPointer<AbstractRosterItem> &item, m_changed_items )
 	{
 		IQ iq( IQ::Set, JID() );
 		iq.addExtension( new Query( item ) );
-		j->client->send( iq, this, SLOT(handleIQ(IQ,int)), SyncContext );
+		d->client->send( iq, this, SLOT(handleIQ(IQ,int)), SyncContext );
 	}
 	m_changed_items.clear();
 }
 
 void AbstractRoster::init()
 {
-	J_D(AbstractRoster);
-	j->client->registerStanzaExtension( new Query( this ) );
+	Q_D(AbstractRoster);
+	d->client->registerStanzaExtension( new Query( this ) );
 }
 
 void AbstractRoster::add( const JID &jid, const QString &name, const QStringList &groups )
 {
 	if( !jid.isValid() )
 		return;
-	J_D(AbstractRoster);
+	Q_D(AbstractRoster);
 	QSharedPointer<AbstractRosterItem> item( createItem() );
-	AbstractRosterItemPrivate *d = item->j_ptr;
-	d->jid = jid;
-	d->subscription = AbstractRosterItem::None;
-	d->name = name;
-	d->groups = groups;
+	AbstractRosterItemPrivate *p = item->d_ptr.data();
+	p->jid = jid;
+	p->subscription = AbstractRosterItem::None;
+	p->name = name;
+	p->groups = groups;
 	IQ iq( IQ::Set, JID() );
 	iq.addExtension( new Query( item ) );
-	j->client->send( iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem );
+	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem );
 }
 
 void AbstractRoster::remove( const JID &jid )
 {
 	if( !jid.isValid() )
 		return;
-	J_D(AbstractRoster);
+	Q_D(AbstractRoster);
 	QSharedPointer<AbstractRosterItem> item( createItem() );
-	item->j_ptr->jid = jid;
+	item->d_ptr->jid = jid;
 	IQ iq( IQ::Set, JID() );
 	iq.addExtension( new Query( item ) );
-	j->client->send( iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem );
+	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem );
 }
 
 QSharedPointer<AbstractRosterItem> AbstractRoster::createItem( const QDomElement &node )
@@ -265,10 +264,10 @@ void AbstractRoster::handlePresence( const Presence &presence )
 		if( !resource )
 		{
 			resource = QSharedPointer<AbstractResource>( createResource() );
-			resource->j_ptr->resource = presence.from().resource();
-			item->m_resources.insert( resource->j_ptr->resource, resource );
+			resource->d_ptr->resource = presence.from().resource();
+			item->m_resources.insert( resource->d_ptr->resource, resource );
 		}
-		resource->j_ptr->presence = presence;
+		resource->d_ptr->presence = presence;
 	}
 	if( item == m_self )
 		emit selfPresence( item, presence );
@@ -276,4 +275,4 @@ void AbstractRoster::handlePresence( const Presence &presence )
 		emit rosterPresence( item, presence );
 }
 
-J_END_NAMESPACE
+}

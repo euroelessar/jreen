@@ -17,7 +17,8 @@
 #include "jstrings.h"
 #include <QStringList>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 static const QStringList receipt_types = QStringList()
 										 << QLatin1String("request") << QLatin1String("received");
@@ -46,4 +47,4 @@ QDomElement Receipt::node( QDomDocument *doc ) const
 	return node;
 }
 
-J_END_NAMESPACE
+}

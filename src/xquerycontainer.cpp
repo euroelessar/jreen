@@ -15,7 +15,8 @@
 
 #include "xquerycontainer_p.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 XQueryContainer::XQueryContainer()
 {
@@ -91,4 +92,4 @@ void XQueryContainer::resetFeatures()
 		stream_feature->reset();
 }
 
-J_END_NAMESPACE
+}

@@ -18,7 +18,8 @@
 #include <QAtomicInt>
 #include <QStringBuilder>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 static const QString empty_string;
 
@@ -327,4 +328,4 @@ JID::operator QString() const
 	return impl ? impl->full : empty_string;
 }
 
-J_END_NAMESPACE
+}

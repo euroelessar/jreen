@@ -15,39 +15,44 @@
 
 #include "privatexml_p.h"
 
-J_BEGIN_NAMESPACE
-
-PrivateXml::PrivateXml( Client *client ) : QObject(client), j_ptr(new PrivateXmlPrivate)
+namespace jreen
 {
-	J_D(PrivateXml);
-	j->client = client;
-	j->client->registerStanzaExtension( new Query );
+
+PrivateXml::PrivateXml( Client *client ) : QObject(client), d_ptr(new PrivateXmlPrivate)
+{
+	Q_D(PrivateXml);
+	d->client = client;
+	d->client->registerStanzaExtension( new Query );
+}
+
+PrivateXml::~PrivateXml()
+{
 }
 
 void PrivateXml::request( const QString &name, const QString &xmlns, QObject *handler, const char *member )
 {
-	J_D(PrivateXml);
-	QString id = j->client->getID();
+	Q_D(PrivateXml);
+	QString id = d->client->getID();
 	IQ iq( IQ::Get, JID(), id );
 	iq.addExtension( new Query( name, xmlns ) );
-	j->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
-	j->client->send( iq, this, SLOT(handleIQ(IQ,int)), Request );
+	d->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
+	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), Request );
 }
 
 void PrivateXml::store( const QDomElement &node, QObject *handler, const char *member )
 {
-	J_D(PrivateXml);
-	QString id = j->client->getID();
+	Q_D(PrivateXml);
+	QString id = d->client->getID();
 	IQ iq( IQ::Get, JID(), id );
 	iq.addExtension( new Query( node ) );
-	j->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
-	j->client->send( iq, this, SLOT(handleIQ(IQ,int)), Store );
+	d->tracks.insert( id, new PrivateXmlTrack( handler, member ) );
+	d->client->send( iq, this, SLOT(handleIQ(IQ,int)), Store );
 }
 
 void PrivateXml::handleIQ( const IQ &iq, int context )
 {
-	J_D(PrivateXml);
-	PrivateXmlTrack *track = j->tracks.take( iq.id() );
+	Q_D(PrivateXml);
+	PrivateXmlTrack *track = d->tracks.take( iq.id() );
 	if( !track )
 		return;
 	const QSharedPointer<Error> error = iq.findExtension<Error>();
@@ -65,4 +70,4 @@ void PrivateXml::handleIQ( const IQ &iq, int context )
 	delete track;
 }
 
-J_END_NAMESPACE
+}

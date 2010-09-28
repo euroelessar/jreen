@@ -20,7 +20,8 @@
 #include "util.h"
 #include <QStringList>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(message)
 J_STRING(body)
@@ -43,27 +44,27 @@ struct MessagePrivate : public StanzaPrivate
 Message::Message( Type type, const JID& to, const QString &body, const QString &subject, const QString &thread, const QString &xmllang )
 	: Stanza(new MessagePrivate)
 {
-	J_D(Message);
-	j->subtype = type;
-	j->to = to;
-	j->thread = thread;
-	j->body[xmllang] = body;
-	j->subject[xmllang] = subject;
+	Q_D(Message);
+	d->subtype = type;
+	d->to = to;
+	d->thread = thread;
+	d->body[xmllang] = body;
+	d->subject[xmllang] = subject;
 }
 
 Message::Message( const QDomElement &node ) : Stanza(node, new MessagePrivate)
 {
-	J_D(Message);
-	j->subtype = Invalid;
+	Q_D(Message);
+	d->subtype = Invalid;
 	if( node.nodeName() != message_str )
 		return;
 	QString type_str = node.attribute( ConstString::type );
 	if( type_str.isEmpty() )
-		j->subtype = Normal;
+		d->subtype = Normal;
 	else
 	{
 		int type = message_types.indexOf( type_str );
-		j->subtype = type < 0 ? Invalid : static_cast<Type>( type );
+		d->subtype = type < 0 ? Invalid : static_cast<Type>( type );
 	}
 	forelements( const QDomElement &elem, node )
 	{
@@ -71,52 +72,52 @@ Message::Message( const QDomElement &node ) : Stanza(node, new MessagePrivate)
 		if( name == body_str )
 		{
 			QString lang = elem.attribute( ConstString::lang );
-			j->body[lang] = elem.text();
+			d->body[lang] = elem.text();
 		}
 		else if( name == subject_str )
 		{
 			QString lang = elem.attribute( ConstString::lang );
-			j->subject[lang] = elem.text();
+			d->subject[lang] = elem.text();
 		}
 		else if( name == thread_str )
-			j->thread = elem.text();
+			d->thread = elem.text();
 	}
 }
 
 Message::Type Message::subtype() const
 {
-	J_D(const Message);
-	return j->subtype;
+	Q_D(const Message);
+	return d->subtype;
 }
 
 const QString &Message::body( const QString &lang ) const
 {
-	J_D(const Message);
-	return j->body.value( lang );
+	Q_D(const Message);
+	return d->body.value( lang );
 }
 
 const QString &Message::subject( const QString &lang ) const
 {
-	J_D(const Message);
-	return j->subject.value( lang );
+	Q_D(const Message);
+	return d->subject.value( lang );
 }
 
 const QString &Message::thread() const
 {
-	J_D(const Message);
-	return j->thread;
+	Q_D(const Message);
+	return d->thread;
 }
 
 void Message::setThread( const QString &thread )
 {
-	J_D(Message);
-	j->thread = thread;
+	Q_D(Message);
+	d->thread = thread;
 }
 
 void Message::setID( const QString &id )
 {
-	J_D(Message);
-	j->id = id;
+	Q_D(Message);
+	d->id = id;
 }
 
 const DelayedDelivery *Message::when() const
@@ -126,21 +127,21 @@ const DelayedDelivery *Message::when() const
 
 QDomElement Message::node() const
 {
-	J_D(const Message);
-	if( !j->node.isNull() )
-		return j->node;
+	Q_D(const Message);
+	if( !d->node.isNull() )
+		return d->node;
 	QDomElement node = DomCreater::instance().createElement( message_str );
-	j->setAttributes( node );
-	if( j->subtype == Invalid )
+	d->setAttributes( node );
+	if( d->subtype == Invalid )
 		return node;
-	j->subject.fillNode( node, subject_str );
-	j->body.fillNode( node, body_str );
-	if( !j->thread.isEmpty() )
-		createElement( node, thread_str, j->thread );
-	node.setAttribute( ConstString::type, message_types.at( j->subtype ) );
-	j->addExtensions( node );
+	d->subject.fillNode( node, subject_str );
+	d->body.fillNode( node, body_str );
+	if( !d->thread.isEmpty() )
+		createElement( node, thread_str, d->thread );
+	node.setAttribute( ConstString::type, message_types.at( d->subtype ) );
+	d->addExtensions( node );
 	return node;
 }
 
 
-J_END_NAMESPACE
+}

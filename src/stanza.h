@@ -20,13 +20,14 @@
 #include "jid.h"
 #include <QMap>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct StanzaPrivate;
 
 class JREEN_EXPORT Stanza
 {
-	J_DECLARE_PRIVATE(Stanza)
+	Q_DECLARE_PRIVATE(Stanza)
 public:
 	Stanza( const Stanza &stanza );
 	~Stanza();
@@ -50,9 +51,9 @@ protected:
 	Stanza( const QDomElement &node, StanzaPrivate *sp = 0 );
 	Stanza( StanzaPrivate * );
 	Stanza &operator =( const Stanza &stanza );
-	StanzaPrivate *j_ptr;
+	StanzaPrivate *d_ptr;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // STANZA_H

@@ -22,7 +22,8 @@
 class QNetworkProxy;
 class QAuthenticator;
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 // Why there is no Qt 5 today?..
 class Connection : public QIODevice
@@ -95,6 +96,6 @@ signals:
 	virtual void newConnection ();
 };
 
-J_END_NAMESPACE
+}
 
 #endif // CONNECTION_H

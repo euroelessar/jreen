@@ -20,7 +20,8 @@
 #include <jdns/qjdns.h>
 #include "action.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 //class JAction;
 
@@ -55,6 +56,6 @@ private:
 	QHash<QString, QJDns::Response> m_results;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // QJDNS_P_H

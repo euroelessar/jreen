@@ -16,7 +16,8 @@
 #include "udpconnection.h"
 #include <QUdpSocket>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 UdpConnection::UdpConnection( const QString &host_name, quint16 port )
 		: DirectConnection( new QUdpSocket, host_name, port )
@@ -28,4 +29,4 @@ UdpConnection::UdpConnection( const QHostAddress &address, quint16 port )
 {
 }
 
-J_END_NAMESPACE
+}

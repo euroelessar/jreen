@@ -20,7 +20,8 @@
 #include <QLineEdit>
 #include <QValidator>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class LineEditHelper : public QLineEdit
 {
@@ -63,6 +64,6 @@ private slots:
 	inline void textEdited( const QString &text ) { jid = text; emit edit->jidEdited( jid ); }
 };
 
-J_END_NAMESPACE
+}
 
 #endif // JIDEDIT_P_H

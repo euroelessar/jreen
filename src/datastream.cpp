@@ -15,7 +15,8 @@
 
 #include "datastream.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 DataStream::DataStream()
 {
@@ -35,4 +36,4 @@ void DataStream::writeIncoming( const QByteArray &data )
 	emit read( data );
 }
 
-J_END_NAMESPACE
+}

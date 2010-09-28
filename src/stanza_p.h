@@ -29,7 +29,8 @@
  * without any notification.
  */
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 //#if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
 //typedef QSharedPointer<StanzaExtension> StanzaExtensionPointer;
@@ -105,6 +106,6 @@ struct StanzaPrivate
 	StanzaExtensionList extensions;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // STANZA_P_H

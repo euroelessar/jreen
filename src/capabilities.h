@@ -18,7 +18,8 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Disco;
 
@@ -38,6 +39,6 @@ private:
 	QString m_ver;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // CAPABILITIES_H

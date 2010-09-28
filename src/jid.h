@@ -18,13 +18,13 @@
 
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JIDPrivate;
 
 class JREEN_EXPORT JID
 {
-	JIDPrivate *impl;
 public:
 	JID();
 	JID( const JID &jid );
@@ -84,10 +84,11 @@ private:
 	bool operator ==( const char *right );
 	bool operator !=( const char *right );
 #endif
+	JIDPrivate *impl;
 };
 
-J_END_NAMESPACE
+}
 
-inline uint qHash(J_NAMESPACE::JID jid) { return qHash(jid.full()); }
+inline uint qHash(jreen::JID jid) { return qHash(jid.full()); }
 
 #endif // JID_H

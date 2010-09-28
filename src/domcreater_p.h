@@ -19,7 +19,8 @@
 #include "jreen.h"
 #include <QDomElement>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class DomCreater
 {
@@ -32,9 +33,9 @@ public:
 
 inline QDomElement DomCreater::createElement( const QString &name, const QString &value )
 {
-	return J_NAMESPACE::createElement( &m_document, name, value );
+	return jreen::createElement( &m_document, name, value );
 }
 
-J_END_NAMESPACE
+}
 
 #endif // DOMCREATER_P_H

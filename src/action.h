@@ -21,7 +21,8 @@
 #include <QVariant>
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JREEN_EXPORT Action : public QObject
 {
@@ -38,6 +39,6 @@ private:
 	QMap<int, QVariant> m_data;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // ACTION_H

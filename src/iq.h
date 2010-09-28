@@ -18,13 +18,14 @@
 
 #include "stanza.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct IQPrivate;
 
 class JREEN_EXPORT IQ : public Stanza
 {
-	J_DECLARE_PRIVATE(IQ)
+	Q_DECLARE_PRIVATE(IQ)
 public:
 	/**
 	* Describes the different valid IQ types.
@@ -42,13 +43,13 @@ public:
 	IQ( Type type, const JID& to, const QString& id = QString() );
 	IQ( const QDomElement &node );
 	inline IQ &operator =( const IQ &stanza )
-		{ return *static_cast<IQ *>( &J_NAMESPACE::Stanza::operator =( stanza ) ); }
+		{ return *static_cast<IQ *>( &Stanza::operator =( stanza ) ); }
 	Type subtype() const;
 	QDomElement node() const;
 	void accept() const;
 	bool accepted() const;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // IQ_H

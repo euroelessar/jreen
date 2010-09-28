@@ -18,7 +18,8 @@
 
 #include "directconnection.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class JREEN_EXPORT UdpConnection : public DirectConnection
 {
@@ -28,6 +29,6 @@ public:
 	UdpConnection( const QHostAddress &address, quint16 port );
 };
 
-J_END_NAMESPACE
+}
 
 #endif // UDPCONNECTION_H

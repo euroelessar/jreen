@@ -16,7 +16,8 @@
 #include "xmlconsole.h"
 #include "ui_xmlconsole.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 XmlConsole::XmlConsole( QWidget *parent ) :
 	QWidget( parent ),
@@ -43,4 +44,4 @@ void XmlConsole::changeEvent( QEvent *e )
     }
 }
 
-J_END_NAMESPACE
+}

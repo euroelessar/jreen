@@ -17,88 +17,84 @@
 #include "stanza_p.h"
 #include <QTextStream>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 Stanza::Stanza( const Stanza &stanza )
 {
-	if( stanza.j_ptr )
-		stanza.j_ptr->ref.ref();
-	j_ptr = stanza.j_ptr;
+	if( stanza.d_ptr )
+		stanza.d_ptr->ref.ref();
+	d_ptr = stanza.d_ptr;
 }
 
-Stanza::Stanza( const JID &to )
+Stanza::Stanza( const JID &to ) : d_ptr(new StanzaPrivate)
 {
-	j_ptr = new StanzaPrivate;
-	j_ptr->to = to;
+	d_ptr->to = to;
 }
 
 Stanza &Stanza::operator =( const Stanza &stanza )
 {
-	if( stanza.j_ptr )
-		stanza.j_ptr->ref.ref();
-	if( !j_ptr->ref.deref() )
-		delete j_ptr;
-	j_ptr = stanza.j_ptr;
+	if( stanza.d_ptr )
+		stanza.d_ptr->ref.ref();
+	if( !d_ptr->ref.deref() )
+		delete d_ptr;
+	d_ptr = stanza.d_ptr;
 	return *this;
 }
 
-Stanza::Stanza( const QDomElement &node, StanzaPrivate *sp )
+Stanza::Stanza( const QDomElement &node, StanzaPrivate *sp ) : d_ptr(sp ? sp : new StanzaPrivate)
 {
-	if( !sp )
-		j_ptr = new StanzaPrivate;
-	else
-		j_ptr = sp;
-	j_ptr->node = node;
-	j_ptr->from = node.attribute( ConstString::from );
-	j_ptr->to = node.attribute( ConstString::to );
-	j_ptr->id = node.attribute( ConstString::id );
+	d_ptr->node = node;
+	d_ptr->from = node.attribute( ConstString::from );
+	d_ptr->to = node.attribute( ConstString::to );
+	d_ptr->id = node.attribute( ConstString::id );
 }
 
 Stanza::Stanza( StanzaPrivate *sp )
 {
-	j_ptr = sp;
+	d_ptr = sp;
 }
 
 Stanza::~Stanza()
 {
-	if( j_ptr && !j_ptr->ref.deref() )
-		delete j_ptr;
+	if( d_ptr && !d_ptr->ref.deref() )
+		delete d_ptr;
 }
 
 void Stanza::setFrom( const JID &jid )
 {
-	j_ptr->from = jid;
+	d_ptr->from = jid;
 }
 
 const JID &Stanza::from() const
 {
-	return j_ptr->from;
+	return d_ptr->from;
 }
 
 const JID &Stanza::to() const
 {
-	return j_ptr->to;
+	return d_ptr->to;
 }
 
 const QString &Stanza::id() const
 {
-	return j_ptr->id;
+	return d_ptr->id;
 }
 
 void Stanza::addExtension( StanzaExtension *se )
 {
-	j_ptr->extensions.insert( se->extensionType(), StanzaExtensionPointer( se ) );
+	d_ptr->extensions.insert( se->extensionType(), StanzaExtensionPointer( se ) );
 }
 
 const StanzaExtensionList &Stanza::extensions() const
 {
-	return j_ptr->extensions;
+	return d_ptr->extensions;
 }
 
 void Stanza::removeExtensions()
 {
-	j_ptr->extensions.clear();
+	d_ptr->extensions.clear();
 }
 
 
-J_END_NAMESPACE
+}

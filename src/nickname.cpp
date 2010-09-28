@@ -16,7 +16,8 @@
 #include "nickname.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(nick)
 
@@ -41,4 +42,4 @@ QDomElement Nickname::node( QDomDocument *doc ) const
 }
 
 
-J_END_NAMESPACE
+}

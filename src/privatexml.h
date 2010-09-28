@@ -19,7 +19,8 @@
 #include <QObject>
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Client;
 class IQ;
@@ -30,7 +31,7 @@ struct PrivateXmlPrivate;
 class PrivateXml : public QObject
 {
 	Q_OBJECT
-	J_DECLARE_PRIVATE(PrivateXml)
+	Q_DECLARE_PRIVATE(PrivateXml)
 public:
 	enum Result
 	{
@@ -40,6 +41,7 @@ public:
 		RequestOk
 	};
 	PrivateXml( Client *client );
+	~PrivateXml();
 	// SLOT(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>))
 	void request( const QString &name, const QString &xmlns, QObject *handler, const char *member );
 	void store( const QDomElement &node, QObject *handler, const char *member );
@@ -47,9 +49,9 @@ private slots:
 	void handleIQ( const IQ &iq, int context );
 private:
 	class Query;
-	PrivateXmlPrivate *j_ptr;
+	QScopedPointer<PrivateXmlPrivate> d_ptr;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // PRIVATEXML_H

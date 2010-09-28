@@ -16,7 +16,8 @@
 #include "langmap.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 LangMapData LangMapData::shared_null = { Q_BASIC_ATOMIC_INITIALIZER(1), QString(), LangMapData::Base() };
 
@@ -59,4 +60,4 @@ const QString &LangMapData::value(const QString &lang, const QString &default_va
 	return default_value;
 }
 
-J_END_NAMESPACE
+}

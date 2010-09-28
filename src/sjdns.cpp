@@ -15,7 +15,8 @@
 
 #include "sjdns_p.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 SJDns &SJDns::instance()
 {
@@ -82,4 +83,4 @@ void SJDns::error(int id, QJDns::Error e)
 	}
 }
 
-J_END_NAMESPACE
+}

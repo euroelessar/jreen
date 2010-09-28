@@ -20,7 +20,8 @@
 #include <QDomElement>
 #include "jid.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class DataStream;
 class Client;
@@ -67,8 +68,8 @@ private:
 	const Type m_type;
 };
 
-J_END_NAMESPACE
+}
 
-Q_DECLARE_INTERFACE(J_NAMESPACE::StreamFeature,"org.qutim.JReen.StreamFeature");
+Q_DECLARE_INTERFACE(jreen::StreamFeature,"org.qutim.JReen.StreamFeature");
 
 #endif // STREAMFEATURE_H

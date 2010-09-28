@@ -17,7 +17,8 @@
 #include "jstrings.h"
 #include <QStringList>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(field)
 J_STRING(option)
@@ -90,4 +91,4 @@ QDomElement DataForm::node( QDomDocument *document ) const
 	return node;
 }
 
-J_END_NAMESPACE
+}

@@ -1,6 +1,7 @@
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 static int stanza_extension_count = 0;
 
@@ -10,4 +11,4 @@ StanzaExtensionMeta::StanzaExtensionMeta( const char *s, const char *s2 ) : name
 }
 
 
-J_END_NAMESPACE
+}

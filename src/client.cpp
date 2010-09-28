@@ -21,7 +21,8 @@
 #include "error.h"
 #include "dataform.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 Client::Client(const JID &jid, const QString &password, int port )
 	: impl(new ClientPrivate( Presence(Presence::Unavailable,JID()), this ))
@@ -206,4 +207,4 @@ void Client::disconnectFromServer( bool force )
 }
 
 
-J_END_NAMESPACE
+}

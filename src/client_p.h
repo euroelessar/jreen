@@ -34,7 +34,8 @@
 #include <QTimer>
 #include <QTextCodec>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class ClientPrivate;
 
@@ -322,6 +323,6 @@ private:
 	ClientPrivate *m_client_private;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // CLIENT_P_H

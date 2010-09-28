@@ -24,7 +24,8 @@
 #include "jid.h"
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class IQ;
 struct DiscoPrivate;
@@ -33,7 +34,7 @@ class Disco : public QObject
 {
 	Q_DISABLE_COPY(Disco)
 	Q_OBJECT
-	J_DECLARE_PRIVATE(Disco)
+	Q_DECLARE_PRIVATE(Disco)
 public:
 	struct Identity
 	{
@@ -107,9 +108,9 @@ public slots:
 private slots:
 	void handleIQ( const IQ &iq );
 protected:
-	DiscoPrivate *j_ptr;
+	QScopedPointer<DiscoPrivate> d_ptr;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // DISCO_H

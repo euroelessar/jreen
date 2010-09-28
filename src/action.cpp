@@ -15,7 +15,8 @@
 
 #include "action.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 Action::Action( QObject *parent ) : QObject(parent)
 {
@@ -36,4 +37,4 @@ QVariant Action::data( int role )
 	return m_data.value( role, QVariant() );
 }
 
-J_END_NAMESPACE
+}

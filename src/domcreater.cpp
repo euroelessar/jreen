@@ -15,7 +15,8 @@
 
 #include "domcreater_p.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 QDomDocument DomCreater::m_document = QDomDocument();
 
@@ -37,4 +38,4 @@ QDomElement createElement( QDomElement parent, const QString &name, const QStrin
 	return node;
 }
 
-J_END_NAMESPACE
+}

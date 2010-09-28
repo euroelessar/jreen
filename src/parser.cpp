@@ -18,7 +18,8 @@
 
 #include <qtextcodec.h>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 //----------------------------------------------------------------------------
 // Event
@@ -28,43 +29,43 @@ J_BEGIN_NAMESPACE
 
 Parser::Event::Event()
 {
-	j_ptr = 0;
+	d_ptr = 0;
 }
 
 Parser::Event::Event( const Parser::Event &e )
 {
-	e.j_ptr->ref.ref();
-	j_ptr = e.j_ptr;
+	e.d_ptr->ref.ref();
+	d_ptr = e.d_ptr;
 }
 
 Parser::Event &Parser::Event::operator=( const Parser::Event &e )
 {
-	e.j_ptr->ref.ref();
-	if( j_ptr && !j_ptr->ref.deref() )
-		delete j_ptr;
-	j_ptr = e.j_ptr;
+	e.d_ptr->ref.ref();
+	if( d_ptr && !d_ptr->ref.deref() )
+		delete d_ptr;
+	d_ptr = e.d_ptr;
 	return *this;
 }
 
 Parser::Event::~Event()
 {
-	if( j_ptr && !j_ptr->ref.deref() )
-		delete j_ptr;
+	if( d_ptr && !d_ptr->ref.deref() )
+		delete d_ptr;
 }
 
 
 Parser::Event::Type Parser::Event::type()
 {
-	J_D(Parser::Event);
-	return j->type;
+	Q_D(Parser::Event);
+	return d->type;
 }
 
 const QString &Parser::Event::nsprefix( const QString &s ) const
 {
-	J_D(const Parser::Event);
-	QStringList::ConstIterator it = j->nsnames.begin();
-	QStringList::ConstIterator it2 = j->nsvalues.begin();
-	for(; it != j->nsnames.end(); ++it) {
+	Q_D(const Parser::Event);
+	QStringList::ConstIterator it = d->nsnames.begin();
+	QStringList::ConstIterator it2 = d->nsvalues.begin();
+	for(; it != d->nsnames.end(); ++it) {
 		if((*it) == s)
 			return (*it2);
 		++it2;
@@ -75,95 +76,94 @@ const QString &Parser::Event::nsprefix( const QString &s ) const
 
 const QString &Parser::Event::namespaceURI() const
 {
-	J_D(const Parser::Event);
-	return j->ns;
+	Q_D(const Parser::Event);
+	return d->ns;
 }
 
 const QString &Parser::Event::localName() const
 {
-	J_D(const Parser::Event);
-	return j->ln;
+	Q_D(const Parser::Event);
+	return d->ln;
 }
 
 const QString &Parser::Event::qName() const
 {
-	J_D(const Parser::Event);
-	return j->qn;
+	Q_D(const Parser::Event);
+	return d->qn;
 }
 
 const QXmlAttributes &Parser::Event::atts() const
 {
-	J_D(const Parser::Event);
-	return j->a;
+	Q_D(const Parser::Event);
+	return d->a;
 }
 
 const QDomElement &Parser::Event::element() const
 {
-	J_D(const Parser::Event);
-	return j->e;
+	Q_D(const Parser::Event);
+	return d->e;
 }
 
 const QString Parser::Event::actualString() const
 {
-	J_D(const Parser::Event);
-	return j->str;
+	Q_D(const Parser::Event);
+	return d->str;
 }
 
 void Parser::Event::setDocumentOpen( const QString &namespaceURI, const QString &localName, const QString &qName,
 					  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues )
 {
-	if(!j_ptr)
-		j_ptr = new Parser::EventPrivate;
-	J_D(Parser::Event);
-	j->type = DocumentOpen;
-	j->ns = namespaceURI;
-	j->ln = localName;
-	j->qn = qName;
-	j->a = atts;
-	j->nsnames = nsnames;
-	j->nsvalues = nsvalues;
+	if(!d_ptr)
+		d_ptr = new Parser::EventPrivate;
+	Q_D(Parser::Event);
+	d->type = DocumentOpen;
+	d->ns = namespaceURI;
+	d->ln = localName;
+	d->qn = qName;
+	d->a = atts;
+	d->nsnames = nsnames;
+	d->nsvalues = nsvalues;
 }
 
 void Parser::Event::setDocumentClose( const QString &namespaceURI, const QString &localName, const QString &qName )
 {
-	if(!j_ptr)
-		j_ptr = new Parser::EventPrivate;
-	J_D(Parser::Event);
-	j->type = DocumentClose;
-	j->ns = namespaceURI;
-	j->ln = localName;
-	j->qn = qName;
+	if(!d_ptr)
+		d_ptr = new Parser::EventPrivate;
+	Q_D(Parser::Event);
+	d->type = DocumentClose;
+	d->ns = namespaceURI;
+	d->ln = localName;
+	d->qn = qName;
 }
 
 void Parser::Event::setElement( const QDomElement &elem )
 {
-	if(!j_ptr)
-		j_ptr = new Parser::EventPrivate;
-	J_D(Parser::Event);
-	j->type = Element;
-	j->e = elem;
+	if(!d_ptr)
+		d_ptr = new Parser::EventPrivate;
+	Q_D(Parser::Event);
+	d->type = Element;
+	d->e = elem;
 }
 
 void Parser::Event::setError()
 {
-	if(!j_ptr)
-		j_ptr = new Parser::EventPrivate;
-	J_D(Parser::Event);
-	j->type = Error;
+	if(!d_ptr)
+		d_ptr = new Parser::EventPrivate;
+	Q_D(Parser::Event);
+	d->type = Error;
 }
 
 void Parser::Event::setActualString( const QString &str )
 {
-	if(!j_ptr)
-		j_ptr = new Parser::EventPrivate;
-	J_D(Parser::Event);
-	j->str = str;
+	if(!d_ptr)
+		d_ptr = new Parser::EventPrivate;
+	Q_D(Parser::Event);
+	d->str = str;
 }
 
 bool Parser::Event::isNull() const
 {
-	J_D(const Parser::Event);
-	return j == 0;
+	return d_func() == 0;
 }
 
 //----------------------------------------------------------------------------
@@ -171,42 +171,40 @@ bool Parser::Event::isNull() const
 //----------------------------------------------------------------------------
 
 
-Parser::Parser() : QObject(0)
+Parser::Parser() : QObject(0), d_ptr(new ParserPrivate(this))
 {
-	j_ptr = new ParserPrivate(this);
 }
 
 Parser::~Parser()
 {
-	delete j_ptr;
 }
 
 void Parser::reset()
 {
-	j_ptr->reset();
+	d_ptr->reset();
 }
 
 void Parser::appendData(const QByteArray &a)
 {
-	j_ptr->in->appendData(a);
+	d_ptr->in->appendData(a);
 
 	// if handler was waiting for more, give it a kick
-	if(j_ptr->handler->needMore)
-		j_ptr->handler->checkNeedMore();
+	if(d_ptr->handler->needMore)
+		d_ptr->handler->checkNeedMore();
 }
 
 Parser::Event Parser::readNext()
 {
 	Event e;
-	if(j_ptr->handler->needMore)
+	if(d_ptr->handler->needMore)
 		return e;
-	Event *ep = j_ptr->handler->takeEvent();
+	Event *ep = d_ptr->handler->takeEvent();
 	if(!ep) {
-		if(!j_ptr->reader->parseContinue()) {
+		if(!d_ptr->reader->parseContinue()) {
 			e.setError();
 			return e;
 		}
-		ep = j_ptr->handler->takeEvent();
+		ep = d_ptr->handler->takeEvent();
 		if(!ep)
 			return e;
 	}
@@ -217,12 +215,12 @@ Parser::Event Parser::readNext()
 
 QByteArray Parser::unprocessed() const
 {
-	return j_ptr->in->unprocessed();
+	return d_ptr->in->unprocessed();
 }
 
 QString Parser::encoding() const
 {
-	return j_ptr->in->encoding();
+	return d_ptr->in->encoding();
 }
 
-J_END_NAMESPACE
+}

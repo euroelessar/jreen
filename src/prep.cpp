@@ -20,7 +20,8 @@
 
 #define JID_PORTION_SIZE 1023
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 static QString prepare( const QString &s, bool *ok, const Stringprep_profile* profile )
 {
@@ -77,4 +78,4 @@ QString Prep::idna( const QString &domain, bool *ok )
 	return QString();
 }
 
-J_END_NAMESPACE
+}

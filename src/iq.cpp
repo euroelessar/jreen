@@ -17,7 +17,8 @@
 #include "stanza_p.h"
 #include <QStringList>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(iq)
 
@@ -33,54 +34,54 @@ struct IQPrivate : public StanzaPrivate
 
 IQ::IQ( Type type, const JID& to, const QString& id ) : Stanza(new IQPrivate)
 {
-	J_D(IQ);
-	j->subtype = type;
-	j->to = to;
-	j->id = id;
+	Q_D(IQ);
+	d->subtype = type;
+	d->to = to;
+	d->id = id;
 }
 
 IQ::IQ( const QDomElement &node ) : Stanza(node, new IQPrivate)
 {
-	J_D(IQ);
+	Q_D(IQ);
 	if( node.nodeName() != iq_str )
 	{
-		j->subtype = Invalid;
+		d->subtype = Invalid;
 		return;
 	}
 	int type = iq_types.indexOf( node.attribute( ConstString::type ) );
-	j->subtype = type < 0 ? Invalid : static_cast<Type>( type );
+	d->subtype = type < 0 ? Invalid : static_cast<Type>( type );
 }
 
 IQ::Type IQ::subtype() const
 {
-	J_D(const IQ);
-	return j->subtype;
+	Q_D(const IQ);
+	return d->subtype;
 }
 
 QDomElement IQ::node() const
 {
-	J_D(const IQ);
-	if( !j->node.isNull() )
-		return j->node;
+	Q_D(const IQ);
+	if( !d->node.isNull() )
+		return d->node;
 	QDomElement node = DomCreater::instance().createElement( iq_str );
-	j->setAttributes( node );
-	if( j->subtype == Invalid )
+	d->setAttributes( node );
+	if( d->subtype == Invalid )
 		return node;
-	node.setAttribute( ConstString::type, iq_types.at( j->subtype ) );
-	j->addExtensions( node );
+	node.setAttribute( ConstString::type, iq_types.at( d->subtype ) );
+	d->addExtensions( node );
 	return node;
 }
 
 void IQ::accept() const
 {
-	J_D(const IQ);
-	j->accepted = true;
+	Q_D(const IQ);
+	d->accepted = true;
 }
 
 bool IQ::accepted() const
 {
-	J_D(const IQ);
-	return j->accepted;
+	Q_D(const IQ);
+	return d->accepted;
 }
 
-J_END_NAMESPACE
+}

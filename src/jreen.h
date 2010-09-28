@@ -38,26 +38,6 @@
 #  define JREEN_EXPORT
 # endif
 
-# ifndef J_NAMESPACE
-#  define J_NAMESPACE jreen
-# endif
-
-# define J_USE_NAMESPACE using namespace ::J_NAMESPACE;
-# define J_BEGIN_NAMESPACE namespace J_NAMESPACE {
-
-# ifdef J_BUILD_LIBRARY
-#  define J_END_NAMESPACE } \
-	J_USE_NAMESPACE
-# else
-# define J_END_NAMESPACE }
-# endif
-
-# define J_DECLARE_PRIVATE(Class) \
-	inline Class##Private* j_func() { return reinterpret_cast<Class##Private *>(j_ptr); } \
-	inline const Class##Private* j_func() const { return reinterpret_cast<Class##Private *>(j_ptr); } \
-	friend class Class##Private;
-
-# define J_D(Class) Class##Private * const j = j_func()
 
 # define J_PURE_SINGLETON(Class) \
 public: \
@@ -125,7 +105,7 @@ public:
 #  define forelements J_FORELEMENTS
 # endif
 
-namespace J_NAMESPACE
+namespace jreen
 {
 	JREEN_EXPORT QDomElement createElement( QDomDocument *doc, const QString &name, const QString &value = QString() );
 	JREEN_EXPORT QDomElement createElement( QDomElement parent, const QString &name, const QString &value = QString() );

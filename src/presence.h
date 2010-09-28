@@ -18,14 +18,15 @@
 
 #include "stanza.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct PresencePrivate;
 class Capabilities;
 
 class JREEN_EXPORT Presence : public Stanza
 {
-	J_DECLARE_PRIVATE(Presence)
+	Q_DECLARE_PRIVATE(Presence)
 public:
 	/**
 	 * Describes the different valid presence types.
@@ -48,7 +49,7 @@ public:
 			  int priority = 0, const QString &xmllang = QString() );
 	Presence( const QDomElement &node );
 	inline Presence &operator =( const Presence &stanza )
-		{ return *static_cast<Presence *>( &J_NAMESPACE::Stanza::operator =( stanza ) ); }
+		{ return *static_cast<Presence *>( &jreen::Stanza::operator =( stanza ) ); }
 	Type subtype() const;
 	const Capabilities *capabilities() const;
 	Type presence() const;
@@ -61,6 +62,6 @@ public:
 	QDomElement node() const;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // PRESENCE_H

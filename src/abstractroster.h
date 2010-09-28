@@ -29,7 +29,8 @@
 template<typename T>
 inline uint qHash(QSharedPointer<T> key) { return qHash(key.data()); }
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class Client;
 class IQ;
@@ -110,17 +111,17 @@ struct AbstractResourcePrivate
 
 class JREEN_EXPORT AbstractResource
 {
-	J_DECLARE_PRIVATE(AbstractResource)
+	Q_DECLARE_PRIVATE(AbstractResource)
 	friend class AbstractRoster;
 public:
-	inline AbstractResource( AbstractResourcePrivate *data = 0 ) : j_ptr(data?data:new AbstractResourcePrivate) {}
-	inline const QString &message( const QString &lang = QString() ) const { return j_ptr->presence.status( lang ); }
-	inline int priority() const { return j_ptr->presence.priority(); }
-	inline const QString &resource() const { return j_ptr->resource; }
-	inline Presence::Type presence() const { return j_ptr->presence.subtype(); }
-	inline const StanzaExtensionList &extensions() const { return j_ptr->presence.extensions(); }
+	inline AbstractResource( AbstractResourcePrivate *data = 0 ) : d_ptr(data?data:new AbstractResourcePrivate) {}
+	inline const QString &message( const QString &lang = QString() ) const { return d_ptr->presence.status( lang ); }
+	inline int priority() const { return d_ptr->presence.priority(); }
+	inline const QString &resource() const { return d_ptr->resource; }
+	inline Presence::Type presence() const { return d_ptr->presence.subtype(); }
+	inline const StanzaExtensionList &extensions() const { return d_ptr->presence.extensions(); }
 protected:
-	AbstractResourcePrivate	*j_ptr;
+	AbstractResourcePrivate	*d_ptr;
 };
 
 struct AbstractRosterItemPrivate;
@@ -128,7 +129,7 @@ struct AbstractRosterItemPrivate;
 class JREEN_EXPORT AbstractRosterItem
 {
 	J_ROSTER_ITEM(AbstractResource)
-	J_DECLARE_PRIVATE(AbstractRosterItem)
+	Q_DECLARE_PRIVATE(AbstractRosterItem)
 	friend class AbstractRoster;
 	enum SubscriptionType
 	{
@@ -152,7 +153,7 @@ public:
 protected:
 	virtual void setData( const QSharedPointer<AbstractRosterItem> &item );
 	inline void setChanged();
-	AbstractRosterItemPrivate *j_ptr;
+	QScopedPointer<AbstractRosterItemPrivate> d_ptr;
 	AbstractRoster *m_roster;
 	QHash<QString, QSharedPointer<AbstractResource> > m_resources;
 };
@@ -176,10 +177,10 @@ class JREEN_EXPORT AbstractRoster : public QObject
 {
 	Q_OBJECT
 	J_ROSTER(AbstractRosterItem)
-	J_DECLARE_PRIVATE(AbstractRoster)
+	Q_DECLARE_PRIVATE(AbstractRoster)
 public:
 	AbstractRoster( Client *client, AbstractRosterPrivate *data = 0 );
-	virtual ~AbstractRoster() { if( j_ptr ) delete j_ptr; }
+	virtual ~AbstractRoster() {}
 public slots:
 	virtual void load();
 	virtual void synchronize();
@@ -216,7 +217,7 @@ protected:
 	virtual void onItemUpdated( QSharedPointer<AbstractRosterItem> item ) { Q_UNUSED(item); }
 	virtual void onItemRemoved( const QString &jid ) { Q_UNUSED(jid); }
 	virtual void onLoaded( const QList<QSharedPointer<AbstractRosterItem> > &items );
-	AbstractRosterPrivate *j_ptr;
+	QScopedPointer<AbstractRosterPrivate> d_ptr;
 	QSharedPointer<AbstractRosterItem> m_self;
 	QHash<QString, QSharedPointer<AbstractRosterItem> > m_items;
 	QSet<QSharedPointer<AbstractRosterItem> > m_changed_items;
@@ -226,44 +227,44 @@ protected:
 
 inline const QString &AbstractRosterItem::jid() const
 {
-	return j_ptr->jid;
+	return d_ptr->jid;
 }
 
 inline const QString &AbstractRosterItem::name() const
 {
-	return j_ptr->name;
+	return d_ptr->name;
 }
 
 inline const QStringList &AbstractRosterItem::groups() const
 {
-	return j_ptr->groups;
+	return d_ptr->groups;
 }
 
 inline AbstractRosterItem::SubscriptionType AbstractRosterItem::subscriptionType() const
 {
-	return j_ptr->subscription;
+	return d_ptr->subscription;
 }
 
 inline const QString &AbstractRosterItem::ask() const
 {
-	return j_ptr->ask;
+	return d_ptr->ask;
 }
 
 inline void AbstractRosterItem::setGroups( const QStringList &groups )
 {
-	setChanged(); j_ptr->groups = groups;
+	setChanged(); d_ptr->groups = groups;
 }
 
 inline void AbstractRosterItem::setName( const QString &name )
 {
-	setChanged(); j_ptr->name = name;
+	setChanged(); d_ptr->name = name;
 }
 
 inline void AbstractRosterItem::setChanged()
 {
-	m_roster->m_changed_items << m_roster->m_items.value( j_ptr->jid );
+	m_roster->m_changed_items << m_roster->m_items.value( d_ptr->jid );
 }
 
-J_END_NAMESPACE
+}
 
 #endif // ABSTRACTROSTER_H

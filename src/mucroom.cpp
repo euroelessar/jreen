@@ -1,9 +1,10 @@
 #include "mucroom.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 MucRoom::MucRoom( Client *client, const JID &jid )
 {
 }
 
-J_END_NAMESPACE
+}

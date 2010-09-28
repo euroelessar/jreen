@@ -18,7 +18,8 @@
 #include "langmap.h"
 #include <QStringList>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(text)
 J_STRING(error)
@@ -64,49 +65,51 @@ struct ErrorPrivate
 	QDomElement app_element;
 };
 
-Error::Error( const QDomElement &node )
+Error::Error( const QDomElement &node ) : d_ptr(new ErrorPrivate)
 {
-	j_ptr = new ErrorPrivate;
-	J_D(Error);
+	Q_D(Error);
 	if( node.isNull() )
 		return;
-	j->condition = Undefined;
+	d->condition = Undefined;
 	int type = error_types.indexOf( node.attribute( ConstString::type ) );
-	j->type = type < 0 ? UndefinedType : static_cast<Type>( type );
+	d->type = type < 0 ? UndefinedType : static_cast<Type>( type );
 	forelements( const QDomElement &elem, node )
 	{
 		QString name = elem.nodeName();
 		int condition = error_conditions.indexOf( name );
 		if( condition > -1 )
-			j->condition = static_cast<Condition>( condition );
+			d->condition = static_cast<Condition>( condition );
 		else if( name == text_str )
-			j->text.insert( elem.attribute( ConstString::lang ), elem.text() );
+			d->text.insert( elem.attribute( ConstString::lang ), elem.text() );
 		else
-			j->app_element = elem;
+			d->app_element = elem;
 	}
 }
 
-Error::Error( Type type, Condition condition, const QDomElement &app_element )
+Error::Error( Type type, Condition condition, const QDomElement &app_element ) : d_ptr(new ErrorPrivate)
 {
-	j_ptr = new ErrorPrivate;
-	J_D(Error);
-	j->type = type;
-	j->condition = condition;
-	j->app_element = app_element;
+	Q_D(Error);
+	d->type = type;
+	d->condition = condition;
+	d->app_element = app_element;
+}
+
+Error::~Error()
+{
 }
 
 QDomElement Error::node( QDomDocument *document ) const
 {
 	static const QString stanzas_str( "urn:ietf:params:xml:ns:xmpp-stanzas" );
-	J_D(const Error);
-	if( j->type == UndefinedType || j->condition == Undefined )
+	Q_D(const Error);
+	if( d->type == UndefinedType || d->condition == Undefined )
 		return QDomElement();
 	QDomElement node = createElement( document, error_str );
-	node.setAttribute( ConstString::type, error_str.at( j->type ) );
-	QDomElement error = createElement( document, error_conditions.at( j->condition ) );
+	node.setAttribute( ConstString::type, error_str.at( d->type ) );
+	QDomElement error = createElement( document, error_conditions.at( d->condition ) );
 	error.setAttribute( ConstString::xmlns, stanzas_str );
-	j->text.fillNode( node, text_str, stanzas_str );
+	d->text.fillNode( node, text_str, stanzas_str );
 	return node;
 }
 
-J_END_NAMESPACE
+}

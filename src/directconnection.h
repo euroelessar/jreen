@@ -21,14 +21,15 @@
 class QAbstractSocket;
 class QHostAddress;
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class DirectConnectionPrivate;
 
 class JREEN_EXPORT DirectConnection : public Connection
 {
 	Q_OBJECT
-	J_DECLARE_PRIVATE(DirectConnection)
+	Q_DECLARE_PRIVATE(DirectConnection)
 
 public:
 	~DirectConnection();
@@ -42,12 +43,12 @@ protected:
 	DirectConnection( QAbstractSocket *socket, const QHostAddress &address, quint16 port );
 	qint64 readData( char *data, qint64 maxlen );
 	qint64 writeData( const char *data, qint64 len );
-	DirectConnectionPrivate *j_ptr;
+	QScopedPointer<DirectConnectionPrivate> d_ptr;
 };
 
 //typedef DirectConnection<QTcpSocket> TcpConnection;
 //typedef DirectConnection<QUdpSocket> UdpConnection;
 
-J_END_NAMESPACE
+}
 
 #endif // DIRECTCONNECTION_H

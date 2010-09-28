@@ -22,7 +22,8 @@
 #include <QLinkedList>
 #include <QXmlAttributes>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class XQueryElement;
 class XQueryContainer;
@@ -77,6 +78,6 @@ private:
 	friend class XQueryContainer;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // XQUERYELEMENT_H

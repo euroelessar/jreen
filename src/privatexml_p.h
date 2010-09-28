@@ -24,7 +24,8 @@
 #include "error.h"
 #include <QHash>
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class PrivateXmlTrack : public QObject
 {
@@ -78,6 +79,6 @@ enum PrivateXmlContext
 	Store
 };
 
-J_END_NAMESPACE
+}
 
 #endif // PRIVATEXML_P_H

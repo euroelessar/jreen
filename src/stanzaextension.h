@@ -23,7 +23,8 @@
 
 template <typename T, typename X> class QMap;
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct JREEN_EXPORT StanzaExtensionMeta
 {
@@ -49,6 +50,6 @@ public:
 typedef QSharedPointer<StanzaExtension>   StanzaExtensionPointer;
 typedef QMap<int, StanzaExtensionPointer> StanzaExtensionList;
 
-J_END_NAMESPACE
+}
 
 #endif // STANZAEXTENSION_H

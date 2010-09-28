@@ -21,21 +21,22 @@
 #include <QXmlInputSource>
 #include "jreen.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class ParserPrivate;
 
 class Parser : public QObject
 {
-	ParserPrivate *j_ptr;
+	QScopedPointer<ParserPrivate> d_ptr;
 	Q_OBJECT
 public:
 	class EventPrivate;
 	class Event
 	{
 		friend class Parser;
-		J_DECLARE_PRIVATE(Event)
-		EventPrivate *j_ptr;
+		Q_DECLARE_PRIVATE(Event)
+		EventPrivate *d_ptr;
 	public:
 		enum Type { DocumentOpen = 0, DocumentClose = 1, Element = 2, Error = 3 };
 
@@ -81,6 +82,6 @@ public:
 	QString encoding() const;
 };
 
-J_END_NAMESPACE
+}
 
 #endif

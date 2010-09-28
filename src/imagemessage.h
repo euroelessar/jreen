@@ -18,7 +18,8 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 class ImageMessage : public StanzaExtension
 {
@@ -32,6 +33,6 @@ private:
 	QByteArray m_data;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // IMAGEMESSAGE_H

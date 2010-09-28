@@ -16,7 +16,8 @@
 #include "imagemessage.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(img)
 
@@ -40,4 +41,4 @@ QDomElement ImageMessage::node( QDomDocument *doc ) const
 	return node;
 }
 
-J_END_NAMESPACE
+}

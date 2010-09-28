@@ -18,14 +18,15 @@
 
 #include "stanzaextension.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 struct ErrorPrivate;
 
 class JREEN_EXPORT Error : public StanzaExtension
 {
 	J_EXTENSION(Error,"/*/error")
-	J_DECLARE_PRIVATE(Error)
+	Q_DECLARE_PRIVATE(Error)
 public:
 	enum Type
 	{
@@ -148,11 +149,12 @@ public:
 //	};
 	Error( const QDomElement &node = QDomElement() );
 	Error( Type type, Condition condition, const QDomElement &app_element = QDomElement() );
+	~Error();
 	QDomElement node( QDomDocument *document ) const;
 private:
-	ErrorPrivate *j_ptr;
+	QScopedPointer<ErrorPrivate> d_ptr;
 };
 
-J_END_NAMESPACE
+}
 
 #endif // ERROR_H

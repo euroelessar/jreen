@@ -20,7 +20,8 @@
 #include "disco.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(ver)
 J_STRING(hash)
@@ -85,4 +86,4 @@ QString Capabilities::ver() const
 	return QString::fromLatin1( QCryptographicHash::hash( s.toUtf8(), QCryptographicHash::Sha1 ).toBase64() );
 }
 
-J_END_NAMESPACE
+}

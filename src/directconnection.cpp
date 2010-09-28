@@ -15,49 +15,49 @@
 
 #include "directconnection_p.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 DirectConnection::DirectConnection( QAbstractSocket *socket, const QString &host_name, quint16 port )
-		: j_ptr(new DirectConnectionPrivate(host_name, port, this))
+		: d_ptr(new DirectConnectionPrivate(host_name, port, this))
 {
 	Q_ASSERT( socket );
-	j_ptr->socket = socket;
-	j_ptr->connectSocket();
+	d_ptr->socket = socket;
+	d_ptr->connectSocket();
 }
 
 DirectConnection::DirectConnection( QAbstractSocket *socket, const QHostAddress &address, quint16 port )
-		: j_ptr(new DirectConnectionPrivate(address.toString(), port, this))
+		: d_ptr(new DirectConnectionPrivate(address.toString(), port, this))
 {
 	Q_ASSERT( socket );
-	j_ptr->socket = socket;
-	j_ptr->connectSocket();
+	d_ptr->socket = socket;
+	d_ptr->connectSocket();
 }
 
 DirectConnection::~DirectConnection()
 {
-	delete j_ptr->socket;
-	delete j_ptr;
+	delete d_ptr->socket;
 }
 
 bool DirectConnection::open()
 {
-	J_D(DirectConnection);
-	if( j->socket_state != QAbstractSocket::UnconnectedState )
+	Q_D(DirectConnection);
+	if( d->socket_state != QAbstractSocket::UnconnectedState )
 	{
-		if( j->socket_state == QAbstractSocket::ListeningState )
+		if( d->socket_state == QAbstractSocket::ListeningState )
 		{
-			j->socket_state = QAbstractSocket::ConnectedState;
+			d->socket_state = QAbstractSocket::ConnectedState;
 			QIODevice::open( ReadWrite );
-			emit stateChanged( static_cast<SocketState>( j->socket_state ) );
+			emit stateChanged( static_cast<SocketState>( d->socket_state ) );
 		}
 		return true;
 	}
-	if( j->do_lookup )
+	if( d->do_lookup )
 	{
-		j->doLookup();
+		d->doLookup();
 	}
 	else
-		j->socket->connectToHost( j->host_name, j->port );
+		d->socket->connectToHost( d->host_name, d->port );
 	return true;
 }
 
@@ -67,26 +67,26 @@ void DirectConnection::close()
 
 Connection::SocketState DirectConnection::socketState() const
 {
-	J_D(const DirectConnection);
-	return static_cast<SocketState>( j->socket_state );
+	Q_D(const DirectConnection);
+	return static_cast<SocketState>( d->socket_state );
 }
 
 Connection::SocketError DirectConnection::socketError() const
 {
-	J_D(const DirectConnection);
-	return static_cast<SocketError>( j->socket_error );
+	Q_D(const DirectConnection);
+	return static_cast<SocketError>( d->socket_error );
 }
 
 qint64 DirectConnection::readData( char *data, qint64 maxlen )
 {
-	J_D(DirectConnection);
-	return j->socket->read( data, maxlen );
+	Q_D(DirectConnection);
+	return d->socket->read( data, maxlen );
 }
 
 qint64 DirectConnection::writeData( const char *data, qint64 len )
 {
-	J_D(DirectConnection);
-	return j->socket->write( data, len );
+	Q_D(DirectConnection);
+	return d->socket->write( data, len );
 }
 
-J_END_NAMESPACE
+}

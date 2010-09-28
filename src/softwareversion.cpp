@@ -16,7 +16,8 @@
 #include "softwareversion.h"
 #include "jstrings.h"
 
-J_BEGIN_NAMESPACE
+namespace jreen
+{
 
 J_STRING(name)
 J_STRING(version)
@@ -56,4 +57,4 @@ QDomElement SoftwareVersion::node( QDomDocument *document ) const
 }
 
 
-J_END_NAMESPACE
+}
