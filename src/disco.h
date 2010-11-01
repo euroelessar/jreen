@@ -50,7 +50,7 @@ public:
 
 	class Info : public StanzaExtension
 	{
-		J_EXTENSION(Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
+		J_EXTENSION(jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
 	public:
 		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
 		: m_node(node), m_identities(identities), m_features(features), m_form(form) {}
@@ -80,7 +80,7 @@ public:
 
 	class Items : public StanzaExtension
 	{
-		J_EXTENSION(Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
+		J_EXTENSION(jreen::Disco::Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
 	public:
 		inline Items(const QString &node = QString(), const ItemList &items = ItemList())
 				: m_items(items), m_node(node) {}

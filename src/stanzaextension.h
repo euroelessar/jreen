@@ -19,37 +19,137 @@
 #include <QDomElement>
 #include <QObject>
 #include <QSharedPointer>
+#include <QMetaTypeId>
 #include "jreen.h"
 
-template <typename T, typename X> class QMap;
+class QXmlStreamWriter;
+class QXmlStreamAttributes;
+template <typename T, typename X> class QMultiMap;
 
 namespace jreen
 {
 
-struct JREEN_EXPORT StanzaExtensionMeta
-{
-	StanzaExtensionMeta(const char *name = 0, const char *xpath = 0);
-	const QByteArray name;
-	const QString xpath;
-	const int type;
-};
+class Client;
 
 class JREEN_EXPORT StanzaExtension
 {
 	Q_DISABLE_COPY(StanzaExtension)
 public:
-	inline StanzaExtension() {}
-	virtual ~StanzaExtension() {}
-	virtual QString xPath() const = 0;
-	virtual StanzaExtension *fromNode(const QDomElement &node) const = 0;
-	virtual QDomElement node(QDomDocument *document) const = 0;
+	typedef QSharedPointer<StanzaExtension> Ptr;
+			
+	StanzaExtension();
+	virtual ~StanzaExtension();
+	
+	static int registerExtensionType(const char *type);
+	
 	virtual int extensionType() const = 0;
-	virtual QByteArray extensionName() const = 0;
 };
 
+class JREEN_EXPORT AbstractStanzaExtensionFactory
+{
+	Q_DISABLE_COPY(AbstractStanzaExtensionFactory)
+public:
+	AbstractStanzaExtensionFactory(Client *client);
+	virtual ~AbstractStanzaExtensionFactory();
+	
+	virtual QStringList features() const = 0;
+	virtual int extensionType() const = 0;
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri) = 0;
+	virtual void handleCharacterData(const QStringRef &name) = 0;
+	virtual void serialize(StanzaExtension *extension, QXmlStreamWriter *writer) = 0;
+	virtual StanzaExtension::Ptr createExtension() = 0;
+};
+
+template <typename Extension>
+class JREEN_EXPORT StanzaExtensionFactory : public AbstractStanzaExtensionFactory
+{
+	Q_DISABLE_COPY(StanzaExtensionFactory)
+public:
+	StanzaExtensionFactory(Client *client);
+	virtual ~StanzaExtensionFactory();
+	
+	virtual int extensionType() const { return qMetaTypeId<Extension>(); }
+};
+
+template <typename Extension>
+class JREEN_EXPORT SimpleStanzaExtensionFactory : public StanzaExtensionFactory<Extension>
+{
+	Q_DISABLE_COPY(SimpleStanzaExtensionFactory)
+public:
+	SimpleStanzaExtensionFactory(const QString &name, const QString &uri, Client *client)
+		: SimpleStanzaExtensionFactory(client), m_elementName(name), m_elementUri(uri) {}
+
+	virtual ~SimpleStanzaExtensionFactory() {}
+	
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(attributes);
+		return name == m_elementName && uri == m_elementUri;
+	}
+private:
+	QString m_elementName;
+	QString m_elementUri;
+};
+
+//template <typename T>
+//Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)
+//{
+//	if (se && qMetaTypeId<T>() == se->extensionType())
+//		return static_cast<T>(se);
+//	return 0;
+//}
+
+template <typename T>
+Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)
+{
+	if (se && reinterpret_cast<T>(0)->staticExtensionType() == se->extensionType())
+		return static_cast<T>(se);
+	return 0;
+}
+
 typedef QSharedPointer<StanzaExtension>   StanzaExtensionPointer;
-typedef QMap<int, StanzaExtensionPointer> StanzaExtensionList;
+typedef QMultiMap<int, StanzaExtension::Ptr> StanzaExtensionList;
 
 }
+
+//#define J_EXTENSION(Class) \
+//	public: \
+//		static inline int staticExtensionType() \
+//		{ \
+//			static int __type = StanzaExtension::registerType(#Class); \
+//			Class *typeCheck = reinterpret_cast<::Class*>(0); \
+//			Q_UNUSED(typeCheck); \
+//			return __type; \
+//		} \
+//		virtual int extensionType() const { return staticExtensionType(); } \
+//	private:
+		
+
+
+#define J_EXTENSION(Class, XPath) \
+	public:  \
+		static int staticExtensionType() \
+		{ \
+			static QBasicAtomicInt extension_type = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			if (!extension_type) { \
+				extension_type = StanzaExtension::registerExtensionType( #Class ); \
+				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \
+				Q_UNUSED(useFullNameWithNamespaces); \
+			} \
+			return extension_type; \
+		} \
+		virtual int extensionType() const \
+		{ \
+			Q_UNUSED(static_cast<const ::Class*>(this)); \
+			return staticExtensionType(); \
+		} \
+	private:
+
+#define J_DECLARE_EXTENSION(Class) 
+		//\
+	//Q_DECLARE_METATYPE(Class*) \
+	//int Class::extensionType() const { return qMetaTypeId<Class*>(); }
 
 #endif // STANZAEXTENSION_H

@@ -42,31 +42,31 @@ void XQueryContainer::registerStanzaExtension(StanzaExtension *extension, Disco 
 		}
 		m_all_stanza_extensions.remove(stanza_extension->extensionType());
 	}
-	QStringList xpaths = stanza_extension->xPath().split('|');
-	foreach(const QString &xpath, xpaths)
-	{
-		if(xpath.startsWith(QLatin1String("//")))
-			continue;
-		XQueryElement *xquery = addChild(xpath.constData(), disco);
-		xquery->addStanzaExtension(stanza_extension);
-		m_all_stanza_extensions.insert(stanza_extension->extensionType(), xquery);
-	}
+//	QStringList xpaths = stanza_extension->xPath().split('|');
+//	foreach(const QString &xpath, xpaths)
+//	{
+//		if(xpath.startsWith(QLatin1String("//")))
+//			continue;
+//		XQueryElement *xquery = addChild(xpath.constData(), disco);
+//		xquery->addStanzaExtension(stanza_extension);
+//		m_all_stanza_extensions.insert(stanza_extension->extensionType(), xquery);
+//	}
 }
 
 void XQueryContainer::registerStreamFeature(StreamFeature *feature)
 {
 	if(!feature)
 		return;
-	StreamFeaturePointer stream_feature(feature);
-	QStringList xpaths = stream_feature->xPath().split('|');
-	foreach(const QString &xpath, xpaths)
-	{
-		if(xpath.startsWith(QLatin1String("//")))
-			continue;
-		XQueryElement *xquery = addChild(xpath.constData(), 0);
-		xquery->addStreamFeature(stream_feature);
-		m_all_stream_features.append(xquery);
-	}
+//	StreamFeaturePointer stream_feature(feature);
+//	QStringList xpaths = stream_feature->xPath().split('|');
+//	foreach(const QString &xpath, xpaths)
+//	{
+//		if(xpath.startsWith(QLatin1String("//")))
+//			continue;
+//		XQueryElement *xquery = addChild(xpath.constData(), 0);
+//		xquery->addStreamFeature(stream_feature);
+//		m_all_stream_features.append(xquery);
+//	}
 }
 
 void XQueryContainer::parseElement(Stanza &stanza, const QDomElement &node)

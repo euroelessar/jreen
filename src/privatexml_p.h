@@ -47,7 +47,7 @@ struct PrivateXmlPrivate
 
 class PrivateXml::Query : public StanzaExtension
 {
-	J_EXTENSION(Query,"/iq/query[@xmlns='jabber:iq:private']");
+	J_EXTENSION(jreen::PrivateXml::Query,"/iq/query[@xmlns='jabber:iq:private']");
 public:
 	Query(const QDomElement &node = QDomElement())
 	{

@@ -25,7 +25,8 @@ namespace jreen
 
 class DelayedDelivery : public StanzaExtension
 {
-	J_EXTENSION(DelayedDelivery,
+public:
+	J_EXTENSION(jreen::DelayedDelivery,
 		   "/presence/delay[@xmlns='jabber:x:delay']"
 		   "|/message/delay[@xmlns='jabber:x:delay']"
 		   "|/presence/x[@xmlns='jabber:x:delay']"
@@ -33,7 +34,7 @@ class DelayedDelivery : public StanzaExtension
 public:
 	DelayedDelivery(const JID& from, const QDateTime &date_time, const QString &reason = QString());
 	DelayedDelivery(const QDomElement &node = QDomElement());
-	QDomElement node(QDomDocument *document) const;
+	void writeXml(QXmlStreamWriter *writer) const;
 	inline const JID &from() const { return m_from; }
 	inline const QString &reason() const { return m_reason; }
 	inline const QDateTime &dateTime() const { return m_date_time; }
@@ -44,5 +45,7 @@ private:
 };
 
 }
+
+J_DECLARE_EXTENSION(jreen::DelayedDelivery)
 
 #endif // DELAYEDDELIVERY_H

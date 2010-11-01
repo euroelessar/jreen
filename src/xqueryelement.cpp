@@ -282,7 +282,7 @@ void XQueryElement::parseElement(Stanza &stanza, const QDomElement &node)
 	StanzaExtensionList::iterator i = m_stanza_extensions.begin();
 	for(; i != m_stanza_extensions.end(); i++)
 	{
-		stanza.addExtension((*i)->fromNode(node));
+//		stanza.addExtension((*i)->fromNode(node));
 	}
 	forelements(const QDomElement &element, node)
 	{

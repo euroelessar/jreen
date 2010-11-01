@@ -24,7 +24,76 @@
 
 namespace jreen
 {
+	enum State
+	{
+		WaitingForStanza,
+		ReadFeatures,
+		ReadStanza,
+		ReadCustom
+	};
 
+void ClientPrivate::readMore()
+{
+	qDebug("readMore");
+	State state = WaitingForStanza;
+	StreamFeature *currentFeature = 0;
+
+	while (reader->readNext() >= QXmlStreamReader::StartDocument) {
+		switch(reader->tokenType()) {
+		case QXmlStreamReader::StartElement:
+			if (depth == 1) {
+				if(reader->name() == QLatin1String("features")) {
+					state = ReadFeatures;
+				} else if (reader->name() == QLatin1String("iq")
+					|| reader->name() == QLatin1String("message")
+					|| reader->name() == QLatin1String("presence")) {
+					state = ReadStanza;
+				} else {
+					state = ReadCustom;
+				}
+			} else if (state == ReadFeatures && depth == 2) {
+				foreach (StreamFeature *feature, streamFeatures) {
+					if (feature->canHandle(reader->name(), reader->namespaceUri(), reader->attributes())) {
+						feature->handleStartElement(reader->name(), reader->namespaceUri(), reader->attributes());
+					}
+				}
+			}
+			qDebug() << reader->tokenString() << depth++ << reader->name();
+			break;
+		case QXmlStreamReader::EndElement:
+			qDebug() << reader->tokenString() << --depth << reader->name();
+			break;
+		case QXmlStreamReader::Characters:
+			qDebug() << reader->tokenString() << reader->text();
+			break;
+		default:
+			qDebug() << reader->tokenString();
+			break;
+		}
+	}
+	qDebug() << "after: " << reader->tokenType() << reader->tokenString();
+//		Parser::Event ev = parser->readNext();
+//		if(!ev)
+//			return;
+//		switch(ev.type())
+//		{
+//		case Parser::Event::Element:
+//			elementParsed(ev.element());
+//			break;
+//		case Parser::Event::DocumentOpen:{
+//			sid = ev.atts().value(ConstString::id);
+//			QString version = ev.atts().value(QLatin1String("version"));
+//			int major = version.isEmpty() ? 0 : version.section('.', 0, 0).toInt();
+//			int minor = version.isEmpty() ? 0 : version.section('.', 1, 1).toInt();
+//			Q_UNUSED(major);
+//			Q_UNUSED(minor);
+//			break;}
+//		default:
+//			break;
+//		}
+//		QTimer::singleShot(0, this, SLOT(readMore()));
+}
+	
 Client::Client(const JID &jid, const QString &password, int port)
 	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
@@ -139,6 +208,7 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 {
 	if(!stream_feature)
 		return;
+	impl->streamFeatures.append(stream_feature);
 	switch(stream_feature->type())
 	{
 	case StreamFeature::SimpleAuthorization:

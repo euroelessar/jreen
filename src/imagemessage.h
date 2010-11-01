@@ -23,7 +23,7 @@ namespace jreen
 
 class ImageMessage : public StanzaExtension
 {
-	J_EXTENSION(ImageMessage,"/message/img[@xmlns='qutim:img']")
+	J_EXTENSION(jreen::ImageMessage,"/message/img[@xmlns='qutim:img']")
 public:
 	ImageMessage(const QDomElement &node = QDomElement());
 	ImageMessage(const QByteArray &data);

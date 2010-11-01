@@ -27,7 +27,7 @@ namespace jreen
 
 class JREEN_EXPORT SoftwareVersion : public StanzaExtension
 {
-	J_EXTENSION(SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
+	J_EXTENSION(jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
 public:
 	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
 	SoftwareVersion(const QDomElement &node = QDomElement());

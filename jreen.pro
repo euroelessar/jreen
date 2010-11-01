@@ -5,13 +5,13 @@ QT += network \
     xml
 QT -= gui
 TARGET = jreen
-CONFIG += dll
-TEMPLATE = lib
-VERSION = 0.1.0
+#CONFIG += dll
+#TEMPLATE = lib
+#VERSION = 0.1.0
 
-# CONFIG += console
+ CONFIG += console
 # CONFIG -= app_bundle
-# TEMPLATE = app
+ TEMPLATE = app
 SOURCES += src/jid.cpp \
     src/util.cpp \
     src/prep.cpp \
@@ -47,7 +47,8 @@ SOURCES += src/jid.cpp \
     src/nickname.cpp \
     src/receipt.cpp \
     src/mucroom.cpp \
-    src/stanzaextension.cpp
+    src/stanzaextension.cpp \
+    src/main.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \

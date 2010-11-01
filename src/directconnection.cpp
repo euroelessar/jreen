@@ -86,6 +86,7 @@ qint64 DirectConnection::readData(char *data, qint64 maxlen)
 qint64 DirectConnection::writeData(const char *data, qint64 len)
 {
 	Q_D(DirectConnection);
+	qDebug("\"%s\"", data);
 	return d->socket->write(data, len);
 }
 

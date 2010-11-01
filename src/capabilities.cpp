@@ -16,6 +16,7 @@
 #include <QCryptographicHash>
 #include <QStringList>
 #include <QMap>
+#include <QXmlStreamWriter>
 #include "capabilities.h"
 #include "disco.h"
 #include "jstrings.h"
@@ -38,14 +39,14 @@ Capabilities::Capabilities(const QDomElement &node) : m_disco(0)
 	m_ver = node.attribute(ver_str);
 }
 
-QDomElement Capabilities::node(QDomDocument *document) const
+void Capabilities::writeXml(QXmlStreamWriter *writer) const
 {
-	QDomElement node = createElement(document, QLatin1String("c"));
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_caps);
-	node.setAttribute(hash_str, QLatin1String("sha-1"));
-	node.setAttribute(ConstString::node, m_node);
-	node.setAttribute(ver_str, ver());
-	return node;
+	writer->writeStartElement(QLatin1String("c"));
+	writer->writeAttribute(ConstString::xmlns, ConstString::xmlns_caps);
+	writer->writeAttribute(hash_str, QLatin1String("sha-1"));
+	writer->writeAttribute(ConstString::node, m_node);
+	writer->writeAttribute(ver_str, ver());
+	writer->writeEndElement();
 }
 
 QString Capabilities::ver() const
@@ -55,7 +56,7 @@ QString Capabilities::ver() const
 	QString s;
 	QStringList sl;
 	const Disco::IdentityList &identity_list = m_disco->identities();
-	static const QString identity_template("%1/%2/%3/%4<");
+	const QString identity_template(QLatin1String("%1/%2/%3/%4<"));
 	foreach(const Disco::Identity &i, identity_list)
 		sl << identity_template.arg(i.category, i.type, i.lang, i.name);
 	sl.sort();

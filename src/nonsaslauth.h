@@ -24,7 +24,7 @@ namespace jreen
 
 class IQ;
 
-class JREEN_EXPORT NonSaslAuth : public StreamFeature
+class JREEN_EXPORT NonSaslAuth : public QObject, public StreamFeature
 {
 	J_FEATURE("/stream:features/auth[@xmlns='http://jabber.org/features/iq-auth']")
 	Q_OBJECT
@@ -40,13 +40,18 @@ public:
 	int priority() { return 10; }
 	void setStreamInfo(StreamInfo *info);
 	void reset();
-	void processElement(const QDomElement &node);
+	bool canHandle(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &name);
+	bool isActivatable();
+	bool activate();
 public slots:
 	void handleIq(const IQ &iq, int context);
 private:
 	class Query : public StanzaExtension
 	{
-		J_EXTENSION(Query,"/iq/query[@xmlns='jabber:iq:auth']")
+		J_EXTENSION(jreen::NonSaslAuth::Query,"/iq/query[@xmlns='jabber:iq:auth']")
 	public:
 		Query(const QDomElement &node = QDomElement());
 		QDomElement node(QDomDocument *document) const;
@@ -61,5 +66,20 @@ private:
 };
 
 }
+//template <>                                                         
+//struct QMetaTypeId< jreen::NonSaslAuth::Query* >                                          
+//{                                                                   
+//	enum { Defined = 1 };                                           
+//	static int qt_metatype_id()                                     
+//		{                                                           
+//			static QBasicAtomicInt metatype_id = Q_BASIC_ATOMIC_INITIALIZER(0); 
+//			if (!metatype_id)                                       
+//				metatype_id = qRegisterMetaType< jreen::NonSaslAuth::Query* >("jreen::NonSaslAuth::Query*",      
+//						   reinterpret_cast< jreen::NonSaslAuth::Query* *>(quintptr(-1))); 
+//			return metatype_id;                                     
+//		}                                                           
+//};                                                                  
+//Q_DECLARE_METATYPE(jreen::NonSaslAuth::Query*)
+//J_DECLARE_EXTENSION(jreen::NonSaslAuth::Query)
 
 #endif // NONSASLAUTH_H

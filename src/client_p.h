@@ -121,7 +121,7 @@ public:
 	void processStreamFeature(StreamFeature *stream_feature, const QDomElement &node)
 	{
 		current_stream_feature = stream_feature;
-		stream_feature->processElement(node);
+//		stream_feature->processElement(node);
 	}
 	void registerPresenceHandler(const JID &jid, QObject *handler, const char *member)
 	{
@@ -222,52 +222,43 @@ public:
 	StreamFeature *current_stream_feature;
 	QHash<QString,IQTrack *> iq_tracks;
 	QXmlStreamWriter *writer;
+	QXmlStreamReader *reader;
+	QList<StreamFeature*> streamFeatures;
+	int depth;
 public slots:
 	void newData()
 	{
 		QByteArray data = conn->readAll();
-		parser->appendData(data);
+		reader->addData(data);
+//		parser->appendData(data);
 		readMore();
 	}
-	void readMore()
-	{
-//		qDebug("readMore");
-		Parser::Event ev = parser->readNext();
-		if(!ev)
-			return;
-		switch(ev.type())
-		{
-		case Parser::Event::Element:
-			elementParsed(ev.element());
-			break;
-		case Parser::Event::DocumentOpen:{
-			sid = ev.atts().value(ConstString::id);
-			QString version = ev.atts().value(QLatin1String("version"));
-			int major = version.isEmpty() ? 0 : version.section('.', 0, 0).toInt();
-			int minor = version.isEmpty() ? 0 : version.section('.', 1, 1).toInt();
-			Q_UNUSED(major);
-			Q_UNUSED(minor);
-			break;}
-		default:
-			break;
-		}
-		QTimer::singleShot(0, this, SLOT(readMore()));
-	}
+	void readMore();
 	void connected()
 	{
 		writer = new QXmlStreamWriter(conn);
+		reader = new QXmlStreamReader();
+		depth = 0;
 		writer->writeStartDocument(QLatin1String("1.0"));
 		writer->writeStartElement(QLatin1String("stream:stream"));
-		writer->writeAttribute(ConstString::to, jid.domain());
-		writer->writeAttribute(ConstString::xmlns, QLatin1String("jabber:client"));
-		writer->writeAttribute("stream", "xmlns", "http://etherx.jabber.org/streams");
-		writer->writeAttribute("xml", "lang", "en");
+		writer->writeAttribute("to", jid.domain());
+		writer->writeDefaultNamespace("jabber:client");
+		writer->writeAttribute("xmlns:stream", "http://etherx.jabber.org/streams");
+		writer->writeAttribute("xml:lang", "en");
 		writer->writeAttribute("version", "1.0");
+		writer->writeCharacters(QString());
 //		QString head = "<?xml version='1.0' ?>"
 //		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
 //		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
 //		"version='1.0'>";
 //		conn->write(head.toUtf8());
+		
+//	<stream:stream to='qutim.org' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en' version='1.0'>
+//  <stream:stream to="qutim.org" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
+//  <stream xmlns="jabber:client" to="qutim.org" xmlns:n1="stream" n1:xmlns="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
+//  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
+//  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0"><!---->
+//  <stream xmlns:stream="jabber:client" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0">
 		client->handleConnect();
 	}
 	void disconnected()

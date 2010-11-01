@@ -224,7 +224,7 @@ typedef QList<QSharedPointer<DataFormReported> > DataFormReportedList;
 
 class JREEN_EXPORT DataForm : public StanzaExtension, public DataFormFieldContainer
 {
-	J_EXTENSION(DataForm,"/message/x[@xmlns='jabber:x:data']")
+	J_EXTENSION(jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
 public:
 	enum Type
 	{

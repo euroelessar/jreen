@@ -1,14 +1,25 @@
 #include "stanzaextension.h"
+#include <QHash>
 
 namespace jreen
 {
+	typedef QHash<QByteArray, int> ByteArrayHash;
+	Q_GLOBAL_STATIC(ByteArrayHash, seClassHash)
+	
+	StanzaExtension::StanzaExtension()
+	{
+	}
 
-static int stanza_extension_count = 0;
+	StanzaExtension::~StanzaExtension()
+	{
+	}
 
-StanzaExtensionMeta::StanzaExtensionMeta(const char *s, const char *s2) : name(s), xpath(QLatin1String(s2)), type(s?stanza_extension_count++:-1)
-{
-	qDebug("StanzaExtensionMeta: \"%s\", %d", name.constData(), type);
-}
-
-
+	int StanzaExtension::registerExtensionType(const char *type)
+	{
+		QByteArray t = type;
+		int id = seClassHash()->value(t, seClassHash()->size());
+		if (id == seClassHash()->size())
+			seClassHash()->insert(t, id);
+		return id;
+	}
 }

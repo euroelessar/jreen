@@ -85,9 +85,8 @@ struct StanzaPrivate
 	}
 	void addExtensions(QXmlStreamWriter *writer) const
 	{
-		Q_UNUSED(writer);
-//		foreach(const StanzaExtensionPointer &stanza_extension, extensions)
-//			node.appendChild(stanza_extension->node(DomCreater::instance().document()));
+		//foreach(const StanzaExtensionPointer &stanzaExtension, extensions)
+		//	stanzaExtension->writeXml(writer);
 	}
 	void setAttributes(QXmlStreamWriter *writer) const
 	{

@@ -26,8 +26,8 @@
 #include <QHash>
 #include <QSet>
 
-template<typename T>
-inline uint qHash(QSharedPointer<T> key) { return qHash(key.data()); }
+//template<typename T>
+//inline uint qHash(QSharedPointer<T> key) { return qHash(key.data()); }
 
 namespace jreen
 {
@@ -187,7 +187,7 @@ public slots:
 protected:
 	class Query : public StanzaExtension
 	{
-		J_PURE_EXTENSION(Query,"/iq/query[@xmlns='jabber:iq:roster']");
+		J_EXTENSION(jreen::AbstractRoster::Query,"/iq/query[@xmlns='jabber:iq:roster']");
 	public:
 		Query(AbstractRoster *roster, const QDomElement &node = QDomElement());
 		inline Query(QSharedPointer<AbstractRosterItem> item) : m_items(QList<QSharedPointer<AbstractRosterItem> >()<<item), m_roster(0) {}

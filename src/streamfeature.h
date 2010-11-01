@@ -20,6 +20,9 @@
 #include <QDomElement>
 #include "jid.h"
 
+class QXmlStreamWriter;
+class QXmlStreamAttributes;
+
 namespace jreen
 {
 
@@ -38,17 +41,17 @@ public:
 	virtual void addDataStream(DataStream *data_stream) = 0;
 };
 
-class JREEN_EXPORT StreamFeature : public QObject
+class JREEN_EXPORT StreamFeature
 {
-	Q_OBJECT
 	Q_DISABLE_COPY(StreamFeature)
 public:
 	enum Type
 	{
-		SimpleAuthorization,
-		SASL,
 		CompressionLayer,
 		SecurityLayer,
+		SASL,
+		SimpleAuthorization,
+		Custom,
 		Invalid
 	};
 	StreamFeature(Type type) : m_info(0), m_client(0), m_type(type) {}
@@ -56,8 +59,12 @@ public:
 	virtual int priority() = 0;
 	virtual void setStreamInfo(StreamInfo *info) { if(info) m_client = (m_info = info)->client(); else { m_info = 0; m_client = 0; } }
 	virtual void reset() {}
-	virtual void processElement(const QDomElement &node) = 0;
-	virtual const QString &xPath() const = 0;
+	virtual bool canHandle(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri) = 0;
+	virtual void handleCharacterData(const QStringRef &name) = 0;
+	virtual bool isActivatable() = 0;
+	virtual bool activate() = 0;
 	inline Type type() const { return m_type; }
 protected:
 	StreamInfo *m_info;

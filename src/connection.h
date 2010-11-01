@@ -93,7 +93,7 @@ public:
 	virtual bool hasPendingConnections () const = 0;
 	virtual Connection *nextPendingConnection() = 0;
 signals:
-	virtual void newConnection ();
+	void newConnection();
 };
 
 }

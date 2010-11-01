@@ -25,11 +25,11 @@ class Disco;
 
 class JREEN_EXPORT Capabilities : public StanzaExtension
 {
-	J_EXTENSION(Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
+	J_EXTENSION(jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
 public:
 	Capabilities(Disco *disco);
 	Capabilities(const QDomElement &node = QDomElement());
-	QDomElement node(QDomDocument *document) const;
+	void writeXml(QXmlStreamWriter *writer) const;
 	inline void setNode(const QString &node) { m_node = node; }
 	inline const QString &node() const { return m_node; }
 	QString ver() const;
@@ -40,5 +40,7 @@ private:
 };
 
 }
+
+J_DECLARE_EXTENSION(jreen::Capabilities)
 
 #endif // CAPABILITIES_H

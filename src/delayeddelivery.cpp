@@ -16,6 +16,7 @@
 #include "delayeddelivery.h"
 #include "util.h"
 #include "jstrings.h"
+#include <QXmlStreamWriter>
 
 namespace jreen
 {
@@ -43,15 +44,15 @@ DelayedDelivery::DelayedDelivery(const QDomElement &node)
 	m_from = node.attribute(ConstString::from);
 }
 
-QDomElement DelayedDelivery::node(QDomDocument *document) const
+void DelayedDelivery::writeXml(QXmlStreamWriter *writer) const
 {
-	if(!m_date_time.isValid())
-		return QDomElement();
-	QDomElement node = createElement(document, delay_str, m_reason);
-	node.setAttribute(stamp_str, Util::toStamp(m_date_time));
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_delay);
-	node.setAttribute(ConstString::from, m_from);
-	return node;
+	if (!m_date_time.isValid())
+		return;
+	writer->writeStartElement(delay_str);
+	writer->writeAttribute(stamp_str, Util::toStamp(m_date_time));
+	writer->writeAttribute(ConstString::xmlns, ConstString::xmlns_delay);
+	writer->writeAttribute(ConstString::from, m_from);
+	writer->writeCharacters(m_reason);
+	writer->writeEndElement();
 }
-
 }

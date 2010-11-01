@@ -17,6 +17,7 @@
 #include "jstrings.h"
 #include "langmap.h"
 #include <QStringList>
+#include <QXmlStreamWriter>
 
 namespace jreen
 {
@@ -98,18 +99,17 @@ Error::~Error()
 {
 }
 
-QDomElement Error::node(QDomDocument *document) const
+void Error::writeXml(QXmlStreamWriter *writer) const
 {
 	static const QString stanzas_str("urn:ietf:params:xml:ns:xmpp-stanzas");
 	Q_D(const Error);
 	if(d->type == UndefinedType || d->condition == Undefined)
-		return QDomElement();
-	QDomElement node = createElement(document, error_str);
-	node.setAttribute(ConstString::type, error_str.at(d->type));
-	QDomElement error = createElement(document, error_conditions.at(d->condition));
-	error.setAttribute(ConstString::xmlns, stanzas_str);
-	d->text.fillNode(node, text_str, stanzas_str);
-	return node;
+		return;
+	writer->writeStartElement(error_str);
+	writer->writeAttribute(ConstString::type, error_str.at(d->type));
+	writer->writeEmptyElement(error_conditions.at(d->condition));
+	writer->writeAttribute(ConstString::xmlns, stanzas_str);
+	d->text.fillNode(writer, text_str, stanzas_str);
+	writer->writeEndElement();
 }
-
 }

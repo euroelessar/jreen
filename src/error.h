@@ -25,7 +25,7 @@ struct ErrorPrivate;
 
 class JREEN_EXPORT Error : public StanzaExtension
 {
-	J_EXTENSION(Error,"/*/error")
+	J_EXTENSION(jreen::Error,"/*/error")
 	Q_DECLARE_PRIVATE(Error)
 public:
 	enum Type
@@ -150,7 +150,7 @@ public:
 	Error(const QDomElement &node = QDomElement());
 	Error(Type type, Condition condition, const QDomElement &app_element = QDomElement());
 	~Error();
-	QDomElement node(QDomDocument *document) const;
+	void writeXml(QXmlStreamWriter *writer) const;
 private:
 	QScopedPointer<ErrorPrivate> d_ptr;
 };

@@ -23,7 +23,33 @@ namespace jreen
 {
 
 J_STRING(auth)
+		
+bool NonSaslAuth::canHandle(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+{
+	Q_UNUSED(attributes);
+	return name == QLatin1String("auth") && uri == QLatin1String("http://jabber.org/features/iq-auth");
+}
 
+void NonSaslAuth::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+{
+}
+
+void NonSaslAuth::handleEndElement(const QStringRef &name, const QStringRef &uri)
+{
+}
+
+void NonSaslAuth::handleCharacterData(const QStringRef &name)
+{
+}
+
+bool NonSaslAuth::isActivatable()
+{
+}
+
+bool NonSaslAuth::activate()
+{
+}
+		
 NonSaslAuth::Query::Query(const QDomElement &node) : m_is_digest(false)
 {
 	forelements(const QDomElement &elem, node)
@@ -89,28 +115,28 @@ void NonSaslAuth::reset()
 	m_current_step = RequestFields;
 }
 
-void NonSaslAuth::processElement(const QDomElement &node)
-{
-	if(m_current_step == Completed)
-		return;
-	Q_UNUSED(node);
-	switch(m_current_step)
-	{
-	case RequestFields:{
-		IQ iq(IQ::Get, m_client->jid().domain());
-		iq.addExtension(new Query);
-		m_client->send(iq, this, SLOT(handleIq(IQ,int)), RequestFields);
-		m_current_step = ProvideInformation;
-		break;}
-	case ProvideInformation:
-		m_current_step = WaitingForResults;
-		break;
-	case WaitingForResults:
-		break;
-	default:
-		break;
-	}
-}
+//void NonSaslAuth::processElement(const QDomElement &node)
+//{
+//	if(m_current_step == Completed)
+//		return;
+//	Q_UNUSED(node);
+//	switch(m_current_step)
+//	{
+//	case RequestFields:{
+//		IQ iq(IQ::Get, m_client->jid().domain());
+//		iq.addExtension(new Query);
+//		m_client->send(iq, this, SLOT(handleIq(IQ,int)), RequestFields);
+//		m_current_step = ProvideInformation;
+//		break;}
+//	case ProvideInformation:
+//		m_current_step = WaitingForResults;
+//		break;
+//	case WaitingForResults:
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 void NonSaslAuth::handleIq(const IQ &iq, int context)
 {

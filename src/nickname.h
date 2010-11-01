@@ -23,7 +23,7 @@ namespace jreen
 
 class Nickname : public StanzaExtension
 {
-	J_EXTENSION(Nickname,
+	J_EXTENSION(jreen::Nickname,
 		   "/presence/nick[@xmlns='http://jabber.org/protocol/nick']"
 		   "|/message/nick[@xmlns='http://jabber.org/protocol/nick']")
 public:

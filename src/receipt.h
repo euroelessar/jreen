@@ -23,7 +23,7 @@ namespace jreen
 
 class Receipt : public StanzaExtension
 {
-	J_EXTENSION(Receipt,
+	J_EXTENSION(jreen::Receipt,
 		   "/message/request[@xmlns='urn:xmpp:receipts']"
 		   "|/message/received[@xmlns='urn:xmpp:receipts']")
 public:

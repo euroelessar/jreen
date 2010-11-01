@@ -41,10 +41,10 @@ public:
 	const StanzaExtensionList &extensions() const;
 	template< class T >
 	inline const QSharedPointer<T> findExtension() const
-		{ return qSharedPointerCast<T>(extensions().value(static_cast<T *>(0)->meta().type)); }
+	{ return qSharedPointerCast<T>(extensions().value(reinterpret_cast<T*>(0)->staticExtensionType())); }
 	template< class T >
 	inline bool containsExtension() const
-		{ return extensions().contains(static_cast<T *>(0)->meta().type); }
+	{ return extensions().contains(reinterpret_cast<T*>(0)->staticExtensionType()); }
 	void removeExtensions();
 	virtual void writeXml(QXmlStreamWriter *writer) const = 0;
 protected:
