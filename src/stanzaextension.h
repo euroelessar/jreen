@@ -45,22 +45,20 @@ public:
 	virtual int extensionType() const = 0;
 };
 
-class JREEN_EXPORT AbstractStanzaExtensionFactory
+class JREEN_EXPORT AbstractStanzaExtensionFactory : public XmlStreamParser
 {
 	Q_DISABLE_COPY(AbstractStanzaExtensionFactory)
 public:
-	AbstractStanzaExtensionFactory(Client *client);
+	AbstractStanzaExtensionFactory();
 	virtual ~AbstractStanzaExtensionFactory();
 	
 	virtual QStringList features() const = 0;
 	virtual int extensionType() const = 0;
-	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
-	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
-	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri) = 0;
-	virtual void handleCharacterData(const QStringRef &name) = 0;
 	virtual void serialize(StanzaExtension *extension, QXmlStreamWriter *writer) = 0;
 	virtual StanzaExtension::Ptr createExtension() = 0;
 };
+
+typedef QMap<int, AbstractStanzaExtensionFactory*> StanzaExtensionFactoryMap;
 
 template <typename Extension>
 class JREEN_EXPORT StanzaExtensionFactory : public AbstractStanzaExtensionFactory
@@ -114,20 +112,6 @@ typedef QMultiMap<int, StanzaExtension::Ptr> StanzaExtensionList;
 
 }
 
-//#define J_EXTENSION(Class) \
-//	public: \
-//		static inline int staticExtensionType() \
-//		{ \
-//			static int __type = StanzaExtension::registerType(#Class); \
-//			Class *typeCheck = reinterpret_cast<::Class*>(0); \
-//			Q_UNUSED(typeCheck); \
-//			return __type; \
-//		} \
-//		virtual int extensionType() const { return staticExtensionType(); } \
-//	private:
-		
-
-
 #define J_EXTENSION(Class, XPath) \
 	public:  \
 		static int staticExtensionType() \
@@ -147,9 +131,6 @@ typedef QMultiMap<int, StanzaExtension::Ptr> StanzaExtensionList;
 		} \
 	private:
 
-#define J_DECLARE_EXTENSION(Class) 
-		//\
-	//Q_DECLARE_METATYPE(Class*) \
-	//int Class::extensionType() const { return qMetaTypeId<Class*>(); }
+#define J_DECLARE_EXTENSION(Class)
 
 #endif // STANZAEXTENSION_H

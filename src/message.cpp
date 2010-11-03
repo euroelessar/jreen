@@ -35,6 +35,7 @@ static const QStringList message_types = QStringList()
 
 struct MessagePrivate : public StanzaPrivate
 {
+	MessagePrivate() : StanzaPrivate(StanzaMessage) {}
 	Message::Type subtype;
 	LangMap body;
 	LangMap subject;
@@ -42,7 +43,7 @@ struct MessagePrivate : public StanzaPrivate
 };
 
 Message::Message(Type type, const JID& to, const QString &body, const QString &subject, const QString &thread, const QString &xmllang)
-	: Stanza(new MessagePrivate)
+	: Stanza(*new MessagePrivate)
 {
 	Q_D(Message);
 	d->subtype = type;

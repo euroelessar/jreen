@@ -69,11 +69,6 @@ private:
 		virtual QByteArray extensionName() const { return meta().name; } \
 	private:
 
-//#define J_EXTENSION(Extension,XPath)
-//	public: \
-//		virtual StanzaExtension *fromNode(const QDomElement &node) const { return new Extension(node); } \
-//		J_PURE_EXTENSION(Extension,XPath)
-
 #define J_FEATURE(XPath) \
 	public: \
 		const QString &xPath() const \
@@ -105,10 +100,22 @@ public:
 #  define forelements J_FORELEMENTS
 # endif
 
+class QXmlStreamAttributes;
+			
 namespace jreen
 {
 	JREEN_EXPORT QDomElement createElement(QDomDocument *doc, const QString &name, const QString &value = QString());
 	JREEN_EXPORT QDomElement createElement(QDomElement parent, const QString &name, const QString &value = QString());
+	
+	class JREEN_EXPORT XmlStreamParser
+	{
+	public:
+		virtual ~XmlStreamParser() {}
+		virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+		virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
+		virtual void handleEndElement(const QStringRef &name, const QStringRef &uri) = 0;
+		virtual void handleCharacterData(const QStringRef &text) = 0;
+	};
 }
 
 #endif // JREEN_H

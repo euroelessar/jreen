@@ -40,10 +40,10 @@ public:
 	int priority() { return 10; }
 	void setStreamInfo(StreamInfo *info);
 	void reset();
-	bool canHandle(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
-	void handleCharacterData(const QStringRef &name);
+	void handleCharacterData(const QStringRef &text);
 	bool isActivatable();
 	bool activate();
 public slots:

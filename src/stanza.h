@@ -31,13 +31,16 @@ class JREEN_EXPORT Stanza
 {
 	Q_DECLARE_PRIVATE(Stanza)
 public:
+	typedef QSharedPointer<Stanza> Ptr;
 	Stanza(const Stanza &stanza);
 	~Stanza();
 	void setFrom(const JID &jid);
 	const JID &from() const;
 	const JID &to() const;
 	const QString &id() const;
-	void addExtension(StanzaExtension *se);
+	void addExtension(StanzaExtension::Ptr se);
+	inline void addExtension(StanzaExtension* se)
+	{ addExtension(StanzaExtension::Ptr(se)); }
 	const StanzaExtensionList &extensions() const;
 	template< class T >
 	inline const QSharedPointer<T> findExtension() const
@@ -48,9 +51,8 @@ public:
 	void removeExtensions();
 	virtual void writeXml(QXmlStreamWriter *writer) const = 0;
 protected:
-	Stanza(const JID &to);
 	Stanza(const QDomElement &node, StanzaPrivate *sp = 0);
-	Stanza(StanzaPrivate *);
+	Stanza(StanzaPrivate &);
 	Stanza &operator =(const Stanza &stanza);
 	StanzaPrivate *d_ptr;
 };

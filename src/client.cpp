@@ -21,6 +21,8 @@
 #include "capabilities.h"
 #include "error.h"
 #include "dataform.h"
+#include "iqfactory_p.h"
+#include "saslfeature.h"
 
 namespace jreen
 {
@@ -31,47 +33,51 @@ namespace jreen
 		ReadStanza,
 		ReadCustom
 	};
+	
+	void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
+	{
+	}
 
 void ClientPrivate::readMore()
 {
-	qDebug("readMore");
-	State state = WaitingForStanza;
-	StreamFeature *currentFeature = 0;
+//	qDebug("readMore");
+//	State state = WaitingForStanza;
+//	StreamFeature *currentFeature = 0;
 
-	while (reader->readNext() >= QXmlStreamReader::StartDocument) {
-		switch(reader->tokenType()) {
-		case QXmlStreamReader::StartElement:
-			if (depth == 1) {
-				if(reader->name() == QLatin1String("features")) {
-					state = ReadFeatures;
-				} else if (reader->name() == QLatin1String("iq")
-					|| reader->name() == QLatin1String("message")
-					|| reader->name() == QLatin1String("presence")) {
-					state = ReadStanza;
-				} else {
-					state = ReadCustom;
-				}
-			} else if (state == ReadFeatures && depth == 2) {
-				foreach (StreamFeature *feature, streamFeatures) {
-					if (feature->canHandle(reader->name(), reader->namespaceUri(), reader->attributes())) {
-						feature->handleStartElement(reader->name(), reader->namespaceUri(), reader->attributes());
-					}
-				}
-			}
-			qDebug() << reader->tokenString() << depth++ << reader->name();
-			break;
-		case QXmlStreamReader::EndElement:
-			qDebug() << reader->tokenString() << --depth << reader->name();
-			break;
-		case QXmlStreamReader::Characters:
-			qDebug() << reader->tokenString() << reader->text();
-			break;
-		default:
-			qDebug() << reader->tokenString();
-			break;
-		}
-	}
-	qDebug() << "after: " << reader->tokenType() << reader->tokenString();
+//	while (reader->readNext() >= QXmlStreamReader::StartDocument) {
+//		switch(reader->tokenType()) {
+//		case QXmlStreamReader::StartElement:
+//			if (depth == 1) {
+//				if(reader->name() == QLatin1String("features")) {
+//					state = ReadFeatures;
+//				} else if (reader->name() == QLatin1String("iq")
+//					|| reader->name() == QLatin1String("message")
+//					|| reader->name() == QLatin1String("presence")) {
+//					state = ReadStanza;
+//				} else {
+//					state = ReadCustom;
+//				}
+//			} else if (state == ReadFeatures && depth == 2) {
+//				foreach (StreamFeature *feature, streamFeatures) {
+//					if (feature->canParse(reader->name(), reader->namespaceUri(), reader->attributes())) {
+//						feature->handleStartElement(reader->name(), reader->namespaceUri(), reader->attributes());
+//					}
+//				}
+//			}
+//			qDebug() << reader->tokenString() << depth++ << reader->name();
+//			break;
+//		case QXmlStreamReader::EndElement:
+//			qDebug() << reader->tokenString() << --depth << reader->name();
+//			break;
+//		case QXmlStreamReader::Characters:
+//			qDebug() << reader->tokenString() << reader->text();
+//			break;
+//		default:
+//			qDebug() << reader->tokenString();
+//			break;
+//		}
+//	}
+//	qDebug() << "after: " << reader->tokenType() << reader->tokenString();
 //		Parser::Event ev = parser->readNext();
 //		if(!ev)
 //			return;
@@ -97,6 +103,8 @@ void ClientPrivate::readMore()
 Client::Client(const JID &jid, const QString &password, int port)
 	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
+	impl->parser = new Parser(this);
+	impl->stanzas << new IqFactory(this);
 	impl->stream_info = new StreamInfoImpl(impl);
 	impl->jid = jid;
 	impl->server = jid.domain();
@@ -108,6 +116,7 @@ Client::Client(const JID &jid, const QString &password, int port)
 	impl->xquery.registerStanzaExtension(new Capabilities, impl->disco);
 	impl->xquery.registerStanzaExtension(new DataForm, impl->disco);
 	registerStreamFeature(new NonSaslAuth);
+	registerStreamFeature(new SASLFeature);
 	impl->presence.addExtension(new Capabilities(impl->disco));
 }
 
@@ -208,7 +217,7 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 {
 	if(!stream_feature)
 		return;
-	impl->streamFeatures.append(stream_feature);
+	impl->features.append(stream_feature);
 	switch(stream_feature->type())
 	{
 	case StreamFeature::SimpleAuthorization:

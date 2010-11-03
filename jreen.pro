@@ -9,6 +9,8 @@ TARGET = jreen
 #TEMPLATE = lib
 #VERSION = 0.1.0
 
+LIBS += /usr/lib/qca2/libqca.so
+
  CONFIG += console
 # CONFIG -= app_bundle
  TEMPLATE = app
@@ -48,7 +50,10 @@ SOURCES += src/jid.cpp \
     src/receipt.cpp \
     src/mucroom.cpp \
     src/stanzaextension.cpp \
-    src/main.cpp
+    src/main.cpp \
+    src/stanzafactory.cpp \
+    src/iqfactory.cpp \
+    src/saslfeature.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \
@@ -92,7 +97,11 @@ HEADERS += src/jid.h \
     src/imagemessage.h \
     src/nickname.h \
     src/receipt.h \
-    src/mucroom.h
+    src/mucroom.h \
+    src/stanzafactory.h \
+    src/iqfactory_p.h \
+    src/iq_p.h \
+    src/saslfeature.h
 include(src/gui/gui.pri)
 include(src/3rdparty/libidn/libidn.pri)
 include(src/3rdparty/jdns/jdns.pri)

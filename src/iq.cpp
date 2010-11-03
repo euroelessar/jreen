@@ -13,7 +13,7 @@
  ***************************************************************************
 *****************************************************************************/
 
-#include "iq.h"
+#include "iq_p.h"
 #include "stanza_p.h"
 #include <QStringList>
 
@@ -25,19 +25,16 @@ J_STRING(iq)
 static const QStringList iq_types = QStringList() << QLatin1String("get") << QLatin1String("set")
 									<< QLatin1String("result") << QLatin1String("error");
 
-struct IQPrivate : public StanzaPrivate
-{
-	IQPrivate() : accepted(false) {}
-	IQ::Type subtype;
-	mutable bool accepted;
-};
-
-IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(new IQPrivate)
+IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 {
 	Q_D(IQ);
 	d->subtype = type;
 	d->to = to;
 	d->id = id;
+}
+
+IQ::IQ(IQPrivate &p) : Stanza(p)
+{
 }
 
 IQ::IQ(const QDomElement &node) : Stanza(node, new IQPrivate)

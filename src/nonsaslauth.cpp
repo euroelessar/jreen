@@ -24,7 +24,7 @@ namespace jreen
 
 J_STRING(auth)
 		
-bool NonSaslAuth::canHandle(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+bool NonSaslAuth::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
 	return name == QLatin1String("auth") && uri == QLatin1String("http://jabber.org/features/iq-auth");
@@ -38,16 +38,18 @@ void NonSaslAuth::handleEndElement(const QStringRef &name, const QStringRef &uri
 {
 }
 
-void NonSaslAuth::handleCharacterData(const QStringRef &name)
+void NonSaslAuth::handleCharacterData(const QStringRef &text)
 {
 }
 
 bool NonSaslAuth::isActivatable()
 {
+	return false;
 }
 
 bool NonSaslAuth::activate()
 {
+	return false;
 }
 		
 NonSaslAuth::Query::Query(const QDomElement &node) : m_is_digest(false)

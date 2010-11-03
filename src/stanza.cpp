@@ -27,11 +27,6 @@ Stanza::Stanza(const Stanza &stanza)
 	d_ptr = stanza.d_ptr;
 }
 
-Stanza::Stanza(const JID &to) : d_ptr(new StanzaPrivate)
-{
-	d_ptr->to = to;
-}
-
 Stanza &Stanza::operator =(const Stanza &stanza)
 {
 	if(stanza.d_ptr)
@@ -42,7 +37,7 @@ Stanza &Stanza::operator =(const Stanza &stanza)
 	return *this;
 }
 
-Stanza::Stanza(const QDomElement &node, StanzaPrivate *sp) : d_ptr(sp ? sp : new StanzaPrivate)
+Stanza::Stanza(const QDomElement &node, StanzaPrivate *sp) : d_ptr(sp)
 {
 	d_ptr->node = node;
 	d_ptr->from = node.attribute(ConstString::from);
@@ -50,9 +45,9 @@ Stanza::Stanza(const QDomElement &node, StanzaPrivate *sp) : d_ptr(sp ? sp : new
 	d_ptr->id = node.attribute(ConstString::id);
 }
 
-Stanza::Stanza(StanzaPrivate *sp)
+Stanza::Stanza(StanzaPrivate &sp)
 {
-	d_ptr = sp;
+	d_ptr = &sp;
 }
 
 Stanza::~Stanza()
@@ -81,9 +76,9 @@ const QString &Stanza::id() const
 	return d_ptr->id;
 }
 
-void Stanza::addExtension(StanzaExtension *se)
+void Stanza::addExtension(StanzaExtension::Ptr se)
 {
-	d_ptr->extensions.insert(se->extensionType(), StanzaExtensionPointer(se));
+	d_ptr->extensions.insert(se->extensionType(), se);
 }
 
 const StanzaExtensionList &Stanza::extensions() const

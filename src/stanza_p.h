@@ -32,59 +32,22 @@
 
 namespace jreen
 {
-
-//#if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
-//typedef QSharedPointer<StanzaExtension> StanzaExtensionPointer;
-//#else
-//struct StanzaExtensionPointerPrivate
-//{
-//	StanzaExtensionPointerPrivate(StanzaExtension *ext)
-//	{
-//		ref = 1;
-//		ptr = ext;
-//	}
-//	QAtomicInt ref;
-//	StanzaExtension *ptr;
-//};
-//class StanzaExtensionPointer
-//{
-//	StanzaExtensionPointerPrivate *impl;
-//public:
-//	inline StanzaExtensionPointer(StanzaExtension *ext) : impl(new StanzaExtensionPointerPrivate(ext)) {}
-//	StanzaExtensionPointer(const StanzaExtensionPointer &pointer)
-//	{
-//		pointer.impl->ref.ref();
-//		if(!impl->ref.deref())
-//			delete impl;
-//		impl = pointer.impl;
-//	}
-//	~StanzaExtensionPointer()
-//	{
-//		if(!impl->ref.deref())
-//			delete impl->ptr;
-//	}
-//	StanzaExtensionPointer &operator =(const StanzaExtensionPointer &pointer)
-//	{
-//		pointer.impl->ref.ref();
-//		if(!impl->ref.deref())
-//			delete impl;
-//		impl = pointer.impl;
-//		return *this;
-//	}
-//	inline StanzaExtension *data() const { return impl->ptr; }
-//	inline StanzaExtension *operator ->() const { return impl->ptr; }
-//	inline StanzaExtension &operator *() const { return *impl->ptr; }
-//};
-//#endif
-
 struct StanzaPrivate
 {
-	StanzaPrivate()
+	enum Type {
+		StanzaIq,
+		StanzaPresence,
+		StanzaMessage,
+		StanzaSubscription
+	};
+	
+	StanzaPrivate(Type t) : type(t)
 	{
 		ref = 1;
 	}
 	void addExtensions(QXmlStreamWriter *writer) const
 	{
+		Q_UNUSED(writer);
 		//foreach(const StanzaExtensionPointer &stanzaExtension, extensions)
 		//	stanzaExtension->writeXml(writer);
 	}
@@ -100,6 +63,7 @@ struct StanzaPrivate
 	}
 	static StanzaPrivate *get(Stanza &stanza) { return stanza.d_func(); }
 	static const StanzaPrivate *get(const Stanza &stanza) { return stanza.d_func(); }
+	Type type;
 	QAtomicInt ref;
 	JID from;
 	JID to;

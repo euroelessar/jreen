@@ -27,6 +27,7 @@ class JREEN_EXPORT IQ : public Stanza
 {
 	Q_DECLARE_PRIVATE(IQ)
 public:
+	typedef QSharedPointer<IQ> Ptr;
 	/**
 	* Describes the different valid IQ types.
 	*/
@@ -41,6 +42,7 @@ public:
 		Invalid                     /**< The stanza is invalid */
 	};
 	IQ(Type type, const JID& to, const QString& id = QString());
+	IQ(IQPrivate &p);
 	IQ(const QDomElement &node);
 	inline IQ &operator =(const IQ &stanza)
 		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }

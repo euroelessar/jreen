@@ -35,13 +35,14 @@ J_STRING(priority)
 
 struct PresencePrivate : public StanzaPrivate
 {
+	PresencePrivate() : StanzaPrivate(StanzaPresence) {}
 	Presence::Type subtype;
 	LangMap status;
 	int priority;
 };
 
 Presence::Presence(Type type, const JID& to, const QString &status, int priority, const QString &xmllang)
-	: Stanza(new PresencePrivate)
+	: Stanza(*new PresencePrivate)
 {
 	Q_D(Presence);
 	d->subtype = type;

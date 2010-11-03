@@ -1,8 +1,7 @@
 /*****************************************************************************
  *  parser.cpp
  *
- *  Copyright (c) 2003 by Justin Karneges
- *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -15,212 +14,121 @@
 *****************************************************************************/
 
 #include "parser_p.h"
-
-#include <qtextcodec.h>
+#include "message.h"
+#include "subscription.h"
+#include "presence.h"
+#include <QDebug>
 
 namespace jreen
 {
-
-//----------------------------------------------------------------------------
-// Event
-//----------------------------------------------------------------------------
-
-
-
-Parser::Event::Event()
-{
-	d_ptr = 0;
-}
-
-Parser::Event::Event(const Parser::Event &e)
-{
-	e.d_ptr->ref.ref();
-	d_ptr = e.d_ptr;
-}
-
-Parser::Event &Parser::Event::operator=(const Parser::Event &e)
-{
-	e.d_ptr->ref.ref();
-	if(d_ptr && !d_ptr->ref.deref())
-		delete d_ptr;
-	d_ptr = e.d_ptr;
-	return *this;
-}
-
-Parser::Event::~Event()
-{
-	if(d_ptr && !d_ptr->ref.deref())
-		delete d_ptr;
-}
-
-
-Parser::Event::Type Parser::Event::type()
-{
-	Q_D(Parser::Event);
-	return d->type;
-}
-
-const QString &Parser::Event::nsprefix(const QString &s) const
-{
-	Q_D(const Parser::Event);
-	QStringList::ConstIterator it = d->nsnames.begin();
-	QStringList::ConstIterator it2 = d->nsvalues.begin();
-	for(; it != d->nsnames.end(); ++it) {
-		if((*it) == s)
-			return (*it2);
-		++it2;
+	Parser::Parser(Client *client) : d_ptr(new ParserPrivate)
+	{
+		Q_D(Parser);
+		d->client = ClientPrivate::get(client);
+		d->reader = new QXmlStreamReader;
+		d->state = WaitingForStanza;
+		d->depth = 0;
 	}
-	static const QString empty_str;
-	return empty_str;
-}
-
-const QString &Parser::Event::namespaceURI() const
-{
-	Q_D(const Parser::Event);
-	return d->ns;
-}
-
-const QString &Parser::Event::localName() const
-{
-	Q_D(const Parser::Event);
-	return d->ln;
-}
-
-const QString &Parser::Event::qName() const
-{
-	Q_D(const Parser::Event);
-	return d->qn;
-}
-
-const QXmlAttributes &Parser::Event::atts() const
-{
-	Q_D(const Parser::Event);
-	return d->a;
-}
-
-const QDomElement &Parser::Event::element() const
-{
-	Q_D(const Parser::Event);
-	return d->e;
-}
-
-const QString Parser::Event::actualString() const
-{
-	Q_D(const Parser::Event);
-	return d->str;
-}
-
-void Parser::Event::setDocumentOpen(const QString &namespaceURI, const QString &localName, const QString &qName,
-					  const QXmlAttributes &atts, const QStringList &nsnames, const QStringList &nsvalues)
-{
-	if(!d_ptr)
-		d_ptr = new Parser::EventPrivate;
-	Q_D(Parser::Event);
-	d->type = DocumentOpen;
-	d->ns = namespaceURI;
-	d->ln = localName;
-	d->qn = qName;
-	d->a = atts;
-	d->nsnames = nsnames;
-	d->nsvalues = nsvalues;
-}
-
-void Parser::Event::setDocumentClose(const QString &namespaceURI, const QString &localName, const QString &qName)
-{
-	if(!d_ptr)
-		d_ptr = new Parser::EventPrivate;
-	Q_D(Parser::Event);
-	d->type = DocumentClose;
-	d->ns = namespaceURI;
-	d->ln = localName;
-	d->qn = qName;
-}
-
-void Parser::Event::setElement(const QDomElement &elem)
-{
-	if(!d_ptr)
-		d_ptr = new Parser::EventPrivate;
-	Q_D(Parser::Event);
-	d->type = Element;
-	d->e = elem;
-}
-
-void Parser::Event::setError()
-{
-	if(!d_ptr)
-		d_ptr = new Parser::EventPrivate;
-	Q_D(Parser::Event);
-	d->type = Error;
-}
-
-void Parser::Event::setActualString(const QString &str)
-{
-	if(!d_ptr)
-		d_ptr = new Parser::EventPrivate;
-	Q_D(Parser::Event);
-	d->str = str;
-}
-
-bool Parser::Event::isNull() const
-{
-	return d_func() == 0;
-}
-
-//----------------------------------------------------------------------------
-// Parser
-//----------------------------------------------------------------------------
-
-
-Parser::Parser() : QObject(0), d_ptr(new ParserPrivate(this))
-{
-}
-
-Parser::~Parser()
-{
-}
-
-void Parser::reset()
-{
-	d_ptr->reset();
-}
-
-void Parser::appendData(const QByteArray &a)
-{
-	d_ptr->in->appendData(a);
-
-	// if handler was waiting for more, give it a kick
-	if(d_ptr->handler->needMore)
-		d_ptr->handler->checkNeedMore();
-}
-
-Parser::Event Parser::readNext()
-{
-	Event e;
-	if(d_ptr->handler->needMore)
-		return e;
-	Event *ep = d_ptr->handler->takeEvent();
-	if(!ep) {
-		if(!d_ptr->reader->parseContinue()) {
-			e.setError();
-			return e;
+	
+	Parser::~Parser()
+	{
+		Q_D(Parser);
+		delete d->reader;
+	}
+	
+	void Parser::reset()
+	{
+		Q_D(Parser);
+		d->reader->clear();
+		d->state = WaitingForStanza;
+		d->depth = 0;
+		foreach (XmlStreamParser *parser, d->parsers)
+			parser->handleEndElement(QStringRef(), QStringRef());
+		d->parsers.clear();
+		foreach (StreamFeature *feature, d->client->features)
+			feature->reset();
+	}
+	
+	void Parser::appendData(const QByteArray &a)
+	{
+		Q_D(Parser);
+		d->reader->addData(a);
+		while (d->reader->readNext() > QXmlStreamReader::Invalid) {
+			switch(d->reader->tokenType()) {
+			case QXmlStreamReader::StartElement:
+				d->parsersCount.push(d->parsers.count());
+				if (d->depth == 1) {
+					if(d->reader->name() == QLatin1String("features")) {
+						d->state = ReadFeatures;
+					} else {
+						foreach (StanzaFactory *factory, d->client->stanzas) {
+							if (d->canParse(factory))
+								d->parsers << factory;
+						}
+						if (d->parsers.isEmpty()) {
+							foreach (StreamFeature *feature, d->client->features) {
+								if (d->canParse(feature))
+									d->parsers.append(feature);
+							}
+							d->state = ReadCustom;
+						} else {
+							d->state = ReadStanza;
+						}
+					}
+				} else if (d->state == ReadFeatures && d->depth == 2) {
+					foreach (StreamFeature *feature, d->client->features) {
+						if (d->canParse(feature))
+							d->parsers.append(feature);
+					}
+				} else if (d->state == ReadStanza && d->depth == 2) {
+					foreach (AbstractStanzaExtensionFactory *factory, d->client->factories) {
+						if (d->canParse(factory))
+							d->parsers.append(factory);
+					}
+				}
+				foreach (XmlStreamParser *parser, d->parsers)
+					parser->handleStartElement(d->reader->name(), d->reader->namespaceUri(), d->reader->attributes());
+				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
+				d->depth++;
+				break;
+			case QXmlStreamReader::EndElement:
+				d->depth--;
+				for (int i = 0; i < d->parsers.size(); i++) {
+					XmlStreamParser *parser = d->parsers.at(i);
+					parser->handleEndElement(d->reader->name(), d->reader->namespaceUri());
+					if (d->depth == 2 && d->state == ReadStanza && i > d->parsersCount.at(1)) {
+						StanzaExtension::Ptr se;
+						se = static_cast<AbstractStanzaExtensionFactory*>(parser)->createExtension();
+						d->stanza->addExtension(se);
+					}
+				}
+				d->parsers.resize(d->parsersCount.pop());
+				if (d->depth == 1) {
+					if (d->state == ReadFeatures) {
+						d->client->current_stream_feature = 0;
+						foreach (StreamFeature *feature, d->client->features) {
+							qDebug() << feature << feature->isActivatable();
+							if (feature->isActivatable()) {
+								d->client->current_stream_feature = feature;
+								feature->activate();
+								break;
+							}
+						}
+					}
+					d->state = WaitingForStanza;
+				} else if (d->depth == 0) {
+				}
+				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
+				break;
+			case QXmlStreamReader::Characters:
+				foreach (XmlStreamParser *parser, d->parsers)
+					parser->handleCharacterData(d->reader->text());
+				qDebug() << d->reader->tokenString() << d->reader->text();
+				break;
+			default:
+				qDebug() << d->reader->tokenString();
+				break;
+			}
 		}
-		ep = d_ptr->handler->takeEvent();
-		if(!ep)
-			return e;
 	}
-	e = *ep;
-	delete ep;
-	return e;
-}
-
-QByteArray Parser::unprocessed() const
-{
-	return d_ptr->in->unprocessed();
-}
-
-QString Parser::encoding() const
-{
-	return d_ptr->in->encoding();
-}
-
 }

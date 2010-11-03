@@ -28,6 +28,7 @@ static const QStringList s10n_types = QStringList() << QLatin1String("subscribe"
 
 struct SubscriptionPrivate : public StanzaPrivate
 {
+	SubscriptionPrivate() : StanzaPrivate(StanzaSubscription) {}
 	Subscription::Type subtype;
 	LangMap status;
 };
@@ -45,7 +46,8 @@ Subscription::Subscription(const QDomElement &node) : Stanza(node, new Subscript
 		}
 }
 
-Subscription::Subscription(Type type, const JID& to, const QString &status, const QString &xmllang) : Stanza(new SubscriptionPrivate)
+Subscription::Subscription(Type type, const JID& to, const QString &status, const QString &xmllang) 
+	: Stanza(*new SubscriptionPrivate)
 {
 	Q_D(Subscription);
 	d->subtype = type;

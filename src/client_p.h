@@ -32,6 +32,7 @@
 #include "jstrings.h"
 #include "disco.h"
 #include "error.h"
+#include "stanzafactory.h"
 #include <QTimer>
 #include <QTextCodec>
 
@@ -90,8 +91,10 @@ class ClientPrivate : public QObject
 {
 	Q_OBJECT
 public:
+	static ClientPrivate *get(Client *client) { return client->impl; }
+	
 	ClientPrivate(const Presence &p, Client *parent)
-		: QObject(parent), presence(p), current_id(0), parser(new Parser), conn(0)
+		: QObject(parent), presence(p), current_id(0), conn(0)
 	{
 		disco = 0;
 		current_stream_feature = 0;
@@ -131,10 +134,11 @@ public:
 	}
 //	void registerMessageHandler(const JID &jid, QObject *handler, const char *member);
 
+	void handleStanza(const Stanza::Ptr &stanza);
 	void elementParsed(const QDomElement &node)
 	{
 		elementToString(node);
-		static const QString stream_features_str("stream:features");
+		static const QString stream_features_str(QLatin1String("stream:features"));
 		if(current_stream_feature)
 		{
 			processStreamFeature(current_stream_feature, node);
@@ -222,31 +226,42 @@ public:
 	StreamFeature *current_stream_feature;
 	QHash<QString,IQTrack *> iq_tracks;
 	QXmlStreamWriter *writer;
-	QXmlStreamReader *reader;
-	QList<StreamFeature*> streamFeatures;
+	QList<StanzaFactory*> stanzas;
+	QList<StreamFeature*> features;
+	StanzaExtensionFactoryMap factories;
 	int depth;
 public slots:
 	void newData()
 	{
 		QByteArray data = conn->readAll();
-		reader->addData(data);
+		qDebug() << data;
+		parser->appendData(data);
 //		parser->appendData(data);
 		readMore();
 	}
 	void readMore();
-	void connected()
+	void sendHeader()
 	{
+		qDebug() << conn;
+		delete writer;
+		qDebug() << conn;
 		writer = new QXmlStreamWriter(conn);
-		reader = new QXmlStreamReader();
-		depth = 0;
+		qDebug() << conn;
 		writer->writeStartDocument(QLatin1String("1.0"));
 		writer->writeStartElement(QLatin1String("stream:stream"));
-		writer->writeAttribute("to", jid.domain());
-		writer->writeDefaultNamespace("jabber:client");
-		writer->writeAttribute("xmlns:stream", "http://etherx.jabber.org/streams");
-		writer->writeAttribute("xml:lang", "en");
-		writer->writeAttribute("version", "1.0");
+		writer->writeAttribute(QLatin1String("to"), jid.domain());
+		writer->writeDefaultNamespace(QLatin1String("jabber:client"));
+		writer->writeAttribute(QLatin1String("xmlns:stream"), QLatin1String("http://etherx.jabber.org/streams"));
+		writer->writeAttribute(QLatin1String("xml:lang"), QLatin1String("en"));
+		writer->writeAttribute(QLatin1String("version"), QLatin1String("1.0"));
 		writer->writeCharacters(QString());
+	}
+	
+	void connected()
+	{
+		writer = 0;
+		depth = 0;
+		sendHeader();
 //		QString head = "<?xml version='1.0' ?>"
 //		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
 //		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
@@ -284,28 +299,28 @@ public:
 	}
 	QString streamID()
 	{
-		if(!m_client_private->current_stream_feature)
-			return QString();
+//		if(!m_client_private->current_stream_feature)
+//			return QString();
 		return m_client_private->sid;
 	}
 	QString connectionServer()
 	{
-		if(!m_client_private->current_stream_feature)
-			return QString();
+//		if(!m_client_private->current_stream_feature)
+//			return QString();
 		return m_client_private->server;
 	}
 	JID jid()
 	{
-		if(!m_client_private->current_stream_feature)
-			return JID();
+//		if(!m_client_private->current_stream_feature)
+//			return JID();
 		return m_client_private->jid;
 	}
 	QString password()
 	{
-		if(!m_client_private->current_stream_feature
-			|| (m_client_private->current_stream_feature->type() != StreamFeature::SASL
-			&& m_client_private->current_stream_feature->type() != StreamFeature::SimpleAuthorization))
-			return QString();
+//		if(!m_client_private->current_stream_feature
+//			|| (m_client_private->current_stream_feature->type() != StreamFeature::SASL
+//			&& m_client_private->current_stream_feature->type() != StreamFeature::SimpleAuthorization))
+//			return QString();
 		return m_client_private->password;
 	}
 	Client *client()
@@ -317,6 +332,8 @@ public:
 		if(m_client_private->current_stream_feature->type() == StreamFeature::SASL
 			|| m_client_private->current_stream_feature->type() == StreamFeature::SimpleAuthorization)
 			m_client_private->emitAuthorized();
+		m_client_private->sendHeader();
+		m_client_private->parser->reset();
 		m_client_private->current_stream_feature = 0;
 	}
 	void addDataStream(DataStream *data_stream) { Q_UNUSED(data_stream); }
