@@ -17,7 +17,7 @@
 #define QJDNS_P_H
 
 //#include <QAction>
-#include <jdns/qjdns.h>
+#include "src/3rdparty/jdns/qjdns.h"
 #include "action.h"
 
 namespace jreen

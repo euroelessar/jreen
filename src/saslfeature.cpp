@@ -90,7 +90,7 @@ namespace jreen
 		if (m_state == AtMechanism) {
 			qDebug() << Q_FUNC_INFO << "mechanism" << text;
 			m_mechs.append(text.toString());
-		} else if (m_state = AtChallenge) {
+		} else if (m_state == AtChallenge) {
 			qDebug() << Q_FUNC_INFO << "challenge" << text;
 //			if (m_firstStep)
 //				m_sasl->putServerFirstStep("DIGEST-MD5");
