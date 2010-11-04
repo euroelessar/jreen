@@ -23,6 +23,8 @@
 #include "dataform.h"
 #include "iqfactory_p.h"
 #include "saslfeature.h"
+#include "bindfeature.h"
+#include "sessionfeature_p.h"
 
 namespace jreen
 {
@@ -36,6 +38,30 @@ namespace jreen
 	
 	void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	{
+		if (!stanza)
+			return;
+		int type = StanzaPrivate::get(*stanza)->type;
+		if (type == StanzaPrivate::StanzaIq) {
+			QSharedPointer<IQ> iq = stanza.staticCast<IQ>();
+			IQTrack *track = iq_tracks.take(stanza->id());
+			if (track) {
+				emit track->newIQ(*iq, track->context);
+				delete track;
+			} else {
+				client->handleIQ(*iq);
+				if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
+					IQ error(IQ::Error, iq->from(), iq->id());
+					error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
+					send(error);
+				}
+			}
+		} else if (type == StanzaPrivate::StanzaMessage) {
+			client->handleMessage(*stanza.staticCast<Message>());
+		} else if (type == StanzaPrivate::StanzaPresence) {
+			client->handlePresence(*stanza.staticCast<Presence>());
+		} else if (type == StanzaPrivate::StanzaSubscription) {
+			client->handleSubscription(*stanza.staticCast<Subscription>());
+		}
 	}
 
 void ClientPrivate::readMore()
@@ -117,6 +143,8 @@ Client::Client(const JID &jid, const QString &password, int port)
 	impl->xquery.registerStanzaExtension(new DataForm, impl->disco);
 	registerStreamFeature(new NonSaslAuth);
 	registerStreamFeature(new SASLFeature);
+	registerStreamFeature(new BindFeature);
+	registerStreamFeature(new SessionFeature);
 	impl->presence.addExtension(new Capabilities(impl->disco));
 }
 
@@ -213,29 +241,41 @@ void Client::registerStanzaExtension(StanzaExtension *stanza_extension)
 	impl->xquery.registerStanzaExtension(stanza_extension, impl->disco);
 }
 
+void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
+{
+	delete impl->factories.value(factory->extensionType(), 0);
+	impl->factories.insert(factory->extensionType(), factory);
+}
+
+inline bool featureLessThan(StreamFeature *a, StreamFeature *b)
+{
+	return a->type() == b->type() ? a->priority() > b->priority() : a->type() < b->type();
+}
+
 void Client::registerStreamFeature(StreamFeature *stream_feature)
 {
 	if(!stream_feature)
 		return;
-	impl->features.append(stream_feature);
-	switch(stream_feature->type())
-	{
-	case StreamFeature::SimpleAuthorization:
-		impl->non_sasl_auths.registerStreamFeature(stream_feature);
-		break;
-	case StreamFeature::SASL:
-		impl->sasl_auths.registerStreamFeature(stream_feature);
-		break;
-	case StreamFeature::CompressionLayer:
-		impl->compressions.registerStreamFeature(stream_feature);
-		break;
-	case StreamFeature::SecurityLayer:
-		impl->security_layers.registerStreamFeature(stream_feature);
-		break;
-	default:
-		delete stream_feature;
-		return;
-	}
+	impl->features.insert(qLowerBound(impl->features.begin(), impl->features.end(),
+									  stream_feature, featureLessThan), stream_feature);
+//	switch(stream_feature->type())
+//	{
+//	case StreamFeature::SimpleAuthorization:
+//		impl->non_sasl_auths.registerStreamFeature(stream_feature);
+//		break;
+//	case StreamFeature::SASL:
+//		impl->sasl_auths.registerStreamFeature(stream_feature);
+//		break;
+//	case StreamFeature::CompressionLayer:
+//		impl->compressions.registerStreamFeature(stream_feature);
+//		break;
+//	case StreamFeature::SecurityLayer:
+//		impl->security_layers.registerStreamFeature(stream_feature);
+//		break;
+//	default:
+//		delete stream_feature;
+//		return;
+//	}
 	stream_feature->setStreamInfo(impl->stream_info);
 }
 

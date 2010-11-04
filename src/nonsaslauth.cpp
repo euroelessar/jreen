@@ -153,7 +153,7 @@ void NonSaslAuth::handleIq(const IQ &iq, int context)
 		break;}
 	case ProvideInformation:
 		iq.accept();
-		completed();
+		m_info->completed(StreamInfo::Authorized);
 		break;
 	}
 }

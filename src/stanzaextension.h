@@ -65,10 +65,10 @@ class JREEN_EXPORT StanzaExtensionFactory : public AbstractStanzaExtensionFactor
 {
 	Q_DISABLE_COPY(StanzaExtensionFactory)
 public:
-	StanzaExtensionFactory(Client *client);
-	virtual ~StanzaExtensionFactory();
+	StanzaExtensionFactory() {}
+	virtual ~StanzaExtensionFactory() {}
 	
-	virtual int extensionType() const { return qMetaTypeId<Extension>(); }
+	virtual int extensionType() const { return Extension::staticExtensionType(); }
 };
 
 template <typename Extension>
@@ -114,6 +114,7 @@ typedef QMultiMap<int, StanzaExtension::Ptr> StanzaExtensionList;
 
 #define J_EXTENSION(Class, XPath) \
 	public:  \
+		typedef QSharedPointer<Class> Ptr; \
 		static int staticExtensionType() \
 		{ \
 			static QBasicAtomicInt extension_type = Q_BASIC_ATOMIC_INITIALIZER(0); \

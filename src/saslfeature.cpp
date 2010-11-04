@@ -67,7 +67,7 @@ namespace jreen
 			} else if (name == QLatin1String("challenge")) {
 				m_state = AtChallenge;
 			} else if (name == QLatin1String("success")) {
-				m_info->completed();
+				m_info->completed(StreamInfo::Authorized);
 			}
 		} else if (m_depth == 2 && name == QLatin1String("mechanism")) {
 			m_state = AtMechanism;

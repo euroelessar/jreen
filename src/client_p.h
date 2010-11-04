@@ -114,7 +114,12 @@ public:
 	}
 	void send(const Stanza &stanza)
 	{
-		stanza.writeXml(writer);
+		foreach (StanzaFactory *factory, stanzas) {
+			if (factory->stanzaType() == StanzaPrivate::get(stanza)->type) {
+				factory->serialize(const_cast<Stanza*>(&stanza), writer);
+				break;
+			}
+		}
 	}
 	void send(const QString &data)
 	{
@@ -274,7 +279,7 @@ public slots:
 //  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
 //  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0"><!---->
 //  <stream xmlns:stream="jabber:client" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0">
-		client->handleConnect();
+//		client->handleConnect();
 	}
 	void disconnected()
 	{
@@ -288,6 +293,7 @@ public slots:
 		client->handleDisconnect();
 	}
 	inline void emitAuthorized() { client->handleAuthorized(); }
+	inline void emitConnected() { client->handleConnect(); }
 };
 
 class StreamInfoImpl : public StreamInfo
@@ -327,14 +333,23 @@ public:
 	{
 		return m_client_private->client;
 	}
-	void completed()
+	void completed(CompletedFlags flags = ResendHeader)
 	{
-		if(m_client_private->current_stream_feature->type() == StreamFeature::SASL
-			|| m_client_private->current_stream_feature->type() == StreamFeature::SimpleAuthorization)
+		if(flags & Authorized)
 			m_client_private->emitAuthorized();
-		m_client_private->sendHeader();
-		m_client_private->parser->reset();
-		m_client_private->current_stream_feature = 0;
+		if (flags & ResendHeader) {
+			m_client_private->sendHeader();
+			m_client_private->parser->reset();
+			m_client_private->current_stream_feature = 0;
+		}
+		if (flags & AcitvateNext)
+			m_client_private->parser->activateFeature();
+		if (flags & Connected)
+			m_client_private->emitConnected();
+	}
+	void setJID(const JID &jid)
+	{
+		m_client_private->jid = jid;
 	}
 	void addDataStream(DataStream *data_stream) { Q_UNUSED(data_stream); }
 private:

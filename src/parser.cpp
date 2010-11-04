@@ -41,12 +41,29 @@ namespace jreen
 		Q_D(Parser);
 		d->reader->clear();
 		d->state = WaitingForStanza;
-		d->depth = 0;
+		d->depth = -1;
 		foreach (XmlStreamParser *parser, d->parsers)
 			parser->handleEndElement(QStringRef(), QStringRef());
 		d->parsers.clear();
 		foreach (StreamFeature *feature, d->client->features)
 			feature->reset();
+		d->extensions.clear();
+	}
+	
+	void Parser::activateFeature()
+	{
+		Q_D(Parser);
+		int i = d->client->features.indexOf(d->client->current_stream_feature) + 1;
+		d->client->current_stream_feature = 0;
+		for (; i < d->client->features.size(); i++) {
+			StreamFeature *feature = d->client->features.at(i);
+			qDebug() << feature << feature->isActivatable();
+			if (feature->isActivatable()) {
+				d->client->current_stream_feature = feature;
+				feature->activate();
+				break;
+			}
+		}
 	}
 	
 	void Parser::appendData(const QByteArray &a)
@@ -99,25 +116,25 @@ namespace jreen
 					if (d->depth == 2 && d->state == ReadStanza && i > d->parsersCount.at(1)) {
 						StanzaExtension::Ptr se;
 						se = static_cast<AbstractStanzaExtensionFactory*>(parser)->createExtension();
-						d->stanza->addExtension(se);
+						d->extensions.append(se);
 					}
 				}
-				d->parsers.resize(d->parsersCount.pop());
 				if (d->depth == 1) {
 					if (d->state == ReadFeatures) {
 						d->client->current_stream_feature = 0;
-						foreach (StreamFeature *feature, d->client->features) {
-							qDebug() << feature << feature->isActivatable();
-							if (feature->isActivatable()) {
-								d->client->current_stream_feature = feature;
-								feature->activate();
-								break;
-							}
-						}
+						activateFeature();
+					} else if (d->state == ReadStanza) {
+						StanzaFactory *factory = static_cast<StanzaFactory*>(d->parsers.top());
+						Stanza::Ptr stanza = factory->createStanza();
+						foreach (const StanzaExtension::Ptr &se, d->extensions)
+							stanza->addExtension(se);
+						d->client->handleStanza(stanza);
+						d->extensions.clear();
 					}
 					d->state = WaitingForStanza;
 				} else if (d->depth == 0) {
 				}
+				d->parsers.resize(d->parsersCount.pop());
 				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
 				break;
 			case QXmlStreamReader::Characters:

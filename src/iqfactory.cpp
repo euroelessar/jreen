@@ -21,6 +21,7 @@ namespace jreen
 {
 	IqFactory::IqFactory(Client *client) : StanzaFactory(client)
 	{
+		m_depth = 0;
 	}
 	
 	int IqFactory::stanzaType()

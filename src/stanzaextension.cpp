@@ -22,4 +22,12 @@ namespace jreen
 			seClassHash()->insert(t, id);
 		return id;
 	}
+	
+	AbstractStanzaExtensionFactory::AbstractStanzaExtensionFactory()
+	{
+	}
+
+	AbstractStanzaExtensionFactory::~AbstractStanzaExtensionFactory()
+	{
+	}
 }

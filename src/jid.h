@@ -34,6 +34,7 @@ public:
 	virtual ~JID();
 
 	bool setJID(const QString &jid);
+	inline void clear() { setJID(QString()); }
 
 	const QString &domain() const;
 	const QString &node() const;

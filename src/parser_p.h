@@ -41,7 +41,7 @@ namespace jreen
 		Parser::State state;
 		QStack<XmlStreamParser*> parsers;
 		QStack<int> parsersCount;
-		Stanza::Ptr stanza;
+		QList<StanzaExtension::Ptr> extensions;
 		int depth;
 		ClientPrivate *client;
 		

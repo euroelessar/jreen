@@ -53,7 +53,9 @@ SOURCES += src/jid.cpp \
     src/main.cpp \
     src/stanzafactory.cpp \
     src/iqfactory.cpp \
-    src/saslfeature.cpp
+    src/saslfeature.cpp \
+    src/bindfeature.cpp \
+    src/sessionfeature.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \
@@ -101,9 +103,10 @@ HEADERS += src/jid.h \
     src/stanzafactory.h \
     src/iqfactory_p.h \
     src/iq_p.h \
-    src/saslfeature.h
+    src/saslfeature.h \
+    src/bindfeature.h \
+    src/sessionfeature_p.h
 include(src/gui/gui.pri)
-include(src/3rdparty/libidn/libidn.pri)
 include(src/3rdparty/jdns/jdns.pri)
 DEFINES += J_BUILD_LIBRARY \
     J_BUILD_STATIC

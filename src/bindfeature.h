@@ -14,31 +14,36 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef STANZAFACTORY_H
-#define STANZAFACTORY_H
+#ifndef BINDFEATURE_H
+#define BINDFEATURE_H
 
-#include "stanza.h"
-#include <QXmlStreamAttributes>
+#include "streamfeature.h"
+#include "stanzaextension.h"
 
 namespace jreen
 {
-	class StanzaFactory : public XmlStreamParser
+	class IQ;
+	
+	class BindFeature : public QObject, public StreamFeature
 	{
+		Q_OBJECT
 	public:
-		StanzaFactory(Client *client);
-		virtual ~StanzaFactory();
-		virtual int stanzaType() = 0;
-		virtual Stanza::Ptr createStanza() = 0;
-		virtual void serialize(Stanza *stanza, QXmlStreamWriter *writer) = 0;
-	protected:
-		void parseAttributes(const QXmlStreamAttributes &attributes);
-		void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
-		void writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer);
-		JID m_from;
-		JID m_to;
-		QString m_id;
-		Client *m_client;
+		BindFeature();
+		int priority() { return 10; }
+		void setStreamInfo(StreamInfo *info);
+		void reset();
+		bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+		void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+		void handleEndElement(const QStringRef &name, const QStringRef &uri);
+		void handleCharacterData(const QStringRef &text);
+		bool isActivatable();
+		bool activate();
+	public slots:
+		void onIQResult(const IQ &iq, int context);
+	private:
+		int m_depth;
+		bool m_hasFeature;
 	};
 }
 
-#endif // STANZAFACTORY_H
+#endif // BINDFEATURE_H

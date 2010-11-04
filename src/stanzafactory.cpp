@@ -15,12 +15,12 @@
  ****************************************************************************/
 
 #include "stanzafactory.h"
+#include "client_p.h"
 
 namespace jreen
 {
-	StanzaFactory::StanzaFactory(Client *client)
+	StanzaFactory::StanzaFactory(Client *client) : m_client(client)
 	{
-		Q_UNUSED(client);
 	}
 
 	StanzaFactory::~StanzaFactory()
@@ -47,7 +47,13 @@ namespace jreen
 	
 	void StanzaFactory::writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer)
 	{
-		Q_UNUSED(stanza);
-		Q_UNUSED(writer);
+		ClientPrivate *p = ClientPrivate::get(m_client);
+		foreach (QSharedPointer<StanzaExtension> extension, stanza->extensions()) {
+			AbstractStanzaExtensionFactory *factory = p->factories.value(extension->extensionType(), 0);
+			if (factory)
+				factory->serialize(extension.data(), p->writer);
+			else
+				qDebug("Invalid stanza extesion %d", extension->extensionType());
+		}
 	}
 }

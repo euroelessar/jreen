@@ -40,6 +40,7 @@ namespace jreen
 		Parser(Client *client);
 		~Parser();
 		void reset();
+		void activateFeature();
 		void appendData(const QByteArray &a);
 	private:
 		QScopedPointer<ParserPrivate> d_ptr;
