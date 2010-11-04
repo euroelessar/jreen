@@ -19,7 +19,7 @@
 
 #include "streamfeature.h"
 #include <QStringList>
-#include <qca2/QtCrypto/QtCrypto>
+#include <QtCrypto/QtCrypto>
 
 namespace jreen
 {

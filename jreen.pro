@@ -5,15 +5,13 @@ QT += network \
     xml
 QT -= gui
 TARGET = jreen
-#CONFIG += dll
-#TEMPLATE = lib
-#VERSION = 0.1.0
 
-LIBS += /usr/lib/qca2/libqca.so
+CONFIG += link_pkgconfig
+PKGCONFIG += qca2
 
- CONFIG += console
-# CONFIG -= app_bundle
- TEMPLATE = app
+CONFIG += console
+CONFIG += qt debug
+TEMPLATE = app
 SOURCES += src/jid.cpp \
     src/util.cpp \
     src/prep.cpp \
@@ -25,7 +23,6 @@ SOURCES += src/jid.cpp \
     src/subscription.cpp \
     src/client.cpp \
     src/directconnection.cpp \
-    src/domcreater.cpp \
     src/sjdns.cpp \
     src/tcpconnection.cpp \
     src/udpconnection.cpp \
@@ -38,7 +35,6 @@ SOURCES += src/jid.cpp \
     src/langmap.cpp \
     src/delayeddelivery.cpp \
     src/error.cpp \
-    src/softwareversion.cpp \
     src/capabilities.cpp \
     src/disco.cpp \
     src/abstractroster.cpp \
@@ -106,7 +102,9 @@ HEADERS += src/jid.h \
     src/saslfeature.h \
     src/bindfeature.h \
     src/sessionfeature_p.h
+
 include(src/gui/gui.pri)
 include(src/3rdparty/jdns/jdns.pri)
+
 DEFINES += J_BUILD_LIBRARY \
     J_BUILD_STATIC

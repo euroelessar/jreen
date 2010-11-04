@@ -28,6 +28,8 @@ namespace jreen
 		m_depth = 0;
 		m_firstStep = true;
 		qDebug() << QCA::supportedFeatures();
+		if(!QCA::isSupported("sasl"))
+			qFatal("sasl is unsupported");
 		m_sasl = new QCA::SASL(this);
 		connect(m_sasl, SIGNAL(clientStarted(bool,QByteArray)),
 				this, SLOT(onClientStarted(bool,QByteArray)));
