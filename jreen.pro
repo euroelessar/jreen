@@ -51,7 +51,8 @@ SOURCES += src/jid.cpp \
     src/iqfactory.cpp \
     src/saslfeature.cpp \
     src/bindfeature.cpp \
-    src/sessionfeature.cpp
+    src/sessionfeature.cpp \
+    src/nicknamefactory.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \
@@ -70,7 +71,6 @@ HEADERS += src/jid.h \
     src/client_p.h \
     src/directconnection.h \
     src/directconnection_p.h \
-    src/domcreater_p.h \
     src/connection.h \
     src/sjdns_p.h \
     src/tcpconnection.h \
@@ -101,7 +101,8 @@ HEADERS += src/jid.h \
     src/iq_p.h \
     src/saslfeature.h \
     src/bindfeature.h \
-    src/sessionfeature_p.h
+    src/sessionfeature_p.h \
+    src/nicknamefactory.h
 
 include(src/gui/gui.pri)
 include(src/3rdparty/jdns/jdns.pri)

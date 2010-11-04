@@ -45,13 +45,13 @@ AbstractRoster::Query::Query(AbstractRoster *roster, const QDomElement &node) : 
 
 QDomElement AbstractRoster::Query::node(QDomDocument *document) const
 {
-	QDomElement node = createElement(document, ConstString::query);
+	QDomElement node; /*= createElement(document, ConstString::query);
 	node.setAttribute(ConstString::xmlns, ConstString::xmlns_roster);
 	foreach(const QSharedPointer<AbstractRosterItem> &item, m_items)
 	{
 		node.appendChild(item->node(document));
 	}
-	return node;
+	return node;*/
 }
 
 AbstractRosterItem::AbstractRosterItem(const QDomElement &node, AbstractRoster *roster, AbstractRosterItemPrivate *data)
@@ -83,7 +83,7 @@ AbstractRosterItem::~AbstractRosterItem()
 QDomElement AbstractRosterItem::node(QDomDocument *doc) const
 {
 	Q_D(const AbstractRosterItem);
-	QDomElement node = createElement(doc, ConstString::item);
+	QDomElement node; /*= createElement(doc, ConstString::item);
 	node.setAttribute(ConstString::jid, d->jid);
 	node.setAttribute(subscription_str, d->subscription == None ? QString() : roster_subscriptions[d->subscription]);
 	if(d->subscription != Remove)
@@ -97,7 +97,7 @@ QDomElement AbstractRosterItem::node(QDomDocument *doc) const
 			node.appendChild(createElement(doc, group_str, group));
 		}
 	}
-	return node;
+	return node;*/
 }
 
 void AbstractRosterItem::setData(const QSharedPointer<AbstractRosterItem> &item)

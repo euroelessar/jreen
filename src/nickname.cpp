@@ -21,25 +21,8 @@ namespace jreen
 
 J_STRING(nick)
 
-Nickname::Nickname(const QDomElement &node)
-{
-	if(node.isNull())
-		return;
-	m_nick = node.text();
-}
-
 Nickname::Nickname(const QString &nick) : m_nick(nick)
 {
 }
-
-QDomElement Nickname::node(QDomDocument *doc) const
-{
-	if(m_nick.isEmpty())
-		return QDomElement();
-	QDomElement node = createElement(doc, nick_str, m_nick);
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_nickname);
-	return node;
-}
-
 
 }

@@ -42,8 +42,8 @@ QDomElement Receipt::node(QDomDocument *doc) const
 {
 	if(m_type == Invalid)
 		return QDomElement();
-	QDomElement node = createElement(doc, receipt_types.at(m_type));
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_receipts);
+	QDomElement node;/* = createElement(doc, receipt_types.at(m_type));
+	node.setAttribute(ConstString::xmlns, ConstString::xmlns_receipts);*/
 	return node;
 }
 

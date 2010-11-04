@@ -34,11 +34,11 @@ ImageMessage::ImageMessage(const QByteArray &data) : m_data(data)
 
 QDomElement ImageMessage::node(QDomDocument *doc) const
 {
-	if(m_data.isEmpty())
-		return QDomElement();
-	QDomElement node = createElement(doc, img_str, m_data.toBase64());
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_qutim_img);
-	return node;
+//	if(m_data.isEmpty())
+	return QDomElement();
+//	QDomElement node = createElement(doc, img_str, m_data.toBase64());
+//	node.setAttribute(ConstString::xmlns, ConstString::xmlns_qutim_img);
+//	return node;
 }
 
 }

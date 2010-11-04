@@ -17,7 +17,6 @@
 #define PRIVATEXML_P_H
 
 #include "privatexml.h"
-#include "domcreater_p.h"
 #include "jstrings.h"
 #include "iq.h"
 #include "client.h"
@@ -58,14 +57,14 @@ public:
 	}
 	Query(const QString &name, const QString &xmlns)
 	{
-		m_node = DomCreater::instance().createElement(name);
+//		m_node = DomCreater::instance().createElement(name);
 		m_node.setAttribute(ConstString::xmlns, xmlns);
 	}
 	QDomElement node(QDomDocument *document) const
 	{
-		QDomElement node = createElement(document, ConstString::query);
+		QDomElement node;/* = createElement(document, ConstString::query);
 		node.setAttribute(ConstString::xmlns, ConstString::xmlns_private_xml);
-		node.appendChild(m_node);
+		node.appendChild(m_node);*/
 		return node;
 	}
 	inline const QDomElement &xml() { return m_node; }

@@ -74,7 +74,7 @@ Disco::Info::Info(const QDomElement &node) : m_form(0)
 
 QDomElement Disco::Info::node(QDomDocument *document) const
 {
-	QDomElement node = createElement(document, ConstString::query);
+	QDomElement node;/* = createElement(document, ConstString::query);
 	node.setAttribute(ConstString::xmlns, ConstString::xmlns_disco_info);
 	foreach(const Disco::Identity &identity, m_identities)
 	{
@@ -94,7 +94,7 @@ QDomElement Disco::Info::node(QDomDocument *document) const
 		node.appendChild(ftr);
 	}
 	if(m_form)
-		node.appendChild(m_form->node(document));
+		node.appendChild(m_form->node(document));*/
 	return node;
 }
 
@@ -115,7 +115,7 @@ Disco::Items::Items(const QDomElement &node)
 
 QDomElement Disco::Items::node(QDomDocument *document) const
 {
-	QDomElement node = createElement(document, ConstString::query);
+	QDomElement node; /*= createElement(document, ConstString::query);
 	node.setAttribute(ConstString::xmlns, ConstString::xmlns_disco_items);
 	node.setAttribute(ConstString::node, m_node);
 	foreach(const Disco::Item &item, m_items)
@@ -125,7 +125,7 @@ QDomElement Disco::Items::node(QDomDocument *document) const
 		elem.setAttribute(ConstString::node, item.node);
 		elem.setAttribute(ConstString::name, item.name);
 		node.appendChild(elem);
-	}
+	}*/
 	return node;
 }
 

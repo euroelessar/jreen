@@ -22,7 +22,6 @@
 #include "jstrings.h"
 #include "stanza.h"
 #include "jid.h"
-#include "domcreater_p.h"
 
 /*
  * WARNING!

@@ -65,18 +65,18 @@ NonSaslAuth::Query::Query(const QDomElement &node) : m_is_digest(false)
 QDomElement NonSaslAuth::Query::node(QDomDocument *document) const
 {
 	QDomElement node = document->createElement(ConstString::query);
-	node.setAttribute(ConstString::xmlns, "jabber:iq:auth");
-	if(!m_username.isEmpty())
-		node.appendChild(createElement(document, "username", m_username));
-	if(!m_password.isEmpty())
-	{
-		if(m_is_digest)
-			node.appendChild(createElement(document, "digest",   m_password));
-		else
-			node.appendChild(createElement(document, "password", m_password));
-	}
-	if(!m_resource.isEmpty())
-		node.appendChild(createElement(document, "resource", m_resource));
+//	node.setAttribute(ConstString::xmlns, "jabber:iq:auth");
+//	if(!m_username.isEmpty())
+//		node.appendChild(createElement(document, "username", m_username));
+//	if(!m_password.isEmpty())
+//	{
+//		if(m_is_digest)
+//			node.appendChild(createElement(document, "digest",   m_password));
+//		else
+//			node.appendChild(createElement(document, "password", m_password));
+//	}
+//	if(!m_resource.isEmpty())
+//		node.appendChild(createElement(document, "resource", m_resource));
 	return node;
 }
 

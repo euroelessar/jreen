@@ -104,9 +104,6 @@ class QXmlStreamAttributes;
 			
 namespace jreen
 {
-	JREEN_EXPORT QDomElement createElement(QDomDocument *doc, const QString &name, const QString &value = QString());
-	JREEN_EXPORT QDomElement createElement(QDomElement parent, const QString &name, const QString &value = QString());
-	
 	class JREEN_EXPORT XmlStreamParser
 	{
 	public:

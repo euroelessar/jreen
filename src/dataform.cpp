@@ -52,7 +52,7 @@ QDomElement DataFormField::node(QDomDocument *doc) const
 {
 	if(m_type == Invalid)
 		return QDomElement();
-	QDomElement node = createElement(doc, field_str);
+	QDomElement node;/* = createElement(doc, field_str);
 	if(m_type != None)
 		node.setAttribute(ConstString::type, dataformfield_types.at(m_type));
 	node.setAttribute(ConstString::var, m_var);
@@ -69,7 +69,7 @@ QDomElement DataFormField::node(QDomDocument *doc) const
 		QDomElement opt = createElement(node, option_str);
 		opt.setAttribute(label_str, option->label);
 		createElement(opt, ConstString::value, option->value);
-	}
+	}*/
 	return node;
 }
 
@@ -83,12 +83,12 @@ QDomElement DataForm::node(QDomDocument *document) const
 {
 	if(m_form_type == Invalid)
 		return QDomElement();
-	QDomElement node = createElement(document, QLatin1String("x"));
+	QDomElement node;/* = createElement(document, QLatin1String("x"));
 	node.setAttribute(ConstString::type, dataform_types.at(m_form_type));
 	node.setAttribute(ConstString::xmlns, ConstString::xmlns_data);
 	foreach(const QSharedPointer<DataFormField> &field, m_fields_list)
 		node.appendChild(field->node(document));
-	return node;
+	return node;*/
 }
 
 }
