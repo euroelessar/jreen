@@ -52,7 +52,9 @@ SOURCES += src/jid.cpp \
     src/saslfeature.cpp \
     src/bindfeature.cpp \
     src/sessionfeature.cpp \
-    src/nicknamefactory.cpp
+    src/nicknamefactory.cpp \
+    src/receiptfactory.cpp \
+    src/delayeddeliveryfactory.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \
@@ -102,7 +104,9 @@ HEADERS += src/jid.h \
     src/saslfeature.h \
     src/bindfeature.h \
     src/sessionfeature_p.h \
-    src/nicknamefactory.h
+    src/nicknamefactory.h \
+    src/receiptfactory.h \
+    src/delayeddeliveryfactory.h
 
 include(src/gui/gui.pri)
 include(src/3rdparty/jdns/jdns.pri)
