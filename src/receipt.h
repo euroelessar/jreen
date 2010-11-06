@@ -33,10 +33,8 @@ public:
 		Received,
 		Invalid
 	};
-	Receipt(const QDomElement &node = QDomElement());
 	Receipt(Type type);
 	inline Type type() { return m_type; }
-	QDomElement node(QDomDocument *doc) const;
 private:
 	Type m_type;
 };

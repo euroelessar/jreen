@@ -23,8 +23,13 @@ public:
 	Receipt::Type type;
 };
 
-ReceiptFactory::ReceiptFactory()
+ReceiptFactory::ReceiptFactory() : d_ptr(new ReceiptFactoryPrivate)
 {
+}
+
+ReceiptFactory::~ReceiptFactory()
+{
+
 }
 
 QStringList ReceiptFactory::features() const

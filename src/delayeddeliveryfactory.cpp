@@ -17,8 +17,13 @@ public:
 	QString reason;
 };
 
-DelayedDeliveryFactory::DelayedDeliveryFactory()
+DelayedDeliveryFactory::DelayedDeliveryFactory() : d_ptr(new DelayedDeliveryFactoryPrivate)
 {
+}
+
+DelayedDeliveryFactory::~DelayedDeliveryFactory()
+{
+
 }
 
 QStringList DelayedDeliveryFactory::features() const

@@ -14,6 +14,7 @@
 *****************************************************************************/
 #include "nicknamefactory.h"
 #include <QStringList>
+
 #define NS_NICKNAME QLatin1String("http://jabber.org/protocol/nick")
 
 namespace jreen {
