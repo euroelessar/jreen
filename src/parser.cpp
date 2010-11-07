@@ -41,7 +41,7 @@ namespace jreen
 		Q_D(Parser);
 		d->reader->clear();
 		d->state = WaitingForStanza;
-		d->depth = -1;
+		d->depth = 0;
 		foreach (XmlStreamParser *parser, d->parsers)
 			parser->handleEndElement(QStringRef(), QStringRef());
 		d->parsers.clear();

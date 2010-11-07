@@ -82,14 +82,6 @@ JID::JID(const QLatin1String &jid)
 	operator =(jid);
 }
 
-#ifndef QT_NO_CAST_FROM_ASCII
-JID::JID(const char *jid)
-{
-	impl = 0;
-	operator =(QString(jid));
-}
-#endif
-
 JID::JID(const QString &node, const QString &domain, const QString &resource)
 {
 	impl = new JIDPrivate;

@@ -54,6 +54,8 @@ SOURCES += src/jid.cpp \
     src/sessionfeature.cpp \
     src/nicknamefactory.cpp \
     src/receiptfactory.cpp \
+    src/zlibcompressionfeature.cpp \
+    src/zlibdatastream.cpp \
     src/delayeddeliveryfactory.cpp \
     src/softwareversionfactory.cpp \
     src/softwareversion.cpp
@@ -108,6 +110,8 @@ HEADERS += src/jid.h \
     src/sessionfeature_p.h \
     src/nicknamefactory.h \
     src/receiptfactory.h \
+    src/zlibcompressionfeature.h \
+    src/zlibdatastream.h \
     src/delayeddeliveryfactory.h \
     src/softwareversionfactory.h
 

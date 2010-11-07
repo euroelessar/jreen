@@ -16,25 +16,25 @@
 #ifndef DATASTREAM_H
 #define DATASTREAM_H
 
-#include <QObject>
+#include <QIODevice>
 #include "jreen.h"
 
 namespace jreen
 {
 
-class JREEN_EXPORT DataStream : public QObject
+class JREEN_EXPORT DataStream : public QIODevice
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(DataStream)
 public:
 	DataStream();
 	virtual ~DataStream();
-public slots:
-	virtual void write(const QByteArray &data);
-	virtual void writeIncoming(const QByteArray &data);
-signals:
-	void read(const QByteArray &data);
-	void readOutgoing(const QByteArray &data);
+	void setDevice(QIODevice *device);
+	QIODevice *device();
+protected slots:
+	virtual void incomingDataReady() = 0;
+private:
+	QIODevice *m_device;
 };
 
 }

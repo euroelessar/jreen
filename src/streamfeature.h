@@ -34,10 +34,10 @@ class JREEN_EXPORT StreamInfo
 public:
 	enum CompletedFlag
 	{
-		ResendHeader,
-		Authorized,
-		AcitvateNext,
-		Connected
+		ResendHeader = 1,
+		Authorized = 2,
+		AcitvateNext = 4,
+		Connected = 8
 	};
 	Q_DECLARE_FLAGS(CompletedFlags, CompletedFlag)
 
@@ -46,7 +46,8 @@ public:
 	virtual JID jid() = 0;
 	virtual QString password() = 0;
 	virtual Client *client() = 0;
-	virtual void completed(CompletedFlags flags = ResendHeader) = 0;
+	virtual QXmlStreamWriter *writer() = 0;
+	virtual void completed(const CompletedFlags &flags = ResendHeader) = 0;
 	virtual void setJID(const JID &jid) = 0;
 	virtual void addDataStream(DataStream *data_stream) = 0;
 };
@@ -75,7 +76,7 @@ public:
 protected:
 	StreamInfo *m_info;
 	Client *m_client;
-	inline void completed(StreamInfo::CompletedFlags flags = StreamInfo::ResendHeader) { if(m_info) m_info->completed(flags); }
+	inline void completed(const StreamInfo::CompletedFlags &flags = StreamInfo::ResendHeader) { if(m_info) m_info->completed(flags); }
 	inline void addDataStream(DataStream *data_stream) { if(m_info) m_info->addDataStream(data_stream); }
 private:
 	const Type m_type;

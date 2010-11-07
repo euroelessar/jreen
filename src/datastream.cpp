@@ -17,23 +17,26 @@
 
 namespace jreen
 {
-
-DataStream::DataStream()
-{
-}
-
-DataStream::~DataStream()
-{
-}
-
-void DataStream::write(const QByteArray &data)
-{
-	emit readOutgoing(data);
-}
-
-void DataStream::writeIncoming(const QByteArray &data)
-{
-	emit read(data);
-}
-
+	
+	DataStream::DataStream() : m_device(0)
+	{
+	}
+	
+	DataStream::~DataStream()
+	{
+	}
+	
+	void DataStream::setDevice(QIODevice *device)
+	{
+		if (m_device)
+			disconnect(m_device, 0, this, 0);
+		m_device = device;
+		connect(m_device, SIGNAL(readyRead()), SLOT(incomingDataReady()));
+	}
+	
+	QIODevice *DataStream::device()
+	{
+		return m_device;
+	}
+	
 }

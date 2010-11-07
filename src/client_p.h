@@ -100,6 +100,7 @@ public:
 		current_stream_feature = 0;
 		authorized = false;
 		client = parent;
+		device = 0;
 	}
 	QString elementToString(const QDomElement &element)
 	{
@@ -123,8 +124,8 @@ public:
 	}
 	void send(const QString &data)
 	{
-		if(conn && conn->isOpen())
-			conn->write(data.toUtf8());
+		if(conn && device->isOpen())
+			device->write(data.toUtf8());
 	}
 	void processStreamFeature(StreamFeature *stream_feature, const QDomElement &node)
 	{
@@ -221,6 +222,7 @@ public:
 	int current_id;
 	Parser *parser;
 	Connection *conn;
+	QIODevice *device;
 	bool authorized;
 	XQueryContainer security_layers;
 	XQueryContainer compressions;
@@ -238,8 +240,8 @@ public:
 public slots:
 	void newData()
 	{
-		QByteArray data = conn->readAll();
-		qDebug() << data;
+		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->size())); // device->readAll();
+		qDebug() << "-" << data.size() << data;
 		parser->appendData(data);
 //		parser->appendData(data);
 		readMore();
@@ -250,7 +252,7 @@ public slots:
 		qDebug() << conn;
 		delete writer;
 		qDebug() << conn;
-		writer = new QXmlStreamWriter(conn);
+		writer = new QXmlStreamWriter(device);
 		qDebug() << conn;
 		writer->writeStartDocument(QLatin1String("1.0"));
 		writer->writeStartElement(QLatin1String("stream:stream"));
@@ -333,11 +335,16 @@ public:
 	{
 		return m_client_private->client;
 	}
-	void completed(CompletedFlags flags = ResendHeader)
+	QXmlStreamWriter *writer()
+	{
+		return m_client_private->writer;
+	}
+	void completed(const CompletedFlags &flags)
 	{
 		if(flags & Authorized)
 			m_client_private->emitAuthorized();
 		if (flags & ResendHeader) {
+			m_client_private->device->readAll();
 			m_client_private->sendHeader();
 			m_client_private->parser->reset();
 			m_client_private->current_stream_feature = 0;
@@ -351,7 +358,14 @@ public:
 	{
 		m_client_private->jid = jid;
 	}
-	void addDataStream(DataStream *data_stream) { Q_UNUSED(data_stream); }
+	void addDataStream(DataStream *dataStream) 
+	{
+		dataStream->setDevice(m_client_private->conn);
+		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);
+		m_client_private->device = dataStream;
+		dataStream->open(QIODevice::ReadWrite);
+		QObject::connect(m_client_private->device, SIGNAL(readyRead()), m_client_private, SLOT(newData()));
+	}
 private:
 	ClientPrivate *m_client_private;
 };

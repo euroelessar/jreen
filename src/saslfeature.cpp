@@ -68,8 +68,6 @@ namespace jreen
 				m_mechs.clear();
 			} else if (name == QLatin1String("challenge")) {
 				m_state = AtChallenge;
-			} else if (name == QLatin1String("success")) {
-				m_info->completed(StreamInfo::Authorized);
 			}
 		} else if (m_depth == 2 && name == QLatin1String("mechanism")) {
 			m_state = AtMechanism;
@@ -83,6 +81,8 @@ namespace jreen
 		else if (m_depth == 1) {
 			qDebug() << Q_FUNC_INFO << m_mechs;
 			m_state = AtStart;
+			if (name == QLatin1String("success"))
+				m_info->completed(StreamInfo::Authorized);
 		}
 		m_depth--;
 	}

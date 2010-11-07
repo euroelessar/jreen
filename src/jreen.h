@@ -16,10 +16,6 @@
 #ifndef JREEN_H
 #define JREEN_H
 
-# ifdef J_BUILD_LIBRARY
-#  define QT_NO_CAST_FROM_ASCII
-# endif
-
 # ifndef __cplusplus
 #  error "C++ is needed"
 # endif // __cplusplus
@@ -73,7 +69,7 @@ private:
 	public: \
 		const QString &xPath() const \
 		{ \
-			static const QString xpath(XPath); \
+			static const QString xpath; \
 			return xpath; \
 		}
 

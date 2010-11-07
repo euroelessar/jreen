@@ -25,6 +25,8 @@
 #include "saslfeature.h"
 #include "bindfeature.h"
 #include "sessionfeature_p.h"
+#include "zlibcompressionfeature.h"
+#include <QStringBuilder>
 
 namespace jreen
 {
@@ -145,6 +147,7 @@ Client::Client(const JID &jid, const QString &password, int port)
 	registerStreamFeature(new SASLFeature);
 	registerStreamFeature(new BindFeature);
 	registerStreamFeature(new SessionFeature);
+	registerStreamFeature(new ZLibCompressionFeature);
 	impl->presence.addExtension(new Capabilities(impl->disco));
 }
 
@@ -190,8 +193,7 @@ int Client::port() const
 
 const QString Client::getID()
 {
-	static const QString base_id("jreen");
-	return base_id + QString::number(impl->current_id++);
+	return QLatin1Literal("jreen") % QString::number(qHash(this)) % QLatin1Char(':') % QString::number(impl->current_id++);
 }
 
 Presence &Client::presence()
@@ -232,6 +234,7 @@ void Client::setConnectionImpl(Connection *conn)
 {
 	delete impl->conn;
 	impl->conn = conn;
+	impl->device = conn;
 	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), impl, SLOT(connected()));
 }

@@ -90,6 +90,6 @@ private:
 
 }
 
-inline uint qHash(jreen::JID jid) { return qHash(jid.full()); }
+inline uint qHash(const jreen::JID &jid) { return qHash(jid.full()); }
 
 #endif // JID_H
