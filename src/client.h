@@ -17,6 +17,7 @@
 #define CLIENT_H
 
 #include <QObject>
+#include <QSet>
 #include "jreen.h"
 #include "presence.h"
 
@@ -36,6 +37,7 @@ class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(Client);
+	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
 	ClientPrivate *impl;
 	friend class ClientPrivate;
 public:
@@ -46,6 +48,7 @@ public:
 	void setServer(const QString &server);
 	void setResource(const QString &resource);
 	void setPort(int port);
+	QSet<QString> serverFeatures() const;
 	const QString &server() const;
 	int port() const;
 	const QString getID();
@@ -64,21 +67,22 @@ public slots:
 	void connectToServer();
 	void disconnectFromServer(bool force = false);
 signals:
-	void onConnect();
-	void onDisconnect();
+	void connected();
+	void disconnected();
 	void authorized();
 	void newSubscription(const Subscription &subscription);
 	void newPresence(const Presence &presence);
 	void newIQ(const IQ &iq);
 	void newMessage(const Message &message);
+	void serverFeaturesReceived(const QSet<QString> &features);
 protected:
-	virtual void handleConnect() { emit onConnect(); }
-	virtual void handleDisconnect() { emit onDisconnect(); }
-	virtual void handleAuthorized() { emit authorized(); }
-	virtual void handleSubscription(const Subscription &subscription) { emit newSubscription(subscription); }
-	virtual void handlePresence(const Presence &presence) { emit newPresence(presence); }
-	virtual void handleIQ(const IQ &iq) { emit newIQ(iq); }
-	virtual void handleMessage(const Message &message) { emit newMessage(message); }
+	virtual void handleConnect();
+	virtual void handleDisconnect();
+	virtual void handleAuthorized();
+	virtual void handleSubscription(const Subscription &subscription);
+	virtual void handlePresence(const Presence &presence);
+	virtual void handleIQ(const IQ &iq);
+	virtual void handleMessage(const Message &message);
 };
 
 }

@@ -16,6 +16,7 @@
 #include <QCryptographicHash>
 #include <QStringList>
 #include <QMap>
+#include <QStringBuilder>
 #include <QXmlStreamWriter>
 #include "capabilities.h"
 #include "disco.h"
@@ -56,9 +57,9 @@ QString Capabilities::ver() const
 	QString s;
 	QStringList sl;
 	const Disco::IdentityList &identity_list = m_disco->identities();
-	const QString identity_template(QLatin1String("%1/%2/%3/%4<"));
 	foreach(const Disco::Identity &i, identity_list)
-		sl << identity_template.arg(i.category, i.type, i.lang, i.name);
+		sl << (i.category % QLatin1Char('/') % i.type
+			   % QLatin1Char('/') % i.lang % QLatin1Char('/') % i.name);
 	sl.sort();
 	foreach(const QString &str, sl)
 		s.append(str);

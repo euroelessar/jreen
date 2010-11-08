@@ -119,6 +119,11 @@ bool JID::setJID(const QString &jid)
 	}
 	if(!impl)
 		impl = new JIDPrivate;
+
+	impl->node.clear();
+	impl->domain.clear();
+	impl->resource.clear();
+
 	int at = jid.indexOf(QLatin1Char('@'));
 	int slash = jid.indexOf(QLatin1Char('/'), at < 0 ? 0 : at);
 

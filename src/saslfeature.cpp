@@ -21,25 +21,30 @@
 
 namespace jreen
 {
+	Q_GLOBAL_STATIC(QCA::Initializer, qcaInit)
+	
 	SASLFeature::SASLFeature() : StreamFeature(SASL)
 	{
 		QCA::setAppName("qutim");
-		static QCA::Initializer qca;
+		qcaInit();
 		m_depth = 0;
 		m_firstStep = true;
 		qDebug() << QCA::supportedFeatures();
-		if(!QCA::isSupported("sasl"))
-			qFatal("sasl is unsupported");
-		m_sasl = new QCA::SASL(this);
-		connect(m_sasl, SIGNAL(clientStarted(bool,QByteArray)),
-				this, SLOT(onClientStarted(bool,QByteArray)));
-		connect(m_sasl, SIGNAL(nextStep(QByteArray)),
-				this, SLOT(onNextStep(QByteArray)));
-		connect(m_sasl, SIGNAL(needParams(QCA::SASL::Params)),
-				this, SLOT(onNeedParams(QCA::SASL::Params)));
-		connect(m_sasl, SIGNAL(authCheck(QString,QString)),
-				this, SLOT(onAuthCheck(QString,QString)));
-		connect(m_sasl, SIGNAL(error()), this, SLOT(onError()));
+		if(QCA::isSupported("sasl")) {
+			m_sasl = new QCA::SASL(this);
+			connect(m_sasl, SIGNAL(clientStarted(bool,QByteArray)),
+					this, SLOT(onClientStarted(bool,QByteArray)));
+			connect(m_sasl, SIGNAL(nextStep(QByteArray)),
+					this, SLOT(onNextStep(QByteArray)));
+			connect(m_sasl, SIGNAL(needParams(QCA::SASL::Params)),
+					this, SLOT(onNeedParams(QCA::SASL::Params)));
+			connect(m_sasl, SIGNAL(authCheck(QString,QString)),
+					this, SLOT(onAuthCheck(QString,QString)));
+			connect(m_sasl, SIGNAL(error()), this, SLOT(onError()));
+		} else {
+			qWarning("Jreen: SASL is not provided by QCA");
+			m_sasl = 0;
+		}
 	}
 	
 	void SASLFeature::reset()
@@ -51,6 +56,9 @@ namespace jreen
 	
 	bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 	{
+		// All other methods shouldn't be called is canParse returnes false
+		if (!m_sasl)
+			return false;
 		Q_UNUSED(name);
 		Q_UNUSED(attributes);
 		qDebug() << Q_FUNC_INFO << name << uri;
@@ -82,7 +90,7 @@ namespace jreen
 			qDebug() << Q_FUNC_INFO << m_mechs;
 			m_state = AtStart;
 			if (name == QLatin1String("success"))
-				m_info->completed(StreamInfo::Authorized);
+				m_info->completed(StreamInfo::Authorized | StreamInfo::ResendHeader);
 		}
 		m_depth--;
 	}
@@ -103,7 +111,7 @@ namespace jreen
 
 	bool SASLFeature::isActivatable()
 	{
-		return !m_mechs.isEmpty();
+		return m_sasl && !m_mechs.isEmpty();
 	}
 
 	bool SASLFeature::activate()

@@ -33,6 +33,7 @@
 #include "disco.h"
 #include "error.h"
 #include "stanzafactory.h"
+#include "buffereddatastream.h"
 #include <QTimer>
 #include <QTextCodec>
 
@@ -100,7 +101,9 @@ public:
 		current_stream_feature = 0;
 		authorized = false;
 		client = parent;
-		device = 0;
+		device = new BufferedDataStream;
+		device->open(QIODevice::ReadWrite);
+		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
 	}
 	QString elementToString(const QDomElement &element)
 	{
@@ -222,7 +225,7 @@ public:
 	int current_id;
 	Parser *parser;
 	Connection *conn;
-	QIODevice *device;
+	DataStream *device;
 	bool authorized;
 	XQueryContainer security_layers;
 	XQueryContainer compressions;
@@ -235,13 +238,15 @@ public:
 	QXmlStreamWriter *writer;
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
+	QSet<QString> serverFeatures;
 	StanzaExtensionFactoryMap factories;
 	int depth;
 public slots:
+	void onIqReceived(const IQ &iq, int context);
 	void newData()
 	{
-		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->size())); // device->readAll();
-		qDebug() << "-" << data.size() << data;
+		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();
+//		qDebug() << "-" << data.size() << data;
 		parser->appendData(data);
 //		parser->appendData(data);
 		readMore();
@@ -249,9 +254,9 @@ public slots:
 	void readMore();
 	void sendHeader()
 	{
-		qDebug() << conn;
+		qDebug() << device;
 		delete writer;
-		qDebug() << conn;
+		qDebug() << device;
 		writer = new QXmlStreamWriter(device);
 		qDebug() << conn;
 		writer->writeStartDocument(QLatin1String("1.0"));
@@ -360,11 +365,12 @@ public:
 	}
 	void addDataStream(DataStream *dataStream) 
 	{
-		dataStream->setDevice(m_client_private->conn);
-		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);
-		m_client_private->device = dataStream;
+		dataStream->setDevice(m_client_private->device->device());
+		m_client_private->device->setDevice(dataStream);
+//		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);
+//		m_client_private->device = dataStream;
 		dataStream->open(QIODevice::ReadWrite);
-		QObject::connect(m_client_private->device, SIGNAL(readyRead()), m_client_private, SLOT(newData()));
+//		QObject::connect(m_client_private->device, SIGNAL(readyRead()), m_client_private, SLOT(newData()));
 	}
 private:
 	ClientPrivate *m_client_private;

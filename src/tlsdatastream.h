@@ -14,21 +14,20 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef TLSDATASTREAM_H
+#define TLSDATASTREAM_H
 
 #include "datastream.h"
+#include <QtCrypto>
 
 namespace jreen
 {
-	class ZLibDataStreamPrivate;
-	class ZLibDataStream : public DataStream
+	class TLSDataStream : public DataStream
 	{
 		Q_OBJECT
-		Q_DECLARE_PRIVATE(ZLibDataStream)
 	public:
-		ZLibDataStream();
-		~ZLibDataStream();
+		TLSDataStream(QCA::TLS *tls);
+		~TLSDataStream();
 		
 		qint64 bytesAvailable() const;
 		bool open(OpenMode mode);
@@ -37,9 +36,14 @@ namespace jreen
 		void incomingDataReady();
 		qint64 writeData(const char *data, qint64 len);
 		qint64 readData(char *data, qint64 maxlen);
+	private slots:
+		void onReadyRead();
+		void onReadyReadOutgoing();
 	private:
-		QScopedPointer<ZLibDataStreamPrivate> d_ptr;
+		QCA::TLS *m_tls;
+		QByteArray m_buffer;
+		int m_offset;
 	};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // TLSDATASTREAM_H

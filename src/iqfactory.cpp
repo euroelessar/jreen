@@ -16,6 +16,7 @@
 
 #include "iqfactory_p.h"
 #include "iq_p.h"
+#include <QDebug>
 
 namespace jreen
 {

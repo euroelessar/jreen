@@ -14,32 +14,43 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef TLSFEATURE_H
+#define TLSFEATURE_H
 
-#include "datastream.h"
+#include "streamfeature.h"
+#include <QtCrypto>
 
 namespace jreen
 {
-	class ZLibDataStreamPrivate;
-	class ZLibDataStream : public DataStream
-	{
-		Q_OBJECT
-		Q_DECLARE_PRIVATE(ZLibDataStream)
-	public:
-		ZLibDataStream();
-		~ZLibDataStream();
-		
-		qint64 bytesAvailable() const;
-		bool open(OpenMode mode);
-		void close();
-	protected:
-		void incomingDataReady();
-		qint64 writeData(const char *data, qint64 len);
-		qint64 readData(char *data, qint64 maxlen);
-	private:
-		QScopedPointer<ZLibDataStreamPrivate> d_ptr;
+class TLSFeature : public QObject, public StreamFeature
+{
+	Q_OBJECT
+public:
+	enum State {
+		AtStart,
+		AtFeature,
+		AtChallenge,
+		AtSuccess
 	};
+    TLSFeature();
+	int priority() { return 10; }
+//		void setStreamInfo(StreamInfo *info);
+	void reset();
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	bool isActivatable();
+	bool activate();
+private slots:
+	void onHandshaken();
+	void onClosed();
+	void onError();
+private:
+	QCA::TLS *m_tls;
+	bool m_required;
+	bool m_available;
+};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // TLSFEATURE_H

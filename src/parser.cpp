@@ -105,7 +105,7 @@ namespace jreen
 				}
 				foreach (XmlStreamParser *parser, d->parsers)
 					parser->handleStartElement(d->reader->name(), d->reader->namespaceUri(), d->reader->attributes());
-				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
+//				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
 				d->depth++;
 				break;
 			case QXmlStreamReader::EndElement:
@@ -135,15 +135,15 @@ namespace jreen
 				} else if (d->depth == 0) {
 				}
 				d->parsers.resize(d->parsersCount.pop());
-				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
+//				qDebug() << d->reader->tokenString() << d->depth << d->reader->name();
 				break;
 			case QXmlStreamReader::Characters:
 				foreach (XmlStreamParser *parser, d->parsers)
 					parser->handleCharacterData(d->reader->text());
-				qDebug() << d->reader->tokenString() << d->reader->text();
+//				qDebug() << d->reader->tokenString() << d->reader->text();
 				break;
 			default:
-				qDebug() << d->reader->tokenString();
+//				qDebug() << d->reader->tokenString();
 				break;
 			}
 		}

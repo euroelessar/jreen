@@ -58,7 +58,11 @@ SOURCES += src/jid.cpp \
     src/zlibdatastream.cpp \
     src/delayeddeliveryfactory.cpp \
     src/softwareversionfactory.cpp \
-    src/softwareversion.cpp
+    src/softwareversion.cpp \
+    src/tlsfeature.cpp \
+    src/tlsdatastream.cpp \
+    src/buffereddatastream.cpp \
+    src/presencefactory.cpp
 HEADERS += src/jid.h \
     src/jreen.h \
     src/jstrings.h \
@@ -113,7 +117,14 @@ HEADERS += src/jid.h \
     src/zlibcompressionfeature.h \
     src/zlibdatastream.h \
     src/delayeddeliveryfactory.h \
-    src/softwareversionfactory.h
+    src/softwareversionfactory.h \
+    src/tlsfeature.h \
+    src/tlsdatastream.h \
+    src/buffereddatastream.h \
+    src/presencefactory_p.h \
+    src/presence_p.h \
+    src/abstractroster_p.h \
+    src/disco_p.h
 
 include(src/gui/gui.pri)
 include(src/3rdparty/jdns/jdns.pri)

@@ -13,9 +13,7 @@
  ***************************************************************************
 *****************************************************************************/
 
-#include "presence.h"
-#include "stanza_p.h"
-#include "langmap.h"
+#include "presence_p.h"
 #include "capabilities.h"
 
 namespace jreen
@@ -33,14 +31,6 @@ J_STRING(dnd)
 J_STRING(xa)
 J_STRING(priority)
 
-struct PresencePrivate : public StanzaPrivate
-{
-	PresencePrivate() : StanzaPrivate(StanzaPresence) {}
-	Presence::Type subtype;
-	LangMap status;
-	int priority;
-};
-
 Presence::Presence(Type type, const JID& to, const QString &status, int priority, const QString &xmllang)
 	: Stanza(*new PresencePrivate)
 {
@@ -49,6 +39,20 @@ Presence::Presence(Type type, const JID& to, const QString &status, int priority
 	d->to = to;
 	d->priority = priority;
 	d->status[xmllang] = status;
+}
+
+Presence::Presence(Type type, const JID& to, const LangMap &status, int priority)
+	: Stanza(*new PresencePrivate)
+{
+	Q_D(Presence);
+	d->subtype = type;
+	d->to = to;
+	d->priority = priority;
+	d->status = status;
+}
+
+Presence::Presence(PresencePrivate &p) : Stanza(p)
+{
 }
 
 Presence::Presence(const QDomElement &node) : Stanza(node, new PresencePrivate)

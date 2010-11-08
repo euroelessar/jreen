@@ -87,8 +87,67 @@ QDomElement DataForm::node(QDomDocument *document) const
 	node.setAttribute(ConstString::type, dataform_types.at(m_form_type));
 	node.setAttribute(ConstString::xmlns, ConstString::xmlns_data);
 	foreach(const QSharedPointer<DataFormField> &field, m_fields_list)
-		node.appendChild(field->node(document));
-	return node;*/
+		node.appendChild(field->node(document));*/
+	return node;
+}
+
+enum DataFormState { AtStart, AtResource, AtJid };
+
+class DataFormFactoryPrivate
+{
+public:
+	int depth;
+	DataFormState state;
+	QString title;
+	DataFormReportedList reported;
+	DataFormItemList items;
+	DataForm::Type formType;
+};
+
+DataFormFactory::DataFormFactory() : d_ptr(new DataFormFactoryPrivate)
+{
+	Q_D(DataFormFactory);
+	d->state = AtStart;
+	d->depth = 0;
+	d->formType = DataForm::Invalid;
+}
+
+DataFormFactory::~DataFormFactory()
+{
+}
+
+QStringList DataFormFactory::features() const
+{
+	return QStringList(QLatin1String("jabber:x:data"));
+}
+
+bool DataFormFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+{
+	Q_UNUSED(attributes);
+	return name == QLatin1String("x") && uri == QLatin1String("jabber:x:data");
+}
+
+void DataFormFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+{
+}
+
+void DataFormFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+{
+}
+
+void DataFormFactory::handleCharacterData(const QStringRef &text)
+{
+}
+
+void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+{
+}
+
+StanzaExtension::Ptr DataFormFactory::createExtension()
+{
+	DataForm *form = new DataForm;
+//	form->setFields();
+	return StanzaExtension::Ptr(form);
 }
 
 }

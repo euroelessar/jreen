@@ -65,6 +65,11 @@ void DirectConnection::close()
 {
 }
 
+qint64 DirectConnection::bytesAvailable() const
+{
+	return d_func()->socket->bytesAvailable() + QIODevice::bytesAvailable();
+}
+
 Connection::SocketState DirectConnection::socketState() const
 {
 	Q_D(const DirectConnection);

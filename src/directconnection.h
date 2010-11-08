@@ -35,6 +35,7 @@ public:
 	~DirectConnection();
 	bool open();
 	void close();
+	qint64 bytesAvailable() const;
 	SocketState socketState() const;
 	SocketError socketError() const;
 

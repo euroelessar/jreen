@@ -244,6 +244,23 @@ private:
 	Type m_form_type;
 };
 
+class DataFormFactoryPrivate;
+class DataFormFactory : public StanzaExtensionFactory<DataForm>
+{
+	Q_DECLARE_PRIVATE(DataFormFactory)
+public:
+	DataFormFactory();
+	virtual ~DataFormFactory();
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
+private:
+	QScopedPointer<DataFormFactoryPrivate> d_ptr;
+};
 }
 
 #endif // DATAFORM_H

@@ -17,6 +17,7 @@
 #include <QtGui>
 #include <QStringList>
 #include "client.h"
+#include "abstractroster.h"
 
 using namespace jreen;
 
@@ -26,5 +27,9 @@ int main(int argc, char **argv)
 	QStringList args = app.arguments();
 	Client client(args.at(1), args.value(2), args.value(3, "-1").toInt());
 	client.connectToServer();
+	AbstractRoster roster(&client);
+	QObject::connect(&client, SIGNAL(serverFeaturesReceived(QSet<QString>)), &roster, SLOT(load()));
+	QObject::connect(&roster, SIGNAL(loaded()), &client, SLOT(setPresence()));
+	client.presence().setPresence(Presence::Available);
 	app.exec();
 }

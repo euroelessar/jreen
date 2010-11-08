@@ -23,6 +23,7 @@ namespace jreen
 
 struct PresencePrivate;
 class Capabilities;
+class LangMap;
 
 class JREEN_EXPORT Presence : public Stanza
 {
@@ -47,6 +48,8 @@ public:
 	};
 	Presence(Type type, const JID& to, const QString &status = QString(),
 			  int priority = 0, const QString &xmllang = QString());
+	Presence(Type type, const JID& to, const LangMap &status, int priority = 0);
+	Presence(PresencePrivate &p);
 	Presence(const QDomElement &node);
 	inline Presence &operator =(const Presence &stanza)
 		{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }

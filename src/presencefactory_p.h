@@ -14,32 +14,32 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef PRESENCEFACTORY_P_H
+#define PRESENCEFACTORY_P_H
 
-#include "datastream.h"
+#include "stanzafactory.h"
+#include "presence.h"
+#include "langmap.h"
 
 namespace jreen
 {
-	class ZLibDataStreamPrivate;
-	class ZLibDataStream : public DataStream
-	{
-		Q_OBJECT
-		Q_DECLARE_PRIVATE(ZLibDataStream)
-	public:
-		ZLibDataStream();
-		~ZLibDataStream();
-		
-		qint64 bytesAvailable() const;
-		bool open(OpenMode mode);
-		void close();
-	protected:
-		void incomingDataReady();
-		qint64 writeData(const char *data, qint64 len);
-		qint64 readData(char *data, qint64 maxlen);
-	private:
-		QScopedPointer<ZLibDataStreamPrivate> d_ptr;
-	};
+class PresenceFactory : public StanzaFactory
+{
+public:
+    PresenceFactory(Client *client);
+	int stanzaType();
+	Stanza::Ptr createStanza();
+	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &name);
+private:
+	int m_depth;
+	Presence::Type m_type;
+	int m_priority;
+	LangMap m_status;
+};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // PRESENCEFACTORY_P_H

@@ -14,32 +14,34 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef BUFFEREDDATASTREAM_H
+#define BUFFEREDDATASTREAM_H
 
 #include "datastream.h"
 
 namespace jreen
 {
-	class ZLibDataStreamPrivate;
-	class ZLibDataStream : public DataStream
+	class BufferedDataStreamPrivate;
+	class BufferedDataStream : public DataStream
 	{
 		Q_OBJECT
-		Q_DECLARE_PRIVATE(ZLibDataStream)
+		Q_DECLARE_PRIVATE(BufferedDataStream)
 	public:
-		ZLibDataStream();
-		~ZLibDataStream();
+		BufferedDataStream();
+		~BufferedDataStream();
 		
 		qint64 bytesAvailable() const;
 		bool open(OpenMode mode);
 		void close();
 	protected:
+		void timerEvent(QTimerEvent *);
 		void incomingDataReady();
 		qint64 writeData(const char *data, qint64 len);
 		qint64 readData(char *data, qint64 maxlen);
 	private:
-		QScopedPointer<ZLibDataStreamPrivate> d_ptr;
+		void flush();
+		QScopedPointer<BufferedDataStreamPrivate> d_ptr;
 	};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // BUFFEREDDATASTREAM_H

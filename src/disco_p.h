@@ -14,49 +14,47 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef SASLFEATURE_H
-#define SASLFEATURE_H
+#ifndef DISCO_P_H
+#define DISCO_P_H
 
-#include "streamfeature.h"
-#include <QStringList>
-#include <QtCrypto>
+#include "disco.h"
 
 namespace jreen
 {
-	class SASLFeature : public QObject, public StreamFeature
+	struct DiscoPrivate
 	{
-		Q_OBJECT
+		Disco::IdentityList identities;
+		QSet<QString> features;
+		Client *client;
+		QSharedPointer<DataForm> form;
+		QString os;
+		QString software_name;
+		QString software_version;
+		
+		static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
+	};
+	
+	class DiscoInfoFactory : public StanzaExtensionFactory<Disco::Info>
+	{
 	public:
-		enum State {
-			AtStart,
-			AtMechanisms,
-			AtMechanism,
-			AtChallenge,
-			AtSuccess
-		};
-
-		SASLFeature();
-		int priority() { return 10; }
-//		void setStreamInfo(StreamInfo *info);
-		void reset();
+		DiscoInfoFactory();
+		QStringList features() const;
 		bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 		void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 		void handleEndElement(const QStringRef &name, const QStringRef &uri);
 		void handleCharacterData(const QStringRef &text);
-		bool isActivatable();
-		bool activate();
-	public slots:
-		void onClientStarted(bool init, const QByteArray &data);
-		void onNextStep(const QByteArray &data);
-		void onNeedParams(const QCA::SASL::Params &params);
-		void onAuthCheck(const QString &user, const QString &authzid);
-		void onError();
+		void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+		StanzaExtension::Ptr createExtension();
 	private:
+		enum State { AtStart, AtInfo, AtDataForm };
 		int m_depth;
 		State m_state;
-		bool m_firstStep;
-		QStringList m_mechs;
-		QCA::SASL *m_sasl;
+		QString m_node;
+		Disco::IdentityList m_identities;
+		QSet<QString> m_features;
+		DataFormFactory m_factory;
+		bool m_hasDataForm;
 	};
 }
-#endif // SASLFEATURE_H
+
+#endif // DISCO_P_H

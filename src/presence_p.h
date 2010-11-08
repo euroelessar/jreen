@@ -14,32 +14,22 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef PRESENCE_P_H
+#define PRESENCE_P_H
 
-#include "datastream.h"
+#include "stanza_p.h"
+#include "presence.h"
+#include "langmap.h"
 
 namespace jreen
 {
-	class ZLibDataStreamPrivate;
-	class ZLibDataStream : public DataStream
+	struct PresencePrivate : public StanzaPrivate
 	{
-		Q_OBJECT
-		Q_DECLARE_PRIVATE(ZLibDataStream)
-	public:
-		ZLibDataStream();
-		~ZLibDataStream();
-		
-		qint64 bytesAvailable() const;
-		bool open(OpenMode mode);
-		void close();
-	protected:
-		void incomingDataReady();
-		qint64 writeData(const char *data, qint64 len);
-		qint64 readData(char *data, qint64 maxlen);
-	private:
-		QScopedPointer<ZLibDataStreamPrivate> d_ptr;
+		PresencePrivate() : StanzaPrivate(StanzaPresence) {}
+		Presence::Type subtype;
+		LangMap status;
+		int priority;
 	};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // PRESENCE_P_H

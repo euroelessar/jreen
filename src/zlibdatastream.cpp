@@ -29,8 +29,6 @@ namespace jreen
 		QByteArray buffer;
 		int offset;
 		int len;
-		QByteArray outBuffer;
-		QBasicTimer timer;
 		void ensureSize(int size)
 		{
 			if (buffer.size() - offset - len < size)
@@ -51,9 +49,9 @@ namespace jreen
 	{
 	}
 	
-	qint64 ZLibDataStream::size() const
+	qint64 ZLibDataStream::bytesAvailable() const
 	{
-		return d_func()->len + QIODevice::size();
+		return d_func()->len + QIODevice::bytesAvailable();
 	}
 	
 	bool ZLibDataStream::open(OpenMode mode)
@@ -81,15 +79,6 @@ namespace jreen
 		inflateEnd(&d->zinflate);
 		deflateEnd(&d->zdeflate);
 	}
-	
-	void ZLibDataStream::timerEvent(QTimerEvent *event)
-	{
-		if (event->timerId() == d_func()->timer.timerId()) {
-			flush();
-			d_func()->timer.stop();
-		}
-		return QIODevice::timerEvent(event);
-	}
 
 	void ZLibDataStream::incomingDataReady()
 	{
@@ -113,17 +102,8 @@ namespace jreen
 		Q_D(ZLibDataStream);
 		if (len <= 0)
 			return 0;
-		d->outBuffer.append(data, len);
-		if (!d->timer.isActive())
-			d->timer.start(0, this);
-		return len;
-	}
-	
-	void ZLibDataStream::flush()
-	{
-		Q_D(ZLibDataStream);
-		d->zdeflate.avail_in = d->outBuffer.size();
-		d->zdeflate.next_in = reinterpret_cast<Bytef*>(const_cast<char *>(d->outBuffer.data()));
+		d->zdeflate.avail_in = len;
+		d->zdeflate.next_in = reinterpret_cast<Bytef*>(const_cast<char *>(data));
 		const int chunkSize = d->zdeflate.avail_in * 1.01 + 13;
 		QByteArray buffer(chunkSize, Qt::Uninitialized);
 		do {
@@ -132,7 +112,7 @@ namespace jreen
 			deflate(&d->zdeflate, Z_SYNC_FLUSH);
 			device()->write(buffer.data(), chunkSize - d->zdeflate.avail_out);
 		} while (d->zdeflate.avail_out == 0);
-		d->outBuffer.clear();
+		return len;
 	}
 
 	qint64 ZLibDataStream::readData(char *data, qint64 maxlen)

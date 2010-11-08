@@ -22,14 +22,13 @@
 
 namespace jreen
 {
-	class StanzaFactory : public XmlStreamParser
+	class StanzaFactory : public XmlStreamFactory<Stanza>
 	{
 	public:
 		StanzaFactory(Client *client);
 		virtual ~StanzaFactory();
 		virtual int stanzaType() = 0;
 		virtual Stanza::Ptr createStanza() = 0;
-		virtual void serialize(Stanza *stanza, QXmlStreamWriter *writer) = 0;
 	protected:
 		void parseAttributes(const QXmlStreamAttributes &attributes);
 		void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);

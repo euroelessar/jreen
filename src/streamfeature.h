@@ -58,8 +58,8 @@ class JREEN_EXPORT StreamFeature : public XmlStreamParser
 public:
 	enum Type
 	{
-		CompressionLayer,
 		SecurityLayer,
+		CompressionLayer,
 		SASL,
 		SimpleAuthorization,
 		Custom,

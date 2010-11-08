@@ -45,7 +45,7 @@ public:
 	virtual int extensionType() const = 0;
 };
 
-class JREEN_EXPORT AbstractStanzaExtensionFactory : public XmlStreamParser
+class JREEN_EXPORT AbstractStanzaExtensionFactory : public XmlStreamFactory<StanzaExtension>
 {
 	Q_DISABLE_COPY(AbstractStanzaExtensionFactory)
 public:
@@ -54,7 +54,6 @@ public:
 	
 	virtual QStringList features() const = 0;
 	virtual int extensionType() const = 0;
-	virtual void serialize(StanzaExtension *extension, QXmlStreamWriter *writer) = 0;
 	virtual StanzaExtension::Ptr createExtension() = 0;
 };
 

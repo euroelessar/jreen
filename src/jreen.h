@@ -95,9 +95,10 @@ public:
 # ifndef forelements
 #  define forelements J_FORELEMENTS
 # endif
-
-class QXmlStreamAttributes;
 			
+class QXmlStreamAttributes;
+class QXmlStreamWriter;
+
 namespace jreen
 {
 	class JREEN_EXPORT XmlStreamParser
@@ -108,6 +109,13 @@ namespace jreen
 		virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes) = 0;
 		virtual void handleEndElement(const QStringRef &name, const QStringRef &uri) = 0;
 		virtual void handleCharacterData(const QStringRef &text) = 0;
+	};
+	
+	template <typename T>
+	class XmlStreamFactory : public XmlStreamParser
+	{
+	public:
+		virtual void serialize(T *obj, QXmlStreamWriter *writer) = 0;
 	};
 }
 

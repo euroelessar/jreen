@@ -14,6 +14,7 @@
 *****************************************************************************/
 
 #include "client_p.h"
+#include "disco_p.h"
 #include "stanza_p.h"
 #include "tcpconnection.h"
 #include "nonsaslauth.h"
@@ -22,7 +23,9 @@
 #include "error.h"
 #include "dataform.h"
 #include "iqfactory_p.h"
+#include "presencefactory_p.h"
 #include "saslfeature.h"
+#include "tlsfeature.h"
 #include "bindfeature.h"
 #include "sessionfeature_p.h"
 #include "zlibcompressionfeature.h"
@@ -68,64 +71,6 @@ namespace jreen
 
 void ClientPrivate::readMore()
 {
-//	qDebug("readMore");
-//	State state = WaitingForStanza;
-//	StreamFeature *currentFeature = 0;
-
-//	while (reader->readNext() >= QXmlStreamReader::StartDocument) {
-//		switch(reader->tokenType()) {
-//		case QXmlStreamReader::StartElement:
-//			if (depth == 1) {
-//				if(reader->name() == QLatin1String("features")) {
-//					state = ReadFeatures;
-//				} else if (reader->name() == QLatin1String("iq")
-//					|| reader->name() == QLatin1String("message")
-//					|| reader->name() == QLatin1String("presence")) {
-//					state = ReadStanza;
-//				} else {
-//					state = ReadCustom;
-//				}
-//			} else if (state == ReadFeatures && depth == 2) {
-//				foreach (StreamFeature *feature, streamFeatures) {
-//					if (feature->canParse(reader->name(), reader->namespaceUri(), reader->attributes())) {
-//						feature->handleStartElement(reader->name(), reader->namespaceUri(), reader->attributes());
-//					}
-//				}
-//			}
-//			qDebug() << reader->tokenString() << depth++ << reader->name();
-//			break;
-//		case QXmlStreamReader::EndElement:
-//			qDebug() << reader->tokenString() << --depth << reader->name();
-//			break;
-//		case QXmlStreamReader::Characters:
-//			qDebug() << reader->tokenString() << reader->text();
-//			break;
-//		default:
-//			qDebug() << reader->tokenString();
-//			break;
-//		}
-//	}
-//	qDebug() << "after: " << reader->tokenType() << reader->tokenString();
-//		Parser::Event ev = parser->readNext();
-//		if(!ev)
-//			return;
-//		switch(ev.type())
-//		{
-//		case Parser::Event::Element:
-//			elementParsed(ev.element());
-//			break;
-//		case Parser::Event::DocumentOpen:{
-//			sid = ev.atts().value(ConstString::id);
-//			QString version = ev.atts().value(QLatin1String("version"));
-//			int major = version.isEmpty() ? 0 : version.section('.', 0, 0).toInt();
-//			int minor = version.isEmpty() ? 0 : version.section('.', 1, 1).toInt();
-//			Q_UNUSED(major);
-//			Q_UNUSED(minor);
-//			break;}
-//		default:
-//			break;
-//		}
-//		QTimer::singleShot(0, this, SLOT(readMore()));
 }
 	
 Client::Client(const JID &jid, const QString &password, int port)
@@ -133,6 +78,7 @@ Client::Client(const JID &jid, const QString &password, int port)
 {
 	impl->parser = new Parser(this);
 	impl->stanzas << new IqFactory(this);
+	impl->stanzas << new PresenceFactory(this);
 	impl->stream_info = new StreamInfoImpl(impl);
 	impl->jid = jid;
 	impl->server = jid.domain();
@@ -142,9 +88,12 @@ Client::Client(const JID &jid, const QString &password, int port)
 	impl->xquery.registerStanzaExtension(new DelayedDelivery, impl->disco);
 	impl->xquery.registerStanzaExtension(new Error, impl->disco);
 	impl->xquery.registerStanzaExtension(new Capabilities, impl->disco);
-	impl->xquery.registerStanzaExtension(new DataForm, impl->disco);
+	registerStanzaExtension(new DataFormFactory);
+	registerStanzaExtension(new DiscoInfoFactory);
+	registerStanzaExtension(new Disco::Items);
 	registerStreamFeature(new NonSaslAuth);
 	registerStreamFeature(new SASLFeature);
+	registerStreamFeature(new TLSFeature);
 	registerStreamFeature(new BindFeature);
 	registerStreamFeature(new SessionFeature);
 	registerStreamFeature(new ZLibCompressionFeature);
@@ -176,6 +125,11 @@ void Client::setPort(int port)
 	impl->server_port = port;
 }
 
+QSet<QString> Client::serverFeatures() const
+{
+	return impl->serverFeatures;
+}
+
 void Client::setResource(const QString &resource)
 {
 	impl->jid.setResource(resource);
@@ -193,7 +147,7 @@ int Client::port() const
 
 const QString Client::getID()
 {
-	return QLatin1Literal("jreen") % QString::number(qHash(this)) % QLatin1Char(':') % QString::number(impl->current_id++);
+	return QLatin1Literal("jreen:") % QString::number(qHash(this), 16) % QLatin1Char(':') % QString::number(impl->current_id++);
 }
 
 Presence &Client::presence()
@@ -211,10 +165,6 @@ void Client::send(const Stanza &stanza)
 	if(!impl->conn || !impl->conn->isOpen())
 		return;
 	impl->send(stanza);
-//	QDomElement node = stanza;
-//	if(stanza.id().isEmpty())
-//		node.setAttribute(ConstString::id, getID());
-//	impl->send(node);
 }
 
 void Client::send(const IQ &iq, QObject *handler, const char *member, int context)
@@ -225,6 +175,7 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 		const StanzaPrivate *p = StanzaPrivate::get(iq);
 		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
+	qDebug() << iq.to();
 	QString id = iq.id();
 	impl->iq_tracks.insert(id, new IQTrack(handler, member, context));
 	impl->send(iq);
@@ -234,8 +185,8 @@ void Client::setConnectionImpl(Connection *conn)
 {
 	delete impl->conn;
 	impl->conn = conn;
-	impl->device = conn;
-	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
+	impl->device->setDevice(conn);
+//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), impl, SLOT(connected()));
 }
 
@@ -248,6 +199,8 @@ void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
 {
 	delete impl->factories.value(factory->extensionType(), 0);
 	impl->factories.insert(factory->extensionType(), factory);
+	foreach (const QString &feature, factory->features())
+		DiscoPrivate::get(impl->disco)->features << feature;
 }
 
 inline bool featureLessThan(StreamFeature *a, StreamFeature *b)
@@ -261,24 +214,6 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 		return;
 	impl->features.insert(qLowerBound(impl->features.begin(), impl->features.end(),
 									  stream_feature, featureLessThan), stream_feature);
-//	switch(stream_feature->type())
-//	{
-//	case StreamFeature::SimpleAuthorization:
-//		impl->non_sasl_auths.registerStreamFeature(stream_feature);
-//		break;
-//	case StreamFeature::SASL:
-//		impl->sasl_auths.registerStreamFeature(stream_feature);
-//		break;
-//	case StreamFeature::CompressionLayer:
-//		impl->compressions.registerStreamFeature(stream_feature);
-//		break;
-//	case StreamFeature::SecurityLayer:
-//		impl->security_layers.registerStreamFeature(stream_feature);
-//		break;
-//	default:
-//		delete stream_feature;
-//		return;
-//	}
 	stream_feature->setStreamInfo(impl->stream_info);
 }
 
@@ -326,5 +261,52 @@ void Client::disconnectFromServer(bool force)
 	}
 }
 
+void ClientPrivate::onIqReceived(const IQ &iq, int context)
+{
+	Q_UNUSED(context);
+	QSharedPointer<Disco::Info> info = iq.findExtension<Disco::Info>();
+	if (info) {
+		serverFeatures = info->features();
+		emit client->serverFeaturesReceived(serverFeatures);
+		qDebug() << serverFeatures;
+	}
+}
 
+void Client::handleConnect()
+{
+	IQ iq(IQ::Get, impl->jid.domain());
+	iq.addExtension(new Disco::Info);
+	send(iq, impl, SLOT(onIqReceived(IQ,int)), 0);
+	emit connected();
+}
+
+void Client::handleDisconnect()
+{
+	emit disconnected();
+}
+
+void Client::handleAuthorized()
+{
+	emit authorized();
+}
+
+void Client::handleSubscription(const Subscription &subscription)
+{
+	emit newSubscription(subscription);
+}
+
+void Client::handlePresence(const Presence &presence)
+{
+	emit newPresence(presence);
+}
+
+void Client::handleIQ(const IQ &iq)
+{
+	emit newIQ(iq);
+}
+
+void Client::handleMessage(const Message &message)
+{
+	emit newMessage(message);
+}
 }
