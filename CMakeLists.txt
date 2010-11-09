@@ -43,20 +43,20 @@ endif()
 ADD_DEFINITIONS(-DJ_BUILD_LIBRARY)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/jreen" )
-file(GLOB_RECURSE JREEN_INCLUDE_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
-foreach( header ${QUTIM_INCLUDE_HEADERS})
-    if( NOT ${header} MATCHES ".*_p\\.h")
-		if( NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
+file(GLOB JREEN_INCLUDE_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+foreach(header ${JREEN_INCLUDE_HEADERS})
+	if(NOT ${header} MATCHES ".*_p\\.h")
+		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
 			file( WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}"
 		"#include \"${CMAKE_CURRENT_SOURCE_DIR}/${header}\"
 	"
 			)
 		endif(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
-	LIST(APPEND QUTIM_INSTALL_HEADERS ${header})
+	LIST(APPEND JREEN_INSTALL_HEADERS ${header})
     endif(NOT ${header} MATCHES ".*_p\\.h")
 endforeach(header)
 
-set(JREEN_LIBRARIES libqutim CACHE INTERNAL "" )
+set(JREEN_LIBRARIES jreen CACHE INTERNAL "" )
 set(JREEN_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include" CACHE INTERNAL "")
 
 # Link with QT
