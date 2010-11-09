@@ -49,7 +49,7 @@ foreach(header ${JREEN_INCLUDE_HEADERS})
 	if(NOT ${header} MATCHES ".*_p\\.h")
 		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
 			file( WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}"
-		"#include \"${CMAKE_CURRENT_SOURCE_DIR}/${header}\"
+		"#include \"${CMAKE_CURRENT_SOURCE_DIR}/src/${header}\"
 	"
 			)
 		endif(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
