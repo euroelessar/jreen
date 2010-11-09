@@ -32,6 +32,7 @@ QT4_AUTOMOC(MOC_SRC ${SRC})
 ADD_LIBRARY(jreen SHARED ${SRC} ${MOC_SRC} ${HDR} )
 
 #compiler flags
+#fixme add macro to clang
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set_target_properties(jreen PROPERTIES COMPILE_FLAGS "-Wall -Wextra" ) #add -Werror
 	if(NOT WIN32)

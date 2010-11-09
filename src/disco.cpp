@@ -80,7 +80,7 @@ namespace jreen
 	
 	void DiscoInfoFactory::handleCharacterData(const QStringRef &text)
 	{
-		if (m_state = AtDataForm)
+		if (m_state == AtDataForm)
 			m_factory.handleCharacterData(text);
 	}
 	
