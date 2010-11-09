@@ -131,3 +131,5 @@ include(src/3rdparty/jdns/jdns.pri)
 
 DEFINES += J_BUILD_LIBRARY \
     J_BUILD_STATIC
+
+INSTALLS += target
