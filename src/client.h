@@ -42,8 +42,10 @@ class JREEN_EXPORT Client : public QObject
 	friend class ClientPrivate;
 public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
+	Client();
 	~Client();
 	const JID &jid();
+	void setJID(const JID &jid);
 	void setPassword(const QString &password);
 	void setServer(const QString &server);
 	void setResource(const QString &resource);
@@ -70,10 +72,10 @@ signals:
 	void connected();
 	void disconnected();
 	void authorized();
-	void newSubscription(const Subscription &subscription);
-	void newPresence(const Presence &presence);
-	void newIQ(const IQ &iq);
-	void newMessage(const Message &message);
+	void newSubscription(const jreen::Subscription &subscription);
+	void newPresence(const jreen::Presence &presence);
+	void newIQ(const jreen::IQ &iq);
+	void newMessage(const jreen::Message &message);
 	void serverFeaturesReceived(const QSet<QString> &features);
 protected:
 	virtual void handleConnect();

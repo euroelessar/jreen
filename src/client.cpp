@@ -40,7 +40,7 @@ namespace jreen
 		ReadStanza,
 		ReadCustom
 	};
-	
+
 	void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	{
 		if (!stanza)
@@ -72,32 +72,43 @@ namespace jreen
 void ClientPrivate::readMore()
 {
 }
-	
+
+void ClientPrivate::init()
+{
+	parser = new Parser(client);
+	stanzas << new IqFactory(client);
+	stanzas << new PresenceFactory(client);
+	stream_info = new StreamInfoImpl(this);
+	disco = new Disco(client);
+	xquery.registerStanzaExtension(new DelayedDelivery, disco);
+	xquery.registerStanzaExtension(new Error, disco);
+	xquery.registerStanzaExtension(new Capabilities, disco);
+	client->registerStanzaExtension(new DataFormFactory);
+	client->registerStanzaExtension(new DiscoInfoFactory);
+	client->registerStanzaExtension(new Disco::Items);
+	client->registerStreamFeature(new NonSaslAuth);
+	client->registerStreamFeature(new SASLFeature);
+	client->registerStreamFeature(new TLSFeature);
+	client->registerStreamFeature(new BindFeature);
+	client->registerStreamFeature(new SessionFeature);
+	client->registerStreamFeature(new ZLibCompressionFeature);
+	presence.addExtension(new Capabilities(disco));
+}
+
 Client::Client(const JID &jid, const QString &password, int port)
 	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
-	impl->parser = new Parser(this);
-	impl->stanzas << new IqFactory(this);
-	impl->stanzas << new PresenceFactory(this);
-	impl->stream_info = new StreamInfoImpl(impl);
+	impl->init();
 	impl->jid = jid;
 	impl->server = jid.domain();
 	impl->password = password;
 	impl->server_port = port;
-	impl->disco = new Disco(this);
-	impl->xquery.registerStanzaExtension(new DelayedDelivery, impl->disco);
-	impl->xquery.registerStanzaExtension(new Error, impl->disco);
-	impl->xquery.registerStanzaExtension(new Capabilities, impl->disco);
-	registerStanzaExtension(new DataFormFactory);
-	registerStanzaExtension(new DiscoInfoFactory);
-	registerStanzaExtension(new Disco::Items);
-	registerStreamFeature(new NonSaslAuth);
-	registerStreamFeature(new SASLFeature);
-	registerStreamFeature(new TLSFeature);
-	registerStreamFeature(new BindFeature);
-	registerStreamFeature(new SessionFeature);
-	registerStreamFeature(new ZLibCompressionFeature);
-	impl->presence.addExtension(new Capabilities(impl->disco));
+}
+
+Client::Client()
+	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
+{
+	impl->init();
 }
 
 Client::~Client()
@@ -108,6 +119,12 @@ Client::~Client()
 const JID &Client::jid()
 {
 	return impl->jid;
+}
+
+void Client::setJID(const JID &jid)
+{
+	impl->jid = jid;
+	impl->server = jid.domain();
 }
 
 void Client::setPassword(const QString &password)

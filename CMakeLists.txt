@@ -17,7 +17,21 @@ INCLUDE(${QT_USE_FILE})
 FIND_PACKAGE(QCA2 REQUIRED)
 FIND_PACKAGE(ZLIB REQUIRED)
 
-add_subdirectory(3rdparty)
+#add_subdirectory(3rdparty)
+
+# Add JDns sources
+LIST(APPEND SRC "3rdparty/jdns/jdns.c"
+		"3rdparty/jdns/jdns_mdnsd.c"
+		"3rdparty/jdns/jdns_packet.c"
+		"3rdparty/jdns/jdns_sys.c"
+		"3rdparty/jdns/jdns_util.c"
+		"3rdparty/jdns/qjdns_sock.cpp"
+		"3rdparty/jdns/qjdns.cpp" )
+LIST(APPEND HDR "3rdparty/jdns/qjdns.h"
+		"3rdparty/jdns/qjdns_p.h" )
+
+#spike
+
 # Add include directories
 INCLUDE_DIRECTORIES(3rdparty
 	${QCA2_INCLUDE_DIR}
@@ -61,7 +75,7 @@ set(JREEN_LIBRARIES jreen CACHE INTERNAL "" )
 set(JREEN_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include" CACHE INTERNAL "")
 
 # Link with QT
-TARGET_LINK_LIBRARIES(jreen ${QT_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} jdns)
+TARGET_LINK_LIBRARIES(jreen ${QT_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
 
 install( TARGETS jreen
 	RUNTIME DESTINATION bin

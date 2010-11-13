@@ -105,6 +105,7 @@ public:
 		device->open(QIODevice::ReadWrite);
 		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
 	}
+	void init();
 	QString elementToString(const QDomElement &element)
 	{
 		static QTextCodec *utf = QTextCodec::codecForName("utf-8");

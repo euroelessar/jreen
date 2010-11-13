@@ -206,7 +206,7 @@ namespace jreen
 	{
 		Q_D(Disco);
 		d->client = client;
-		connect(d->client, SIGNAL(newIQ(IQ)), this, SLOT(handleIQ(IQ)));
+		connect(d->client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(IQ)));
 	}
 	
 	Disco::~Disco()
@@ -237,7 +237,7 @@ namespace jreen
 		return d->features;
 	}
 	
-	void Disco::handleIQ(const IQ &iq)
+	void Disco::handleIQ(const jreen::IQ &iq)
 	{
 		Q_D(Disco);
 		const Info *info = iq.findExtension<Info>().data();
