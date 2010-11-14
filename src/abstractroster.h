@@ -207,7 +207,7 @@ signals:
 protected slots:
 	virtual void handleIQ(const jreen::IQ &iq);
 	virtual void handleIQ(const jreen::IQ &iq, int context);
-	//	virtual void handlePresence(const Presence &presence);
+//	virtual void handlePresence(const jreen::Presence &presence);
 protected:
 	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }
 	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }
