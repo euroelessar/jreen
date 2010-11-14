@@ -49,11 +49,11 @@ class IQTrack : public QObject
 public:
 	inline IQTrack(QObject *handler, const char *member, int ctx) : context(ctx)
 	{
-		connect(this, SIGNAL(newIQ(IQ,int)), handler, member);
+		connect(this, SIGNAL(newIQ(jreen::IQ,int)), handler, member);
 	}
 	int context;
 signals:
-	void newIQ(const IQ &iq, int context);
+	void newIQ(const jreen::IQ &iq, int context);
 };
 
 class PresenceTrack : public QObject
@@ -63,13 +63,13 @@ class PresenceTrack : public QObject
 public:
 	PresenceTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newPresence(Presence)), handler, member);
+		connect(this, SIGNAL(newPresence(jreen::Presence)), handler, member);
 	}
 	virtual ~PresenceTrack()
 	{
 	}
 signals:
-	void newPresence(const Presence &presence);
+	void newPresence(const jreen::Presence &presence);
 };
 
 class MessageTrack : public QObject
@@ -79,13 +79,13 @@ class MessageTrack : public QObject
 public:
 	MessageTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newMessage(Message)), handler, member);
+		connect(this, SIGNAL(newMessage(jreen::Message)), handler, member);
 	}
 	virtual ~MessageTrack()
 	{
 	}
 signals:
-	void newMessage(const Message &presence);
+	void newMessage(const jreen::Message &presence);
 };
 
 class ClientPrivate : public QObject
@@ -243,7 +243,7 @@ public:
 	StanzaExtensionFactoryMap factories;
 	int depth;
 public slots:
-	void onIqReceived(const IQ &iq, int context);
+	void onIqReceived(const jreen::IQ &iq, int context);
 	void newData()
 	{
 		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();

@@ -161,7 +161,7 @@ bool BindFeature::activate()
 {
 	IQ::Ptr iq(new IQ(IQ::Set, JID()));
 	iq->addExtension(new BindQuery(JID(), m_info->jid().resource()));
-	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(IQ,int)), 0);
+	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(jreen::IQ,int)), 0);
 	return true;
 }
 

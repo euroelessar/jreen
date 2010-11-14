@@ -191,7 +191,7 @@ void AbstractRosterItem::setData(const QSharedPointer<AbstractRosterItem> &item)
 	 AbstractRosterItemPrivate *d = m_self->d_ptr.data();
 	 d->jid = client->jid().bare();
 	 d->subscription = AbstractRosterItem::Both;
-	 connect(client, SIGNAL(newPresence(Presence)), this, SLOT(handlePresence(Presence)));
+	 connect(client, SIGNAL(newPresence(jreen::Presence)), this, SLOT(handlePresence(jreen::Presence)));
 	 init();
  }
 
@@ -204,7 +204,7 @@ void AbstractRoster::load()
 	Q_D(AbstractRoster);
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	iq.addExtension(new AbstractRosterQuery);
-	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), LoadRoster);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), LoadRoster);
 }
 
 void AbstractRoster::synchronize()
@@ -214,7 +214,7 @@ void AbstractRoster::synchronize()
 	{
 		IQ iq(IQ::Set, JID());
 		iq.addExtension(new AbstractRosterQuery(item));
-		d->client->send(iq, this, SLOT(handleIQ(IQ,int)), SyncContext);
+		d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SyncContext);
 	}
 	m_changed_items.clear();
 }
@@ -314,6 +314,7 @@ void AbstractRoster::onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &
 	foreach(const QSharedPointer<AbstractRosterItem> &item, items)
 	{
 		m_items.insert(item->jid(), item);
+		onItemAdded(item);
 	}
 	emit loaded();
 }

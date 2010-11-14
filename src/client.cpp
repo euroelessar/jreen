@@ -293,7 +293,7 @@ void Client::handleConnect()
 {
 	IQ iq(IQ::Get, impl->jid.domain());
 	iq.addExtension(new Disco::Info);
-	send(iq, impl, SLOT(onIqReceived(IQ,int)), 0);
+	send(iq, impl, SLOT(onIqReceived(jreen::IQ,int)), 0);
 	emit connected();
 }
 

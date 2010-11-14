@@ -128,7 +128,7 @@ namespace jreen
 	{
 		IQ::Ptr iq(new IQ(IQ::Set, JID()));
 		iq->addExtension(new SessionQuery());
-		m_info->client()->send(*iq.data(), this, SLOT(onIQResult(IQ,int)), 0);
+		m_info->client()->send(*iq.data(), this, SLOT(onIQResult(jreen::IQ,int)), 0);
 		return true;
 	}
 	

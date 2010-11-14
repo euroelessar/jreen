@@ -46,61 +46,62 @@ class ItemFactory : public XmlStreamFactory<AbstractRosterItem>
 public:
 };
 
-//#define J_ROSTER(RosterItem) \
-//public: \
-//	inline QHash<QString, QSharedPointer<RosterItem> > &items() \
-//	{ \
-//		return *reinterpret_cast<QHash<QString, QSharedPointer<RosterItem> > *>(&m_items); \
-//	} \
-//	inline QSharedPointer<RosterItem> item(const JID &jid) \
-//	{ \
-//		return m_items.value(jid.bare()).staticCast<RosterItem>(); \
-//	} \
-//	inline QSharedPointer<RosterItem> item(const QString &jid) \
-//	{ \
-//		return m_items.value(jid).staticCast<RosterItem>(); \
-//	} \
-//	inline const QHash<QString, QSharedPointer<RosterItem> > &items() const \
-//	{ \
-//		return *reinterpret_cast<const QHash<QString, QSharedPointer<RosterItem> > *>(&m_items); \
-//	} \
-//	inline const QSharedPointer<RosterItem> item(const JID &jid) const \
-//	{ \
-//		return m_items.value(jid.bare()).staticCast<RosterItem>(); \
-//	} \
-//	inline const QSharedPointer<RosterItem> item(const QString &jid) const \
-//	{ \
-//		return m_items.value(jid).staticCast<RosterItem>(); \
-//	} \
-//	inline const QSharedPointer<RosterItem> self() const \
-//	{ \
-//		return m_self.staticCast<RosterItem>(); \
-//	} \
-//	inline QSharedPointer<RosterItem> self() \
-//	{ \
-//		return m_self.staticCast<RosterItem>(); \
-//	} \
-//private:
+/* #define J_ROSTER(RosterItem) \
+public: \
+ inline QHash<QString, QSharedPointer<RosterItem> > &items() \
+ { \
+  return *reinterpret_cast<QHash<QString, QSharedPointer<RosterItem> > *>(&m_items); \
+ } \
+ inline QSharedPointer<RosterItem> item(const JID &jid) \
+ { \
+  return m_items.value(jid.bare()).staticCast<RosterItem>(); \
+ } \
+ inline QSharedPointer<RosterItem> item(const QString &jid) \
+ { \
+  return m_items.value(jid).staticCast<RosterItem>(); \
+ } \
+ inline const QHash<QString, QSharedPointer<RosterItem> > &items() const \
+ { \
+  return *reinterpret_cast<const QHash<QString, QSharedPointer<RosterItem> > *>(&m_items); \
+ } \
+ inline const QSharedPointer<RosterItem> item(const JID &jid) const \
+ { \
+  return m_items.value(jid.bare()).staticCast<RosterItem>(); \
+ } \
+ inline const QSharedPointer<RosterItem> item(const QString &jid) const \
+ { \
+  return m_items.value(jid).staticCast<RosterItem>(); \
+ } \
+ inline const QSharedPointer<RosterItem> self() const \
+ { \
+  return m_self.staticCast<RosterItem>(); \
+ } \
+ inline QSharedPointer<RosterItem> self() \
+ { \
+  return m_self.staticCast<RosterItem>(); \
+ } \
+private:
+*/
 
-//#define J_ROSTER_ITEM(Resource) \
-//	inline QHash<QString, QSharedPointer<Resource> > &resources() \
-//	{ \
-//		return *reinterpret_cast<QHash<QString, QSharedPointer<Resource> > *>(&m_resources); \
-//	} \
-//	QSharedPointer<Resource> resource(const QString &resource) \
-//	{ \
-//		return m_resources.value(resource).staticCast<Resource>(); \
-//	} \
-//public: \
-//	inline const QHash<QString, QSharedPointer<Resource> > &resources() const \
-//	{ \
-//		return *reinterpret_cast<const QHash<QString, QSharedPointer<Resource> > *>(&m_resources); \
-//	} \
-//	const QSharedPointer<Resource> resource(const QString &resource) const \
-//	{ \
-//		return m_resources.value(resource).staticCast<Resource>(); \
-//	} \
-//private:
+/* #define J_ROSTER_ITEM(Resource) \
+ inline QHash<QString, QSharedPointer<Resource> > &resources() \
+ { \
+  return *reinterpret_cast<QHash<QString, QSharedPointer<Resource> > *>(&m_resources); \
+ } \
+ QSharedPointer<Resource> resource(const QString &resource) \
+ { \
+  return m_resources.value(resource).staticCast<Resource>(); \
+ } \
+public: \
+ inline const QHash<QString, QSharedPointer<Resource> > &resources() const \
+ { \
+  return *reinterpret_cast<const QHash<QString, QSharedPointer<Resource> > *>(&m_resources); \
+ } \
+ const QSharedPointer<Resource> resource(const QString &resource) const \
+ { \
+  return m_resources.value(resource).staticCast<Resource>(); \
+ } \
+private:*/
 
 enum AbstractRosterIqContext
 {
@@ -136,7 +137,7 @@ struct AbstractRosterItemPrivate;
 
 class JREEN_EXPORT AbstractRosterItem
 {
-//	J_ROSTER_ITEM(AbstractResource)
+	//	J_ROSTER_ITEM(AbstractResource)
 	Q_DECLARE_PRIVATE(AbstractRosterItem)
 	friend class AbstractRoster;
 public:
@@ -163,7 +164,7 @@ protected:
 	virtual void setData(const QSharedPointer<AbstractRosterItem> &item);
 	void setChanged();
 	QScopedPointer<AbstractRosterItemPrivate> d_ptr;
-//	QHash<QString, QSharedPointer<AbstractResource> > m_resources;
+	//	QHash<QString, QSharedPointer<AbstractResource> > m_resources;
 };
 
 //struct AbstractRosterItemPrivate
@@ -184,7 +185,7 @@ protected:
 class JREEN_EXPORT AbstractRoster : public QObject
 {
 	Q_OBJECT
-//	J_ROSTER(AbstractRosterItem)
+	//	J_ROSTER(AbstractRosterItem)
 	Q_DECLARE_PRIVATE(AbstractRoster)
 public:
 	AbstractRoster(Client *client, AbstractRosterPrivate *data = 0);
@@ -194,19 +195,19 @@ public slots:
 	virtual void synchronize();
 protected:
 	virtual QSharedPointer<AbstractRosterItem> createItem(const QDomElement &node = QDomElement());
-//	virtual QSharedPointer<AbstractResource> createResource();
+	//	virtual QSharedPointer<AbstractResource> createResource();
 	virtual void init();
 	virtual void add(const JID &jid, const QString &name, const QStringList &groups = QStringList());
 	virtual void remove(const JID &jid);
 signals:
 	void loaded();
-//	void selfPresence(QSharedPointer<AbstractRosterItem> item, const Presence &presence);
-//	void rosterPresence(QSharedPointer<AbstractRosterItem> item, const Presence &presence);
-//	void nonRosterPresence(const Presence &presence);
+	//	void selfPresence(QSharedPointer<AbstractRosterItem> item, const Presence &presence);
+	//	void rosterPresence(QSharedPointer<AbstractRosterItem> item, const Presence &presence);
+	//	void nonRosterPresence(const Presence &presence);
 protected slots:
-	virtual void handleIQ(const IQ &iq);
-	virtual void handleIQ(const IQ &iq, int context);
-//	virtual void handlePresence(const Presence &presence);
+	virtual void handleIQ(const jreen::IQ &iq);
+	virtual void handleIQ(const jreen::IQ &iq, int context);
+	//	virtual void handlePresence(const Presence &presence);
 protected:
 	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }
 	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }

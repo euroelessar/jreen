@@ -65,7 +65,7 @@ public:
 public slots:
 	void whitespacePing(int period = 0);
 	void setPresence();
-	void setPresence(Presence::Type type, const QString &text = QString(), int priority = -129);
+	void setPresence(jreen::Presence::Type type, const QString &text = QString(), int priority = -129);
 	void connectToServer();
 	void disconnectFromServer(bool force = false);
 signals:

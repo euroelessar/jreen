@@ -38,7 +38,7 @@ namespace jreen
 		bool isActivatable();
 		bool activate();
 	public slots:
-		void onIQResult(const IQ &iq, int context);
+		void onIQResult(const jreen::IQ &iq, int context);
 	private:
 		int m_depth;
 		bool m_hasFeature;
