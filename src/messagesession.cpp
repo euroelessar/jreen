@@ -104,7 +104,7 @@ void MessageSession::setJid(const JID &jid)
 MessageSessionManager::MessageSessionManager(Client *client) : m_client(client), m_session_handlers(Message::Invalid)
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	MessageSessionManager::connect(client, SIGNAL(newMessage(Message)), this, SLOT(handleMessage(Message)));
+	MessageSessionManager::connect(client, SIGNAL(newMessage(jreen::Message)), this, SLOT(handleMessage(jreen::Message)));
 }
 
 void MessageSessionManager::send(const Message &message)

@@ -106,15 +106,16 @@ class JREEN_EXPORT MessageSessionManager : public QObject
 	Q_OBJECT
 public:
 	MessageSessionManager(Client *client);
+	virtual ~MessageSessionManager() {}
 	void send(const Message &message);
 	void registerMessageSession(MessageSession *session);
 	void registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types);
 	void removeMessageSessionHandler(MessageSessionHandler *handler);
 	MessageSession *session(const JID &jid, Message::Type type, bool create = true);
 public slots:
-	void handleMessage(const Message &message);
+	virtual void handleMessage(const jreen::Message &message);
 signals:
-	void newMessage(const Message &message);
+	void newMessage(const jreen::Message &message);
 private:
 	Client *m_client;
 	QMultiHash<QString, QPointer<MessageSession> > m_full_sessions;
