@@ -94,6 +94,8 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	case Presence::Unavailable:
 		chat = QLatin1String("unavailable");
 		break;
+	default:
+		break;
 	}
 
 	//writer->writeAttribute(QLatin1String("type"),type);
@@ -112,8 +114,14 @@ bool PresenceFactory::canParse(const QStringRef &name, const QStringRef &uri, co
 
 void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(uri);
 	m_depth++;
 	if (m_depth == 1) {
+		//clear
+		m_status.clear();
+		m_priority = 0;
+		m_type = Presence::Available;
+
 		parseAttributes(attributes);
 		//			QStringRef type = attributes.value(QLatin1String("type"));
 		//			if (type == QLatin1String("get"))
