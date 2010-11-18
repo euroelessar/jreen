@@ -63,6 +63,7 @@ public:
 	int priority() const;
 	void setPriority(int priority);
 	void writeXml(QXmlStreamWriter *writer) const;
+	virtual ~Presence() {};
 };
 
 }

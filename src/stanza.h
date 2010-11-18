@@ -33,7 +33,7 @@ class JREEN_EXPORT Stanza
 public:
 	typedef QSharedPointer<Stanza> Ptr;
 	Stanza(const Stanza &stanza);
-	~Stanza();
+	virtual ~Stanza();
 	void setFrom(const JID &jid);
 	const JID &from() const;
 	const JID &to() const;

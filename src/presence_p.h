@@ -23,13 +23,13 @@
 
 namespace jreen
 {
-	struct PresencePrivate : public StanzaPrivate
-	{
-		PresencePrivate() : StanzaPrivate(StanzaPresence) {}
-		Presence::Type subtype;
-		LangMap status;
-		int priority;
-	};
+struct PresencePrivate : public StanzaPrivate
+{
+	PresencePrivate() : StanzaPrivate(StanzaPresence) {}
+	Presence::Type subtype;
+	LangMap status;
+	int priority;
+};
 }
 
 #endif // PRESENCE_P_H

@@ -205,6 +205,7 @@ void Client::setConnectionImpl(Connection *conn)
 	impl->device->setDevice(conn);
 //	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), impl, SLOT(connected()));
+	connect(conn, SIGNAL(disconnected()), impl, SLOT(disconnected()));
 }
 
 void Client::registerStanzaExtension(StanzaExtension *stanza_extension)
@@ -254,7 +255,7 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 	impl->presence.addStatus(text);
 	if(priority > -129 && priority < 128)
 		impl->presence.setPriority(priority);
-	send(impl->presence);
+	setPresence();
 }
 
 void Client::connectToServer()

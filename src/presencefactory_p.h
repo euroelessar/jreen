@@ -26,6 +26,7 @@ namespace jreen
 class PresenceFactory : public StanzaFactory
 {
 public:
+	enum State { AtShow, AtStatus };
     PresenceFactory(Client *client);
 	int stanzaType();
 	Stanza::Ptr createStanza();
@@ -39,6 +40,8 @@ private:
 	Presence::Type m_type;
 	int m_priority;
 	LangMap m_status;
+	State m_state;
+	QStringRef m_lang;
 };
 }
 

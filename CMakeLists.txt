@@ -48,12 +48,12 @@ ADD_LIBRARY(jreen SHARED ${SRC} ${MOC_SRC} ${HDR} )
 #compiler flags
 #fixme add macro to clang
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set_target_properties(jreen PROPERTIES COMPILE_FLAGS "-Wall -Wextra" ) #add -Werror
+	ADD_DEFINITIONS("-Wall -Wextra" ) #add -Werror
 	if(NOT WIN32)
-		set_target_properties(jreen PROPERTIES COMPILE_FLAGS "-fvisibility=hidden" )
+		ADD_DEFINITIONS("-fvisibility=hidden" )
 	endif(NOT WIN32)
 elseif(MSVC)
-	set_target_properties(jreen PROPERTIES COMPILE_FLAGS "/W3 /WX" )
+	ADD_DEFINITIONS("/W3 /WX" )
 endif()
 ADD_DEFINITIONS(-DJ_BUILD_LIBRARY)
 
