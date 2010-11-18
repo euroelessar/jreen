@@ -2,6 +2,7 @@
  *  client.cpp
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -260,12 +261,12 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 
 void Client::connectToServer()
 {
-	if(!impl->conn || !impl->conn->isOpen())
-	{
-		if(!impl->conn)
-			setConnectionImpl(new TcpConnection(impl->server, impl->server_port));
+	if(!impl->conn)
+		setConnectionImpl(new TcpConnection(impl->server, impl->server_port));
+
+	if(!impl->conn->isOpen())
 		impl->conn->open();
-	}
+
 }
 
 void Client::disconnectFromServer(bool force)

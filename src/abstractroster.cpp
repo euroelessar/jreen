@@ -120,58 +120,20 @@ namespace jreen
 		return StanzaExtension::Ptr(new AbstractRosterQuery(m_items));
 	}
 
-J_STRING(group)
-J_STRING(subscription)
-J_STRING(ask)
-
 static const QStringList roster_subscriptions = QStringList()
 												<< ConstString::from << ConstString::to
 												<< QLatin1String("both") << QLatin1String("remove");
 
-AbstractRosterItem::AbstractRosterItem(const QDomElement &node, AbstractRoster *roster, AbstractRosterItemPrivate *data)
+AbstractRosterItem::AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data)
 	: d_ptr(data ? data : new AbstractRosterItemPrivate())
 {
 	Q_D(AbstractRosterItem);
 	d->roster = roster;
-	if(node.isNull())
-		return;
 	d->groups.clear();
-	forelements(const QDomElement &elem, node)
-	{
-		if(elem.nodeName() == group_str)
-		{
-			d->groups << elem.text();
-		}
-	}
-	d->ask = node.attribute(ask_str);
-	int sub = roster_subscriptions.indexOf(node.attribute(subscription_str));
-	d->subscription = sub == -1 ? None : static_cast<SubscriptionType>(sub);
-	d->jid = node.attribute(ConstString::jid);
-	d->name = node.attribute(ConstString::name);
 }
 
 AbstractRosterItem::~AbstractRosterItem()
 {
-}
-
-QDomElement AbstractRosterItem::node(QDomDocument *doc) const
-{
-	Q_D(const AbstractRosterItem);
-	QDomElement node; /*= createElement(doc, ConstString::item);
-	node.setAttribute(ConstString::jid, d->jid);
-	node.setAttribute(subscription_str, d->subscription == None ? QString() : roster_subscriptions[d->subscription]);
-	if(d->subscription != Remove)
-	{
-		if(!d->ask.isEmpty())
-			node.setAttribute(ask_str, d->ask);
-		if(!d->name.isEmpty())
-			node.setAttribute(ConstString::name, d->name);
-		foreach(const QString &group, d->groups)
-		{
-			node.appendChild(createElement(doc, group_str, group));
-		}
-	}*/
-	return node;
 }
 
 void AbstractRosterItem::setData(const QSharedPointer<AbstractRosterItem> &item)
@@ -253,9 +215,9 @@ void AbstractRoster::remove(const JID &jid)
 	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem);
 }
 
-QSharedPointer<AbstractRosterItem> AbstractRoster::createItem(const QDomElement &node)
+QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
 {
-	return QSharedPointer<AbstractRosterItem>(new AbstractRosterItem(node, this));
+	return QSharedPointer<AbstractRosterItem>(new AbstractRosterItem(this));
 }
 
 //QSharedPointer<AbstractResource> AbstractRoster::createResource()

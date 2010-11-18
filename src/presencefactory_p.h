@@ -3,6 +3,7 @@
  *  This file is part of qutIM
  *
  *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -26,7 +27,7 @@ namespace jreen
 class PresenceFactory : public StanzaFactory
 {
 public:
-	enum State { AtShow, AtStatus };
+	enum State { AtShow, AtStatus,AtPriority };
     PresenceFactory(Client *client);
 	int stanzaType();
 	Stanza::Ptr createStanza();
@@ -41,7 +42,7 @@ private:
 	int m_priority;
 	LangMap m_status;
 	State m_state;
-	QStringRef m_lang;
+	QStringRef m_xmllang;
 };
 }
 

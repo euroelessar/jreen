@@ -2,6 +2,7 @@
  *  presence.h
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -50,7 +51,6 @@ public:
 			  int priority = 0, const QString &xmllang = QString());
 	Presence(Type type, const JID& to, const LangMap &status, int priority = 0);
 	Presence(PresencePrivate &p);
-	Presence(const QDomElement &node);
 	inline Presence &operator =(const Presence &stanza)
 		{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
@@ -62,7 +62,6 @@ public:
 	void resetStatus();
 	int priority() const;
 	void setPriority(int priority);
-	void writeXml(QXmlStreamWriter *writer) const;
 	virtual ~Presence() {};
 };
 

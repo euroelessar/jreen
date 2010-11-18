@@ -150,9 +150,8 @@ public:
 		None
 	};
 	typedef QSharedPointer<AbstractRosterItem> Ptr;
-	AbstractRosterItem(const QDomElement &node, AbstractRoster *roster, AbstractRosterItemPrivate *data = 0);
+	AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data = 0);
 	virtual ~AbstractRosterItem();
-	virtual QDomElement node(QDomDocument *doc) const;
 	const QString &jid() const;
 	const QString &name() const;
 	const QStringList &groups() const;
@@ -194,7 +193,7 @@ public slots:
 	virtual void load();
 	virtual void synchronize();
 protected:
-	virtual QSharedPointer<AbstractRosterItem> createItem(const QDomElement &node = QDomElement());
+	virtual QSharedPointer<AbstractRosterItem> createItem();
 	//	virtual QSharedPointer<AbstractResource> createResource();
 	virtual void init();
 	virtual void add(const JID &jid, const QString &name, const QStringList &groups = QStringList());

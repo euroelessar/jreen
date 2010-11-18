@@ -2,6 +2,7 @@
  *  directconnection.cpp
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -19,7 +20,7 @@ namespace jreen
 {
 
 DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_name, quint16 port)
-		: d_ptr(new DirectConnectionPrivate(host_name, port, this))
+	: d_ptr(new DirectConnectionPrivate(host_name, port, this))
 {
 	Q_ASSERT(socket);
 	d_ptr->socket = socket;
@@ -27,7 +28,7 @@ DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_
 }
 
 DirectConnection::DirectConnection(QAbstractSocket *socket, const QHostAddress &address, quint16 port)
-		: d_ptr(new DirectConnectionPrivate(address.toString(), port, this))
+	: d_ptr(new DirectConnectionPrivate(address.toString(), port, this))
 {
 	Q_ASSERT(socket);
 	d_ptr->socket = socket;
@@ -63,6 +64,9 @@ bool DirectConnection::open()
 
 void DirectConnection::close()
 {
+	Q_D(DirectConnection);
+	d->socket->disconnectFromHost();
+	QIODevice::close();
 }
 
 qint64 DirectConnection::bytesAvailable() const

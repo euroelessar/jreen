@@ -3,6 +3,7 @@
  *  This file is part of qutIM
  *
  *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -55,7 +56,7 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	writer->writeStartElement(QLatin1String("presence"));
 	writeAttributes(stanza, writer);
 
-	QString type = QLatin1String("set");
+	//QString type = QLatin1String("set");
 	//	switch (presence->subtype()) {
 	//	case Presence::Get:
 	//		type = QLatin1String("get");
@@ -95,7 +96,7 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 		break;
 	}
 
-	writer->writeAttribute(QLatin1String("type"),type);
+	//writer->writeAttribute(QLatin1String("type"),type);
 	writeStanzaExtensions(stanza, writer);
 	writer->writeTextElement(QLatin1String("status"),presence->status());
 	writer->writeTextElement(QLatin1String("show"),chat);
@@ -128,10 +129,13 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("show"))
 			m_state = AtShow;
-//		else if(name == QLatin1String("status")) {
-//			m_state = AtStatus;
-//			m_lang = attributes.value(QLatin1String("lang"));
-//		}
+		else if(name == QLatin1String("priority")) {
+			m_state = AtPriority;
+		}
+		else if(name == QLatin1String("status")) {
+			m_state = AtStatus;
+			m_xmllang = attributes.value(QLatin1String("lang"));
+		}
 	}
 }
 
@@ -159,9 +163,12 @@ void PresenceFactory::handleCharacterData(const QStringRef &text)
 			else if(text == QLatin1String("xa"))
 				m_type = Presence::XA;
 		}
-//		else if(m_state == AtStatus) {
-//			m_status.insert(m_lang.toString(),text.toString());
-//		}
+		else if(m_state == AtPriority) {
+			m_priority = text.toString().toInt();
+		}
+		else if(m_state == AtStatus) {
+			m_status[m_xmllang.toString()] = text.toString();
+		}
 	}
 }
 

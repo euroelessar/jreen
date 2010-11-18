@@ -49,7 +49,7 @@ public:
 	inline bool containsExtension() const
 	{ return extensions().contains(reinterpret_cast<T*>(0)->staticExtensionType()); }
 	void removeExtensions();
-	virtual void writeXml(QXmlStreamWriter *writer) const = 0;
+	Q_DECL_DEPRECATED virtual void writeXml(QXmlStreamWriter *) const {};
 protected:
 	Stanza(const QDomElement &node, StanzaPrivate *sp = 0);
 	Stanza(StanzaPrivate &);
