@@ -31,8 +31,9 @@
 
 namespace jreen
 {
-struct StanzaPrivate
+class StanzaPrivate
 {
+public:
 	enum Type {
 		StanzaIq,
 		StanzaPresence,

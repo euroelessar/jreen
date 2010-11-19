@@ -133,7 +133,7 @@ enum AbstractRosterIqContext
 //	AbstractResourcePrivate	*d_ptr;
 //};
 
-struct AbstractRosterItemPrivate;
+class AbstractRosterItemPrivate;
 
 class JREEN_EXPORT AbstractRosterItem
 {

@@ -21,7 +21,7 @@
 namespace jreen
 {
 
-struct MessagePrivate;
+class MessagePrivate;
 class DelayedDelivery;
 
 class JREEN_EXPORT Message : public Stanza

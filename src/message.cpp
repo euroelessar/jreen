@@ -33,8 +33,9 @@ static const QStringList message_types = QStringList()
 										 << QLatin1String("groupchat") << QLatin1String("headline")
 										 << QLatin1String("normal");
 
-struct MessagePrivate : public StanzaPrivate
+class MessagePrivate : public StanzaPrivate
 {
+public:
 	MessagePrivate() : StanzaPrivate(StanzaMessage) {}
 	Message::Type subtype;
 	LangMap body;

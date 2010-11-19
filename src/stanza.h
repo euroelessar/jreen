@@ -25,7 +25,7 @@ class QXmlStreamWriter;
 namespace jreen
 {
 
-struct StanzaPrivate;
+class StanzaPrivate;
 
 class JREEN_EXPORT Stanza
 {

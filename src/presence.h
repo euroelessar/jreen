@@ -22,7 +22,7 @@
 namespace jreen
 {
 
-struct PresencePrivate;
+class PresencePrivate;
 class Capabilities;
 class LangMap;
 

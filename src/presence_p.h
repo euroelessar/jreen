@@ -24,8 +24,9 @@
 
 namespace jreen
 {
-struct PresencePrivate : public StanzaPrivate
+class PresencePrivate : public StanzaPrivate
 {
+public:
 	PresencePrivate() : StanzaPrivate(StanzaPresence) {}
 	Presence::Type subtype;
 	LangMap status;
