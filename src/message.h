@@ -29,8 +29,8 @@ class JREEN_EXPORT Message : public Stanza
 	Q_DECLARE_PRIVATE(Message)
 public:
 	/**
-	 * Describes the different valid message types.
-	 */
+  * Describes the different valid message types.
+  */
 	enum Type
 	{
 		Chat = 0,     /**< A chat message. */
@@ -41,10 +41,11 @@ public:
 		Invalid	      /**< The message stanza is invalid. */
 	};
 	Message(Type type, const JID& to, const QString &body = QString(), const QString &subject = QString(),
-			   const QString &thread = QString(), const QString &xmllang = QString());
+			const QString &thread = QString(), const QString &xmllang = QString());
 	Message(const QDomElement &node);
+	Message(MessagePrivate &p);
 	inline Message &operator =(const Message &stanza)
-		{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
+	{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const QString &body(const QString &lang = QString()) const;
 	const QString &subject(const QString &lang = QString()) const;

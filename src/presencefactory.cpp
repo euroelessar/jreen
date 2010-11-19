@@ -1,6 +1,5 @@
 /****************************************************************************
- *
- *  This file is part of qutIM
+ *  presencefactory.cpp
  *
  *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
@@ -27,8 +26,14 @@ namespace jreen
 PresenceFactory::PresenceFactory(Client *client) : StanzaFactory(client)
 {
 	m_depth = 0;
-	m_type = Presence::Available;
+	clear();
+}
+
+void PresenceFactory::clear()
+{
+	m_status.clear();
 	m_priority = 0;
+	m_type = Presence::Available;
 }
 
 int PresenceFactory::stanzaType()
@@ -117,12 +122,9 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 	Q_UNUSED(uri);
 	m_depth++;
 	if (m_depth == 1) {
-		//clear
-		m_status.clear();
-		m_priority = 0;
-		m_type = Presence::Available;
-
+		clear();
 		parseAttributes(attributes);
+		//TODO handle server errors
 		//			QStringRef type = attributes.value(QLatin1String("type"));
 		//			if (type == QLatin1String("get"))
 		//				m_type = Presence::Get;

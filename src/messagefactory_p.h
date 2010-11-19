@@ -1,33 +1,32 @@
 /****************************************************************************
- *  presencefactory_p.h
+ *  messagefactory_p.h
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
- *   This file is part of free software; you can redistribute it and/or    *
- *   modify it under the terms of the GNU General Public License as        *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************
- ****************************************************************************/
+*****************************************************************************/
 
-#ifndef PRESENCEFACTORY_P_H
-#define PRESENCEFACTORY_P_H
+#ifndef MESSAGEFACTORY_P_H
+#define MESSAGEFACTORY_P_H
 
 #include "stanzafactory.h"
-#include "presence.h"
+#include "message.h"
 #include "langmap.h"
 
 namespace jreen
 {
-class PresenceFactory : public StanzaFactory
+class MessageFactory : public StanzaFactory
 {
 public:
-	enum State { AtShow, AtStatus,AtPriority };
-    PresenceFactory(Client *client);
+	enum State { AtBody, AtSubject,AtThread };
+	MessageFactory(Client *client);
 	int stanzaType();
 	Stanza::Ptr createStanza();
 	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
@@ -38,12 +37,13 @@ public:
 private:
 	void clear();
 	int m_depth;
-	Presence::Type m_type;
-	int m_priority;
-	LangMap m_status;
+	Message::Type m_subtype;
+	LangMap m_body;
+	LangMap m_subject;
 	State m_state;
-	QStringRef m_xmllang;
+	QStringRef m_thread;
 };
-}
 
-#endif // PRESENCEFACTORY_P_H
+} // namespace  jreen
+
+#endif // MESSAGEFACTORY_P_H

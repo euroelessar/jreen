@@ -14,8 +14,7 @@
 *****************************************************************************/
 
 #include "message.h"
-#include "stanza_p.h"
-#include "langmap.h"
+#include "message_p.h"
 #include "delayeddelivery.h"
 #include "util.h"
 #include <QStringList>
@@ -29,19 +28,9 @@ J_STRING(subject)
 J_STRING(thread)
 
 static const QStringList message_types = QStringList()
-										 << QLatin1String("chat") << QLatin1String("error")
-										 << QLatin1String("groupchat") << QLatin1String("headline")
-										 << QLatin1String("normal");
-
-class MessagePrivate : public StanzaPrivate
-{
-public:
-	MessagePrivate() : StanzaPrivate(StanzaMessage) {}
-	Message::Type subtype;
-	LangMap body;
-	LangMap subject;
-	QString thread;
-};
+<< QLatin1String("chat") << QLatin1String("error")
+<< QLatin1String("groupchat") << QLatin1String("headline")
+<< QLatin1String("normal");
 
 Message::Message(Type type, const JID& to, const QString &body, const QString &subject, const QString &thread, const QString &xmllang)
 	: Stanza(*new MessagePrivate)
@@ -84,6 +73,11 @@ Message::Message(const QDomElement &node) : Stanza(node, new MessagePrivate)
 		else if(name == thread_str)
 			d->thread = elem.text();
 	}
+}
+
+Message::Message(MessagePrivate &p) : Stanza(p)
+{
+
 }
 
 Message::Type Message::subtype() const

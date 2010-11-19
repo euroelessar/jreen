@@ -22,22 +22,23 @@
 
 namespace jreen
 {
-	class StanzaFactory : public XmlStreamFactory<Stanza>
-	{
-	public:
-		StanzaFactory(Client *client);
-		virtual ~StanzaFactory();
-		virtual int stanzaType() = 0;
-		virtual Stanza::Ptr createStanza() = 0;
-	protected:
-		void parseAttributes(const QXmlStreamAttributes &attributes);
-		void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
-		void writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer);
-		JID m_from;
-		JID m_to;
-		QString m_id;
-		Client *m_client;
-	};
+
+class StanzaFactory : public XmlStreamFactory<Stanza>
+{
+public:
+	StanzaFactory(Client *client);
+	virtual ~StanzaFactory();
+	virtual int stanzaType() = 0;
+	virtual Stanza::Ptr createStanza() = 0;
+protected:
+	void parseAttributes(const QXmlStreamAttributes &attributes);
+	void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
+	void writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer);
+	JID m_from;
+	JID m_to;
+	QString m_id;
+	Client *m_client;
+};
 }
 
 #endif // STANZAFACTORY_H

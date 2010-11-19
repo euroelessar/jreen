@@ -25,6 +25,7 @@
 #include "dataform.h"
 #include "iqfactory_p.h"
 #include "presencefactory_p.h"
+#include "messagefactory_p.h"
 #include "saslfeature.h"
 #include "tlsfeature.h"
 #include "bindfeature.h"
@@ -34,41 +35,41 @@
 
 namespace jreen
 {
-	enum State
-	{
-		WaitingForStanza,
-		ReadFeatures,
-		ReadStanza,
-		ReadCustom
-	};
+enum State
+{
+	WaitingForStanza,
+	ReadFeatures,
+	ReadStanza,
+	ReadCustom
+};
 
-	void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
-	{
-		if (!stanza)
-			return;
-		int type = StanzaPrivate::get(*stanza)->type;
-		if (type == StanzaPrivate::StanzaIq) {
-			QSharedPointer<IQ> iq = stanza.staticCast<IQ>();
-			IQTrack *track = iq_tracks.take(stanza->id());
-			if (track) {
-				emit track->newIQ(*iq, track->context);
-				delete track;
-			} else {
-				client->handleIQ(*iq);
-				if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
-					IQ error(IQ::Error, iq->from(), iq->id());
-					error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
-					send(error);
-				}
+void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
+{
+	if (!stanza)
+		return;
+	int type = StanzaPrivate::get(*stanza)->type;
+	if (type == StanzaPrivate::StanzaIq) {
+		QSharedPointer<IQ> iq = stanza.staticCast<IQ>();
+		IQTrack *track = iq_tracks.take(stanza->id());
+		if (track) {
+			emit track->newIQ(*iq, track->context);
+			delete track;
+		} else {
+			client->handleIQ(*iq);
+			if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
+				IQ error(IQ::Error, iq->from(), iq->id());
+				error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
+				send(error);
 			}
-		} else if (type == StanzaPrivate::StanzaMessage) {
-			client->handleMessage(*stanza.staticCast<Message>());
-		} else if (type == StanzaPrivate::StanzaPresence) {
-			client->handlePresence(*stanza.staticCast<Presence>());
-		} else if (type == StanzaPrivate::StanzaSubscription) {
-			client->handleSubscription(*stanza.staticCast<Subscription>());
 		}
+	} else if (type == StanzaPrivate::StanzaMessage) {
+		client->handleMessage(*stanza.staticCast<Message>());
+	} else if (type == StanzaPrivate::StanzaPresence) {
+		client->handlePresence(*stanza.staticCast<Presence>());
+	} else if (type == StanzaPrivate::StanzaSubscription) {
+		client->handleSubscription(*stanza.staticCast<Subscription>());
 	}
+}
 
 void ClientPrivate::readMore()
 {
@@ -79,6 +80,7 @@ void ClientPrivate::init()
 	parser = new Parser(client);
 	stanzas << new IqFactory(client);
 	stanzas << new PresenceFactory(client);
+	stanzas << new MessageFactory(client);
 	stream_info = new StreamInfoImpl(this);
 	disco = new Disco(client);
 	xquery.registerStanzaExtension(new DelayedDelivery, disco);
@@ -204,7 +206,7 @@ void Client::setConnectionImpl(Connection *conn)
 	delete impl->conn;
 	impl->conn = conn;
 	impl->device->setDevice(conn);
-//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
+	//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), impl, SLOT(connected()));
 	connect(conn, SIGNAL(disconnected()), impl, SLOT(disconnected()));
 }

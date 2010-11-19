@@ -31,8 +31,8 @@ class JREEN_EXPORT Presence : public Stanza
 	Q_DECLARE_PRIVATE(Presence)
 public:
 	/**
-	 * Describes the different valid presence types.
-	 */
+  * Describes the different valid presence types.
+  */
 	enum Type
 	{
 		Available,                  /**< The entity is online. */
@@ -48,11 +48,11 @@ public:
 		Offline = Unavailable
 	};
 	Presence(Type type, const JID& to, const QString &status = QString(),
-			  int priority = 0, const QString &xmllang = QString());
+			 int priority = 0, const QString &xmllang = QString());
 	Presence(Type type, const JID& to, const LangMap &status, int priority = 0);
 	Presence(PresencePrivate &p);
 	inline Presence &operator =(const Presence &stanza)
-		{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
+	{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const Capabilities *capabilities() const;
 	Type presence() const;
