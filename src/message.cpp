@@ -2,6 +2,7 @@
  *  message.cpp
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -31,10 +32,6 @@ Message::Message(Type type, const JID& to, const QString &body, const QString &s
 	d->thread = thread;
 	d->body[xmllang] = body;
 	d->subject[xmllang] = subject;
-}
-
-Message::Message(const QDomElement &node) : Stanza(node, new MessagePrivate)
-{
 }
 
 Message::Message(MessagePrivate &p) : Stanza(p)
@@ -83,7 +80,4 @@ const DelayedDelivery *Message::when() const
 	return findExtension<DelayedDelivery>().data();
 }
 
-void Message::writeXml(QXmlStreamWriter *writer) const
-{
-}
 }

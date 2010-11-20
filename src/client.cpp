@@ -20,6 +20,7 @@
 #include "tcpconnection.h"
 #include "nonsaslauth.h"
 #include "delayeddelivery.h"
+#include "chatstatefactory_p.h"
 #include "capabilities.h"
 #include "error.h"
 #include "dataform.h"
@@ -83,12 +84,14 @@ void ClientPrivate::init()
 	stanzas << new MessageFactory(client);
 	stream_info = new StreamInfoImpl(this);
 	disco = new Disco(client);
-	xquery.registerStanzaExtension(new DelayedDelivery, disco);
-	xquery.registerStanzaExtension(new Error, disco);
-	xquery.registerStanzaExtension(new Capabilities, disco);
+	client->registerStanzaExtension(new DelayedDelivery);
+	client->registerStanzaExtension(new Error);
+	client->registerStanzaExtension(new Capabilities);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
 	client->registerStanzaExtension(new Disco::Items);
+	client->registerStanzaExtension(new ChatStateFactory);
+
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);
 	client->registerStreamFeature(new TLSFeature);

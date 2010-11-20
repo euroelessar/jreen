@@ -2,6 +2,7 @@
  *  message.h
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -42,7 +43,6 @@ public:
 	};
 	Message(Type type, const JID& to, const QString &body = QString(), const QString &subject = QString(),
 			const QString &thread = QString(), const QString &xmllang = QString());
-	Message(const QDomElement &node);
 	Message(MessagePrivate &p);
 	inline Message &operator =(const Message &stanza)
 	{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
@@ -53,7 +53,6 @@ public:
 	void setThread(const QString &thread);
 	void setID(const QString &id);
 	const DelayedDelivery *when() const;
-	void writeXml(QXmlStreamWriter *writer) const;
 };
 
 }
