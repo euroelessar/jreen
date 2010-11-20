@@ -33,6 +33,7 @@
 #include "sessionfeature_p.h"
 #include "zlibcompressionfeature.h"
 #include <QStringBuilder>
+#include "delayeddeliveryfactory.h"
 
 namespace jreen
 {
@@ -84,13 +85,14 @@ void ClientPrivate::init()
 	stanzas << new MessageFactory(client);
 	stream_info = new StreamInfoImpl(this);
 	disco = new Disco(client);
-	client->registerStanzaExtension(new DelayedDelivery);
+
 	client->registerStanzaExtension(new Error);
 	client->registerStanzaExtension(new Capabilities);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
 	client->registerStanzaExtension(new Disco::Items);
 	client->registerStanzaExtension(new ChatStateFactory);
+	client->registerStanzaExtension(new DelayedDeliveryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);

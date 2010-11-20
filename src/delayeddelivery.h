@@ -23,20 +23,23 @@
 namespace jreen
 {
 
+//XEP 0203
+//http://xmpp.org/extensions/xep-0203.html
+
 class DelayedDelivery : public StanzaExtension
 {
-public:
 	J_EXTENSION(jreen::DelayedDelivery,
 				"/presence/delay[@xmlns='jabber:x:delay']"
 				"|/message/delay[@xmlns='jabber:x:delay']"
 				"|/presence/x[@xmlns='jabber:x:delay']"
 				"|/message/x[@xmlns='jabber:x:delay']")
-	public:
-		DelayedDelivery(const JID& from, const QDateTime &date_time, const QString &reason = QString());
+public:
+	DelayedDelivery(const JID& from, const QDateTime &date_time, const QString &reason = QString());
 	DelayedDelivery() {}
 	inline const JID &from() const { return m_from; }
 	inline const QString &reason() const { return m_reason; }
 	inline const QDateTime &dateTime() const { return m_date_time; }
+	virtual ~DelayedDelivery() {};
 private:
 	QDateTime m_date_time;
 	QString m_reason;

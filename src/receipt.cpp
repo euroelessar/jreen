@@ -2,6 +2,7 @@
  *  receipt.cpp
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -20,20 +21,8 @@
 namespace jreen
 {
 
-static const QStringList receipt_types = QStringList()
-										 << QLatin1String("request") << QLatin1String("received");
-
-Receipt::Receipt(Type type) : m_type(type)
+Receipt::Receipt(Type type,const QString &id) : m_type(type),m_id(id)
 {
 }
-
-//QDomElement Receipt::node(QDomDocument *doc) const
-//{
-//	if(m_type == Invalid)
-//		return QDomElement();
-//	QDomElement node;/* = createElement(doc, receipt_types.at(m_type));
-//	node.setAttribute(ConstString::xmlns, ConstString::xmlns_receipts);*/
-//	return node;
-//}
 
 }

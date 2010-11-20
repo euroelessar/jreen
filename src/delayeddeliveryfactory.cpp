@@ -2,12 +2,11 @@
 #include <QStringList>
 #include <QXmlStreamReader>
 #include "util.h"
-#include "jstrings.h"
+
+
+#define NS_DELAY "jabber:x:delay"
 
 namespace jreen {
-
-J_STRING(delay)
-J_STRING(stamp)
 
 class DelayedDeliveryFactoryPrivate
 {
@@ -28,27 +27,33 @@ DelayedDeliveryFactory::~DelayedDeliveryFactory()
 
 QStringList DelayedDeliveryFactory::features() const
 {
-
+	return QStringList(NS_DELAY);
 }
 
 bool DelayedDeliveryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-
+	return name == QLatin1String("delay") && uri == NS_DELAY;
+	Q_UNUSED(attributes);
 }
 
 void DelayedDeliveryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-
+	Q_D(DelayedDeliveryFactory);
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	d->from = attributes.value(QLatin1String("from")).toString();
+	d->dateTime = Util::fromStamp(attributes.value("stamp").toString());
 }
 
 void DelayedDeliveryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 }
 
 void DelayedDeliveryFactory::handleCharacterData(const QStringRef &text)
 {
-
+	Q_UNUSED(text);
 }
 
 void DelayedDeliveryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
@@ -56,10 +61,10 @@ void DelayedDeliveryFactory::serialize(StanzaExtension *extension, QXmlStreamWri
 	DelayedDelivery *delivery = se_cast<DelayedDelivery*>(extension);
 	if (!delivery->dateTime().isValid())
 		return;
-	writer->writeStartElement(delay_str);
-	writer->writeAttribute(stamp_str, Util::toStamp(delivery->dateTime()));
-	writer->writeAttribute(ConstString::xmlns, ConstString::xmlns_delay);
-	writer->writeAttribute(ConstString::from, delivery->from());
+	writer->writeStartElement(QLatin1String("delay"));
+	writer->writeAttribute(QLatin1String("stamp"), Util::toStamp(delivery->dateTime()));
+	writer->writeDefaultNamespace(NS_DELAY);
+	writer->writeAttribute(QLatin1String("from"), delivery->from());
 	writer->writeCharacters(delivery->reason());
 	writer->writeEndElement();
 }

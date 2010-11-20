@@ -2,6 +2,7 @@
  *  receipt.h
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -33,10 +34,13 @@ public:
 		Received,
 		Invalid
 	};
-	Receipt(Type type);
+	Receipt(Type type,const QString &id = QString());
 	inline Type type() { return m_type; }
+	inline QString id() {return m_id;}
+	virtual ~Receipt() {}
 private:
 	Type m_type;
+	QString m_id;
 };
 
 }
