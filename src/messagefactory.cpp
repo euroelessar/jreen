@@ -23,7 +23,7 @@ MessageFactory::MessageFactory(Client *client) :
 	StanzaFactory(client),
 	m_depth(0)
 {
-
+	clear();
 }
 
 void MessageFactory::clear()
@@ -31,6 +31,7 @@ void MessageFactory::clear()
 	m_body.clear();
 	m_subject.clear();
 	m_thread.clear();
+	m_subtype = Message::Normal;
 }
 
 int MessageFactory::stanzaType()
@@ -41,6 +42,9 @@ int MessageFactory::stanzaType()
 Stanza::Ptr MessageFactory::createStanza()
 {
 	MessagePrivate *p = new MessagePrivate;
+	p->from = m_from;
+	p->to = m_to;
+	p->id = m_id;
 	p->body = m_body;
 	p->subject = m_subject;
 	p->subtype = m_subtype;
@@ -55,7 +59,7 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 		return;
 
 	QString subtype;
-	switch (m_subtype) {
+	switch (message->subtype()) {
 	case Message::Chat:
 		subtype = QLatin1String("chat");
 		break;
@@ -77,9 +81,9 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	writer->writeAttribute(QLatin1String("type"),subtype);
 	writeStanzaExtensions(stanza, writer);
 	//FIXME write langmap correctly
-	writer->writeTextElement(QLatin1String("subject"),m_subject.value());
-	writer->writeTextElement(QLatin1String("body"),m_body.value());
-	writer->writeTextElement(QLatin1String("thread"),m_thread.toString());
+	writer->writeTextElement(QLatin1String("subject"),message->subject());
+	writer->writeTextElement(QLatin1String("body"),message->body());
+	writer->writeTextElement(QLatin1String("thread"),message->thread());
 	writer->writeEndElement();
 }
 
@@ -98,6 +102,16 @@ void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef
 	if (m_depth == 1) {
 		clear();
 		parseAttributes(attributes);
+		QStringRef subtype = attributes.value(QLatin1String("type"));
+		if(subtype == QLatin1String("chat"))
+			m_subtype = Message::Chat;
+		else if(subtype == QLatin1String("groupchat"))
+			m_subtype = Message::Groupchat;
+		else if(subtype == QLatin1String("headline"))
+			m_subtype = Message::Headline;
+			else if(subtype == QLatin1String("error"))
+			m_subtype = Message::Error;
+
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("body"))
 			m_state = AtBody;

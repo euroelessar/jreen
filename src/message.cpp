@@ -22,16 +22,6 @@
 namespace jreen
 {
 
-J_STRING(message)
-J_STRING(body)
-J_STRING(subject)
-J_STRING(thread)
-
-static const QStringList message_types = QStringList()
-<< QLatin1String("chat") << QLatin1String("error")
-<< QLatin1String("groupchat") << QLatin1String("headline")
-<< QLatin1String("normal");
-
 Message::Message(Type type, const JID& to, const QString &body, const QString &subject, const QString &thread, const QString &xmllang)
 	: Stanza(*new MessagePrivate)
 {
@@ -45,34 +35,6 @@ Message::Message(Type type, const JID& to, const QString &body, const QString &s
 
 Message::Message(const QDomElement &node) : Stanza(node, new MessagePrivate)
 {
-	Q_D(Message);
-	d->subtype = Invalid;
-	if(node.nodeName() != message_str)
-		return;
-	QString type_str = node.attribute(ConstString::type);
-	if(type_str.isEmpty())
-		d->subtype = Normal;
-	else
-	{
-		int type = message_types.indexOf(type_str);
-		d->subtype = type < 0 ? Invalid : static_cast<Type>(type);
-	}
-	forelements(const QDomElement &elem, node)
-	{
-		QString name = elem.nodeName();
-		if(name == body_str)
-		{
-			QString lang = elem.attribute(ConstString::lang);
-			d->body[lang] = elem.text();
-		}
-		else if(name == subject_str)
-		{
-			QString lang = elem.attribute(ConstString::lang);
-			d->subject[lang] = elem.text();
-		}
-		else if(name == thread_str)
-			d->thread = elem.text();
-	}
 }
 
 Message::Message(MessagePrivate &p) : Stanza(p)
@@ -123,17 +85,5 @@ const DelayedDelivery *Message::when() const
 
 void Message::writeXml(QXmlStreamWriter *writer) const
 {
-	Q_D(const Message);
-	writer->writeStartElement(message_str);
-	d->setAttributes(writer);
-	if (d->subtype != Invalid) {
-		d->subject.fillNode(writer, subject_str);
-		d->body.fillNode(writer, body_str);
-		if(!d->thread.isEmpty())
-			writer->writeTextElement(thread_str, d->thread);
-		writer->writeAttribute(ConstString::type, message_types.at(d->subtype));
-		d->addExtensions(writer);
-	}
-	writer->writeEndElement();
 }
 }
