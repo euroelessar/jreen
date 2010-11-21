@@ -79,11 +79,11 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	writer->writeStartElement(QLatin1String("message"));
 	writeAttributes(stanza, writer);
 	writer->writeAttribute(QLatin1String("type"),subtype);
+	writeLangMap(QLatin1String("subject"),message->subject(),writer);
+	writeLangMap(QLatin1String("body"),message->body(),writer);
+	if(!message->thread().isEmpty())
+		writer->writeTextElement(QLatin1String("thread"),message->thread());
 	writeStanzaExtensions(stanza, writer);
-	//FIXME write langmap correctly
-	writer->writeTextElement(QLatin1String("subject"),message->subject());
-	writer->writeTextElement(QLatin1String("body"),message->body());
-	writer->writeTextElement(QLatin1String("thread"),message->thread());
 	writer->writeEndElement();
 }
 

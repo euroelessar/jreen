@@ -21,13 +21,4 @@
 namespace jreen
 {
 
-DelayedDelivery::DelayedDelivery(const JID& from,
-								 const QDateTime &date_time, const QString &reason)
-	: StanzaExtension()
-{
-	m_from = from;
-	m_date_time = date_time;
-	m_reason = reason;
-}
-
 }

@@ -56,4 +56,16 @@ void StanzaFactory::writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writ
 			qDebug("Invalid stanza extesion %d", extension->extensionType());
 	}
 }
+
+void StanzaFactory::writeLangMap(const QString &tag, const LangMap &map, QXmlStreamWriter *writer)
+{
+	foreach(QString lang,map.langs()) {
+		writer->writeStartElement(tag);
+		if(!lang.isEmpty())
+			writer->writeAttribute(QLatin1String("xml:lang"),lang);
+		writer->writeCharacters(map.value(lang));
+		writer->writeEndElement();
+	}
+}
+
 }

@@ -18,6 +18,7 @@
 #define STANZAFACTORY_H
 
 #include "stanza.h"
+#include "langmap.h"
 #include <QXmlStreamAttributes>
 
 namespace jreen
@@ -34,6 +35,7 @@ protected:
 	void parseAttributes(const QXmlStreamAttributes &attributes);
 	void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
 	void writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer);
+	void writeLangMap(const QString &tag, const LangMap &map,QXmlStreamWriter *writer); //may be move to XmlStreamFactory?
 	JID m_from;
 	JID m_to;
 	QString m_id;

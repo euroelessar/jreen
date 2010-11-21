@@ -34,6 +34,7 @@
 #include "zlibcompressionfeature.h"
 #include <QStringBuilder>
 #include "delayeddeliveryfactory.h"
+#include "receiptfactory.h"
 
 namespace jreen
 {
@@ -93,6 +94,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new Disco::Items);
 	client->registerStanzaExtension(new ChatStateFactory);
 	client->registerStanzaExtension(new DelayedDeliveryFactory);
+	client->registerStanzaExtension(new ReceiptFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);

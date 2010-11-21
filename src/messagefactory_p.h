@@ -18,7 +18,6 @@
 
 #include "stanzafactory.h"
 #include "message.h"
-#include "langmap.h"
 
 namespace jreen
 {

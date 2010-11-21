@@ -22,7 +22,7 @@
 namespace jreen
 {
 
-class Receipt : public StanzaExtension
+class JREEN_EXPORT Receipt : public StanzaExtension
 {
 	J_EXTENSION(jreen::Receipt,
 		   "/message/request[@xmlns='urn:xmpp:receipts']"
@@ -44,5 +44,7 @@ private:
 };
 
 }
+
+J_DECLARE_EXTENSION(jreen::Receipt)
 
 #endif // RECEIPT_H
