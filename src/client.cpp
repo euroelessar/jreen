@@ -22,7 +22,7 @@
 #include "delayeddelivery.h"
 #include "chatstatefactory_p.h"
 #include "capabilities.h"
-#include "error.h"
+#include "errorfactory_p.h"
 #include "dataform.h"
 #include "iqfactory_p.h"
 #include "presencefactory_p.h"
@@ -87,7 +87,7 @@ void ClientPrivate::init()
 	stream_info = new StreamInfoImpl(this);
 	disco = new Disco(client);
 
-	client->registerStanzaExtension(new Error);
+	client->registerStanzaExtension(new ErrorFactory);
 	client->registerStanzaExtension(new Capabilities);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
@@ -261,7 +261,7 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 {
 	if(impl->presence.subtype() == type || type == Presence::Error || type == Presence::Invalid || type == Presence::Probe)
 		return;
-	impl->presence.setPresence(type);
+	impl->presence.setSubtype(type);
 	impl->presence.addStatus(text);
 	if(priority > -129 && priority < 128)
 		impl->presence.setPriority(priority);
@@ -282,7 +282,7 @@ void Client::disconnectFromServer(bool force)
 {
 	if(impl->conn && impl->conn->isOpen())
 	{
-		impl->presence.setPresence(Presence::Unavailable);
+		impl->presence.setSubtype(Presence::Unavailable);
 		setPresence();
 		if(force)
 			impl->conn->close();

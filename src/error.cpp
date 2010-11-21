@@ -63,53 +63,33 @@ struct ErrorPrivate
 	Error::Type type;
 	Error::Condition condition;
 	LangMap text;
-	QDomElement app_element;
 };
 
-Error::Error(const QDomElement &node) : d_ptr(new ErrorPrivate)
-{
-	Q_D(Error);
-	if(node.isNull())
-		return;
-	d->condition = Undefined;
-	int type = error_types.indexOf(node.attribute(ConstString::type));
-	d->type = type < 0 ? UndefinedType : static_cast<Type>(type);
-	forelements(const QDomElement &elem, node)
-	{
-		QString name = elem.nodeName();
-		int condition = error_conditions.indexOf(name);
-		if(condition > -1)
-			d->condition = static_cast<Condition>(condition);
-		else if(name == text_str)
-			d->text.insert(elem.attribute(ConstString::lang), elem.text());
-		else
-			d->app_element = elem;
-	}
-}
-
-Error::Error(Type type, Condition condition, const QDomElement &app_element) : d_ptr(new ErrorPrivate)
+Error::Error(Error::Type type, Error::Condition condition, const jreen::LangMap& string)
+: StanzaExtension(), d_ptr(new ErrorPrivate)
 {
 	Q_D(Error);
 	d->type = type;
 	d->condition = condition;
-	d->app_element = app_element;
+	d->text = string;
 }
 
 Error::~Error()
 {
 }
 
-void Error::writeXml(QXmlStreamWriter *writer) const
-{
-	static const QString stanzas_str("urn:ietf:params:xml:ns:xmpp-stanzas");
-	Q_D(const Error);
-	if(d->type == UndefinedType || d->condition == Undefined)
-		return;
-	writer->writeStartElement(error_str);
-	writer->writeAttribute(ConstString::type, error_str.at(d->type));
-	writer->writeEmptyElement(error_conditions.at(d->condition));
-	writer->writeAttribute(ConstString::xmlns, stanzas_str);
-	d->text.fillNode(writer, text_str, stanzas_str);
-	writer->writeEndElement();
-}
+//void Error::writeXml(QXmlStreamWriter *writer) const
+//{
+//	static const QString stanzas_str("urn:ietf:params:xml:ns:xmpp-stanzas");
+//	Q_D(const Error);
+//	if(d->type == UndefinedType || d->condition == Undefined)
+//		return;
+//	writer->writeStartElement(error_str);
+//	writer->writeAttribute(ConstString::type, error_str.at(d->type));
+//	writer->writeEmptyElement(error_conditions.at(d->condition));
+//	writer->writeAttribute(ConstString::xmlns, stanzas_str);
+//	d->text.fillNode(writer, text_str, stanzas_str);
+//	writer->writeEndElement();
+//}
+
 }

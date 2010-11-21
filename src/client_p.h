@@ -132,10 +132,9 @@ public:
 		if(conn && device->isOpen())
 			device->write(data.toUtf8());
 	}
-	void processStreamFeature(StreamFeature *stream_feature, const QDomElement &node)
+	void processStreamFeature(StreamFeature *stream_feature)
 	{
 		current_stream_feature = stream_feature;
-		//		stream_feature->processElement(node);
 	}
 	void registerPresenceHandler(const JID &jid, QObject *handler, const char *member)
 	{
@@ -298,7 +297,7 @@ public slots:
 		security_layers.resetFeatures();
 		authorized = false;
 		current_stream_feature = 0;
-		presence.setPresence(Presence::Unavailable);
+		presence.setSubtype(Presence::Unavailable);
 		client->handleDisconnect();
 	}
 	inline void emitAuthorized() { client->handleAuthorized(); }

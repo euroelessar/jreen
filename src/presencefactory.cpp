@@ -33,7 +33,7 @@ void PresenceFactory::clear()
 {
 	m_status.clear();
 	m_priority = 0;
-	m_type = Presence::Available;
+	m_subtype = Presence::Available;
 }
 
 int PresenceFactory::stanzaType()
@@ -47,7 +47,7 @@ Stanza::Ptr PresenceFactory::createStanza()
 	p->from = m_from;
 	p->to = m_to;
 	p->id = m_id;
-	p->subtype = m_type;
+	p->subtype = m_subtype;
 	p->status = m_status;
 	p->priority = m_priority;
 	return Stanza::Ptr(new Presence(*p));
@@ -56,57 +56,59 @@ Stanza::Ptr PresenceFactory::createStanza()
 void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 {
 	Presence *presence = static_cast<Presence*>(stanza);
-	if (presence->subtype() == Presence::Invalid)
+	if(presence->subtype() == Presence::Invalid)
 		return;
 	writer->writeStartElement(QLatin1String("presence"));
 	writeAttributes(stanza, writer);
 
-	//QString type = QLatin1String("set");
-	//	switch (presence->subtype()) {
-	//	case Presence::Get:
-	//		type = QLatin1String("get");
-	//		break;
-	//	case Presence::Set:
-	//		type = QLatin1String("set");
-	//		break;
-	//	case Presence::Result:
-	//		type = QLatin1String("result");
-	//		break;
-	//	case Presence::Error:
-	//		type = QLatin1String("error");
-	//		break;
-	//	default:
-	//		break;
-	//	}
-
-	QString chat;
-	switch (presence->presence()) {
-	case Presence::Available:
-		chat = QLatin1String("available");
-		break;
+	QString type  = QLatin1String("available");
+	QString show;
+	switch (presence->subtype()) {
 	case Presence::Away:
-		chat = QLatin1String("away");
+		show = QLatin1String("away");
 		break;
 	case Presence::Chat:
-		chat = QLatin1String("chat");
+		show = QLatin1String("chat");
 		break;
 	case Presence::DND:
-		chat = QLatin1String("dnd");
+		show = QLatin1String("dnd");
 		break;
 	case Presence::XA:
-		chat = QLatin1String("xa");
+		show = QLatin1String("xa");
+		break;
+	case Presence::Available:
 		break;
 	case Presence::Unavailable:
-		chat = QLatin1String("unavailable");
+		type = QLatin1String("unavailable");
+		break;
+	case Presence::Subscribe:
+		type = QLatin1String("subscribe");
+		break;
+	case Presence::Subscribed:
+		type = QLatin1String("subscribe");
+		break;
+	case Presence::Unsubscribe:
+		type = QLatin1String("unsubscribe");
+		break;
+	case Presence::Unsubscribed:
+		type = QLatin1String("unsubscribed");
+		break;
+	case Presence::Error:
+		type = QLatin1String("error");
+		break;
+	case Presence::Probe:
+		type = QLatin1String("probe");
 		break;
 	default:
 		break;
 	}
 
-	//writer->writeAttribute(QLatin1String("type"),type);
+	if(!type.isEmpty())
+		writer->writeAttribute(QLatin1String("type"),type);
 	writeStanzaExtensions(stanza, writer);
 	writeLangMap(QLatin1String("status"),presence->status(),writer);
-	writeLangMap(QLatin1String("show"),chat,writer);
+	if(!show.isEmpty())
+		writer->writeTextElement(QLatin1String("show"),show);
 	writer->writeEndElement();
 }
 
@@ -124,18 +126,25 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 	if (m_depth == 1) {
 		clear();
 		parseAttributes(attributes);
-		//TODO handle server errors
-		//			QStringRef type = attributes.value(QLatin1String("type"));
-		//			if (type == QLatin1String("get"))
-		//				m_type = Presence::Get;
-		//			else if (type == QLatin1String("set"))
-		//				m_type = Presence::Set;
-		//			else if (type == QLatin1String("result"))
-		//				m_type = Presence::Result;
-		//			else if (type == QLatin1String("error"))
-		//				m_type = Presence::Error;
-		//			else
-		//				m_type = Presence::Invalid;
+		QStringRef type = attributes.value(QLatin1String("type"));
+		if (type == QLatin1String("available"))
+			m_subtype = Presence::Available;
+		else if (type == QLatin1String("unavailable"))
+			m_subtype = Presence::Unavailable;
+		else if (type == QLatin1String("probe"))
+			m_subtype = Presence::Probe;
+		else if (type == QLatin1String("subscribe"))
+			m_subtype = Presence::Subscribe;
+		else if (type == QLatin1String("unsubscribe"))
+			m_subtype = Presence::Unsubscribe;
+		else if (type == QLatin1String("subscribed"))
+			m_subtype = Presence::Subscribe;
+		else if (type == QLatin1String("unsubscribed"))
+			m_subtype = Presence::Unsubscribe;
+		else if (type == QLatin1String("error"))
+			m_subtype = Presence::Error;
+		else
+			m_subtype = Presence::Available;
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("show"))
 			m_state = AtShow;
@@ -144,7 +153,7 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 		}
 		else if(name == QLatin1String("status")) {
 			m_state = AtStatus;
-			m_xmllang = attributes.value(QLatin1String("lang"));
+			m_xmllang = attributes.value(QLatin1String("xml:lang"));
 		}
 	}
 }
@@ -160,18 +169,18 @@ void PresenceFactory::handleCharacterData(const QStringRef &text)
 {
 	if(m_depth == 2) {
 		if(m_state == AtShow) {
-			if(text == QLatin1String("available"))
+/*			if(text == QLatin1String("available"))
 				m_type = Presence::Available;
 			else if(text == QLatin1String("unavailable"))
 				m_type = Presence::Unavailable;
-			else if(text == QLatin1String("away"))
-				m_type = Presence::Away;
+			else */if(text == QLatin1String("away"))
+				m_subtype = Presence::Away;
 			else if(text == QLatin1String("chat"))
-				m_type = Presence::Chat;
+				m_subtype = Presence::Chat;
 			else if(text == QLatin1String("dnd"))
-				m_type = Presence::DND;
+				m_subtype = Presence::DND;
 			else if(text == QLatin1String("xa"))
-				m_type = Presence::XA;
+				m_subtype = Presence::XA;
 		}
 		else if(m_state == AtPriority) {
 			m_priority = text.toString().toInt();

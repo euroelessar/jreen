@@ -35,28 +35,33 @@ public:
   */
 	enum Type
 	{
-		Available,                  /**< The entity is online. */
-		Chat,                       /**< The entity is 'available for chat'. */
-		Away,                       /**< The entity is away. */
-		DND,                        /**< The entity is DND (Do Not Disturb). */
-		XA,                         /**< The entity is XA (eXtended Away). */
-		Unavailable,                /**< The entity is offline. */
-		Probe,                      /**< This is a presence probe. */
-		Error,                      /**< This is a presence error. */
-		Invalid,                    /**< The stanza is invalid. */
-		Online = Available,
-		Offline = Unavailable
+		Invalid		= 0,	/**< Invalid type */
+		Unavailable = 0,	/**< The entity is offline. */
+		Available,			/**< The entity is online. */
+		Subscribe,			/**< Subscribe request. */
+		Unsubscribe,		/**< The sender is unsubscribing from another entity's presence.. */
+		Subscribed,			/**< The sender has allowed the recipient to receive their presence.. */
+		Unsubscribed,		/**< The subscription request has been denied or a previously-granted subscription has been cancelled. */
+		Probe,				/**< A request for an entity's current presence; SHOULD be generated only by a server on behalf of a user. */
+		Error,				/**< An error has occurred regarding processing or delivery of a previously-sent presence stanza. */
+		Empty,				/**< Do not send show state*/
+		Chat,				/**< The entity is 'available for chat'. */
+		Away,				/**< The entity is away. */
+		DND,				/**< The entity is DND (Do Not Disturb). */
+		XA					/**< The entity is XA (eXtended Away). */
 	};
-	Presence(Type type, const JID& to, const QString &status = QString(),
-			 int priority = 0, const QString &xmllang = QString());
-	Presence(Type type, const JID& to, const LangMap &status, int priority = 0);
+
+	Presence(Type type, const JID& to,
+			 const QString &status = QString(), int priority = 0,
+			 const QString &xmllang = QString());
+	Presence(Type type, const JID& to,const LangMap &status,
+			 int priority = 0);
 	Presence(PresencePrivate &p);
 	inline Presence &operator =(const Presence &stanza)
 	{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
+	void setSubtype(Type subtype);
 	const Capabilities *capabilities() const;
-	Type presence() const;
-	void setPresence(Type type);
 	const QString &status(const QString &lang = QString()) const;
 	void addStatus(const QString &status, const QString &lang = QString());
 	void resetStatus();

@@ -38,7 +38,7 @@ public:
 private:
 	void clear();
 	int m_depth;
-	Presence::Type m_type;
+	Presence::Type m_subtype;
 	int m_priority;
 	LangMap m_status;
 	State m_state;

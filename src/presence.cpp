@@ -20,7 +20,8 @@
 namespace jreen
 {
 
-Presence::Presence(Type type, const JID& to, const QString &status, int priority, const QString &xmllang)
+Presence::Presence(Type type, const JID& to,
+				   const QString &status, int priority, const QString &xmllang)
 	: Stanza(*new PresencePrivate)
 {
 	Q_D(Presence);
@@ -30,7 +31,7 @@ Presence::Presence(Type type, const JID& to, const QString &status, int priority
 	d->status[xmllang] = status;
 }
 
-Presence::Presence(Type type, const JID& to, const LangMap &status, int priority)
+Presence::Presence(Type type, const JID& to,const LangMap &status,int priority)
 	: Stanza(*new PresencePrivate)
 {
 	Q_D(Presence);
@@ -44,6 +45,11 @@ Presence::Presence(PresencePrivate &p) : Stanza(p)
 {
 }
 
+void Presence::setSubtype(Type subtype)
+{
+	d_func()->subtype = subtype;
+}
+
 Presence::Type Presence::subtype() const
 {
 	Q_D(const Presence);
@@ -53,18 +59,6 @@ Presence::Type Presence::subtype() const
 const Capabilities *Presence::capabilities() const
 {
 	return findExtension<Capabilities>().data();
-}
-
-Presence::Type Presence::presence() const
-{
-	Q_D(const Presence);
-	return d->subtype;
-}
-
-void Presence::setPresence(Type type)
-{
-	Q_D(Presence);
-	d->subtype = type;
 }
 
 const QString &Presence::status(const QString &lang) const

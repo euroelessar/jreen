@@ -153,7 +153,7 @@ void AbstractRosterItem::setData(const QSharedPointer<AbstractRosterItem> &item)
 	 AbstractRosterItemPrivate *d = m_self->d_ptr.data();
 	 d->jid = client->jid().bare();
 	 d->subscription = AbstractRosterItem::Both;
-	 connect(client, SIGNAL(newPresence(jreen::Presence)), this, SLOT(handlePresence(jreen::Presence)));
+//	 connect(client, SIGNAL(newPresence(jreen::Presence)), this, SLOT(handlePresence(jreen::Presence)));
 	 init();
  }
 
