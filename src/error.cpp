@@ -25,24 +25,24 @@ namespace jreen
 J_STRING(text)
 J_STRING(error)
 
-static const QStringList error_types = QStringList()
-											<< QLatin1String("auth") << QLatin1String("cancel")
-											<< QLatin1String("continue") << QLatin1String("modify")
-											<< QLatin1String("wait");
+const char *error_types[] = {"auth","cancel",
+							 "continue","modify",
+							 "wait"};
 
-static const QStringList error_conditions = QStringList()
-											<< QLatin1String("bad-request") << QLatin1String("conflict")
-											<< QLatin1String("feature-not-implemented") << QLatin1String("forbidden")
-											<< QLatin1String("gone") << QLatin1String("internal-server-error")
-											<< QLatin1String("item-not-found") << QLatin1String("jid-malformed")
-											<< QLatin1String("not-acceptable") << QLatin1String("not-allowed")
-											<< QLatin1String("not-authorized") << QLatin1String("not-modified")
-											<< QLatin1String("payment-required") << QLatin1String("recipient-unavailable")
-											<< QLatin1String("redirect") << QLatin1String("registration-required")
-											<< QLatin1String("remote-server-not-found") << QLatin1String("remote-server-timeout")
-											<< QLatin1String("resource-constraint") << QLatin1String("service-unavailable")
-											<< QLatin1String("subscription-required") << QLatin1String("undefined-condition")
-											<< QLatin1String("unexpected-request") << QLatin1String("unknown-sender");
+const char *error_conditions[] = {"bad-request","conflict",
+								  "feature-not-implemented", "forbidden",
+								  "gone", "internal-server-error",
+								  "item-not-found", "jid-malformed",
+								  "not-acceptable", "not-allowed",
+								  "not-authorized", "not-modified",
+								  "payment-required", "recipient-unavailable",
+								  "redirect", "registration-required",
+								  "remote-server-not-found", "remote-server-timeout",
+								  "resource-constraint", "service-unavailable",
+								  "subscription-required", "undefined-condition",
+								  "unexpected-request", "unknown-sender"};
+
+
 
 //static const QStringList error_conditions = QStringList()
 //											<< QLatin1String("bad-format") << QLatin1String("bad-namespace-prefix")

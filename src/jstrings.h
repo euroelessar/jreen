@@ -62,6 +62,34 @@ static const QString xmlns_nickname         (QLatin1String("http://jabber.org/pr
 static const QString xmlns_receipts         (QLatin1String("urn:xmpp:receipts"));
 static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:softwareinfo"));
 }
+
+//Unsafe, but very fast functions, only for testing
+inline int strToEnum(const char *str, const char **strings, int size)
+{
+	for(int i=0;i!=size;i++) {
+		if(qstrcmp(strings[i],str))
+			return i;
+	}
+	return -1;
+}
+
+inline QString enumToStr(int i,const char **strings,int size)
+{
+	if(i<0 || i>=size)
+		return QString();
+	return QLatin1String(strings[i]);
+}
+
+//overloading
+inline int strToEnum(const QLatin1String &str, const char **strings, int size)
+{
+	return strToEnum(str.latin1(),strings,size);
+}
+inline int strToEnum(const QString &str, const char **strings, int size)
+{
+	return strToEnum(str.toLatin1().constData(),strings,size);
+}
+
 }
 
 #endif // JSTRINGS_H

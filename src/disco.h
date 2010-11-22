@@ -40,7 +40,7 @@ public:
 	{
 		inline Identity() {}
 		inline Identity(const QString &category, const QString &type, const QString &name, const QString &lang = QString())
-		: category(category), type(type), name(name), lang(lang) {}
+			: category(category), type(type), name(name), lang(lang) {}
 		QString category;
 		QString type;
 		QString name;
@@ -51,9 +51,9 @@ public:
 	class Info : public StanzaExtension
 	{
 		J_EXTENSION(jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
-	public:
-		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
-		: m_node(node), m_identities(identities), m_features(features), m_form(form) {}
+		public:
+			inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
+		  : m_node(node), m_identities(identities), m_features(features), m_form(form) {}
 		Info(const QDomElement &node);
 		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
@@ -71,7 +71,7 @@ public:
 	{
 		inline Item() {}
 		inline Item(const JID &jid, const QString &node, const QString &name)
-		: jid(jid), node(node), name(name) {}
+			: jid(jid), node(node), name(name) {}
 		JID jid;
 		QString node;
 		QString name;
@@ -81,9 +81,9 @@ public:
 	class Items : public StanzaExtension
 	{
 		J_EXTENSION(jreen::Disco::Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
-	public:
-		inline Items(const QString &node = QString(), const ItemList &items = ItemList())
-				: m_items(items), m_node(node) {}
+		public:
+			inline Items(const QString &node = QString(), const ItemList &items = ItemList())
+		  : m_items(items), m_node(node) {}
 		Items(const QDomElement &node);
 		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
@@ -106,7 +106,7 @@ public:
 
 public slots:
 private slots:
-	void handleIQ(const IQ &iq);
+	void handleIQ(const jreen::IQ &iq);
 protected:
 	QScopedPointer<DiscoPrivate> d_ptr;
 };

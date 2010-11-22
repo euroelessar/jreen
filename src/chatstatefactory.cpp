@@ -17,21 +17,17 @@
 #include <QMap>
 #include <QXmlStreamReader>
 #include <QStringList>
+#include "jstrings.h"
 
 #define NS_CHATSTATE QLatin1String("http://jabber.org/protocol/chatstates")
 
 namespace jreen {
 
-QMap<int,QString> stateStrings()
-{
-	QMap<int,QString> states;
-	states.insert(ChatState::Active,QLatin1String("active"));
-	states.insert(ChatState::InActive,QLatin1String("inactive"));
-	states.insert(ChatState::Composing,QLatin1String("composing"));
-	states.insert(ChatState::Paused,QLatin1String("paused"));
-	states.insert(ChatState::Gone,QLatin1String("gone"));
-	return states;
-}
+const char *state_strings[] = {"active",
+							   "inactive",
+							   "gone",
+							   "composing",
+							   "paused"};
 
 ChatStateFactory::ChatStateFactory()
 {
@@ -52,14 +48,14 @@ bool ChatStateFactory::canParse(const QStringRef &name,
 								const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return (stateStrings().key(name.toString(),-1) != -1) && (uri == NS_CHATSTATE);
+	return (strToEnum(name.toString(),state_strings,5) != -1) && (uri == NS_CHATSTATE);
 }
 
 void ChatStateFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	m_state = static_cast<ChatState::State>(stateStrings().key(name.toString()));
+	m_state = static_cast<ChatState::State>(strToEnum(name.toString(),state_strings,5));
 }
 
 void ChatStateFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -76,7 +72,7 @@ void ChatStateFactory::handleCharacterData(const QStringRef &text)
 void ChatStateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	ChatState *state = se_cast<ChatState*>(extension);
-	writer->writeStartElement(stateStrings().value(state->state()));
+	writer->writeStartElement(enumToStr(state->state(),state_strings,5));
 	writer->writeDefaultNamespace(NS_CHATSTATE);
 	writer->writeEndElement();
 }

@@ -20,11 +20,11 @@
 namespace jreen
 {
 
-static const QString full_stamp_str(QLatin1String("yyyy-MM-ddThh:mm:ss.zzz"));
-static const QString fullz_stamp_str(QLatin1String("yyyy-MM-ddThh:mm:ss.zzzZ"));
-static const QString date_time_stamp_str(QLatin1String("yyyy-MM-ddThh:mm:ss"));
-static const QString deprecated_stamp_str(QLatin1String("yyyyMMddThh:mm:ss"));
-static const QString time_stamp_str(QLatin1String("hh:mm"));
+#define FULL_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss.zzz")
+#define FULLZ_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss.zzzZ")
+#define DATE_TIME_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss")
+#define DEPRECATED_STAMP_STR QLatin1String("yyyyMMddThh:mm:ss")
+#define TIME_STAMP_STR QLatin1String("hh:mm")
 
 QDateTime Util::fromStamp(const QString &stamp)
 {
@@ -37,12 +37,12 @@ QDateTime Util::fromStamp(const QString &stamp)
 		QString time = stamp;
 		time.truncate(num);
 		if(num == 19)
-			date_time = QDateTime::fromString(time, date_time_stamp_str);
+			date_time = QDateTime::fromString(time, DATE_TIME_STAMP_STR);
 		else
-			date_time = QDateTime::fromString(time, full_stamp_str);
+			date_time = QDateTime::fromString(time, FULL_STAMP_STR);
 		if(num > 19)
 		{
-			QTime delta = QTime::fromString(stamp.right(5), time_stamp_str);
+			QTime delta = QTime::fromString(stamp.right(5), TIME_STAMP_STR);
 			int multi = 1;
 			if(stamp.at(stamp.length() - 6) == QLatin1Char('+'))
 				multi = -1;
@@ -50,7 +50,7 @@ QDateTime Util::fromStamp(const QString &stamp)
 		}
 	}
 	else // Deprecated format of stamp
-		date_time = QDateTime::fromString(stamp, deprecated_stamp_str);
+		date_time = QDateTime::fromString(stamp, DEPRECATED_STAMP_STR);
 	if(!date_time.isValid())
 		return QDateTime();
 	date_time.setTimeSpec(Qt::UTC);
@@ -59,7 +59,7 @@ QDateTime Util::fromStamp(const QString &stamp)
 
 QString Util::toStamp(const QDateTime &date_time)
 {
-	return date_time.toUTC().toString(fullz_stamp_str);
+	return date_time.toUTC().toString(FULLZ_STAMP_STR);
 }
 
 QString Util::randomHash(const JID &jid)

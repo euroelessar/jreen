@@ -16,10 +16,13 @@
 #include <QStringList>
 #include <QXmlStreamReader>
 #include <QMap>
+#include "jstrings.h"
 
 #define NS_RECEIPT QLatin1String("urn:xmpp:receipts")
 
 namespace jreen {
+
+static const char *receipt_strings[] = {"received","request"};
 
 class ReceiptFactoryPrivate
 {
@@ -27,14 +30,6 @@ public:
 	Receipt::Type type;
 	QString id;
 };
-
-QMap<int,QString> typeStrings()
-{
-	QMap<int,QString> map;
-	map.insert(Receipt::Received,QLatin1String("received"));
-	map.insert(Receipt::Request,QLatin1String("request"));
-	return map;
-}
 
 ReceiptFactory::ReceiptFactory() : d_ptr(new ReceiptFactoryPrivate)
 {
@@ -53,7 +48,7 @@ QStringList ReceiptFactory::features() const
 bool ReceiptFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return (typeStrings().key(name.toString(),-1) != -1) && uri == NS_RECEIPT;
+	return (strToEnum(name.toString(),receipt_strings,2) != -1) && uri == NS_RECEIPT;
 }
 
 void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -61,7 +56,7 @@ void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef
 	Q_D(ReceiptFactory);
 	Q_UNUSED(uri);
 	d->id = attributes.value(QLatin1String("id")).toString();
-	d->type = static_cast<Receipt::Type>(typeStrings().key(name.toString()));
+	d->type = static_cast<Receipt::Type>(strToEnum(name.toString(),receipt_strings,2));
 }
 
 void ReceiptFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -78,8 +73,9 @@ void ReceiptFactory::handleCharacterData(const QStringRef &text)
 void ReceiptFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	Receipt *receipt = se_cast<Receipt*>(extension);
-	writer->writeStartElement(typeStrings().value(receipt->type()));
-	writer->writeAttribute(QLatin1String("id"),receipt->id());
+	writer->writeStartElement(enumToStr(receipt->type(),receipt_strings,2));
+	if(!receipt->id().isEmpty())
+		writer->writeAttribute(QLatin1String("id"),receipt->id());
 	writer->writeDefaultNamespace(NS_RECEIPT);
 	writer->writeEndElement();
 }
