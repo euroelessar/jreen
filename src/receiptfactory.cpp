@@ -48,7 +48,7 @@ QStringList ReceiptFactory::features() const
 bool ReceiptFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return (strToEnum(name.toString(),receipt_strings,2) != -1) && uri == NS_RECEIPT;
+	return (strToEnum(name.toString(),receipt_strings) != -1) && uri == NS_RECEIPT;
 }
 
 void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -56,7 +56,7 @@ void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef
 	Q_D(ReceiptFactory);
 	Q_UNUSED(uri);
 	d->id = attributes.value(QLatin1String("id")).toString();
-	d->type = static_cast<Receipt::Type>(strToEnum(name.toString(),receipt_strings,2));
+	d->type = static_cast<Receipt::Type>(strToEnum(name.toString(),receipt_strings));
 }
 
 void ReceiptFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -73,7 +73,7 @@ void ReceiptFactory::handleCharacterData(const QStringRef &text)
 void ReceiptFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	Receipt *receipt = se_cast<Receipt*>(extension);
-	writer->writeStartElement(enumToStr(receipt->type(),receipt_strings,2));
+	writer->writeStartElement(enumToStr(receipt->type(),receipt_strings));
 	if(!receipt->id().isEmpty())
 		writer->writeAttribute(QLatin1String("id"),receipt->id());
 	writer->writeDefaultNamespace(NS_RECEIPT);

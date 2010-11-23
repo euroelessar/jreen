@@ -63,9 +63,10 @@ static const QString xmlns_receipts         (QLatin1String("urn:xmpp:receipts"))
 static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:softwareinfo"));
 }
 
-//Unsafe, but very fast functions, only for testing
-inline int strToEnum(const char *str, const char **strings, int size)
+template<int N>
+inline int strToEnum(const char *str, const char *(&strings)[N])
 {
+	int size = N-1;
 	for(int i=0;i!=size;i++) {
 		if(qstrcmp(strings[i],str))
 			return i;
@@ -73,21 +74,25 @@ inline int strToEnum(const char *str, const char **strings, int size)
 	return -1;
 }
 
-inline QString enumToStr(int i,const char **strings,int size)
+template<int N>
+inline QString enumToStr(int i, const char *(&strings)[N])
 {
+	int size = N-1;
 	if(i<0 || i>=size)
 		return QString();
 	return QLatin1String(strings[i]);
 }
 
-//overloading
-inline int strToEnum(const QLatin1String &str, const char **strings, int size)
+////overloading
+template<int N>
+inline int strToEnum(const QLatin1String &str, const char *(&strings)[N])
 {
-	return strToEnum(str.latin1(),strings,size);
+	return strToEnum(str.latin1(),strings);
 }
-inline int strToEnum(const QString &str, const char **strings, int size)
+template<int N>
+inline int strToEnum(const QString &str, const char *(&strings)[N])
 {
-	return strToEnum(str.toLatin1().constData(),strings,size);
+	return strToEnum(str.toLatin1().constData(),strings);
 }
 
 }

@@ -48,14 +48,14 @@ bool ChatStateFactory::canParse(const QStringRef &name,
 								const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return (strToEnum(name.toString(),state_strings,5) != -1) && (uri == NS_CHATSTATE);
+	return (strToEnum(name.toString(),state_strings) != -1) && (uri == NS_CHATSTATE);
 }
 
 void ChatStateFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	m_state = static_cast<ChatState::State>(strToEnum(name.toString(),state_strings,5));
+	m_state = static_cast<ChatState::State>(strToEnum(name.toString(),state_strings));
 }
 
 void ChatStateFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -72,7 +72,7 @@ void ChatStateFactory::handleCharacterData(const QStringRef &text)
 void ChatStateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	ChatState *state = se_cast<ChatState*>(extension);
-	writer->writeStartElement(enumToStr(state->state(),state_strings,5));
+	writer->writeStartElement(enumToStr(state->state(),state_strings));
 	writer->writeDefaultNamespace(NS_CHATSTATE);
 	writer->writeEndElement();
 }
