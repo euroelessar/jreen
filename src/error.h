@@ -148,6 +148,8 @@ public:
 	//		Undefined
 	//	};
 	Error(Type type, Condition condition,const LangMap &langMap = LangMap());
+	Type type() const;
+	Condition condition() const;
 	~Error();
 private:
 	QScopedPointer<ErrorPrivate> d_ptr;

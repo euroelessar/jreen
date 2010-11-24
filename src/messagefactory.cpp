@@ -16,8 +16,16 @@
 #include "messagefactory_p.h"
 #include "message_p.h"
 #include "message.h"
+#include "jstrings.h"
 
 namespace jreen {
+
+static const char *message_types[] = {
+		"chat",
+		"error",
+		"groupchat",
+		"headline"
+};
 
 MessageFactory::MessageFactory(Client *client) :
 	StanzaFactory(client),
@@ -58,23 +66,7 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	if (message->subtype() == Message::Invalid)
 		return;
 
-	QString subtype;
-	switch (message->subtype()) {
-	case Message::Chat:
-		subtype = QLatin1String("chat");
-		break;
-	case Message::Error:
-		subtype = QLatin1String("error");
-		break;
-	case Message::Groupchat:
-		subtype = QLatin1String("groupchat");
-		break;
-	case Message::Headline:
-		subtype = QLatin1String("headline");
-		break;
-	default:
-		break;
-	}
+	QString subtype = enumToStr(message->subtype(),message_types);
 
 	writer->writeStartElement(QLatin1String("message"));
 	writeAttributes(stanza, writer);
@@ -103,15 +95,7 @@ void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef
 		clear();
 		parseAttributes(attributes);
 		QStringRef subtype = attributes.value(QLatin1String("type"));
-		if(subtype == QLatin1String("chat"))
-			m_subtype = Message::Chat;
-		else if(subtype == QLatin1String("groupchat"))
-			m_subtype = Message::Groupchat;
-		else if(subtype == QLatin1String("headline"))
-			m_subtype = Message::Headline;
-			else if(subtype == QLatin1String("error"))
-			m_subtype = Message::Error;
-
+		m_subtype = strToEnum<Message::Type>(subtype,message_types);
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("body"))
 			m_state = AtBody;

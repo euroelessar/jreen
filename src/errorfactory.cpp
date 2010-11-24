@@ -16,16 +16,34 @@
 #include "errorfactory_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
+#include "jstrings.h"
+
+#define NS_ERROR QLatin1String("urn:ietf:params:xml:ns:xmpp-stanzas")
 
 namespace jreen {
 
-#define NS_ERROR QLatin1String("urn:ietf:params:xml:ns:xmpp-stanzas")
+const char *error_types[] = {"auth","cancel",
+							 "continue","modify",
+							 "wait"};
+
+const char *error_conditions[] = {"bad-request","conflict",
+								  "feature-not-implemented", "forbidden",
+								  "gone", "internal-server-error",
+								  "item-not-found", "jid-malformed",
+								  "not-acceptable", "not-allowed",
+								  "not-authorized", "not-modified",
+								  "payment-required", "recipient-unavailable",
+								  "redirect", "registration-required",
+								  "remote-server-not-found", "remote-server-timeout",
+								  "resource-constraint", "service-unavailable",
+								  "subscription-required", "undefined-condition",
+								  "unexpected-request", "unknown-sender"};
   
 ErrorFactory::ErrorFactory()
 {
 }
 
-bool ErrorFactory::canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes)
+bool ErrorFactory::canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes&)
 {
 	return name == QLatin1String("error") && uri == NS_ERROR;
 }
@@ -42,21 +60,35 @@ QStringList ErrorFactory::features() const
 
 void ErrorFactory::handleStartElement(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes)
 {
-
+	Q_UNUSED(uri);
+	m_depth++;
+	if (m_depth == 1) {
+		QStringRef subtype = attributes.value(QLatin1String("type"));
+		m_type = strToEnum<Error::Type>(subtype,error_types);
+	} else if(m_depth == 2)
+		m_condition = strToEnum<Error::Condition>(name,error_conditions);
 }
 
 void ErrorFactory::handleCharacterData(const QStringRef& text)
 {
-
+	Q_UNUSED(text);
 }
 void ErrorFactory::handleEndElement(const QStringRef& name, const QStringRef& uri)
 {
-
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	m_depth--;
 }
 
 void ErrorFactory::serialize(StanzaExtension* obj, QXmlStreamWriter* writer)
 {
-
+	Error *error = se_cast<Error*>(obj);
+	if(error->type() == Error::UndefinedType || error->condition() == Error::Undefined)
+		return;
+	writer->writeStartElement(QLatin1String("error"));
+	writer->writeAttribute(QLatin1String("type"),enumToStr(error->type(),error_types));
+	writer->writeEmptyElement(enumToStr(error->condition(),error_conditions));
+	writer->writeDefaultNamespace(NS_ERROR);
 }
 
 ErrorFactory::~ErrorFactory()
