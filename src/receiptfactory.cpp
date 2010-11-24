@@ -56,7 +56,7 @@ void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef
 	Q_D(ReceiptFactory);
 	Q_UNUSED(uri);
 	d->id = attributes.value(QLatin1String("id")).toString();
-	d->type = static_cast<Receipt::Type>(strToEnum(name.toString(),receipt_strings));
+	d->type = strToEnum<Receipt::Type>(name.toString(),receipt_strings);
 }
 
 void ReceiptFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)

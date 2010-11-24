@@ -63,6 +63,7 @@ static const QString xmlns_receipts         (QLatin1String("urn:xmpp:receipts"))
 static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:softwareinfo"));
 }
 
+//enums
 template<int N>
 inline int strToEnum(const char *str, const char *(&strings)[N])
 {
@@ -89,10 +90,60 @@ inline int strToEnum(const QLatin1String &str, const char *(&strings)[N])
 {
 	return strToEnum(str.latin1(),strings);
 }
+
 template<int N>
 inline int strToEnum(const QString &str, const char *(&strings)[N])
 {
 	return strToEnum(str.toLatin1().constData(),strings);
+}
+template<typename T,int N>
+inline T strToEnum(const QString &str, const char *(&strings)[N])
+{
+	return static_cast<T>(strToEnum(str.toLatin1().constData(),strings));
+}
+
+//flags
+template<int N>
+inline QString flagToStr(int i, const char *(&strings)[N])
+{
+	int size = N-1;
+	int n=1;
+	while(n < i)
+		n <<= 1;
+	if(n<0 || n>=size)
+		return QString();
+	return QLatin1String(strings[n]);
+}
+
+template<int N>
+inline int strToFlag(const char *str, const char *(&strings)[N])
+{
+	int size = N-1;
+	int flag = 0x1;
+	for(int i=0;i!=size;i++) {
+		if(qstrcmp(strings[i],str))
+			return i;
+		flag <<= 1;
+	}
+	return -1;
+}
+
+////overloading
+template<int N>
+inline int strToFlag(const QLatin1String &str, const char *(&strings)[N])
+{
+	return strToFlag(str.latin1(),strings);
+}
+
+template<int N>
+inline int strToFlag(const QString &str, const char *(&strings)[N])
+{
+	return strToFlag(str.toLatin1().constData(),strings);
+}
+template<typename T,int N>
+inline T strToFlag(const QString &str, const char *(&strings)[N])
+{
+	return static_cast<T>(strToFlag(str.toLatin1().constData(),strings));
 }
 
 }

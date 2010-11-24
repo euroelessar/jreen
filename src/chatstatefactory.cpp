@@ -55,7 +55,7 @@ void ChatStateFactory::handleStartElement(const QStringRef &name, const QStringR
 {
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	m_state = static_cast<ChatState::State>(strToEnum(name.toString(),state_strings));
+	m_state = strToEnum<ChatState::State>(name.toString(),state_strings);
 }
 
 void ChatStateFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
