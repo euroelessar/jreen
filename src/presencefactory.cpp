@@ -85,7 +85,7 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 		type = QLatin1String("subscribe");
 		break;
 	case Presence::Subscribed:
-		type = QLatin1String("subscribe");
+		type = QLatin1String("subscribed");
 		break;
 	case Presence::Unsubscribe:
 		type = QLatin1String("unsubscribe");

@@ -22,7 +22,7 @@
 
 namespace jreen {
 
-static const char *receipt_strings[] = {"received","request"};
+static const char *receipt_strings[] = {"request","received"};
 
 class ReceiptFactoryPrivate
 {

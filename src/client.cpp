@@ -35,6 +35,7 @@
 #include <QStringBuilder>
 #include "delayeddeliveryfactory.h"
 #include "receiptfactory.h"
+#include "softwareversionfactory.h"
 
 namespace jreen
 {
@@ -69,9 +70,9 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 		client->handleMessage(*stanza.staticCast<Message>());
 	} else if (type == StanzaPrivate::StanzaPresence) {
 		client->handlePresence(*stanza.staticCast<Presence>());
-	} else if (type == StanzaPrivate::StanzaSubscription) {
+	}/* else if (type == StanzaPrivate::StanzaSubscription) {
 		client->handleSubscription(*stanza.staticCast<Subscription>());
-	}
+	}*/
 }
 
 void ClientPrivate::readMore()
@@ -95,6 +96,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new ChatStateFactory);
 	client->registerStanzaExtension(new DelayedDeliveryFactory);
 	client->registerStanzaExtension(new ReceiptFactory);
+	client->registerStanzaExtension(new SoftwareVersionFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);

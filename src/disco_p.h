@@ -18,43 +18,44 @@
 #define DISCO_P_H
 
 #include "disco.h"
+#include "dataformfactory_p.h"
 
 namespace jreen
 {
-	struct DiscoPrivate
-	{
-		Disco::IdentityList identities;
-		QSet<QString> features;
-		Client *client;
-		QSharedPointer<DataForm> form;
-		QString os;
-		QString software_name;
-		QString software_version;
-		
-		static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
-	};
-	
-	class DiscoInfoFactory : public StanzaExtensionFactory<Disco::Info>
-	{
-	public:
-		DiscoInfoFactory();
-		QStringList features() const;
-		bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-		void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-		void handleEndElement(const QStringRef &name, const QStringRef &uri);
-		void handleCharacterData(const QStringRef &text);
-		void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-		StanzaExtension::Ptr createExtension();
-	private:
-		enum State { AtStart, AtInfo, AtDataForm };
-		int m_depth;
-		State m_state;
-		QString m_node;
-		Disco::IdentityList m_identities;
-		QSet<QString> m_features;
-		DataFormFactory m_factory;
-		bool m_hasDataForm;
-	};
+struct DiscoPrivate
+{
+	Disco::IdentityList identities;
+	QSet<QString> features;
+	Client *client;
+	QSharedPointer<DataForm> form;
+	QString os;
+	QString software_name;
+	QString software_version;
+
+	static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
+};
+
+class DiscoInfoFactory : public StanzaExtensionFactory<Disco::Info>
+{
+public:
+	DiscoInfoFactory();
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
+private:
+	enum State { AtStart, AtInfo, AtDataForm };
+	int m_depth;
+	State m_state;
+	QString m_node;
+	Disco::IdentityList m_identities;
+	QSet<QString> m_features;
+	DataFormFactory m_factory;
+	bool m_hasDataForm;
+};
 }
 
 #endif // DISCO_P_H

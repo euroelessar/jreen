@@ -30,9 +30,9 @@ void LangMapData::fillNode(QXmlStreamWriter *writer, const QString &name, const 
 		writer->writeTextElement(name, base);
 	for (LangMapData::Base::const_iterator i = other.begin(); i != other.end(); i++) {
 		writer->writeStartElement(name);
-		writer->writeAttribute(ConstString::lang, i.key());
+		writer->writeAttribute(QLatin1String("xml:lang"), i.key());
 		if (!uri.isEmpty())
-			writer->writeAttribute(ConstString::xmlns, uri);
+			writer->writeDefaultNamespace(uri);
 		writer->writeEndElement();
 	}
 }

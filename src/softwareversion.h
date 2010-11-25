@@ -23,6 +23,7 @@ namespace jreen
 
 /*
  * Implementation of XEP-0092
+ * http://xmpp.org/extensions/xep-0092.html
  */
 
 class JREEN_EXPORT SoftwareVersion : public StanzaExtension

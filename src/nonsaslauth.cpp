@@ -64,7 +64,7 @@ NonSaslAuth::Query::Query(const QDomElement &node) : m_is_digest(false)
 
 QDomElement NonSaslAuth::Query::node(QDomDocument *document) const
 {
-	QDomElement node = document->createElement(ConstString::query);
+	QDomElement node/* = document->createElement(ConstString::query)*/;
 //	node.setAttribute(ConstString::xmlns, "jabber:iq:auth");
 //	if(!m_username.isEmpty())
 //		node.appendChild(createElement(document, "username", m_username));

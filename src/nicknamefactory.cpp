@@ -37,29 +37,36 @@ QStringList NicknameFactory::features() const
 
 bool NicknameFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(uri);
+	Q_UNUSED(attributes);
 	return name == QLatin1String("nick") && uri == NS_NICKNAME;
 }
 
 void NicknameFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	Q_UNUSED(attributes);
 }
 
 void NicknameFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 }
 
 void NicknameFactory::handleCharacterData(const QStringRef &text)
 {
-
+	d_func()->nickname = text.toString();
 }
 
 void NicknameFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	Nickname *nick = se_cast<Nickname*>(extension);
+	writer->writeStartElement(QLatin1String("nick"));
 	writer->writeDefaultNamespace(NS_NICKNAME);
-	writer->writeTextElement(QLatin1String("nickname"),nick->nick());
+	writer->writeCharacters(nick->nick());
+	writer->writeEndElement();
 }
 
 StanzaExtension::Ptr NicknameFactory::createExtension()

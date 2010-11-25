@@ -45,7 +45,7 @@ IQ::IQ(const QDomElement &node) : Stanza(node, new IQPrivate)
 		d->subtype = Invalid;
 		return;
 	}
-	int type = iq_types.indexOf(node.attribute(ConstString::type));
+	int type = iq_types.indexOf(node.attribute(QLatin1String("type")));
 	d->subtype = type < 0 ? Invalid : static_cast<Type>(type);
 }
 
@@ -61,7 +61,7 @@ void IQ::writeXml(QXmlStreamWriter *writer) const
 	writer->writeStartElement(iq_str);
 	d->setAttributes(writer);
 	if (d->subtype != Invalid) {
-		writer->writeAttribute(ConstString::type, iq_types.at(d->subtype));
+		writer->writeAttribute(QLatin1String("type"), iq_types.at(d->subtype));
 		d->addExtensions(writer);
 	}
 	writer->writeEndElement();

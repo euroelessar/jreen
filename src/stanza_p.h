@@ -54,12 +54,12 @@ public:
 	void setAttributes(QXmlStreamWriter *writer) const
 	{
 		if(from.isValid())
-			writer->writeAttribute(ConstString::from, from);
+			writer->writeAttribute(QLatin1String("from"), from);
 		if(to.isValid())
-			writer->writeAttribute(ConstString::to, to);
+			writer->writeAttribute(QLatin1String("to"), to);
 		if(!id.isEmpty())
-			writer->writeAttribute(ConstString::id, id);
-		writer->writeAttribute(ConstString::xmlns, ConstString::ns_client);
+			writer->writeAttribute(QLatin1String("id"), id);
+		writer->writeDefaultNamespace(QLatin1String("jabber:client"));
 	}
 	static StanzaPrivate *get(Stanza &stanza) { return stanza.d_func(); }
 	static const StanzaPrivate *get(const Stanza &stanza) { return stanza.d_func(); }

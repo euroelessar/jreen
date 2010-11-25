@@ -22,6 +22,7 @@
 
 namespace jreen
 {
+
 DiscoInfoFactory::DiscoInfoFactory()
 {
 	m_depth = 0;
@@ -119,30 +120,30 @@ StanzaExtension::Ptr DiscoInfoFactory::createExtension()
 
 Disco::Info::Info(const QDomElement &node) : m_form(0)
 {
-	if(node.isNull())
-		return;
-	m_node = node.attribute(ConstString::node);
-	forelements(const QDomElement &elem, node)
-	{
-		QString name = elem.nodeName();
-		if(name == QLatin1String("identity"))
-		{
-			m_identities.append(Disco::Identity(elem.attribute(QLatin1String("category")),
-												elem.attribute(ConstString::type),
-												elem.attribute(ConstString::name),
-												elem.attribute(ConstString::lang)));
-		}
-		else if(name == ConstString::feature)
-		{
-			QString var = elem.attribute(ConstString::var);
-			if(!var.isEmpty())
-				m_features.insert(var);
-		}
-		else if(!m_form && name == QLatin1String("x") && elem.namespaceURI() == ConstString::xmlns_data)
-		{
-			m_form = QSharedPointer<DataForm>(new DataForm(elem));
-		}
-	}
+//	if(node.isNull())
+//		return;
+//	m_node = node.attribute(ConstString::node);
+//	forelements(const QDomElement &elem, node)
+//	{
+//		QString name = elem.nodeName();
+//		if(name == QLatin1String("identity"))
+//		{
+//			m_identities.append(Disco::Identity(elem.attribute(QLatin1String("category")),
+//												elem.attribute(ConstString::type),
+//												elem.attribute(ConstString::name),
+//												elem.attribute(ConstString::lang)));
+//		}
+//		else if(name == ConstString::feature)
+//		{
+//			QString var = elem.attribute(ConstString::var);
+//			if(!var.isEmpty())
+//				m_features.insert(var);
+//		}
+//		else if(!m_form && name == QLatin1String("x") && elem.namespaceURI() == ConstString::xmlns_data)
+//		{
+//			m_form = QSharedPointer<DataForm>(new DataForm(elem));
+//		}
+//	}
 }
 
 QDomElement Disco::Info::node(QDomDocument *document) const
@@ -173,17 +174,17 @@ QDomElement Disco::Info::node(QDomDocument *document) const
 
 Disco::Items::Items(const QDomElement &node)
 {
-	m_node = node.attribute(ConstString::node);
-	forelements(const QDomElement &elem, node)
-	{
-		QString name = elem.nodeName();
-		if(name == QLatin1String("item"))
-		{
-			m_items.append(Disco::Item(elem.attribute(ConstString::jid),
-									   elem.attribute(ConstString::node),
-									   elem.attribute(ConstString::name)));
-		}
-	}
+//	m_node = node.attribute(ConstString::node);
+//	forelements(const QDomElement &elem, node)
+//	{
+//		QString name = elem.nodeName();
+//		if(name == QLatin1String("item"))
+//		{
+//			m_items.append(Disco::Item(elem.attribute(ConstString::jid),
+//									   elem.attribute(ConstString::node),
+//									   elem.attribute(ConstString::name)));
+//		}
+//	}
 }
 
 QDomElement Disco::Items::node(QDomDocument *document) const

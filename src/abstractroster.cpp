@@ -121,7 +121,7 @@ namespace jreen
 	}
 
 static const QStringList roster_subscriptions = QStringList()
-												<< ConstString::from << ConstString::to
+												<< QLatin1String("from") << QLatin1String("to")
 												<< QLatin1String("both") << QLatin1String("remove");
 
 AbstractRosterItem::AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data)

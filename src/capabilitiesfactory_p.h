@@ -1,7 +1,6 @@
 /****************************************************************************
- *  receipt.h
+ *  capabilitiesfactory_p.h
  *
- *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
@@ -14,37 +13,29 @@
  ***************************************************************************
 *****************************************************************************/
 
-#ifndef RECEIPT_H
-#define RECEIPT_H
+#ifndef CAPABILITIESFACTORY_P_H
+#define CAPABILITIESFACTORY_P_H
 
 #include "stanzaextension.h"
+#include "capabilities.h"
 
-namespace jreen
-{
+namespace jreen {
 
-class JREEN_EXPORT Receipt : public StanzaExtension
+class CapabilitesFactory : public StanzaExtensionFactory<Capabilities>
 {
-	J_EXTENSION(jreen::Receipt,
-		   "/message/request[@xmlns='urn:xmpp:receipts']"
-		   "|/message/received[@xmlns='urn:xmpp:receipts']")
 public:
-	enum Type
-	{
-		Request		= 0,
-		Received	= 1,
-		Invalid		= -1
-	};
-	Receipt(Type type,const QString &id = QString());
-	inline Type type() { return m_type; }
-	inline QString id() {return m_id;}
-	virtual ~Receipt() {}
+	CapabilitesFactory();
+	virtual ~CapabilitesFactory();
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
 private:
-	Type m_type;
-	QString m_id;
 };
 
-}
+} // namespace jreen
 
-J_DECLARE_EXTENSION(jreen::Receipt)
-
-#endif // RECEIPT_H
+#endif // CAPABILITIESFACTORY_P_H

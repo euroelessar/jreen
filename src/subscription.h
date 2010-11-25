@@ -21,28 +21,28 @@
 namespace jreen
 {
 
-struct SubscriptionPrivate;
+//struct SubscriptionPrivate;
 
-class JREEN_EXPORT Subscription : public Stanza
-{
-	Q_DECLARE_PRIVATE(Subscription)
-public:
-	enum Type
-	{
-		Subscribe,                  /**> A subscription request. */
-		Subscribed,                 /**< A subscription notification. */
-		Unsubscribe,                /**< An unsubscription request. */
-		Unsubscribed,               /**< An unsubscription notification. */
-		Invalid                     /**< The stanza is invalid. */
-	};
-	Subscription(const QDomElement &node);
-	Subscription(Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString());
-	inline Subscription &operator =(const Subscription &stanza)
-		{ return *static_cast<Subscription *>(&jreen::Stanza::operator =(stanza)); }
-	Type subtype() const;
-	const QString &status(const QString &lang = QString()) const;
-	void writeXml(QXmlStreamWriter *writer) const;
-};
+//class JREEN_EXPORT Subscription : public Stanza
+//{
+//	Q_DECLARE_PRIVATE(Subscription)
+//public:
+//	enum Type
+//	{
+//		Subscribe,                  /**> A subscription request. */
+//		Subscribed,                 /**< A subscription notification. */
+//		Unsubscribe,                /**< An unsubscription request. */
+//		Unsubscribed,               /**< An unsubscription notification. */
+//		Invalid                     /**< The stanza is invalid. */
+//	};
+//	Subscription(const QDomElement &node);
+//	Subscription(Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString());
+//	inline Subscription &operator =(const Subscription &stanza)
+//		{ return *static_cast<Subscription *>(&jreen::Stanza::operator =(stanza)); }
+//	Type subtype() const;
+//	const QString &status(const QString &lang = QString()) const;
+//	void writeXml(QXmlStreamWriter *writer) const;
+//};
 
 }
 

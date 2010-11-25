@@ -21,22 +21,22 @@
 namespace jreen {
 namespace ConstString
 {
-static const QString from                   (QLatin1String("from"));
-static const QString to                     (QLatin1String("to"));
-static const QString id                     (QLatin1String("id"));
-static const QString jid                    (QLatin1String("jid"));
-static const QString type                   (QLatin1String("type"));
-static const QString xmlns                  (QLatin1String("xmlns"));
-static const QString value                  (QLatin1String("value"));
-static const QString query                  (QLatin1String("query"));
-static const QString node                   (QLatin1String("node"));
-static const QString item                   (QLatin1String("item"));
-static const QString name                   (QLatin1String("name"));
-static const QString lang                   (QLatin1String("xml:lang"));
-static const QString feature                (QLatin1String("feature"));
-static const QString var                    (QLatin1String("var"));
-static const QString ns_etherx              (QLatin1String("http://etherx.jabber.org/streams"));
-static const QString ns_client              (QLatin1String("jabber:client"));
+//static const QString from                   (QLatin1String("from"));
+//static const QString to                     (QLatin1String("to"));
+//static const QString id                     (QLatin1String("id"));
+//static const QString jid                    (QLatin1String("jid"));
+//static const QString type                   (QLatin1String("type"));
+//static const QString xmlns                  (QLatin1String("xmlns"));
+//static const QString value                  (QLatin1String("value"));
+//static const QString query                  (QLatin1String("query"));
+//static const QString node                   (QLatin1String("node"));
+//static const QString item                   (QLatin1String("item"));
+//static const QString name                   (QLatin1String("name"));
+//static const QString lang                   (QLatin1String("xml:lang"));
+//static const QString feature                (QLatin1String("feature"));
+//static const QString var                    (QLatin1String("var"));
+//static const QString ns_etherx              (QLatin1String("http://etherx.jabber.org/streams"));
+//static const QString ns_client              (QLatin1String("jabber:client"));
 static const QString ns_server              (QLatin1String("jabber:server"));
 static const QString ns_dialback            (QLatin1String("jabber:server:dialback"));
 static const QString ns_streams             (QLatin1String("urn:ietf:params:xml:ns:xmpp-streams"));

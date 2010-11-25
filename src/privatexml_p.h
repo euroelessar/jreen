@@ -50,7 +50,7 @@ class PrivateXml::Query : public StanzaExtension
 public:
 	Query(const QDomElement &node = QDomElement())
 	{
-		if(node.nodeName() == ConstString::query && node.namespaceURI() == ConstString::xmlns_private_xml)
+		if(node.nodeName() == QLatin1String("query") && node.namespaceURI() == QLatin1String("jabber:iq:private"))
 			m_node = node.firstChildElement();
 		else
 			m_node = node;
@@ -58,7 +58,7 @@ public:
 	Query(const QString &name, const QString &xmlns)
 	{
 //		m_node = DomCreater::instance().createElement(name);
-		m_node.setAttribute(ConstString::xmlns, xmlns);
+//		m_node.setAttribute(ConstString::xmlns, xmlns);
 	}
 	QDomElement node(QDomDocument *document) const
 	{
