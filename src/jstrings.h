@@ -64,64 +64,52 @@ static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:s
 }
 
 //enums
-template<int N>
-Q_INLINE_TEMPLATE int strToEnum(const char *str, const char *(&strings)[N])
+template<typename T, int N>
+Q_INLINE_TEMPLATE int strToEnum(const T &str, const char *(&strings)[N])
 {
 	int size = N-1;
 	for(int i=0;i!=size;i++) {
-		if(qstrcmp(strings[i],str))
+		if(QLatin1String(strings[i]) == str)
 			return i;
 	}
 	return -1;
 }
 
+template<typename X,typename T, int N>
+Q_INLINE_TEMPLATE X strToEnum(const T &str, const char *(&strings)[N])
+{
+	return static_cast<X>(strToEnum(str,strings));
+}
+
 template<int N>
-Q_INLINE_TEMPLATE QString enumToStr(int i, const char *(&strings)[N])
+Q_INLINE_TEMPLATE QLatin1String enumToStr(int i, const char *(&strings)[N])
 {
 	int size = N-1;
 	if(i<0 || i>=size)
-		return QString();
+		return QLatin1String(0);
 	return QLatin1String(strings[i]);
 }
 
-////overloading
-template<int N>
-Q_INLINE_TEMPLATE int strToEnum(const QLatin1String &str, const char *(&strings)[N])
-{
-	return strToEnum(str.latin1(),strings);
-}
-
-template<int N>
-Q_INLINE_TEMPLATE int strToEnum(const QString &str, const char *(&strings)[N])
-{
-	return strToEnum(str.toLatin1().constData(),strings);
-}
-
-template<int N>
-Q_INLINE_TEMPLATE int strToEnum(const QStringRef &str, const char *(&strings)[N])
-{
-	return strToEnum(str.toString().toLatin1().constData(),strings);
-}
-
-template<typename T,int N>
-Q_INLINE_TEMPLATE int strToEnum(const QLatin1String &str, const char *(&strings)[N])
-{
-	return static_cast<T>(strToEnum(str.latin1(),strings));
-}
-
-template<typename T,int N>
-Q_INLINE_TEMPLATE T strToEnum(const QString &str, const char *(&strings)[N])
-{
-	return static_cast<T>(strToEnum(str.toLatin1().constData(),strings));
-}
-
-template<typename T,int N>
-Q_INLINE_TEMPLATE T strToEnum(const QStringRef &str, const char *(&strings)[N])
-{
-	return static_cast<T>(strToEnum(str.toString().toLatin1().constData(),strings));
-}
-
 //flags
+template<typename T, int N>
+Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
+{
+	int size = N-1;
+	int flag = 0x1;
+	for(int i=0;i!=size;i++) {
+		if(QLatin1String(strings[i]) == str)
+			return i;
+		flag <<= 1;
+	}
+	return -1;
+}
+
+template<typename T, int N, typename X>
+Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
+{
+	return static_cast<X>(strToFlag(str,strings));
+}
+
 template<int N>
 Q_INLINE_TEMPLATE QString flagToStr(int i, const char *(&strings)[N])
 {
@@ -134,36 +122,6 @@ Q_INLINE_TEMPLATE QString flagToStr(int i, const char *(&strings)[N])
 	return QLatin1String(strings[n]);
 }
 
-template<int N>
-Q_INLINE_TEMPLATE int strToFlag(const char *str, const char *(&strings)[N])
-{
-	int size = N-1;
-	int flag = 0x1;
-	for(int i=0;i!=size;i++) {
-		if(qstrcmp(strings[i],str))
-			return i;
-		flag <<= 1;
-	}
-	return -1;
-}
-
-////overloading
-template<int N>
-Q_INLINE_TEMPLATE int strToFlag(const QLatin1String &str, const char *(&strings)[N])
-{
-	return strToFlag(str.latin1(),strings);
-}
-
-template<int N>
-Q_INLINE_TEMPLATE int strToFlag(const QString &str, const char *(&strings)[N])
-{
-	return strToFlag(str.toLatin1().constData(),strings);
-}
-template<typename T,int N>
-Q_INLINE_TEMPLATE T strToFlag(const QString &str, const char *(&strings)[N])
-{
-	return static_cast<T>(strToFlag(str.toLatin1().constData(),strings));
-}
 
 }
 
