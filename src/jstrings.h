@@ -67,8 +67,7 @@ static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:s
 template<typename T, int N>
 Q_INLINE_TEMPLATE int strToEnum(const T &str, const char *(&strings)[N])
 {
-	int size = N-1;
-	for(int i=0;i!=size;i++) {
+	for(int i=0;i<=N;i++) {
 		if(QLatin1String(strings[i]) == str)
 			return i;
 	}
@@ -84,8 +83,7 @@ Q_INLINE_TEMPLATE X strToEnum(const T &str, const char *(&strings)[N])
 template<int N>
 Q_INLINE_TEMPLATE QLatin1String enumToStr(int i, const char *(&strings)[N])
 {
-	int size = N-1;
-	if(i<0 || i>=size)
+	if(i<0 || i>=N)
 		return QLatin1String(0);
 	return QLatin1String(strings[i]);
 }
@@ -94,9 +92,8 @@ Q_INLINE_TEMPLATE QLatin1String enumToStr(int i, const char *(&strings)[N])
 template<typename T, int N>
 Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
 {
-	int size = N-1;
 	int flag = 0x1;
-	for(int i=0;i!=size;i++) {
+	for(int i=0;i<=N;i++) {
 		if(QLatin1String(strings[i]) == str)
 			return i;
 		flag <<= 1;
@@ -113,11 +110,10 @@ Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
 template<int N>
 Q_INLINE_TEMPLATE QString flagToStr(int i, const char *(&strings)[N])
 {
-	int size = N-1;
 	int n=1;
 	while(n < i)
 		n <<= 1;
-	if(n<0 || n>=size)
+	if(n<0 || n>=N)
 		return QString();
 	return QLatin1String(strings[n]);
 }

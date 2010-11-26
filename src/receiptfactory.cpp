@@ -17,6 +17,7 @@
 #include <QXmlStreamReader>
 #include <QMap>
 #include "jstrings.h"
+#include <QDebug>
 
 #define NS_RECEIPT QLatin1String("urn:xmpp:receipts")
 
@@ -48,7 +49,7 @@ QStringList ReceiptFactory::features() const
 bool ReceiptFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return (strToEnum(name.toString(),receipt_strings) != -1) && uri == NS_RECEIPT;
+	return (strToEnum(name,receipt_strings) != -1) && uri == NS_RECEIPT;
 }
 
 void ReceiptFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
