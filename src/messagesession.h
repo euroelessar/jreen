@@ -109,7 +109,7 @@ public:
 	virtual ~MessageSessionManager() {}
 	void send(const Message &message);
 	void registerMessageSession(MessageSession *session);
-	void registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types);
+	void registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types);//WTF? O_o
 	void removeMessageSessionHandler(MessageSessionHandler *handler);
 	MessageSession *session(const JID &jid, Message::Type type, bool create = true);
 public slots:

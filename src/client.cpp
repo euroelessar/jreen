@@ -36,6 +36,8 @@
 #include "delayeddeliveryfactory.h"
 #include "receiptfactory.h"
 #include "softwareversionfactory.h"
+#include "moodfactory_p.h"
+#include "vcardfactory_p.h"
 
 namespace jreen
 {
@@ -97,6 +99,8 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new DelayedDeliveryFactory);
 	client->registerStanzaExtension(new ReceiptFactory);
 	client->registerStanzaExtension(new SoftwareVersionFactory);
+	client->registerStanzaExtension(new MoodFactory);
+	client->registerStanzaExtension(new VCardFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);

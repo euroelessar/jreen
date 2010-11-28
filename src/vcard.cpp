@@ -17,8 +17,29 @@
 
 namespace jreen {
 
-VCard::VCard()
+void VCard::setName(const QString &family,
+					const QString &given,
+					const QString &middle,
+					const QString &prefix,
+					const QString &suffix)
 {
+	m_name.family = family;
+	m_name.given = given;
+	m_name.middle = middle;
+	m_name.prefix = prefix;
+	m_name.suffix = suffix;
+}
+
+void VCard::setPhoto(const QString &extval)
+{
+	m_photo.extval = extval;
+	m_photo.binval.clear();
+	m_photo.type.clear();
+}
+
+void VCard::setPhoto(const Photo &photo)
+{
+	m_photo = photo;
 }
 
 } // namespace jreen
