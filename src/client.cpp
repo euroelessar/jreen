@@ -109,7 +109,7 @@ void ClientPrivate::init()
 	client->registerStreamFeature(new BindFeature);
 	client->registerStreamFeature(new SessionFeature);
 	client->registerStreamFeature(new ZLibCompressionFeature);
-	presence.addExtension(new Capabilities(capsFactory->hashValue(disco)));
+	//presence.addExtension(new Capabilities(capsFactory->hashValue(disco)));
 }
 
 Client::Client(const JID &jid, const QString &password, int port)

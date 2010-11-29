@@ -40,77 +40,76 @@ public:
 	enum Type
 	{
 		Boolean,		/**< The field enables an entity to gather or provide an either-or
-  * choice between two options. The default value is "false". */
+		* choice between two options. The default value is "false". */
 		Fixed,			/**<  The field is intended for data description (e.g., human-readable
-  * text such as "section" headers) rather than data gathering or
-  * provision. The <value/> child SHOULD NOT contain newlines
-  * (the \n and \r characters); instead an application SHOULD
-  * generate multiple fixed fields, each with one <value/> child. */
+		* text such as "section" headers) rather than data gathering or
+		* provision. The <value/> child SHOULD NOT contain newlines
+		* (the \n and \r characters); instead an application SHOULD
+		* generate multiple fixed fields, each with one <value/> child. */
 		Hidden,			/**<  The field is not shown to the form-submitting entity, but
-  * instead is returned with the form. The form-submitting entity
-  * SHOULD NOT modify the value of a hidden field, but MAY do so
-  * if such behavior is defined for the "using protocol". */
+		* instead is returned with the form. The form-submitting entity
+		* SHOULD NOT modify the value of a hidden field, but MAY do so
+		* if such behavior is defined for the "using protocol". */
 		JidMulti,		/**<  The field enables an entity to gather or provide multiple
-  * Jabber IDs. Each provided JID SHOULD be unique (as determined
-  * by comparison that includes application of the Nodeprep, Nameprep,
-  * and Resourceprep profiles of Stringprep as specified in XMPP Core),
-  * and duplicate JIDs MUST be ignored. */
+		* Jabber IDs. Each provided JID SHOULD be unique (as determined
+		* by comparison that includes application of the Nodeprep, Nameprep,
+		* and Resourceprep profiles of Stringprep as specified in XMPP Core),
+		* and duplicate JIDs MUST be ignored. */
 		JidSingle,		/**<  The field enables an entity to gather or provide a single
-  * Jabber ID. */
+		* Jabber ID. */
 		ListMulti,		/**<  The field enables an entity to gather or provide one or more
-  * options from among many. A form-submitting entity chooses one
-  * or more items from among the options presented by the form-processing
-  * entity and MUST NOT insert new options. The form-submitting entity
-  * MUST NOT modify the order of items as received from the form-processing
-  * entity, since the order of items MAY be significant. */
+		* options from among many. A form-submitting entity chooses one
+		* or more items from among the options presented by the form-processing
+		* entity and MUST NOT insert new options. The form-submitting entity
+		* MUST NOT modify the order of items as received from the form-processing
+		* entity, since the order of items MAY be significant. */
 		ListSingle,		/**<  The field enables an entity to gather or provide one option
-  * from among many. A form-submitting entity chooses one item
-  * from among the options presented by the form-processing entity
-  * and MUST NOT insert new options. */
+		* from among many. A form-submitting entity chooses one item
+		* from among the options presented by the form-processing entity
+		* and MUST NOT insert new options. */
 		TextMulti,		/**<  The field enables an entity to gather or provide multiple
-  * lines of text. */
+		* lines of text. */
 		TextPrivate,	/**<  The field enables an entity to gather or provide a single
-  * line or word of text, which shall be obscured in an interface
-  * (e.g., with multiple instances of the asterisk character). */
+		* line or word of text, which shall be obscured in an interface
+		* (e.g., with multiple instances of the asterisk character). */
 		TextSingle,		/**<  The field enables an entity to gather or provide a single
-  * line or word of text, which may be shown in an interface.
-  * This field type is the default and MUST be assumed if a form-submitting
-  * entity receives a field type it does not understand. */
+		* line or word of text, which may be shown in an interface.
+		* This field type is the default and MUST be assumed if a form-submitting
+		* entity receives a field type it does not understand. */
 		None,
 		Invalid
 	};
 	inline DataFormField(Type type = TextSingle) : m_type(type), m_required(false) {}
 	inline DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle)
 		: m_type(type), m_var(var), m_label(label), m_values(QStringList()<<value), m_required(false) {}
-			  inline DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle)
-			  : m_type(type), m_var(var), m_label(label), m_values(values), m_required(false) {}
-			  inline DataFormField(const QString &var, const QString &label, Type type)
-			  : m_type(type), m_var(var), m_label(label), m_required(false) {}
-			  //	inline ~DataFormField() {}
-			  inline Type type() const { return m_type; }
-inline bool isValid() const { return m_type != Invalid; }
-							inline const DataFormOptionList &options() const { return m_options; }
-																			 inline DataFormOptionList &options() { return m_options; }
-																												  inline void setOptions(const DataFormOptionList &options) { m_options = options; }
-																																											inline QStringList &values() { return m_values; }
-																																																		 inline const QStringList &values() const { return m_values; }
-																																																												  inline void setValues(const QStringList &values) { m_values = values; }
-																																																																								   inline const QString &var() const { return m_var; }
-																																																																																	 inline void setVar(const QString &var) { m_var = var; }
-																																																																																											inline bool required() const { return m_required; }
-																																																																																																		 inline void setRequired(bool required) { m_required = required; }
-																																																																																																												inline const QString &desc() const { return m_desc; }
-																																																																																																																				   inline void setDesc(const QString &desc) { m_desc = desc; }
-																																																																																																																															QDomElement node(QDomDocument *doc) const;
+	inline DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle)
+		: m_type(type), m_var(var), m_label(label), m_values(values), m_required(false) {}
+	inline DataFormField(const QString &var, const QString &label, Type type)
+		: m_type(type), m_var(var), m_label(label), m_required(false) {}
+	//	inline ~DataFormField() {}
+	inline Type type() const { return m_type; }
+	inline bool isValid() const { return m_type != Invalid; }
+	inline const DataFormOptionList &options() const { return m_options; }
+	inline DataFormOptionList &options() { return m_options; }
+	inline void setOptions(const DataFormOptionList &options) { m_options = options; }
+	inline QStringList &values() { return m_values; }
+	inline const QStringList &values() const { return m_values; }
+	inline void setValues(const QStringList &values) { m_values = values; }
+	inline const QString &var() const { return m_var; }
+	inline void setVar(const QString &var) { m_var = var; }
+	inline bool required() const { return m_required; }
+	inline void setRequired(bool required) { m_required = required; }
+	inline const QString &desc() const { return m_desc; }
+	inline void setDesc(const QString &desc) { m_desc = desc; }																																																			  																																																																																																													QDomElement node(QDomDocument *doc) const;
 protected:
-DataFormField(const QDomElement &node);
-Type m_type;
-QString m_var;
-QString m_desc;
-QString m_label;
-QStringList m_values;
-bool m_required;
-DataFormOptionList m_options;
+	DataFormField(const QDomElement &node);
+	Type m_type;
+	QString m_var;
+	QString m_desc;
+	QString m_label;
+	QStringList m_values;
+	bool m_required;
+	DataFormOptionList m_options;
 };
 
 //class DataFormFieldBoolean : public DataFormField
@@ -225,16 +224,16 @@ typedef QList<QSharedPointer<DataFormReported> > DataFormReportedList;
 class JREEN_EXPORT DataForm : public StanzaExtension, public DataFormFieldContainer
 {
 	J_EXTENSION(jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
-	public:
-		enum Type
+public:
+	enum Type
 	{
 		Form,    // The form-processing entity is asking the form-submitting entity to complete a form.
-				Submit,  // The form-submitting entity is submitting data to the form-processing entity. The submission MAY include fields that were not provided in the empty form, but the form-processing entity MUST ignore any fields that it does not understand.
-				Cancel,  // The form-submitting entity has cancelled submission of data to the form-processing entity.
-				Result,  // The form-processing entity is returning data (e.g., search results) to the form-submitting entity, or the data is a generic data set.
-				Invalid
+		Submit,  // The form-submitting entity is submitting data to the form-processing entity. The submission MAY include fields that were not provided in the empty form, but the form-processing entity MUST ignore any fields that it does not understand.
+		Cancel,  // The form-submitting entity has cancelled submission of data to the form-processing entity.
+		Result,  // The form-processing entity is returning data (e.g., search results) to the form-submitting entity, or the data is a generic data set.
+		Invalid
 	};
-	DataForm(const QDomElement &node = QDomElement());
+	DataForm(Type type,const QString &title);
 	const QString &title() { return m_title; }
 	QDomElement node(QDomDocument *document) const;
 private:
