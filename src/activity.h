@@ -54,7 +54,7 @@ public:
 	General general() const {return m_general;}
 	int specific() const {return m_specific;}
 	template<typename T>
-	T specific()() const {return static_cast<T>(m_specific);}
+	T specific() const {return static_cast<T>(m_specific);}
 	const QString &text() const {return m_text;}
 	void setText(const QString &text) {m_text = text;}
 private:

@@ -17,7 +17,7 @@
 
 namespace jreen {
 
-static const char* general_types= {
+static const char* general_types[]= {
 	"doing_chores",
 	"drinking",
 	"eating",

@@ -17,8 +17,4 @@
 
 namespace jreen {
 
-Activity::Activity()
-{
-}
-
 } // namespace jreen
