@@ -21,10 +21,11 @@
 
 namespace jreen {
 
+class Disco;
 class CapabilitesFactory : public StanzaExtensionFactory<Capabilities>
 {
 public:
-	CapabilitesFactory();
+	CapabilitesFactory(Disco *disco);
 	virtual ~CapabilitesFactory();
 	QStringList features() const;
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
@@ -33,7 +34,11 @@ public:
 	void handleCharacterData(const QStringRef &text);
 	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 	StanzaExtension::Ptr createExtension();
-private:
+	static QString hashValue(Disco *disco);
+private:	
+	Disco *m_disco;
+	QString m_ver;
+	QString m_node;
 };
 
 } // namespace jreen

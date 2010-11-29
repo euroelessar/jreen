@@ -27,16 +27,15 @@ class JREEN_EXPORT Capabilities : public StanzaExtension
 {
 	J_EXTENSION(jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
 public:
-	Capabilities(Disco *disco);
-	Capabilities(const QDomElement &node = QDomElement());
-	void writeXml(QXmlStreamWriter *writer) const;
+	Capabilities(const QString &ver);
+//	Capabilities(const QDomElement &node = QDomElement());
+//	void writeXml(QXmlStreamWriter *writer) const;
 	inline void setNode(const QString &node) { m_node = node; }
 	inline const QString &node() const { return m_node; }
-	QString ver() const;
+	QString ver() const { return m_ver; };
 private:
-	Disco *m_disco;
-	QString m_node;
 	QString m_ver;
+	QString m_node;
 };
 
 }

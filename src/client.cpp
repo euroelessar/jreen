@@ -21,7 +21,7 @@
 #include "nonsaslauth.h"
 #include "delayeddelivery.h"
 #include "chatstatefactory_p.h"
-#include "capabilities.h"
+#include "capabilitiesfactory_p.h"
 #include "errorfactory_p.h"
 #include "dataform.h"
 #include "iqfactory_p.h"
@@ -89,9 +89,10 @@ void ClientPrivate::init()
 	stanzas << new MessageFactory(client);
 	stream_info = new StreamInfoImpl(this);
 	disco = new Disco(client);
+	CapabilitesFactory *capsFactory = new CapabilitesFactory(disco);
 
 	client->registerStanzaExtension(new ErrorFactory);
-	client->registerStanzaExtension(new Capabilities);
+	client->registerStanzaExtension(capsFactory);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
 	client->registerStanzaExtension(new Disco::Items);
@@ -108,7 +109,7 @@ void ClientPrivate::init()
 	client->registerStreamFeature(new BindFeature);
 	client->registerStreamFeature(new SessionFeature);
 	client->registerStreamFeature(new ZLibCompressionFeature);
-	presence.addExtension(new Capabilities(disco));
+	presence.addExtension(new Capabilities(capsFactory->hashValue(disco)));
 }
 
 Client::Client(const JID &jid, const QString &password, int port)

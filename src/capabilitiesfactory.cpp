@@ -14,11 +14,54 @@
 *****************************************************************************/
 
 #include "capabilitiesfactory_p.h"
+#include "disco.h"
 #include <QStringList>
+#include <QCryptographicHash>
+#include <QXmlStreamWriter>
+#include <QStringBuilder>
+#define NS_CAPS QLatin1String("http://jabber.org/protocol/caps")
 
 namespace jreen {
 
-CapabilitesFactory::CapabilitesFactory()
+
+QString CapabilitesFactory::hashValue(Disco *disco)
+{
+	QString s;
+	QStringList sl;
+	const Disco::IdentityList &identity_list = disco->identities();
+	foreach(const Disco::Identity &i, identity_list)
+		sl << (i.category % QLatin1Char('/') % i.type
+			   % QLatin1Char('/') % i.lang % QLatin1Char('/') % i.name);
+	sl.sort();
+	foreach(const QString &str, sl)
+		s.append(str);
+	sl = disco->features().values();
+	sl.sort();
+	foreach(const QString &str, sl)
+		s.append(str).append(QLatin1Char('<'));
+	const DataForm *data = disco->form();
+	QString form_type;
+	QMap<QString,QStringList> fields;
+	foreach(const QSharedPointer<DataFormField> &field, data->fields())
+	{
+		if(field->var() == QLatin1String("FORM_TYPE"))
+			form_type = field->values().first();
+		else
+			fields.insert(field->var(), field->values());
+	}
+	s.append(form_type).append(QLatin1Char('<'));
+	QMap<QString,QStringList>::iterator it = fields.begin();
+	for(; it != fields.end(); it++)
+	{
+		s.append(it.key()).append(QLatin1Char('<'));
+		foreach(const QString &value, it.value())
+			s.append(value).append(QLatin1Char('<'));
+	}
+	return QString::fromLatin1(QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1).toBase64());
+}
+
+CapabilitesFactory::CapabilitesFactory(Disco *disco)
+	:	m_disco(disco)
 {
 }
 
@@ -28,32 +71,54 @@ CapabilitesFactory::~CapabilitesFactory()
 
 QStringList CapabilitesFactory::features() const
 {
+	return QStringList(NS_CAPS);
 }
 
 bool CapabilitesFactory::canParse(const QStringRef &name, const QStringRef &uri,
 								  const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(attributes);
+	return name == QLatin1String("c") && uri == NS_CAPS;
 }
 
 void CapabilitesFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
 											const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	m_node = attributes.value(QLatin1String("node")).toString();
+	m_ver = attributes.value(QLatin1String("ver")).toString();
 }
 
 void CapabilitesFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 }
 
 void CapabilitesFactory::handleCharacterData(const QStringRef &text)
 {
+	Q_UNUSED(text);
 }
 
 void CapabilitesFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
+	Capabilities *caps = se_cast<Capabilities*>(extension);
+	QString ver = caps->ver().isEmpty() ? hashValue(m_disco) : caps->ver();
+	writer->writeStartElement(QLatin1String("c"));
+	writer->writeDefaultNamespace(NS_CAPS);
+	writer->writeAttribute(QLatin1String("hash"),QLatin1String("sha-1"));
+	writer->writeAttribute(QLatin1String("ver"),ver);
+	writer->writeAttribute(QLatin1String("node"),caps->node());
+	writer->writeEndElement();
 }
 
 StanzaExtension::Ptr CapabilitesFactory::createExtension()
 {
+	Capabilities *caps = new Capabilities(m_ver);
+	caps->setNode(m_node);
+	return StanzaExtension::Ptr(caps);
 }
+
 
 } // namespace jreen
