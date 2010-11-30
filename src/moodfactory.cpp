@@ -138,6 +138,8 @@ void MoodFactory::handleStartElement(const QStringRef &name, const QStringRef &,
 
 void MoodFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 	m_depth--;
 }
 
