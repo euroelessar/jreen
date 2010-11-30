@@ -13,10 +13,23 @@
  ***************************************************************************
 *****************************************************************************/
 
-#include "vcard.h"
+#include "vcard_p.h"
 
 namespace jreen {
 
+VCard::VCard(const QString &formattedName, Classification classification)
+	: d_ptr(new VCardPrivate), m_formattedName(formattedName), m_classification(classification)
+{
+}
+
+VCard::VCard(VCardPrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::~VCard()
+{
+}
+	
 void VCard::setName(const QString &family,
 					const QString &given,
 					const QString &middle,

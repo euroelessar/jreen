@@ -132,12 +132,8 @@ void MoodFactory::handleStartElement(const QStringRef &name, const QStringRef &,
 									 const QXmlStreamAttributes &)
 {
 	m_depth++;
-	if(m_depth == 1) {
-		if(name == QLatin1String("text")) {
-		} else
-			m_subtype = strToEnum<Mood::Type>(name,mood_types);
-
-	}
+	if(m_depth == 1 && name != QLatin1String("text"))
+		m_subtype = strToEnum<Mood::Type>(name,mood_types);
 }
 
 void MoodFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)

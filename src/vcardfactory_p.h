@@ -17,11 +17,60 @@
 #define VCARDFACTORY_P_H
 #include "vcard.h"
 #include "stanzaextension.h"
+#include <QPair>
 
 namespace jreen {
+class VCardFactoryPrivate;
+
+class AbstractStructureParser : public XmlStreamParser
+{
+public:
+	AbstractStructureParser(const QLatin1String &name);
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+
+protected:
+	void serialize(void *zero, void *data, QXmlStreamWriter *writer);
+	void addString(const QLatin1String &name, QString *str);
+	void addFlag(const char **table, int size, int *value);
+	template <int N>
+	void addFlag(const char *(&table)[N], int *value)
+	{ addFlag(table, N, value); }
+
+	int m_depth;
+	
+private:
+	struct FlagInfo
+	{
+		const char **table;
+		int tableSize;
+		int *value;
+	};
+
+	QList<QPair<QLatin1String, QString*> > m_strings;
+	QList<FlagInfo> m_flags;
+	QLatin1String m_name;
+	QString *m_current;
+};
+
+template <typename T>
+class StructureParser : public AbstractStructureParser
+{
+public:
+	StructureParser(const QLatin1String &name) : AbstractStructureParser(name) {}
+	T create() { return m_data; }
+	void serialize(const T &data, QXmlStreamWriter *writer) 
+	{ AbstractStructureParser::serialize(&m_data, const_cast<T*>(&data), writer); }
+
+protected:
+	T m_data;
+};
 
 class VCardFactory : public StanzaExtensionFactory<VCard>
 {
+	Q_DECLARE_PRIVATE(VCardFactory)
 public:
     VCardFactory();
     virtual ~VCardFactory();
@@ -33,30 +82,14 @@ public:
 	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 	StanzaExtension::Ptr createExtension();	
 private:
-	void clear();
-	enum State {//it make me cry
-		AtFN,
+	QScopedPointer<VCardFactoryPrivate> d_ptr;
+	enum State {
 		AtName,
-		AtNameFamily,
-		AtNameGiven,
-		AtNameMiddle,
-		AtNamePrefix,
-		AtNameSuffix,
-		AtBDay,
-		AtNickname,
 		AtPhoto,
-		AtPhotoExtval,
-		AtPhotoBinval,
-		AtPhotoType
+		AtTelephone,
+		AtEMail,
+		LastState
 	};
-	int m_depth;
-	State m_state;
-	QString m_fn;
-	VCard::Classification m_classification;
-	VCard::Name m_name;
-	QString m_nickname;
-	QString m_bday;
-	VCard::Photo m_photo;
 };
 
 } // namespace jreen

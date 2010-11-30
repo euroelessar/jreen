@@ -23,10 +23,13 @@
 //http://xmpp.org/extensions/xep-0054.html
 namespace jreen {
 
+class VCardPrivate;
+
 class JREEN_EXPORT VCard : public StanzaExtension
 {
 	J_EXTENSION(jreen::VCard,
 		   "/iq/vcard[@xmlns='vcard-temp']")
+	Q_DECLARE_PRIVATE(VCard)
 public:
 	/**
 	* Addressing type indicators.
@@ -86,9 +89,70 @@ public:
 		QString binval;         /**< This is the photo (base64). */
 		QString type;           /**< This is a hint at the mime-type. May be forged! */
 	};
-	VCard(const QString &formattedName,Classification classification = ClassNone)
-		: m_formattedName(formattedName),
-		  m_classification(classification) {}
+	
+	class Telephone
+	{
+	public:
+		enum Type
+		{
+			Home      = 0x0001, 
+			Work      = 0x0002,
+			Voice     = 0x0004,
+			Fax       = 0x0008,
+			Pager     = 0x0010,
+			Msg       = 0x0020,
+			Cell      = 0x0040,
+			Video     = 0x0080,
+			BBS       = 0x0100,
+			Modem     = 0x0200,
+			ISDN      = 0x0400,
+			PCS       = 0x0800,
+			Preferred = 0x1000
+		};
+		typedef QFlags<Type> Types;
+		int types;
+		QString number;
+	};
+	class EMail
+	{
+	public:
+		enum Type
+		{
+			Home      = 0x01,
+			Work      = 0x02,
+			Internet  = 0x04,
+			Preferred = 0x08,
+			X400      = 0x10,
+		};
+		int types;
+		QString userId;
+	};
+	class Address
+	{
+	public:
+		enum Type
+		{
+			Home          = 0x01,
+			Work          = 0x02,
+			Postal        = 0x04,
+			Parcel        = 0x08,
+			Domestic      = 0x10,
+			International = 0x20,
+			Preferred     = 0x40
+		};
+		int types;
+		QString pobox;
+		QString extendedAddress;
+		QString street;
+		QString locality;
+		QString region;
+		QString pcode;
+		QString country;
+	};
+
+	VCard(const QString &formattedName = QString(), Classification classification = ClassNone);
+	VCard(VCardPrivate &p);
+	~VCard();
 	/**
 	* Sets the formatted name.
 	* @param name The formatted name.
@@ -154,6 +218,7 @@ public:
 	//Nickname *nickname() const {return findExtension<Nickname>().data();}
 	//Photo *photo() const {return findExtension<Photo>().data();}
 private:
+	QScopedPointer<VCardPrivate> d_ptr;
 	QString m_formattedName;
 	QString m_nickname;
 	Classification m_classification;
@@ -163,5 +228,7 @@ private:
 };
 
 } // namespace jreen
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(jreen::VCard::Telephone::Types)
 
 #endif // VCARD_H

@@ -67,7 +67,7 @@ static const QString xmlns_softwareinfo     (QLatin1String("urn:xmpp:dataforms:s
 template<typename T, int N>
 Q_INLINE_TEMPLATE int strToEnum(const T &str, const char *(&strings)[N])
 {
-	for(int i=0;i<=N;i++) {
+	for(int i=0; i < N; i++) {
 		if(QLatin1String(strings[i]) == str)
 			return i;
 	}
@@ -83,9 +83,7 @@ Q_INLINE_TEMPLATE X strToEnum(const T &str, const char *(&strings)[N])
 template<int N>
 Q_INLINE_TEMPLATE QLatin1String enumToStr(int i, const char *(&strings)[N])
 {
-	if(i<0 || i>=N)
-		return QLatin1String(0);
-	return QLatin1String(strings[i]);
+	return QLatin1String((i < 0 || i >= N) ? 0 : strings[i]);
 }
 
 //flags
