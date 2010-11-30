@@ -2,6 +2,7 @@
  *  dataform.h
  *
  *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -25,14 +26,15 @@ namespace jreen
 {
 
 // XEP-0004
-
+// http://xmpp.org/extensions/xep-0004.html
 struct JREEN_EXPORT DataFormOption
 {
 	QString label;
 	QString value;
 };
 
-typedef QList<QSharedPointer<DataFormOption> > DataFormOptionList;
+typedef QSharedPointer<DataFormOption> DataFormOptionPointer;
+typedef QList<DataFormOptionPointer> DataFormOptionList;
 
 class JREEN_EXPORT DataFormField
 {
