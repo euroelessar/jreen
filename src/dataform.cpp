@@ -77,7 +77,6 @@ DataForm::DataForm(Type type, const QString &title)
 	:	m_form_type(type),m_title(title)
 {
 	m_form_type = Result;
-	Q_UNUSED(node);
 }
 
 QDomElement DataForm::node(QDomDocument *document) const

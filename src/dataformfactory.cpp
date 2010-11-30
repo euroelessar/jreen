@@ -94,7 +94,7 @@ StanzaExtension::Ptr DataFormFactory::createExtension()
 {
 	Q_D(DataFormFactory);
 	DataForm *form = new DataForm(d->formType,d->title);
-	form->setFields(d->items);
+//	form->setFields(d->items);
 	return StanzaExtension::Ptr(form);
 }
 
