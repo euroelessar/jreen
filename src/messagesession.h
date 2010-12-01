@@ -31,9 +31,9 @@ class Client;
 
 #define J_MESSAGE_FILTER \
 	public: \
-		inline static const MessageFilterMeta &meta() \
+		static const jreen::MessageFilterMeta &meta() \
 		{ \
-			static MessageFilterMeta staticFilterMeta; \
+			static jreen::MessageFilterMeta staticFilterMeta; \
 			return staticFilterMeta; \
 		} \
 		virtual int filterType() const { return meta().type; } \
@@ -53,7 +53,7 @@ public:
 	virtual void filter(Message &message) = 0;
 	virtual void decorate(Message &message) = 0;
 	virtual void reset() = 0;
-	virtual int filterType() = 0;
+	virtual int filterType() const = 0;
 protected:
 	inline void send(const Message &message);
 private:
@@ -126,8 +126,9 @@ private:
 
 inline MessageFilter::MessageFilter(MessageSession *session) : m_session(session)
 {
-	if(m_session)
-		m_session->registerMessageFilter(this);
+	//Pure virtual function call!
+	//if(m_session)
+	//	m_session->registerMessageFilter(this);
 }
 
 inline void MessageFilter::send(const Message &message)

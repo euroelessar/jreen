@@ -20,7 +20,7 @@
 namespace jreen {
 
 //overkill
-class PingFactory : StanzaExtensionFactory<Ping>
+class PingFactory : public StanzaExtensionFactory<Ping>
 {
 public:
 	PingFactory();

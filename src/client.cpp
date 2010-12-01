@@ -38,6 +38,7 @@
 #include "softwareversionfactory.h"
 #include "moodfactory_p.h"
 #include "vcardfactory_p.h"
+#include "pingfactory_p.h"
 
 namespace jreen
 {
@@ -102,6 +103,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new SoftwareVersionFactory);
 	client->registerStanzaExtension(new MoodFactory);
 	client->registerStanzaExtension(new VCardFactory);
+	client->registerStanzaExtension(new PingFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);
