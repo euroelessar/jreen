@@ -39,6 +39,7 @@
 #include "moodfactory_p.h"
 #include "vcardfactory_p.h"
 #include "pingfactory_p.h"
+#include "vcardupdatefactory_p.h"
 
 namespace jreen
 {
@@ -104,6 +105,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new MoodFactory);
 	client->registerStanzaExtension(new VCardFactory);
 	client->registerStanzaExtension(new PingFactory);
+	client->registerStanzaExtension(new VCardUpdateFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);
@@ -111,7 +113,7 @@ void ClientPrivate::init()
 	client->registerStreamFeature(new BindFeature);
 	client->registerStreamFeature(new SessionFeature);
 	client->registerStreamFeature(new ZLibCompressionFeature);
-	//presence.addExtension(new Capabilities(capsFactory->hashValue(disco)));
+	presence.addExtension(new Capabilities(capsFactory->hashValue(disco)));
 }
 
 Client::Client(const JID &jid, const QString &password, int port)

@@ -75,7 +75,7 @@ QDomElement DataFormField::node(QDomDocument *doc) const
 }
 
 DataForm::DataForm(Type type, const QString &title)
-	:	m_form_type(type),m_title(title)
+	:	m_title(title),m_form_type(type)
 {
 	m_form_type = Result;
 }

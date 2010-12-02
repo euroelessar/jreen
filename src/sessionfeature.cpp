@@ -31,7 +31,7 @@ namespace jreen
 	public:
 		SessionQuery() {}
 	};
-	
+
 	class SessionQueryFactory : public StanzaExtensionFactory<SessionQuery>
 	{
 	public:
@@ -45,7 +45,7 @@ namespace jreen
 		StanzaExtension::Ptr createExtension();
 	private:
 	};
-	
+
 	bool SessionQueryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 	{
 		Q_UNUSED(attributes);
@@ -81,12 +81,12 @@ namespace jreen
 	{
 		return StanzaExtension::Ptr(new SessionQuery());
 	}
-	
+
 	SessionFeature::SessionFeature() : StreamFeature(Custom)
 	{
 		m_hasFeature = false;
 	}
-	
+
 	void SessionFeature::setStreamInfo(StreamInfo *info)
 	{
 		StreamFeature::setStreamInfo(info);
@@ -131,12 +131,11 @@ namespace jreen
 		m_info->client()->send(*iq.data(), this, SLOT(onIQResult(jreen::IQ,int)), 0);
 		return true;
 	}
-	
+
 	void SessionFeature::onIQResult(const IQ &iq, int context)
 	{
 		Q_ASSERT(context == 0);
-		SessionQuery::Ptr query = iq.findExtension<SessionQuery>();
-		if (query && iq.subtype() == IQ::Result) {
+		if (iq.subtype() == IQ::Result) {
 			m_info->completed(StreamInfo::Connected);
 		}
 	}

@@ -201,6 +201,7 @@ public:
 	const DataFormFieldList &fields() const { return m_fields_list; }
 	DataFormFieldList &fields() { return m_fields_list; }
 	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
+	inline void addField(DataFormFieldPointer field) {m_fields_list.append(field);}
 	//	inline void appendField(DataFormField *field);
 	//	inline QSharedPointer<DataFormField> appendField(DataFormField *field);
 	//	QSharedPointer<DataFormField> addField(DataFormField::Type,
@@ -235,7 +236,7 @@ public:
 		Result,  // The form-processing entity is returning data (e.g., search results) to the form-submitting entity, or the data is a generic data set.
 		Invalid
 	};
-	DataForm(Type type,const QString &title);
+	DataForm(Type type,const QString &title = QString());
 	const QString &title() { return m_title; }
 	QDomElement node(QDomDocument *document) const;
 private:

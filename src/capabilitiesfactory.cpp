@@ -40,22 +40,24 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 	foreach(const QString &str, sl)
 		s.append(str).append(QLatin1Char('<'));
 	const DataForm *data = disco->form();
-	QString form_type;
-	QMap<QString,QStringList> fields;
-	foreach(const QSharedPointer<DataFormField> &field, data->fields())
-	{
-		if(field->var() == QLatin1String("FORM_TYPE"))
-			form_type = field->values().first();
-		else
-			fields.insert(field->var(), field->values());
-	}
-	s.append(form_type).append(QLatin1Char('<'));
-	QMap<QString,QStringList>::iterator it = fields.begin();
-	for(; it != fields.end(); it++)
-	{
-		s.append(it.key()).append(QLatin1Char('<'));
-		foreach(const QString &value, it.value())
-			s.append(value).append(QLatin1Char('<'));
+	if(data) {
+		QString form_type;
+		QMap<QString,QStringList> fields;
+		foreach(const QSharedPointer<DataFormField> &field, data->fields())	{
+			if(field->var() == QLatin1String("FORM_TYPE"))
+				form_type = field->values().first();
+			else
+				fields.insert(field->var(), field->values());
+		}	
+		s.append(form_type).append(QLatin1Char('<'));
+
+		QMap<QString,QStringList>::iterator it = fields.begin();
+		for(; it != fields.end(); it++)
+		{
+			s.append(it.key()).append(QLatin1Char('<'));
+			foreach(const QString &value, it.value())
+				s.append(value).append(QLatin1Char('<'));
+		}
 	}
 	return QString::fromLatin1(QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1).toBase64());
 }

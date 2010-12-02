@@ -30,7 +30,7 @@ namespace jreen
 class IQ;
 struct DiscoPrivate;
 
-class Disco : public QObject
+class JREEN_EXPORT Disco : public QObject
 {
 	Q_DISABLE_COPY(Disco)
 	Q_OBJECT

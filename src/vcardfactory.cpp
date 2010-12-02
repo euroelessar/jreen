@@ -331,7 +331,7 @@ bool VCardFactory::canParse(const QStringRef& name, const QStringRef& uri, const
 StanzaExtension::Ptr VCardFactory::createExtension()
 {
 	Q_D(VCardFactory);
-	return StanzaExtension::Ptr(d->vcard ? new VCard(*d->vcard.take()) : 0);
+	return StanzaExtension::Ptr(d->vcard ? new VCard(*d->vcard.take()) : 0); //here is segfault
 }
 
 QStringList VCardFactory::features() const
