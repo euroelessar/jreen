@@ -21,6 +21,21 @@
 
 namespace jreen {
 
+inline void writeAttribute(QXmlStreamWriter *writer,
+						   const QLatin1String &name,const QString &value)
+{
+	if(!value.isEmpty())
+		writer->writeAttribute(name,value);
+}
+inline void writeTextElement(QXmlStreamWriter *writer,
+							 const QLatin1String &name,const QString &value)
+{
+	if(!value.isEmpty())
+		writer->writeTextElement(name,value);
+}
+
+
+
 class DataFormOptionParser : XmlStreamFactory<DataFormOption>
 {
 public:
@@ -62,8 +77,8 @@ public:
 	virtual void serialize(DataFormOption *option, QXmlStreamWriter *writer)
 	{
 		writer->writeStartElement(QLatin1String("option"));
-		writer->writeAttribute(QLatin1String("label"),option->label);
-		writer->writeTextElement(QLatin1String("value"),option->value);
+		writeAttribute(writer,QLatin1String("label"),option->label);
+		writeTextElement(writer,QLatin1String("value"),option->value);
 		writer->writeEndElement();
 	}
 	void serialize(const DataFormOptionList &options, QXmlStreamWriter *writer)
@@ -167,13 +182,13 @@ public:
 	virtual void serialize(DataFormField *field, QXmlStreamWriter *writer)
 	{
 		writer->writeStartElement(QLatin1String("field"));
-		writer->writeAttribute(QLatin1String("type"),enumToStr(field->type(),datafield_types));
-		writer->writeAttribute(QLatin1String("label"),field->desc());
-		writer->writeAttribute(QLatin1String("var"),field->var());
+		writeAttribute(writer,QLatin1String("type"),enumToStr(field->type(),datafield_types));
+		writeAttribute(writer,QLatin1String("label"),field->desc());
+		writeAttribute(writer,QLatin1String("var"),field->var());
 		m_optionParser.serialize(field->options(),writer);
 		foreach(const QString &value,field->values())
-			writer->writeTextElement(QLatin1String("value"),value);
-		if(m_required)
+			writeTextElement(writer,QLatin1String("value"),value);
+		if(field->required())
 			writer->writeEmptyElement(QLatin1String("required"));
 		writer->writeEndElement();
 	}
@@ -318,7 +333,7 @@ void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	DataForm *form = se_cast<DataForm*>(extension);
 	writer->writeStartElement(QLatin1String("x"));
 	writer->writeDefaultNamespace(NS_DATAFORM);
-	writer->writeTextElement(QLatin1String("title"),form->title());
+	writeTextElement(writer,QLatin1String("title"),form->title());
 	//writer->writeTextElement(QLatin1String("instruction"),form->));
 	d->fieldParser.serialize(form->fields(),writer);
 	writer->writeEndElement();

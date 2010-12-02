@@ -201,7 +201,7 @@ public:
 	const DataFormFieldList &fields() const { return m_fields_list; }
 	DataFormFieldList &fields() { return m_fields_list; }
 	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
-	inline void addField(DataFormFieldPointer field) {m_fields_list.append(field);}
+	inline void appendField(DataFormFieldPointer field) {m_fields_list.append(field);}
 	//	inline void appendField(DataFormField *field);
 	//	inline QSharedPointer<DataFormField> appendField(DataFormField *field);
 	//	QSharedPointer<DataFormField> addField(DataFormField::Type,

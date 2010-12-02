@@ -318,6 +318,7 @@ VCardFactory::VCardFactory() : d_ptr(new VCardFactoryPrivate)
 {
 	Q_D(VCardFactory);
 	d->currentParser = 0;
+	d->depth = 0;
 	d->classification = VCard::ClassNone;
 }
 

@@ -157,42 +157,42 @@ public:
 	* Sets the formatted name.
 	* @param name The formatted name.
 	*/
-	void setFormattedName(const QString &fn) {m_formattedName = fn;}
+	inline void setFormattedName(const QString &fn);
 	/**
 	* Returns the formatted name.
 	* @return The formatted name.
 	*/
-	const QString &formattedName() const {return m_formattedName;}
+	const QString &formattedName() const;
 	inline void setName(const QString& family, const QString& given,
 						const QString& middle = QString(),
 						const QString& prefix = QString(),
 						const QString& suffix = QString());
-	void setName(const Name &name) {m_name = name;}
+	void setName(const Name &name);
 	/**
    * Returns a full name.
    * @return A full name.
    */
-	const Name& name() const {return m_name;}
+	const Name& name() const;
 	/**
 	* Sets a nickname.
 	* @param nickname The nickname.
 	*/
-	void setNickname(const QString& nickname) {m_nickname = nickname;}
+	void setNickname(const QString& nickname);
 	/**
 	* Returns the nickname.
 	* @return The nickname.
 	*/
-	const QString& nickname() const {return m_nickname;}
+	const QString& nickname() const;
 	/**
 	* Sets the birthday.
 	* @param bday The birthday
 	*/
-	void setBday(const QDateTime& bday) {m_bday = bday;}
+	void setBday(const QDateTime& bday);
 	/**
 	* Returns the birthday.
 	* @return The birthday.
 	*/
-	const QDateTime& bday() const {return m_bday;}
+	const QDateTime& bday() const;
 	/**
 	* Sets a URI to a photo.
 	* @param extval The URI to the photo.
@@ -209,22 +209,14 @@ public:
 	* Returns photo information.
 	* @return Info about the photo.
 	*/
-	const Photo& photo() const {return m_photo;}
+	const Photo& photo() const;
 	/**
 	* Sets a URI to a organization logo.
 	* @param extval The URI to the logo.
 	*/
-	//I want to be able to do so
-	//Nickname *nickname() const {return findExtension<Nickname>().data();}
-	//Photo *photo() const {return findExtension<Photo>().data();}
+
 private:
 	QScopedPointer<VCardPrivate> d_ptr;
-	QString m_formattedName;
-	QString m_nickname;
-	Classification m_classification;
-	Name m_name;
-	QDateTime m_bday;
-	Photo m_photo;
 };
 
 } // namespace jreen

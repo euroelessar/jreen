@@ -22,29 +22,29 @@
 
 namespace jreen
 {
-	class Client;
-	class ParserPrivate;
-	
-	class Parser
+class Client;
+class ParserPrivate;
+
+class Parser
+{
+	Q_DECLARE_PRIVATE(Parser)
+public:
+	enum State
 	{
-		Q_DECLARE_PRIVATE(Parser)
-	public:
-		enum State
-		{
-			WaitingForStanza,
-			ReadFeatures,
-			ReadStanza,
-			ReadCustom
-		};
-		
-		Parser(Client *client);
-		~Parser();
-		void reset();
-		void activateFeature();
-		void appendData(const QByteArray &a);
-	private:
-		QScopedPointer<ParserPrivate> d_ptr;
+		WaitingForStanza,
+		ReadFeatures,
+		ReadStanza,
+		ReadCustom
 	};
+
+	Parser(Client *client);
+	~Parser();
+	void reset();
+	void activateFeature();
+	void appendData(const QByteArray &a);
+private:
+	QScopedPointer<ParserPrivate> d_ptr;
+};
 }
 
 #endif
