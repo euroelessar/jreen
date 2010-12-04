@@ -15,7 +15,7 @@
 
 #ifndef VCARDFACTORY_P_H
 #define VCARDFACTORY_P_H
-#include "vcard.h"
+#include "vcard_p.h"
 #include "stanzaextension.h"
 #include <QPair>
 
@@ -33,6 +33,7 @@ public:
 
 protected:
 	void serialize(void *zero, void *data, QXmlStreamWriter *writer);
+	void addByteArray(const QLatin1String &name, QByteArray *str);
 	void addString(const QLatin1String &name, QString *str);
 	void addFlag(const char **table, int size, int *value);
 	template <int N>
@@ -50,9 +51,11 @@ private:
 	};
 
 	QList<QPair<QLatin1String, QString*> > m_strings;
+	QList<QPair<QLatin1String, QByteArray*> > m_byteArrays;
 	QList<FlagInfo> m_flags;
 	QLatin1String m_name;
-	QString *m_current;
+	QString *m_currentString;
+	QByteArray *m_currentArray;
 };
 
 template <typename T>
@@ -66,6 +69,23 @@ public:
 
 protected:
 	T m_data;
+};
+
+template <typename TPrivate, typename T>
+class StructurePrivateParser : public AbstractStructureParser
+{
+public:
+	StructurePrivateParser(const QLatin1String &name) : AbstractStructureParser(name) {}
+	T create() { return T(*new TPrivate(m_data)); }
+	void serialize(const T &data, QXmlStreamWriter *writer) 
+	{
+		TPrivate *t1 = &m_data;
+		TPrivate *t2 = const_cast<TPrivate*>(TPrivate::get(&data));
+		AbstractStructureParser::serialize(t1, t2, writer);
+	}
+
+protected:
+	TPrivate m_data;
 };
 
 class VCardFactory : public StanzaExtensionFactory<VCard>

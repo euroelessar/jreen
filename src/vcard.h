@@ -72,22 +72,53 @@ public:
 		ClassConfidential	/**< Confidential. */
 	};
 
+	class NamePrivate;
+	class PhotoPrivate;
+	class AddressPrivate;
+	class TelephonePrivate;
+	class EMailPrivate;
+
 	class Name
 	{
 	public:
-		QString family;         /**< Family name. */
-		QString given;          /**< Given name. */
-		QString middle;         /**< Middle name. */
-		QString prefix;         /**< Name prefix. */
-		QString suffix;         /**< Name suffix. */
+		Name();
+		Name(const Name &o);
+		Name(NamePrivate &p);
+		~Name();
+		Name &operator =(const Name &o);
+		
+		QString family() const;
+		void setFamily(const QString &);
+		QString given() const;
+		void setGiven(const QString &);
+		QString middle() const;
+		void setMiddle(const QString &);
+		QString prefix() const;
+		void setPrefix(const QString &);
+		QString suffix() const;
+		void setSuffix(const QString &);
+	private:
+		QSharedDataPointer<NamePrivate> d_ptr;
+		friend class NamePrivate;
 	};
+
 	class Photo
 	{
 	public:
-		QString extval;         /**< The photo is not stored inside the VCard. This is a hint (URL?)
-		  * where to look for it. */
-		QString binval;         /**< This is the photo (base64). */
-		QString type;           /**< This is a hint at the mime-type. May be forged! */
+		Photo();
+		Photo(const Photo &o);
+		Photo(PhotoPrivate &p);
+		~Photo();
+		Photo &operator =(const Photo &o);
+		
+		QString external() const;
+		void setExternal(const QString &);
+		void setData(const QByteArray &data, const QString &mimeType = QString());
+		QByteArray data() const;
+		QString mimeType() const;
+	private:
+		QSharedDataPointer<PhotoPrivate> d_ptr;
+		friend class PhotoPrivate;
 	};
 	
 	class Telephone
@@ -110,9 +141,22 @@ public:
 			Preferred = 0x1000
 		};
 		typedef QFlags<Type> Types;
-		int types;
-		QString number;
+		
+		Telephone();
+		Telephone(const Telephone &o);
+		Telephone(TelephonePrivate &p);
+		~Telephone();
+		Telephone &operator =(const Telephone &o);
+
+		bool testType(Type t) const;
+		void setType(Type t, bool value);
+		QString number() const;
+		void setNumber(const QString &);
+	private:
+		QSharedDataPointer<TelephonePrivate> d_ptr;
+		friend class TelephonePrivate;
 	};
+
 	class EMail
 	{
 	public:
@@ -124,9 +168,16 @@ public:
 			Preferred = 0x08,
 			X400      = 0x10,
 		};
-		int types;
-		QString userId;
+		EMail();
+		EMail(const EMail &o);
+		EMail(EMailPrivate &p);
+		~EMail();
+		EMail &operator =(const EMail &o);
+	private:
+		QSharedDataPointer<EMailPrivate> d_ptr;
+		friend class EMailPrivate;
 	};
+
 	class Address
 	{
 	public:
@@ -140,14 +191,14 @@ public:
 			International = 0x20,
 			Preferred     = 0x40
 		};
-		int types;
-		QString pobox;
-		QString extendedAddress;
-		QString street;
-		QString locality;
-		QString region;
-		QString pcode;
-		QString country;
+		Address();
+		Address(const Address &o);
+		Address(AddressPrivate &p);
+		~Address();
+		Address &operator =(const Address &o);
+	private:
+		QSharedDataPointer<AddressPrivate> d_ptr;
+		friend class AddressPrivate;
 	};
 
 	VCard(const QString &formattedName = QString(), Classification classification = ClassNone);
@@ -163,10 +214,10 @@ public:
 	* @return The formatted name.
 	*/
 	const QString &formattedName() const;
-	inline void setName(const QString& family, const QString& given,
-						const QString& middle = QString(),
-						const QString& prefix = QString(),
-						const QString& suffix = QString());
+	void setName(const QString& family, const QString& given,
+				 const QString& middle = QString(),
+				 const QString& prefix = QString(),
+				 const QString& suffix = QString());
 	void setName(const Name &name);
 	/**
    * Returns a full name.
@@ -182,7 +233,7 @@ public:
 	* Returns the nickname.
 	* @return The nickname.
 	*/
-	const QString& nickname() const;
+	QString nickname() const;
 	/**
 	* Sets the birthday.
 	* @param bday The birthday
@@ -192,7 +243,7 @@ public:
 	* Returns the birthday.
 	* @return The birthday.
 	*/
-	const QDateTime& bday() const;
+	QDateTime bday() const;
 	/**
 	* Sets a URI to a photo.
 	* @param extval The URI to the photo.
@@ -209,7 +260,7 @@ public:
 	* Returns photo information.
 	* @return Info about the photo.
 	*/
-	const Photo& photo() const;
+	Photo photo() const;
 	/**
 	* Sets a URI to a organization logo.
 	* @param extval The URI to the logo.

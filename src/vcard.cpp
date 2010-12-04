@@ -17,6 +17,215 @@
 
 namespace jreen {
 
+VCard::Name::Name() : d_ptr(new VCard::NamePrivate)
+{
+}
+
+VCard::Name::Name(const VCard::Name &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::Name::Name(VCard::NamePrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::Name::~Name()
+{
+}
+
+VCard::Name &VCard::Name::operator =(const VCard::Name &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+QString VCard::Name::family() const
+{
+	return d_ptr->family;
+}
+
+void VCard::Name::setFamily(const QString &name)
+{
+	d_ptr->family = name;
+}
+
+QString VCard::Name::given() const
+{
+	return d_ptr->given;
+}
+
+void VCard::Name::setGiven(const QString &name)
+{
+	d_ptr->given = name;
+}
+
+QString VCard::Name::middle() const
+{
+	return d_ptr->middle;
+}
+
+void VCard::Name::setMiddle(const QString &name)
+{
+	d_ptr->middle = name;
+}
+
+QString VCard::Name::prefix() const
+{
+	return d_ptr->prefix;
+}
+
+void VCard::Name::setPrefix(const QString &name)
+{
+	d_ptr->prefix = name;
+}
+
+QString VCard::Name::suffix() const
+{
+	return d_ptr->suffix;
+}
+
+void VCard::Name::setSuffix(const QString &name)
+{
+	d_ptr->suffix = name;
+}
+
+VCard::Photo::Photo() : d_ptr(new PhotoPrivate)
+{
+}
+
+VCard::Photo::Photo(const VCard::Photo::Photo &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::Photo::Photo(VCard::PhotoPrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::Photo::~Photo()
+{
+}
+
+VCard::Photo &VCard::Photo::operator =(const VCard::Photo::Photo &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+QString VCard::Photo::external() const
+{
+	return d_ptr->extval;
+}
+
+void VCard::Photo::setExternal(const QString &extval)
+{
+	d_ptr->extval = extval;
+	d_ptr->binval = QByteArray();
+	d_ptr->type = QString();
+}
+
+void VCard::Photo::setData(const QByteArray &data, const QString &mimeType)
+{
+	d_ptr->extval = QString();
+	d_ptr->binval = data;
+	d_ptr->type = mimeType;
+}
+
+QByteArray VCard::Photo::data() const
+{
+	return d_ptr->binval;
+}
+
+QString VCard::Photo::mimeType() const
+{
+	return d_ptr->type;
+}
+
+VCard::Telephone::Telephone() : d_ptr(new VCard::TelephonePrivate)
+{
+}
+
+VCard::Telephone::Telephone(const VCard::Telephone::Telephone &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::Telephone::Telephone(VCard::TelephonePrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::Telephone::~Telephone()
+{
+}
+
+VCard::Telephone &VCard::Telephone::operator =(const VCard::Telephone &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+bool VCard::Telephone::testType(Type t) const
+{
+	return d_ptr->types & t;
+}
+
+void VCard::Telephone::setType(Type t, bool value)
+{
+	d_ptr->types ^= ((d_ptr->types & t) == t) == value ? 0 : t;
+}
+
+QString VCard::Telephone::number() const
+{
+	return d_ptr->number;
+}
+
+void VCard::Telephone::setNumber(const QString &number)
+{
+	d_ptr->number = number;
+}
+
+VCard::EMail::EMail() : d_ptr(new VCard::EMailPrivate)
+{
+}
+
+VCard::EMail::EMail(const VCard::EMail::EMail &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::EMail::EMail(VCard::EMailPrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::EMail::~EMail()
+{
+}
+
+VCard::EMail &VCard::EMail::operator =(const VCard::EMail &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+VCard::Address::Address() : d_ptr(new VCard::AddressPrivate)
+{
+}
+
+VCard::Address::Address(const VCard::Address::Address &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::Address::Address(VCard::AddressPrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::Address::~Address()
+{
+}
+
+VCard::Address &VCard::Address::operator =(const VCard::Address &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
 VCard::VCard(const QString &formattedName, Classification classification)
 	: d_ptr(new VCardPrivate)
 {
@@ -58,7 +267,7 @@ void VCard::setNickname(const QString& nickname)
 	d_func()->nickname = nickname;
 }
 
-const QString& VCard::nickname() const
+QString VCard::nickname() const
 {
 	return d_func()->nickname;
 }
@@ -70,19 +279,17 @@ void VCard::setName(const QString &family,
 					const QString &suffix)
 {
 	Q_D(VCard);
-	d->name.family = family;
-	d->name.given = given;
-	d->name.middle = middle;
-	d->name.prefix = prefix;
-	d->name.suffix = suffix;
+	d->name.setFamily(family);
+	d->name.setGiven(given);
+	d->name.setMiddle(middle);
+	d->name.setPrefix(prefix);
+	d->name.setSuffix(suffix);
 }
 
 void VCard::setPhoto(const QString &extval)
 {
 	Q_D(VCard);
-	d->photo.extval = extval;
-	d->photo.binval.clear();
-	d->photo.type.clear();
+	d->photo.setExternal(extval);
 }
 
 void VCard::setPhoto(const Photo &photo)
@@ -90,7 +297,7 @@ void VCard::setPhoto(const Photo &photo)
 	d_func()->photo = photo;
 }
 
-const VCard::Photo& VCard::photo() const
+VCard::Photo VCard::photo() const
 {
 	return d_func()->photo;
 }
@@ -100,7 +307,7 @@ void VCard::setBday(const QDateTime& bday)
 	d_func()->bday = bday;
 }
 
-const QDateTime& VCard::bday() const
+QDateTime VCard::bday() const
 {
 	return d_func()->bday;
 }
