@@ -23,13 +23,13 @@
 #include "dataform.h"
 #include "jid.h"
 #include "stanzaextension.h"
+#include "iq.h"
 
 namespace jreen
 {
 
 class IQ;
-struct DiscoPrivate;
-
+class DiscoPrivate;
 class JREEN_EXPORT Disco : public QObject
 {
 	Q_DISABLE_COPY(Disco)
@@ -51,11 +51,9 @@ public:
 	class Info : public StanzaExtension
 	{
 		J_EXTENSION(jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
-		public:
-			inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
+	public:
+		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
 		  : m_node(node), m_identities(identities), m_features(features), m_form(form) {}
-		Info(const QDomElement &node);
-		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
 		inline const IdentityList &identities() const { return m_identities; }
 		inline const QSet<QString> &features() const { return m_features; }
@@ -84,8 +82,6 @@ public:
 		public:
 			inline Items(const QString &node = QString(), const ItemList &items = ItemList())
 		  : m_items(items), m_node(node) {}
-		Items(const QDomElement &node);
-		QDomElement node(QDomDocument *document) const;
 		inline const QString &node() const { return m_node; }
 		inline const ItemList &items() const { return m_items; }
 		inline ItemList &items() { return m_items; }

@@ -173,6 +173,10 @@ public:
 		EMail(EMailPrivate &p);
 		~EMail();
 		EMail &operator =(const EMail &o);
+		bool testType(Type t) const;
+		const QString &userId() const;
+		void setUserId(const QString &userId);
+		void setType(Type t, bool value);
 	private:
 		QSharedDataPointer<EMailPrivate> d_ptr;
 		friend class EMailPrivate;
@@ -262,10 +266,51 @@ public:
 	*/
 	Photo photo() const;
 	/**
-	* Sets a URI to a organization logo.
-	* @param extval The URI to the logo.
+	* Returns the url.
+	* @return The url.
 	*/
-
+	const QUrl& url() const;
+	/**
+	* Returns a list of telephone numbers.
+	* @return A list of telephone numbers.
+	*/
+	QList<VCard::Telephone> telephones() const;
+	/**
+	* Adds a telephone number.
+	* @param number The telephone number.
+	* @param type Bit-wise ORed @ref AddressType.
+	*/
+	void addTelephone(const Telephone &telephone);
+	/**
+	* Adds an email address.
+	* @param userid The email address.
+	* @param type Bit-wise ORed @ref AddressType.
+	*/
+	void addEmail(const EMail &email);
+	/**
+	* Returns a list of email addresses.
+	* @return A list of email addresses.
+	*/
+	QList<VCard::EMail> emails() const;
+	/**
+	* Returns a list of addresses.
+	* @return A list of addresses.
+	*/
+	//AddressList& addresses() const;
+	///**
+	//* Adds an address.
+	//*/
+	//void addAdress(const Address &adr);
+	/**
+	* Sets a "free-form descriptive text".
+	* @param desc The descriptive text.
+	*/
+	void setDesc(const QString& desc);
+	/**
+	* Returns the "free-form descriptive text".
+	* @return The descriptive text.
+	*/
+	const QString& desc() const;
 private:
 	QScopedPointer<VCardPrivate> d_ptr;
 };

@@ -56,6 +56,25 @@ private:
 	DataFormFactory m_factory;
 	bool m_hasDataForm;
 };
+
+class DiscoItemsFactory : public StanzaExtensionFactory<Disco::Items>
+{
+public:
+	DiscoItemsFactory();
+	virtual ~DiscoItemsFactory() {}
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
+private:
+	int m_depth;
+	QString m_node;
+	Disco::ItemList m_items;
+};
+
 }
 
 #endif // DISCO_P_H

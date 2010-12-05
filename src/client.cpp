@@ -40,6 +40,7 @@
 #include "vcardfactory_p.h"
 #include "pingfactory_p.h"
 #include "vcardupdatefactory_p.h"
+#include "ping.h"
 
 namespace jreen
 {
@@ -97,7 +98,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(capsFactory);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
-	client->registerStanzaExtension(new Disco::Items);
+	client->registerStanzaExtension(new DiscoItemsFactory);
 	client->registerStanzaExtension(new ChatStateFactory);
 	client->registerStanzaExtension(new DelayedDeliveryFactory);
 	client->registerStanzaExtension(new ReceiptFactory);
@@ -341,6 +342,11 @@ void Client::handlePresence(const Presence &presence)
 
 void Client::handleIQ(const IQ &iq)
 {
+	//handle XMPP::ping
+	if(iq.containsExtension<Ping>()) {
+		IQ pong(IQ::Result,iq.from(),iq.id());
+		send(pong); //FIXME remove warning
+	}
 	emit newIQ(iq);
 }
 

@@ -167,6 +167,26 @@ bool VCard::Telephone::testType(Type t) const
 	return d_ptr->types & t;
 }
 
+bool VCard::EMail::testType(Type t) const
+{
+	return d_ptr->types & t;
+}
+
+const QString &VCard::EMail::userId() const
+{
+	return d_ptr->userId;
+}
+
+void VCard::EMail::setType(Type t, bool value)
+{
+	d_ptr->types ^= ((d_ptr->types & t) == t) == value ? 0 : t;
+}
+
+void VCard::EMail::setUserId(const QString &userId)
+{
+	d_ptr->userId = userId;
+}
+
 void VCard::Telephone::setType(Type t, bool value)
 {
 	d_ptr->types ^= ((d_ptr->types & t) == t) == value ? 0 : t;
@@ -310,6 +330,51 @@ void VCard::setBday(const QDateTime& bday)
 QDateTime VCard::bday() const
 {
 	return d_func()->bday;
+}
+
+const QUrl &VCard::url() const
+{
+	return d_func()->url;
+}
+
+QList<VCard::Telephone> VCard::telephones() const
+{
+	return d_func()->telephones;
+}
+
+void VCard::addTelephone(const Telephone &t)
+{
+	d_func()->telephones.append(t);
+}
+
+void VCard::addEmail(const EMail &email)
+{
+	d_func()->emails.append(email);
+}
+
+QList<VCard::EMail> VCard::emails() const
+{
+	return d_func()->emails;
+}
+
+//AddressList& VCard::addresses() const
+//{
+//	return d_func()->addresses;
+//}
+
+//void VCard::addAdress(const Address &adr)
+//{
+//	return d_func()->addresses.append(adr);
+//}
+
+void VCard::setDesc(const QString& desc)
+{
+	d_func()->description = desc;
+}
+
+const QString& VCard::desc() const
+{
+	return d_func()->description;
 }
 
 } // namespace jreen

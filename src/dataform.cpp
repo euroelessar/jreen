@@ -45,51 +45,19 @@ static inline DataFormField::Type getDataFormFieldType(const QString &type)
 	return t < 0 ? DataFormField::Invalid : static_cast<DataFormField::Type>(t);
 }
 
-DataFormField::DataFormField(const QDomElement &node)
-{
-}
-
-QDomElement DataFormField::node(QDomDocument *doc) const
-{
-	if(m_type == Invalid)
-		return QDomElement();
-	QDomElement node;/* = createElement(doc, field_str);
-	if(m_type != None)
-		node.setAttribute(ConstString::type, dataformfield_types.at(m_type));
-	node.setAttribute(ConstString::var, m_var);
-	if(!m_label.isEmpty())
-		node.setAttribute(label_str, m_label);
-	if(m_required)
-		createElement(node, required_str);
-	if(!m_desc.isEmpty())
-		createElement(node, desc_str, m_desc);
-	foreach(const QString &value, m_values)
-		createElement(node, ConstString::value, value);
-	foreach(const QSharedPointer<DataFormOption> &option, m_options)
-	{
-		QDomElement opt = createElement(node, option_str);
-		opt.setAttribute(label_str, option->label);
-		createElement(opt, ConstString::value, option->value);
-	}*/
-	return node;
-}
-
 DataForm::DataForm(Type type, const QString &title)
 	:	m_title(title),m_form_type(type)
 {
 	m_form_type = Result;
 }
 
-QDomElement DataForm::node(QDomDocument *document) const
+DataFormFieldPointer DataFormFieldContainer::field(const QString &var) const
 {
-	if(m_form_type == Invalid)
-		return QDomElement();
-	QDomElement node;/* = createElement(document, QLatin1String("x"));
-	node.setAttribute(ConstString::type, dataform_types.at(m_form_type));
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_data);
-	foreach(const QSharedPointer<DataFormField> &field, m_fields_list)
-		node.appendChild(field->node(document));*/
-	return node;
+	foreach(DataFormFieldPointer field,fields()) {
+		if (field->var() == var)
+			return field;
+	}
+	return DataFormFieldPointer(0);
 }
 
 }

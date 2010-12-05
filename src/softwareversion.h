@@ -30,10 +30,11 @@ class JREEN_EXPORT SoftwareVersion : public StanzaExtension
 {
 	J_EXTENSION(jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
 public:
+	SoftwareVersion() {}
 	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
-	inline const QString &name() { return m_name; }
-	inline const QString &version() { return m_version; }
-	inline const QString &os() { return m_os; }
+	inline const QString &name() const { return m_name; }
+	inline const QString &version() const { return m_version; }
+	inline const QString &os() const { return m_os; }
 private:
 	QString m_name;
 	QString m_version;

@@ -95,6 +95,7 @@ public:
 	inline DataFormOptionList &options() { return m_options; }
 	inline void setOptions(const DataFormOptionList &options) { m_options = options; }
 	inline QStringList &values() { return m_values; }
+	inline QString value() {return m_values.size() ? m_values.first() : QString();}
 	inline const QStringList &values() const { return m_values; }
 	inline void setValues(const QStringList &values) { m_values = values; }
 	inline const QString &var() const { return m_var; }
@@ -102,9 +103,8 @@ public:
 	inline bool required() const { return m_required; }
 	inline void setRequired(bool required) { m_required = required; }
 	inline const QString &desc() const { return m_desc; }
-	inline void setDesc(const QString &desc) { m_desc = desc; }																																																			  																																																																																																													QDomElement node(QDomDocument *doc) const;
+	inline void setDesc(const QString &desc) { m_desc = desc; }
 protected:
-	DataFormField(const QDomElement &node);
 	Type m_type;
 	QString m_var;
 	QString m_desc;
@@ -200,6 +200,7 @@ class JREEN_EXPORT DataFormFieldContainer
 public:
 	const DataFormFieldList &fields() const { return m_fields_list; }
 	DataFormFieldList &fields() { return m_fields_list; }
+	DataFormFieldPointer field(const QString &var) const;
 	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
 	inline void appendField(DataFormFieldPointer field) {m_fields_list.append(field);}
 	//	inline void appendField(DataFormField *field);
@@ -238,7 +239,6 @@ public:
 	};
 	DataForm(Type type,const QString &title = QString());
 	const QString &title() { return m_title; }
-	QDomElement node(QDomDocument *document) const;
 private:
 	QString m_title;
 	DataFormReportedList m_reported;

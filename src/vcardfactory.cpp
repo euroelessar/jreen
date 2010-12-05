@@ -434,7 +434,9 @@ void VCardFactory::handleEndElement(const QStringRef& name, const QStringRef& ur
 	} else if (d->depth == 2 && d->currentString) {
 		if (d->currentString == &d->tmpString) {
 			int index = d->state - LastState;
-			if (index == Birthday)
+			if (index == FormattedName)
+				d->vcard->formattedName = d->tmpString;
+			else if (index == Birthday)
 				d->vcard->bday = Util::fromStamp(d->tmpString);
 			else if (index == Url)
 				d->vcard->url = QUrl::fromUserInput(d->tmpString);
@@ -462,7 +464,9 @@ void VCardFactory::serialize(StanzaExtension* extension, QXmlStreamWriter* write
 	QString tmp;
 	for (int i = 0; i < LastVCardType; i++) {
 		QString *current = &tmp;
-		if (i == Birthday)
+		if (i == FormattedName)
+			tmp = vcard->formattedName;
+		else if (i == Birthday)
 			tmp = Util::toStamp(vcard->bday);
 		else if (i == Url)
 			tmp = QString::fromUtf8(vcard->url.toEncoded());

@@ -188,12 +188,13 @@ class JREEN_EXPORT AbstractRoster : public QObject
 	Q_DECLARE_PRIVATE(AbstractRoster)
 public:
 	AbstractRoster(Client *client, AbstractRosterPrivate *data = 0);
-	virtual ~AbstractRoster();
+	virtual ~AbstractRoster();	
 public slots:
 	virtual void load();
 	virtual void synchronize();
 protected:
 	virtual QSharedPointer<AbstractRosterItem> createItem();
+	virtual QSharedPointer<AbstractRosterItem> getItem(const JID &jid) const;
 	//	virtual QSharedPointer<AbstractResource> createResource();
 	virtual void init();
 	virtual void add(const JID &jid, const QString &name, const QStringList &groups = QStringList());
