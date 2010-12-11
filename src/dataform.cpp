@@ -71,7 +71,7 @@ DataFormField::DataFormField(Type type) :
 	d->type = type;
 }
 
-DataFormField::Type DataFormField::type()
+DataFormField::Type DataFormField::type() const
 {
 	return d_func()->type;
 }

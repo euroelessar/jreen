@@ -17,17 +17,17 @@
 #define JID_H
 
 #include "jreen.h"
+#include <QSharedData>
 
 namespace jreen
 {
 
-class JIDPrivate;
-
+class JIDData;
 class JREEN_EXPORT JID
 {
 public:
 	JID();
-	JID(const JID &jid);
+	JID(const JID &other);
 	JID(const QString &jid);
 	JID(const QLatin1String &jid);
 	JID(const QString &node, const QString &domain, const QString &resource = QString());
@@ -48,18 +48,16 @@ public:
 	bool setDomain(const QString &domain);
 	bool setResource(const QString &resource);
 
-	// TODO: non-inline, don't want to rebuild jreen right now
-	inline bool isBare() const { return isValid() && resource().isEmpty() && !node().isEmpty(); }
-	inline bool isFull() const { return isValid() && !node().isEmpty() && !resource().isEmpty(); }
-	inline bool isDomain() const { return isValid() && resource().isEmpty() && node().isEmpty(); }
+	bool isBare() const;
+	bool isFull() const;
+	bool isDomain() const;
 
-	JID clone() const;
 	JID withNode(const QString &node) const;
 	JID withResource(const QString &resource) const;
 
-	inline JID &operator =(const QString &s) { setJID(s); return *this; }
-	inline JID &operator =(const QLatin1String &s) { setJID(QString(s)); return *this; }
-	JID &operator =(const JID &jid);
+	JID &operator =(const QString &s);
+	JID &operator =(const QLatin1String &s);
+	JID &operator =(const JID &other);
 
 	bool operator ==(const QString &right) const;
 	bool operator !=(const QString &right) const;
@@ -71,7 +69,8 @@ public:
 	bool isValid() const;
 	operator QString() const;
 private:
-	JIDPrivate *impl;
+	QSharedDataPointer<JIDData> d_ptr;
+	friend class JIDData;
 };
 
 }

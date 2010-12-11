@@ -21,15 +21,21 @@
 namespace jreen
 {
 
-static const QString empty_string;
-
-class JIDPrivate
+class JIDData : public QSharedData
 {
 public:
-	JIDPrivate()
+	JIDData()
 	{
 		ref = 1;
 		valid = false;
+	}
+	JIDData(const JIDData &other) :
+		QSharedData(other), domain(other.domain),
+		node(other.node), resource(other.resource),
+		bare(other.bare), full(other.full),
+		valid(other.valid)
+	{
+
 	}
 
 	inline void setStrings() { setBare(); setFull(); }
@@ -45,7 +51,7 @@ public:
 	void setFull() {
 		full = bare;
 		if(!resource.isEmpty())
-		  full += QLatin1Char('/') + resource;
+			full += QLatin1Char('/') + resource;
 	}
 
 	QString domain;
@@ -54,265 +60,216 @@ public:
 	QString bare;
 	QString full;
 	bool valid;
-	QAtomicInt ref;
 };
 
-JID::JID()
+JID::JID() : d_ptr(new JIDData)
 {
-	impl = 0;
 }
 
-JID::JID(const JID &jid)
-{
-	impl = 0;
+JID::JID(const JID &jid){
+
 	operator =(jid);
 }
 
-JID::JID(const QString &jid)
+JID::JID(const QString &jid) : d_ptr(new JIDData)
 {
-	impl = 0;
 	operator =(jid);
 }
 
-JID::JID(const QLatin1String &jid)
+JID::JID(const QLatin1String &jid) : d_ptr(new JIDData)
 {
-	impl = 0;
 	operator =(jid);
 }
 
-JID::JID(const QString &node, const QString &domain, const QString &resource)
+JID::JID(const QString &node, const QString &domain, const QString &resource) :
+	d_ptr(new JIDData)
 {
-	impl = new JIDPrivate;
-	impl->node = Prep::instance().nodePrep(node, &impl->valid);
-	if(!impl->valid)
+	d_ptr->node = Prep::instance().nodePrep(node, &d_ptr->valid);
+	if(!d_ptr->valid)
 		return;
-	impl->domain = Prep::instance().namePrep(domain, &impl->valid);
-	if(!impl->valid)
+	d_ptr->domain = Prep::instance().namePrep(domain, &d_ptr->valid);
+	if(!d_ptr->valid)
 		return;
-	impl->resource = Prep::instance().resourcePrep(resource, &impl->valid);
-	if(!impl->valid)
+	d_ptr->resource = Prep::instance().resourcePrep(resource, &d_ptr->valid);
+	if(!d_ptr->valid)
 		return;
-	impl->setStrings();
+	d_ptr->setStrings();
 }
 
 JID::~JID()
 {
-	if(impl && !impl->ref.deref())
-		delete impl;
 }
 
 bool JID::setJID(const QString &jid)
 {
-	if(impl && impl->ref != 1) {
-		impl->ref.deref();
-		impl = 0;
-	}
-	if(jid.isEmpty()) {
-		if(impl && impl->ref.deref())
-			delete impl;
-		impl = 0;
+	if(jid.isEmpty())
 		return false;
-	}
-	if(!impl)
-		impl = new JIDPrivate;
 
-	impl->node.clear();
-	impl->domain.clear();
-	impl->resource.clear();
+	d_ptr->node.clear();
+	d_ptr->domain.clear();
+	d_ptr->resource.clear();
 
 	int at = jid.indexOf(QLatin1Char('@'));
 	int slash = jid.indexOf(QLatin1Char('/'), at < 0 ? 0 : at);
 
 	if(at > -1) {
-		impl->node = Prep::instance().nodePrep(jid.mid(0, at), &impl->valid);
-		if(!impl->valid)
+		d_ptr->node = Prep::instance().nodePrep(jid.mid(0, at), &d_ptr->valid);
+		if(!d_ptr->valid)
 			return false;
 	}
 
-	impl->domain = Prep::instance().namePrep(jid.mid(at < 0 ? 0 : at + 1, slash - at - 1), &impl->valid);
-	if(!impl->valid)
+	d_ptr->domain = Prep::instance().namePrep(jid.mid(at < 0 ? 0 : at + 1, slash - at - 1), &d_ptr->valid);
+	if(!d_ptr->valid)
 		return false;
 
 	if(slash > -1) {
-		impl->resource = Prep::instance().resourcePrep(jid.mid(slash + 1), &impl->valid);
-		if(!impl->valid)
+		d_ptr->resource = Prep::instance().resourcePrep(jid.mid(slash + 1), &d_ptr->valid);
+		if(!d_ptr->valid)
 			return false;
 	}
 
-	impl->setStrings();
-
-	return impl->valid;
+	d_ptr->setStrings();
+	return d_ptr->valid;
 }
 
 const QString &JID::domain() const
 {
-	return impl ? impl->domain : empty_string;
+	return d_ptr->domain;
 }
 
 const QString &JID::node() const
 {
-	return impl ? impl->node : empty_string;
+	return d_ptr->node;
 }
 
 const QString &JID::resource() const
 {
-	return impl ? impl->resource : empty_string;
+	return d_ptr->resource;
 }
 
 const QString &JID::bare() const
 {
-	return impl ? impl->bare : empty_string;
+	return d_ptr->bare;
 }
 
 const QString &JID::full() const
 {
-	return impl ? impl->full : empty_string;
+	return d_ptr->full;
 }
 
 bool JID::setNode(const QString &node)
 {
-	if(impl && impl->ref != 1) {
-		impl->ref.deref();
-		QString &domain = impl->domain;
-		QString &resource = impl->resource;
-		impl = new JIDPrivate;
-		impl->domain = domain;
-		impl->resource = resource;
-	}
-	if(!impl)
-		impl = new JIDPrivate;
-	impl->node = Prep::instance().nodePrep(node, &impl->valid);
-	impl->setStrings();
-	return impl->valid;
+	d_ptr->node = Prep::instance().nodePrep(node, &d_ptr->valid);
+	d_ptr->setStrings();
+	return d_ptr->valid;
 }
 
 bool JID::setDomain(const QString &domain)
 {
-	if(impl && impl->ref != 1) {
-		impl->ref.deref();
-		QString &node = impl->node;
-		QString &resource = impl->resource;
-		impl = new JIDPrivate;
-		impl->node = node;
-		impl->resource = resource;
-	}
-	if(!impl)
-		impl = new JIDPrivate;
-	impl->domain = Prep::instance().namePrep(domain, &impl->valid);
-	impl->setStrings();
-	return impl->valid;
+	d_ptr->domain = Prep::instance().namePrep(domain, &d_ptr->valid);
+	d_ptr->setStrings();
+	return d_ptr->valid;
 }
 
 bool JID::setResource(const QString &resource)
 {
-	if(impl && impl->ref != 1) {
-		impl->ref.deref();
-		QString &node = impl->node;
-		QString &domain = impl->domain;
-		QString &bare = impl->bare;
-		impl = new JIDPrivate;
-		impl->node = node;
-		impl->domain = domain;
-		impl->bare = bare;
-	}
-	if(!impl)
-		impl = new JIDPrivate;
-	impl->resource = Prep::instance().resourcePrep(resource, &impl->valid);
-	impl->setFull();
-	return impl->valid;
-}
-
-JID JID::clone() const
-{
-	JID j;
-	j.impl = new JIDPrivate;
-	j.impl->domain = impl->domain;
-	j.impl->node = impl->node;
-	j.impl->resource = impl->resource;
-	j.impl->bare = impl->bare;
-	j.impl->full = impl->full;
-	j.impl->valid = impl->valid;
-	return j;
+	d_ptr->resource = Prep::instance().resourcePrep(resource, &d_ptr->valid);
+	d_ptr->setFull();
+	return d_ptr->valid;
 }
 
 JID JID::withNode(const QString &node) const
 {
-	JID j = this->clone();
+	JID j = *this;
 	j.setNode(node);
 	return j;
 }
 
 JID JID::withResource(const QString &resource) const
 {
-	JID j = this->clone();
+	JID j = *this;
 	j.setResource(resource);
 	return j;
 }
 
-JID &JID::operator =(const JID &jid)
+JID &JID::operator =(const JID &other)
 {
-	if(jid.impl)
-		jid.impl->ref.ref();
-	if(impl && !impl->ref.deref())
-		delete impl;
-	impl = jid.impl;
+	d_ptr = other.d_ptr;
 	return *this;
 }
 
 bool JID::operator ==(const QString &right) const
 {
-	if(!impl)
-		return right.isEmpty();
-	return impl->full == right;
+	return d_ptr->full == right;
 }
 
 bool JID::operator !=(const QString &right) const
 {
-	if(!impl)
-		return !right.isEmpty();
-	return impl->full != right;
+	return d_ptr->full != right;
 }
 
 bool JID::operator ==(const QLatin1String &right) const
 {
-	if(!impl)
-		return (*right.latin1()) == '\0';
-	return impl->full == right;
+	return d_ptr->full == right;
 }
 
 bool JID::operator !=(const QLatin1String &right) const
 {
-	if(!impl)
-		return (*right.latin1()) != '\0';
-	return impl->full != right;
+	return d_ptr->full != right;
 }
 
 bool JID::operator ==(const JID& right) const
 {
-	if(impl == right.impl)
+	if(d_ptr == right.d_ptr)
 		return true;
-	if(impl && right.impl)
-		return impl->full == right.impl->full;
+	if(d_ptr && right.d_ptr)
+		return d_ptr->full == right.d_ptr->full;
 	return false;
 }
 
 bool JID::operator !=(const JID& right) const
 {
-	if(impl == right.impl)
+	if(d_ptr == right.d_ptr)
 		return false;
-	if(impl && right.impl)
-		return impl->full != right.impl->full;
+	if(d_ptr && right.d_ptr)
+		return d_ptr->full != right.d_ptr->full;
 	return true;
+}
+
+JID &JID::operator =(const QString &s)
+{
+	setJID(s);
+	return *this;
+}
+
+JID &JID::operator =(const QLatin1String &s)
+{
+	return operator =(QString(s));
 }
 
 bool JID::isValid() const
 {
-	return impl ? impl->valid : false;
+	return d_ptr ? d_ptr->valid : false;
 }
 
 JID::operator QString() const
 {
-	return impl ? impl->full : empty_string;
+	return d_ptr->full;
+}
+
+bool JID::isBare() const
+{
+	return isValid() && resource().isEmpty() && !node().isEmpty();
+}
+
+bool JID::isFull() const
+{
+	return isValid() && !node().isEmpty() && !resource().isEmpty();
+}
+
+bool JID::isDomain() const
+{
+	return isValid() && resource().isEmpty() && node().isEmpty();
 }
 
 }
