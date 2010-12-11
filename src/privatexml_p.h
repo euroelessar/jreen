@@ -38,8 +38,9 @@ signals:
 	void newResult(const QDomElement &node, PrivateXml::Result result, QSharedPointer<Error> error);
 };
 
-struct PrivateXmlPrivate
+class PrivateXmlPrivate
 {
+public:
 	QHash<QString, PrivateXmlTrack *> tracks;
 	Client *client;
 };

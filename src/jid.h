@@ -68,23 +68,9 @@ public:
 	bool operator ==(const JID& right) const;
 	bool operator !=(const JID& right) const;
 
-	// ASCII compatibility
-#ifndef QT_NO_CAST_FROM_ASCII
-	inline QT_ASCII_CAST_WARN_CONSTRUCTOR JID(const char *jid) { impl = 0; operator =(QLatin1String(jid)); }
-	inline QT_ASCII_CAST_WARN_CONSTRUCTOR JID &operator =(const char *s) { setJID(QLatin1String(s)); return *this; }
-	inline QT_ASCII_CAST_WARN_CONSTRUCTOR bool operator ==(const char *right) const { return operator ==(QLatin1String(right)); }
-	inline QT_ASCII_CAST_WARN_CONSTRUCTOR bool operator !=(const char *right) const { return operator !=(QLatin1String(right)); }
-#endif
-
 	bool isValid() const;
 	operator QString() const;
 private:
-#ifdef QT_NO_CAST_FROM_ASCII
-	JID(const char *jid);
-	JID &operator =(const char *s);
-	bool operator ==(const char *right);
-	bool operator !=(const char *right);
-#endif
 	JIDPrivate *impl;
 };
 

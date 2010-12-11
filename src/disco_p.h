@@ -22,8 +22,9 @@
 
 namespace jreen
 {
-struct DiscoPrivate
+class DiscoPrivate
 {
+public:
 	Disco::IdentityList identities;
 	QSet<QString> features;
 	Client *client;
@@ -31,7 +32,6 @@ struct DiscoPrivate
 	QString os;
 	QString software_name;
 	QString software_version;
-
 	static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
 };
 

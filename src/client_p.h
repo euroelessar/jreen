@@ -24,7 +24,6 @@
 #include "parser.h"
 #include "directconnection.h"
 #include "streamfeature.h"
-#include "xquerycontainer_p.h"
 #include "iq.h"
 #include "message.h"
 #include "presence.h"
@@ -37,6 +36,7 @@
 #include "buffereddatastream.h"
 #include <QTimer>
 #include <QTextCodec>
+#include "stanza_p.h"
 
 namespace jreen
 {
@@ -217,7 +217,6 @@ public:
 	StreamInfo *stream_info;
 	Client *client;
 	JID jid;
-	XQueryContainer xquery;
 	QString sid;
 	QString server;
 	QString password;
@@ -228,11 +227,7 @@ public:
 	Connection *conn;
 	DataStream *device;
 	bool authorized;
-	XQueryContainer security_layers;
-	XQueryContainer compressions;
-	XQueryContainer sasl_auths;
 	// And again compression
-	XQueryContainer non_sasl_auths;
 	Disco *disco;
 	StreamFeature *current_stream_feature;
 	QHash<QString,IQTrack *> iq_tracks;
@@ -291,10 +286,6 @@ public slots:
 	}
 	void disconnected()
 	{
-		non_sasl_auths.resetFeatures();
-		sasl_auths.resetFeatures();
-		compressions.resetFeatures();
-		security_layers.resetFeatures();
 		authorized = false;
 		current_stream_feature = 0;
 		presence.setSubtype(Presence::Unavailable);

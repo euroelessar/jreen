@@ -62,11 +62,14 @@ private:
 
 bool BindQueryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(attributes);
 	return (name == QLatin1String("bind") || name == QLatin1String("unbind")) && uri == NS_BIND;
 }
 
 void BindQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(uri);
+	Q_UNUSED(attributes);
 	m_depth++;
 	if (m_depth == 1) {
 		m_state = AtStart;
@@ -85,6 +88,8 @@ void BindQueryFactory::handleStartElement(const QStringRef &name, const QStringR
 
 void BindQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 	m_depth--;
 	if (m_depth == 1)
 		m_state = AtStart;
@@ -140,16 +145,22 @@ bool BindFeature::canParse(const QStringRef &name, const QStringRef &uri, const 
 
 void BindFeature::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	Q_UNUSED(attributes);
 	qDebug() << Q_FUNC_INFO;
 	m_hasFeature = true;
 }
 
 void BindFeature::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
 }
 
 void BindFeature::handleCharacterData(const QStringRef &text)
 {
+	Q_UNUSED(text);
 }
 
 bool BindFeature::isActivatable()

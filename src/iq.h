@@ -21,8 +21,7 @@
 namespace jreen
 {
 
-struct IQPrivate;
-
+class IQPrivate;
 class JREEN_EXPORT IQ : public Stanza
 {
 	Q_DECLARE_PRIVATE(IQ)

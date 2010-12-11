@@ -60,7 +60,6 @@ public:
 	void send(const Stanza &stanza);
 	void send(const IQ &iq, QObject *handler, const char *member, int context);
 	void setConnectionImpl(Connection *conn);
-	void registerStanzaExtension(StanzaExtension *stanza_extension);
 	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:

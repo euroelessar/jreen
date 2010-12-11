@@ -22,7 +22,7 @@
 namespace jreen
 {
 
-struct ErrorPrivate;
+class ErrorPrivate;
 class JREEN_EXPORT Error : public StanzaExtension
 {
 	J_EXTENSION(jreen::Error,"/*/error")

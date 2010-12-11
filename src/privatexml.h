@@ -24,7 +24,7 @@ namespace jreen
 
 class Client;
 class IQ;
-struct PrivateXmlPrivate;
+class PrivateXmlPrivate;
 
 // XEP-0049
 

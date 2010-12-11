@@ -21,13 +21,14 @@
 #include "stanza_p.h"
 
 namespace jreen
-{	
-	struct IQPrivate : public StanzaPrivate
-	{
-		IQPrivate() : StanzaPrivate(StanzaIq), accepted(false) {}
-		IQ::Type subtype;
-		mutable bool accepted;
-	};
+{
+class IQPrivate : public StanzaPrivate
+{
+public:
+	IQPrivate() : StanzaPrivate(StanzaIq), accepted(false) {}
+	IQ::Type subtype;
+	mutable bool accepted;
+};
 }
 
 #endif // IQ_P_H

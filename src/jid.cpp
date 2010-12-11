@@ -34,8 +34,7 @@ public:
 
 	inline void setStrings() { setBare(); setFull(); }
 
-	void setBare()
-	{
+	void setBare() {
 		if(!node.isEmpty())
 			bare = node + QLatin1Char('@');
 		else
@@ -43,8 +42,7 @@ public:
 		bare += domain;
 	}
 
-	void setFull()
-	{
+	void setFull() {
 		full = bare;
 		if(!resource.isEmpty())
 		  full += QLatin1Char('/') + resource;
@@ -105,13 +103,11 @@ JID::~JID()
 
 bool JID::setJID(const QString &jid)
 {
-	if(impl && impl->ref != 1)
-	{
+	if(impl && impl->ref != 1) {
 		impl->ref.deref();
 		impl = 0;
 	}
-	if(jid.isEmpty())
-	{
+	if(jid.isEmpty()) {
 		if(impl && impl->ref.deref())
 			delete impl;
 		impl = 0;
@@ -127,8 +123,7 @@ bool JID::setJID(const QString &jid)
 	int at = jid.indexOf(QLatin1Char('@'));
 	int slash = jid.indexOf(QLatin1Char('/'), at < 0 ? 0 : at);
 
-	if(at > -1)
-	{
+	if(at > -1) {
 		impl->node = Prep::instance().nodePrep(jid.mid(0, at), &impl->valid);
 		if(!impl->valid)
 			return false;
@@ -138,8 +133,7 @@ bool JID::setJID(const QString &jid)
 	if(!impl->valid)
 		return false;
 
-	if(slash > -1)
-	{
+	if(slash > -1) {
 		impl->resource = Prep::instance().resourcePrep(jid.mid(slash + 1), &impl->valid);
 		if(!impl->valid)
 			return false;
@@ -177,8 +171,7 @@ const QString &JID::full() const
 
 bool JID::setNode(const QString &node)
 {
-	if(impl && impl->ref != 1)
-	{
+	if(impl && impl->ref != 1) {
 		impl->ref.deref();
 		QString &domain = impl->domain;
 		QString &resource = impl->resource;
@@ -195,8 +188,7 @@ bool JID::setNode(const QString &node)
 
 bool JID::setDomain(const QString &domain)
 {
-	if(impl && impl->ref != 1)
-	{
+	if(impl && impl->ref != 1) {
 		impl->ref.deref();
 		QString &node = impl->node;
 		QString &resource = impl->resource;
@@ -213,9 +205,7 @@ bool JID::setDomain(const QString &domain)
 
 bool JID::setResource(const QString &resource)
 {
-	bool valid = true;
-	if(impl && impl->ref != 1)
-	{
+	if(impl && impl->ref != 1) {
 		impl->ref.deref();
 		QString &node = impl->node;
 		QString &domain = impl->domain;

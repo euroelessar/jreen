@@ -33,11 +33,20 @@ struct JREEN_EXPORT DataFormOption
 	QString value;
 };
 
+class MultimediaDataPrivate;
+class JREEN_EXPORT MultimediaData
+{
+public:
+
+};
+
 typedef QSharedPointer<DataFormOption> DataFormOptionPointer;
 typedef QList<DataFormOptionPointer> DataFormOptionList;
 
+class DataFormFieldPrivate;
 class JREEN_EXPORT DataFormField
 {
+	Q_DECLARE_PRIVATE(DataFormField)
 public:
 	enum Type
 	{
@@ -81,37 +90,28 @@ public:
 		None,
 		Invalid
 	};
-	inline DataFormField(Type type = TextSingle) : m_type(type), m_required(false) {}
-	inline DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle)
-		: m_type(type), m_var(var), m_label(label), m_values(QStringList()<<value), m_required(false) {}
-	inline DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle)
-		: m_type(type), m_var(var), m_label(label), m_values(values), m_required(false) {}
-	inline DataFormField(const QString &var, const QString &label, Type type)
-		: m_type(type), m_var(var), m_label(label), m_required(false) {}
-	//	inline ~DataFormField() {}
-	inline Type type() const { return m_type; }
-	inline bool isValid() const { return m_type != Invalid; }
-	inline const DataFormOptionList &options() const { return m_options; }
-	inline DataFormOptionList &options() { return m_options; }
-	inline void setOptions(const DataFormOptionList &options) { m_options = options; }
-	inline QStringList &values() { return m_values; }
-	inline QString value() {return m_values.size() ? m_values.first() : QString();}
-	inline const QStringList &values() const { return m_values; }
-	inline void setValues(const QStringList &values) { m_values = values; }
-	inline const QString &var() const { return m_var; }
-	inline void setVar(const QString &var) { m_var = var; }
-	inline bool required() const { return m_required; }
-	inline void setRequired(bool required) { m_required = required; }
-	inline const QString &desc() const { return m_desc; }
-	inline void setDesc(const QString &desc) { m_desc = desc; }
-protected:
-	Type m_type;
-	QString m_var;
-	QString m_desc;
-	QString m_label;
-	QStringList m_values;
-	bool m_required;
-	DataFormOptionList m_options;
+	DataFormField(Type type = TextSingle);
+	DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle);
+	DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle);
+	DataFormField(const QString &var, const QString &label, Type type);
+	~DataFormField();
+	inline Type type();
+	inline bool isValid() const;
+	inline DataFormOptionList options() const;
+	inline DataFormOptionList &options();
+	inline void setOptions(const DataFormOptionList &options);
+	inline QStringList &values();
+	inline QString value() const;
+	inline QStringList values() const;
+	inline void setValues(const QStringList &values);
+	inline QString var() const;
+	inline void setVar(const QString &var);
+	inline bool required() const;
+	inline void setRequired(bool required);
+	inline QString desc() const;
+	inline void setDesc(const QString &desc);
+private:
+	QScopedPointer<DataFormFieldPrivate> d_ptr;
 };
 
 //class DataFormFieldBoolean : public DataFormField

@@ -22,8 +22,9 @@
 namespace jreen
 {
 
-struct ErrorPrivate
+class ErrorPrivate
 {
+public:
 	Error::Type type;
 	Error::Condition condition;
 	LangMap text;

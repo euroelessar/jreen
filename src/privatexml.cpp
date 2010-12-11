@@ -21,8 +21,7 @@ namespace jreen
 PrivateXml::PrivateXml(Client *client) : QObject(client), d_ptr(new PrivateXmlPrivate)
 {
 	Q_D(PrivateXml);
-	d->client = client;
-	d->client->registerStanzaExtension(new Query);
+	d->client = client;	
 }
 
 PrivateXml::~PrivateXml()

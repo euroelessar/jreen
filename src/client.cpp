@@ -230,11 +230,6 @@ void Client::setConnectionImpl(Connection *conn)
 	connect(conn, SIGNAL(disconnected()), impl, SLOT(disconnected()));
 }
 
-void Client::registerStanzaExtension(StanzaExtension *stanza_extension)
-{
-	impl->xquery.registerStanzaExtension(stanza_extension, impl->disco);
-}
-
 void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
 {
 	delete impl->factories.value(factory->extensionType(), 0);
