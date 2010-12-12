@@ -52,7 +52,7 @@ void AbstractStructureParser::handleStartElement(const QStringRef &name, const Q
 				return;
 			}
 		}
-		for (int i = 0; i < m_strings.size(); i++) {
+		for (int i = 0; i < m_byteArrays.size(); i++) {
 			const QPair<QLatin1String, QByteArray*> &p = m_byteArrays.at(i);
 			if (p.first == name) {
 				m_currentArray = p.second;

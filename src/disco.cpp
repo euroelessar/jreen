@@ -93,6 +93,7 @@ void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	if (!info)
 		return;
 	writer->writeStartElement(QLatin1String("info"));
+	writer->writeAttribute(QLatin1String("node"),info->node());
 	writer->writeDefaultNamespace(NS_DISCO_INFO);
 	foreach (const Disco::Identity &identity, info->identities()) {
 		writer->writeEmptyElement(QLatin1String("identity"));
@@ -208,6 +209,11 @@ Disco::IdentityList &Disco::identities()
 {
 	Q_D(Disco);
 	return d->identities;
+}
+
+void Disco::addIdentity(const Identity &identity)
+{
+	d_func()->identities.append(identity);
 }
 
 const QSet<QString> &Disco::features() const

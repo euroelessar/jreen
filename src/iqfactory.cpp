@@ -108,4 +108,5 @@ void IqFactory::handleCharacterData(const QStringRef &name)
 {
 	Q_UNUSED(name);
 }
+
 }

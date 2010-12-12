@@ -92,6 +92,7 @@ public:
 
 	Disco(Client *client);
 	virtual ~Disco();
+	void addIdentity(const Identity &identity);
 	const IdentityList &identities() const;
 	IdentityList &identities();
 	const QSet<QString> &features() const;

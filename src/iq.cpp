@@ -38,33 +38,10 @@ IQ::IQ(IQPrivate &p) : Stanza(p)
 {
 }
 
-IQ::IQ(const QDomElement &node) : Stanza(node, new IQPrivate)
-{
-	Q_D(IQ);
-	if(node.nodeName() != QLatin1String("iq"))
-	{
-		d->subtype = Invalid;
-		return;
-	}
-	d->subtype = strToEnum<IQ::Type>(node.attribute(QLatin1String("type")),iq_types);
-}
-
 IQ::Type IQ::subtype() const
 {
 	Q_D(const IQ);
 	return d->subtype;
-}
-
-void IQ::writeXml(QXmlStreamWriter *writer) const
-{
-	Q_D(const IQ);
-	writer->writeStartElement(QLatin1String("iq"));
-	d->setAttributes(writer);
-	if (d->subtype != Invalid) {
-		writer->writeAttribute(QLatin1String("type"), enumToStr(d->subtype,iq_types));
-		d->addExtensions(writer);
-	}
-	writer->writeEndElement();
 }
 
 void IQ::accept() const

@@ -42,11 +42,9 @@ public:
 	};
 	IQ(Type type, const JID& to, const QString& id = QString());
 	IQ(IQPrivate &p);
-	IQ(const QDomElement &node);
 	inline IQ &operator =(const IQ &stanza)
 		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }
 	Type subtype() const;
-	void writeXml(QXmlStreamWriter *writer) const;
 	void accept() const;
 	bool accepted() const;
 };

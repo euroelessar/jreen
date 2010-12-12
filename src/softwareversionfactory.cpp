@@ -82,7 +82,8 @@ void SoftwareVersionFactory::handleCharacterData(const QStringRef &text)
 void SoftwareVersionFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	SoftwareVersion *softwareVersion = se_cast<SoftwareVersion*>(extension);
-	writer->writeStartElement(NS_SOFTWAREVERSION,QLatin1String("query"));
+	writer->writeStartElement(QLatin1String("query"));
+	writer->writeDefaultNamespace(NS_SOFTWAREVERSION);
 	writer->writeTextElement(QLatin1String("name"),softwareVersion->name());
 	writer->writeTextElement(QLatin1String("version"),softwareVersion->version());
 	writer->writeTextElement(QLatin1String("os"),softwareVersion->os());

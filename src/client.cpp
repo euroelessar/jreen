@@ -343,6 +343,7 @@ void Client::handleIQ(const IQ &iq)
 {
 	//handle XMPP::ping
 	if(iq.containsExtension<Ping>()) {
+		iq.accept();
 		IQ pong(IQ::Result,iq.from(),iq.id());
 		send(pong); //FIXME remove warning
 	}
