@@ -39,6 +39,7 @@ class AbstractRosterPrivate
 {
 public:
 	Client *client;
+	QHash<QString,IQ> iqHash;
 };
 
 class AbstractRosterQuery : public StanzaExtension

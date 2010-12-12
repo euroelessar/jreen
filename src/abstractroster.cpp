@@ -205,6 +205,7 @@ void AbstractRoster::add(const JID &jid, const QString &name, const QStringList 
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), AddRosterItem);
+	d->iqHash.insert(iq.id(),iq);
 }
 
 void AbstractRoster::remove(const JID &jid)
@@ -218,6 +219,7 @@ void AbstractRoster::remove(const JID &jid)
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RemoveRosterItem);
+	d->iqHash.insert(iq.id(),iq);
 }
 
 QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
@@ -257,6 +259,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 
 void AbstractRoster::handleIQ(const IQ &iq, int context)
 {
+	Q_D(AbstractRoster);
 	switch(context)
 	{
 	case LoadRoster:
@@ -268,8 +271,18 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 			iq.accept();
 		}
 		break;
+	case AddRosterItem:
 	case RemoveRosterItem: {
-		qDebug() << "remove handled";
+		IQ request = d->iqHash.take(iq.id());
+		Q_ASSERT(request.subtype() != IQ::Invalid);
+		if(iq.subtype() == IQ::Error)
+			return;
+		handleIQ(request);
+		iq.accept();
+		break;
+	}
+	case SyncContext: {
+		//IMPLEMENTME
 		break;
 	}
 	}

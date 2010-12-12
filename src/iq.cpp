@@ -34,6 +34,12 @@ IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 	d->id = id;
 }
 
+IQ::IQ() : Stanza(*new IQPrivate)
+{
+	Q_D(IQ);
+	d->subtype = IQ::Invalid;
+}
+
 IQ::IQ(IQPrivate &p) : Stanza(p)
 {
 }

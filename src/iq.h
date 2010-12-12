@@ -41,6 +41,7 @@ public:
 		Invalid                     /**< The stanza is invalid */
 	};
 	IQ(Type type, const JID& to, const QString& id = QString());
+	IQ();
 	IQ(IQPrivate &p);
 	inline IQ &operator =(const IQ &stanza)
 		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }
