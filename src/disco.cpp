@@ -262,7 +262,7 @@ void Disco::setSoftwareVersion(const QString &name, const QString &version, cons
 	d->os = os;
 	QSharedPointer<DataForm> form(new DataForm(DataForm::Submit,QString()));
 	DataFormFieldList fields;
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("FORM_TYPE"), ConstString::xmlns_softwareinfo, QString(), DataFormField::Hidden)));
+	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("FORM_TYPE"),QLatin1String("urn:xmpp:dataforms:softwareinfo"), QString(), DataFormField::Hidden)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("ip_version"), QStringList()<< QLatin1String("ipv4") << QLatin1String("ipv6"), QString(), DataFormField::None)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("os"), os, QString(), DataFormField::None)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("software"), name, QString(), DataFormField::None)));

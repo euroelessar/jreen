@@ -24,9 +24,8 @@ namespace jreen
 // XEP-0221
 // http://xmpp.org/extensions/xep-0221.html
 class MultimediaDataPrivate;
-class JREEN_EXPORT MultimediaData : public StanzaExtension
+class JREEN_EXPORT MultimediaData
 {
-	J_EXTENSION(jreen::MultimediaData,"")
 public:
 	enum Type
 	{

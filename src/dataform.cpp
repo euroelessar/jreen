@@ -143,30 +143,6 @@ void DataFormField::setDesc(const QString &desc)
 	d_func()->desc = desc;
 }
 
-J_STRING(field)
-J_STRING(option)
-J_STRING(label)
-J_STRING(desc)
-J_STRING(required)
-
-static const QStringList dataformfield_types = QStringList()
-<< QLatin1String("boolean") << QLatin1String("fixed")
-<< QLatin1String("hidden") << QLatin1String("jid-multi")
-<< QLatin1String("jid-single") << QLatin1String("list-multi")
-<< QLatin1String("list-single") << QLatin1String("text-multi")
-<< QLatin1String("text-private") << QLatin1String("text-single")
-<< QString();
-
-static const QStringList dataform_types = QStringList()
-<< QLatin1String("form") << QLatin1String("submit")
-<< QLatin1String("cancel") << QLatin1String("result");
-
-static inline DataFormField::Type getDataFormFieldType(const QString &type)
-{
-	int t = dataformfield_types.indexOf(type);
-	return t < 0 ? DataFormField::Invalid : static_cast<DataFormField::Type>(t);
-}
-
 DataForm::DataForm(Type type, const QString &title)
 	:	m_title(title),m_form_type(type)
 {

@@ -21,8 +21,6 @@
 namespace jreen
 {
 
-J_STRING(MessageSession)
-
 static int message_filter_count = 0;
 
 MessageFilterMeta::MessageFilterMeta() : type(message_filter_count++)
@@ -32,7 +30,7 @@ MessageFilterMeta::MessageFilterMeta() : type(message_filter_count++)
 MessageSession::MessageSession(MessageSessionManager *manager, const JID &jid, bool ignore_thread, const QString &thread)
 		: QObject(manager), m_manager(manager), m_ignore_thread(ignore_thread), m_want_upgrade(false), m_jid(jid)
 {
-	setObjectName(MessageSession_str);
+	setObjectName(QLatin1String("MessageSession"));
 	if(manager)
 		manager->registerMessageSession(this);
 	m_thread = thread;

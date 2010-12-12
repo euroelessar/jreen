@@ -41,6 +41,7 @@
 #include "pingfactory_p.h"
 #include "vcardupdatefactory_p.h"
 #include "ping.h"
+#include "privatexml_p.h"
 
 namespace jreen
 {
@@ -107,6 +108,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new VCardFactory);
 	client->registerStanzaExtension(new PingFactory);
 	client->registerStanzaExtension(new VCardUpdateFactory);
+	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);

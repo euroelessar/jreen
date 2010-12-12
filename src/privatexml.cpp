@@ -14,14 +14,84 @@
 *****************************************************************************/
 
 #include "privatexml_p.h"
+#include <QXmlStreamWriter>
+#define NS_PRIVATE_XML QLatin1String("jabber:iq:private")
 
 namespace jreen
 {
 
+PrivateXml::QueryFactory::QueryFactory()
+{
+
+}
+
+PrivateXml::QueryFactory::~QueryFactory()
+{
+
+}
+
+QStringList PrivateXml::QueryFactory::features() const
+{
+	return QStringList(NS_PRIVATE_XML);
+}
+
+bool PrivateXml::QueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
+										const QXmlStreamAttributes &attributes)
+{
+	Q_UNUSED(attributes);
+	return name == QLatin1String("query") && uri == NS_PRIVATE_XML;
+}
+
+void PrivateXml::QueryFactory::handleStartElement(const QStringRef &name,
+												  const QStringRef &uri,
+												  const QXmlStreamAttributes &attributes)
+{
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	Q_UNUSED(attributes);
+	m_depth++;
+}
+
+void PrivateXml::QueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+{
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	m_depth--;
+}
+
+void PrivateXml::QueryFactory::handleCharacterData(const QStringRef &text)
+{
+	if(m_depth == 2) {
+		QDomDocument doc;
+		doc.setContent(text.toString());
+		m_xml = doc.firstChildElement();
+	}
+}
+
+void PrivateXml::QueryFactory::serialize(StanzaExtension *extension,
+										 QXmlStreamWriter *writer)
+{
+	PrivateXml::Query *query = se_cast<PrivateXml::Query*>(extension);
+	writer->writeStartElement(QLatin1String("query"));
+	writer->writeDefaultNamespace(NS_PRIVATE_XML);
+
+	writer->writeStartElement(query->name());
+	writer->writeDefaultNamespace(query->namespaceURI());
+	writer->writeEndElement();
+
+	writer->writeEndElement();
+}
+
+StanzaExtension::Ptr PrivateXml::QueryFactory::createExtension()
+{
+	return StanzaExtension::Ptr(new PrivateXml::Query(m_xml));
+}
+
 PrivateXml::PrivateXml(Client *client) : QObject(client), d_ptr(new PrivateXmlPrivate)
 {
 	Q_D(PrivateXml);
-	d->client = client;	
+	d->client = client;
+	d->client->registerStanzaExtension(new PrivateXml::QueryFactory);
 }
 
 PrivateXml::~PrivateXml()
@@ -69,4 +139,4 @@ void PrivateXml::handleIQ(const IQ &iq, int context)
 	delete track;
 }
 
-}
+} //namespace jreen

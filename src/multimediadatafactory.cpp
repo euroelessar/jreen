@@ -74,20 +74,18 @@ void MultimediaDataFactory::handleCharacterData(const QStringRef &text)
 		m_currentDataItem.insert("uri",text.toString());
 }
 
-void MultimediaDataFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MultimediaDataFactory::serialize(const MultimediaData &media, QXmlStreamWriter *writer)
 {
-	MultimediaData *media = se_cast<MultimediaData*>(extension);
-
 	writer->writeStartElement(QLatin1String("media"));
 	writer->writeDefaultNamespace(NS_MULTIMEDIA_DATA);
 
-	QVariantMap attributes = media->attributes();
+	QVariantMap attributes = media.attributes();
 	QVariantMap::const_iterator it = attributes.constBegin();
 	while(it != attributes.constEnd()) {
 		writer->writeAttribute(it.key(),it.value().toString());
 		it++;
 	}
-	foreach(QVariant item,media->data()) {
+	foreach(QVariant item,media.data()) {
 		QVariantMap map = item.toMap();
 		writer->writeStartElement(QLatin1String("uri"));
 		writer->writeAttribute(QLatin1String("type"),map.value("type").toString());
@@ -97,9 +95,9 @@ void MultimediaDataFactory::serialize(StanzaExtension *extension, QXmlStreamWrit
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MultimediaDataFactory::createExtension()
+MultimediaData MultimediaDataFactory::create()
 {
-	return StanzaExtension::Ptr(new MultimediaData(m_type,m_data,m_attributes));
+	return MultimediaData(m_type,m_data,m_attributes);
 }
 
 } // namespace jreen

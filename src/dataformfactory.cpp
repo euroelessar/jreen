@@ -16,7 +16,7 @@
 #include "dataformfactory_p.h"
 #include "jstrings.h"
 #include <QXmlStreamWriter>
-#include "vcardfactory_p.h" //temporary
+#include "multimediadatafactory_p.h"
 #define NS_DATAFORM QLatin1String("jabber:x:data")
 
 namespace jreen {
@@ -199,8 +199,9 @@ public:
 	}
 	DataFormFieldPointer create()
 	{
+		DataFormField *field = new DataFormField(m_var,m_values,m_label,m_type);
 		clear();
-		return DataFormFieldPointer(new DataFormField(m_var,m_values,m_label,m_type));
+		return DataFormFieldPointer(field);
 	}
 private:
 	enum State {
@@ -225,6 +226,7 @@ private:
 	DataFormOptionList m_options;
 	bool m_required;
 	DataFormOptionParser m_optionParser;
+	MultimediaDataFactory m_multimediaDataFactory;
 };
 
 enum DataFormState { AtTitle, AtInstruction, AtField };
@@ -342,9 +344,9 @@ void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 StanzaExtension::Ptr DataFormFactory::createExtension()
 {
 	Q_D(DataFormFactory);
-	d->clear();
 	DataForm *form = new DataForm(d->formType,d->title);
 	form->setFields(d->fields);
+	d->clear();
 	return StanzaExtension::Ptr(form);
 }
 
