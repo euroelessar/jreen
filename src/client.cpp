@@ -125,6 +125,7 @@ Client::Client(const JID &jid, const QString &password, int port)
 	impl->server = jid.domain();
 	impl->password = password;
 	impl->server_port = port;
+	impl->presence.setFrom(impl->jid);
 }
 
 Client::Client()
@@ -147,6 +148,7 @@ void Client::setJID(const JID &jid)
 {
 	impl->jid = jid;
 	impl->server = jid.domain();
+	impl->presence.setFrom(jid);
 }
 
 void Client::setPassword(const QString &password)

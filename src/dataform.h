@@ -33,13 +33,6 @@ struct JREEN_EXPORT DataFormOption
 	QString value;
 };
 
-class MultimediaDataPrivate;
-class JREEN_EXPORT MultimediaData
-{
-public:
-
-};
-
 typedef QSharedPointer<DataFormOption> DataFormOptionPointer;
 typedef QList<DataFormOptionPointer> DataFormOptionList;
 
