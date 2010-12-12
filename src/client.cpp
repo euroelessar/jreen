@@ -291,10 +291,8 @@ void Client::connectToServer()
 
 void Client::disconnectFromServer(bool force)
 {
-	if(impl->conn && impl->conn->isOpen())
-	{
-		impl->presence.setSubtype(Presence::Unavailable);
-		setPresence();
+	if(impl->conn && impl->conn->isOpen()) {
+		impl->writer->writeEndElement();
 		if(force)
 			impl->conn->close();
 	}

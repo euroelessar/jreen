@@ -37,14 +37,6 @@ Stanza &Stanza::operator =(const Stanza &stanza)
 	return *this;
 }
 
-Stanza::Stanza(const QDomElement &node, StanzaPrivate *sp) : d_ptr(sp)
-{
-	d_ptr->node = node;
-	d_ptr->from = node.attribute(QLatin1String("from"));
-	d_ptr->to = node.attribute(QLatin1String("to"));
-	d_ptr->id = node.attribute(QLatin1String("id"));
-}
-
 Stanza::Stanza(StanzaPrivate &sp)
 {
 	d_ptr = &sp;

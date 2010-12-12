@@ -19,9 +19,17 @@
 #include "iq.h"
 #include "jid.h"
 #include <QXmlStreamWriter>
+#include <QDebug>
 
 namespace jreen
 {
+
+static const char *subscription_types[] = {"from",
+										   "to",
+										   "both",
+										   "remove",
+										   "none"
+										  };
 
 AbstractRosterQueryFactory::AbstractRosterQueryFactory(AbstractRoster *roster)
 {
@@ -54,16 +62,7 @@ void AbstractRosterQueryFactory::handleStartElement(const QStringRef &name, cons
 		m_jid = JID(attributes.value(QLatin1String("jid")).toString()).bare();
 		m_name = attributes.value(QLatin1String("name")).toString();
 		QStringRef s10n = attributes.value(QLatin1String("subscription"));
-		if (s10n == QLatin1String("to"))
-			m_subscription = AbstractRosterItem::To;
-		else if (s10n == QLatin1String("from"))
-			m_subscription = AbstractRosterItem::From;
-		else if (s10n == QLatin1String("both"))
-			m_subscription = AbstractRosterItem::Both;
-		else if (s10n == QLatin1String("remove"))
-			m_subscription = AbstractRosterItem::Remove;
-		else
-			m_subscription = AbstractRosterItem::None;
+		m_subscription = strToEnum<AbstractRosterItem::SubscriptionType>(s10n,subscription_types);
 		m_groups.clear();
 	} else if (m_depth == 3 && m_state == AtItem && name == QLatin1String("group")) {
 		m_state = AtGroup;
@@ -106,10 +105,12 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
 	if (m_items.isEmpty())
 		writer->writeAttribute(QLatin1String("ver"), QLatin1String(""));
-	foreach (const AbstractRosterItem::Ptr &item, m_items) {
+	foreach (const AbstractRosterItem::Ptr &item, query->items()) {
 		writer->writeStartElement(QLatin1String("item"));
-		writer->writeAttribute(QLatin1String("name"), item->name());
+		if(!item->name().isEmpty())
+			writer->writeAttribute(QLatin1String("name"), item->name());
 		writer->writeAttribute(QLatin1String("jid"), item->jid());
+		writer->writeAttribute(QLatin1String("subscription"),enumToStr(item->subscriptionType(),subscription_types));
 		foreach (const QString &group, item->groups())
 			writer->writeTextElement(QLatin1String("group"), group);
 		writer->writeEndElement();
@@ -203,7 +204,7 @@ void AbstractRoster::add(const JID &jid, const QString &name, const QStringList 
 	p->groups = groups;
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
-	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), AddRosterItem);
 }
 
 void AbstractRoster::remove(const JID &jid)
@@ -213,9 +214,10 @@ void AbstractRoster::remove(const JID &jid)
 	Q_D(AbstractRoster);
 	QSharedPointer<AbstractRosterItem> item(createItem());
 	item->d_ptr->jid = jid;
+	item->d_ptr->subscription = AbstractRosterItem::Remove;
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
-	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), AddRosterItem);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RemoveRosterItem);
 }
 
 QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
@@ -233,6 +235,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	const AbstractRosterQuery *roster = iq.findExtension<AbstractRosterQuery>().data();
 	if(!roster)
 		return;
+	iq.accept();
 	foreach(const QSharedPointer<AbstractRosterItem> &item, roster->items()) {
 		if(item->subscriptionType() == AbstractRosterItem::Remove) {
 			m_items.remove(item->jid());
@@ -262,10 +265,13 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 		if (AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>()) {
 			m_items.clear();
 			onLoaded(roster->items());
+			iq.accept();
 		}
 		break;
-	default:
+	case RemoveRosterItem: {
+		qDebug() << "remove handled";
 		break;
+	}
 	}
 }
 

@@ -68,7 +68,6 @@ public:
 	JID from;
 	JID to;
 	QString id;
-	QDomElement node;
 	StanzaExtensionList extensions;
 };
 

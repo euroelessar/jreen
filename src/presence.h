@@ -35,7 +35,7 @@ public:
   */
 	enum Type
 	{
-		Invalid		= 0,	/**< Invalid type */
+		Invalid		= -1,	/**< Invalid type */
 		Unavailable = 0,	/**< The entity is offline. */
 		Available,			/**< The entity is online. */
 		Subscribe,			/**< Subscribe request. */
