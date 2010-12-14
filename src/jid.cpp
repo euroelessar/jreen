@@ -26,7 +26,6 @@ class JIDData : public QSharedData
 public:
 	JIDData()
 	{
-		ref = 1;
 		valid = false;
 	}
 	JIDData(const JIDData &other) :
@@ -42,16 +41,16 @@ public:
 
 	void setBare() {
 		if(!node.isEmpty())
-			bare = node + QLatin1Char('@');
+			this->bare = node + QLatin1Char('@');
 		else
-			bare.clear();
-		bare += domain;
+			this->bare.clear();
+		this->bare += domain;
 	}
 
 	void setFull() {
-		full = bare;
+		this->full = bare;
 		if(!resource.isEmpty())
-			full += QLatin1Char('/') + resource;
+			this->full += QLatin1Char('/') + resource;
 	}
 
 	QString domain;

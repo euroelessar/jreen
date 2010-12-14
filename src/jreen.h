@@ -115,6 +115,7 @@ namespace jreen
 	public:
 		virtual void serialize(T *obj, QXmlStreamWriter *writer) = 0;
 	};
+
 }
 
 #endif // JREEN_H

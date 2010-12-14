@@ -20,12 +20,6 @@
 namespace jreen
 {
 
-static const char *iq_types[] = {"get",
-								 "set",
-								 "result",
-								 "error"
-								};
-
 IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 {
 	Q_D(IQ);

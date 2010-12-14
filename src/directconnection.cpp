@@ -43,18 +43,15 @@ DirectConnection::~DirectConnection()
 bool DirectConnection::open()
 {
 	Q_D(DirectConnection);
-	if(d->socket_state != QAbstractSocket::UnconnectedState)
-	{
-		if(d->socket_state == QAbstractSocket::ListeningState)
-		{
+	if(d->socket_state != QAbstractSocket::UnconnectedState) {
+		if(d->socket_state == QAbstractSocket::ListeningState) {
 			d->socket_state = QAbstractSocket::ConnectedState;
 			QIODevice::open(ReadWrite);
 			emit stateChanged(static_cast<SocketState>(d->socket_state));
 		}
 		return true;
 	}
-	if(d->do_lookup)
-	{
+	if(d->do_lookup) {
 		d->doLookup();
 	}
 	else

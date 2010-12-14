@@ -93,7 +93,7 @@ class ClientPrivate : public QObject
 {
 	Q_OBJECT
 public:
-	static ClientPrivate *get(Client *client) { return client->impl; }
+	static ClientPrivate *get(Client *client) { return client->d_func(); }
 	
 	ClientPrivate(const Presence &p, Client *parent)
 		: QObject(parent), presence(p), current_id(0), conn(0)

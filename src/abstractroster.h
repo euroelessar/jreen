@@ -147,7 +147,8 @@ public:
 		To,
 		Both,
 		Remove,
-		None
+		None,
+		Invalid = -1
 	};
 	typedef QSharedPointer<AbstractRosterItem> Ptr;
 	AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data = 0);

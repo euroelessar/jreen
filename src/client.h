@@ -37,14 +37,13 @@ class Disco;
 class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
-	Q_DISABLE_COPY(Client);
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
-	ClientPrivate *impl;
+	Q_DECLARE_PRIVATE(Client);
 	friend class ClientPrivate;
 public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
-	~Client();
+	virtual ~Client();
 	const JID &jid();
 	void setJID(const JID &jid);
 	void setPassword(const QString &password);
@@ -85,6 +84,8 @@ protected:
 	virtual void handlePresence(const Presence &presence);
 	virtual void handleIQ(const IQ &iq);
 	virtual void handleMessage(const Message &message);
+private:
+	QScopedPointer<ClientPrivate> d_ptr;
 };
 
 }

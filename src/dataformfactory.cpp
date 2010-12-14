@@ -16,25 +16,13 @@
 #include "dataformfactory_p.h"
 #include "jstrings.h"
 #include <QXmlStreamWriter>
+#include "util.h"
 #include "multimediadatafactory_p.h"
 #define NS_DATAFORM QLatin1String("jabber:x:data")
 
 namespace jreen {
 
-inline void writeAttribute(QXmlStreamWriter *writer,
-						   const QLatin1String &name,const QString &value)
-{
-	if(!value.isEmpty())
-		writer->writeAttribute(name,value);
-}
-inline void writeTextElement(QXmlStreamWriter *writer,
-							 const QLatin1String &name,const QString &value)
-{
-	if(!value.isEmpty())
-		writer->writeTextElement(name,value);
-}
-
-
+using namespace Util;
 
 class DataFormOptionParser : XmlStreamFactory<DataFormOption>
 {
