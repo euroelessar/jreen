@@ -250,8 +250,8 @@ void AbstractRoster::handleIQ(const IQ &iq)
 		else {
 			QHash<QString, QSharedPointer<AbstractRosterItem> >::iterator item_iter = m_items.find(iq.from().bare());
 			if(item_iter == m_items.end()) {
-				m_items.insert(item_iter.value()->jid(), item_iter.value());
-				onItemAdded(item_iter.value());
+				m_items.insert(item->jid(), item);
+				onItemAdded(item);
 			}
 			else {
 				item_iter.value()->setData(item);
