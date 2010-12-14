@@ -308,6 +308,7 @@ void Client::disconnectFromServer(bool force)
 {
 	Q_D(Client);
 	if(d->conn && d->conn->isOpen()) {
+		setPresence(Presence::Unavailable);
 		d->writer->writeEndElement();
 		if(force)
 			d->conn->close();

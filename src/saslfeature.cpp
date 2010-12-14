@@ -123,7 +123,9 @@ bool SASLFeature::activate()
 	m_sasl->setUsername(m_info->jid().node());
 	m_sasl->setRealm(m_info->jid().domain());
 	m_sasl->setAuthzid(m_info->jid().bare());
+	m_sasl->setConstraints(QCA::SASL::AllowPlain);
 	m_sasl->startClient("xmpp", QUrl::toAce(m_info->jid().domain()), m_mechs, QCA::SASL::AllowClientSendFirst);
+	qDebug() << m_sasl->mechanismList();
 	return true;
 }
 

@@ -92,7 +92,7 @@ void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	Disco::Info *info = se_cast<Disco::Info*>(extension);
 	if (!info)
 		return;
-	writer->writeStartElement(QLatin1String("info"));
+	writer->writeStartElement(QLatin1String("query"));
 	writer->writeAttribute(QLatin1String("node"),info->node());
 	writer->writeDefaultNamespace(NS_DISCO_INFO);
 	foreach (const Disco::Identity &identity, info->identities()) {
