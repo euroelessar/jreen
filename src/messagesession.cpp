@@ -23,6 +23,31 @@ namespace jreen
 
 static int message_filter_count = 0;
 
+
+MessageFilter::MessageFilter(MessageSession *session) : m_session(session)
+{
+
+}
+
+void MessageFilter::send(const Message &message)
+{
+	if(m_session)
+		m_session->send(message);
+}
+
+void MessageSession::filter(Message &message)
+{
+	foreach(MessageFilter *filter, m_filters)
+		filter->filter(message);
+}
+
+void MessageSession::decorate(Message &message)
+{
+	foreach(MessageFilter *filter, m_filters)
+		filter->decorate(message);
+}
+
+
 MessageFilterMeta::MessageFilterMeta() : type(message_filter_count++)
 {
 }
@@ -53,11 +78,18 @@ void MessageSession::resetResource()
 
 void MessageSession::sendMessage(const QString &body, const QString &subject)
 {
+	Message message(Message::Chat, m_jid, body, subject);
+	sendMessage(message);
+}
+
+void MessageSession::sendMessage(const Message &message)
+{
 	if(!m_manager)
 		return;
-	Message message(Message::Chat, m_jid, body, subject, m_thread);
-	decorate(message);
-	m_manager->send(message);
+	Message msg = message;
+	msg.setThread(m_thread);
+	decorate(msg);
+	m_manager->send(msg);
 }
 
 void MessageSession::handleMessage(const Message &message_orig)
@@ -198,4 +230,11 @@ void MessageSessionManager::handleMessage(const Message &message)
 	session->handleMessage(message);
 }
 
+
+void MessageSession::registerMessageFilter(MessageFilter *filter)
+{
+	m_filters.insert(filter->filterType(),filter);
 }
+
+}
+

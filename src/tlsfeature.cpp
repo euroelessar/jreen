@@ -3,6 +3,7 @@
  *  This file is part of qutIM
  *
  *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -16,6 +17,7 @@
 
 #include "tlsfeature.h"
 #include "tlsdatastream.h"
+#include "client.h"
 #include <QXmlStreamWriter>
 #include <QDebug>
 
@@ -41,6 +43,14 @@ TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 		qWarning("Jreen: TLS is not provided by QCA");
 		m_tls = 0;
 	}
+}
+
+void TLSFeature::setStreamInfo(StreamInfo *info)
+{
+	if(m_client)
+		m_client->disconnect(this);
+	StreamFeature::setStreamInfo(info);
+	connect(m_client,SIGNAL(disconnected()),SLOT(onDisconnected()));
 }
 
 void TLSFeature::reset()
@@ -148,10 +158,22 @@ void TLSFeature::onHandshaken()
 void TLSFeature::onClosed()
 {
 	qDebug() << Q_FUNC_INFO;
+	reset();
 }
 
 void TLSFeature::onError()
 {
 	qDebug() << Q_FUNC_INFO;
+	reset();
+	m_client->disconnectFromServer(true);
 }
+
+void TLSFeature::onDisconnected()
+{
+	qDebug() << Q_FUNC_INFO;
+	m_tls->close();
 }
+
+} //namespace jreen
+
+

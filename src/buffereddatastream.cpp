@@ -61,7 +61,7 @@ bool BufferedDataStream::open(OpenMode mode)
 
 void BufferedDataStream::close()
 {
-	return QIODevice::close();
+	flush();
 }
 
 void BufferedDataStream::timerEvent(QTimerEvent *event)
