@@ -57,7 +57,6 @@ public:
 protected:
 	void send(const Message &message);
 private:
-	Q_DISABLE_COPY(MessageFilter)
 	MessageSession *m_session;
 };
 
@@ -105,12 +104,14 @@ public:
 	virtual void handleMessageSession(MessageSession *session) = 0;
 };
 
+class MessageSessionManagerPrivate;
 class JREEN_EXPORT MessageSessionManager : public QObject
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(MessageSessionManager)
 public:
 	MessageSessionManager(Client *client);
-	virtual ~MessageSessionManager() {}
+	virtual ~MessageSessionManager();
 	void send(const Message &message);
 	void registerMessageSession(MessageSession *session);
 	void registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types);//WTF? O_o
@@ -122,10 +123,7 @@ signals:
 	void newMessage(const jreen::Message &message);
 	void sessionCreated(jreen::MessageSession *session);
 private:
-	Client *m_client;
-	QMultiHash<QString, QPointer<MessageSession> > m_full_sessions;
-	QMultiHash<QString, QPointer<MessageSession> > m_bare_sessions;
-	QVector<MessageSessionHandler *> m_session_handlers;
+	QScopedPointer<MessageSessionManagerPrivate> d_ptr;
 	friend class MessageSession;
 };
 
