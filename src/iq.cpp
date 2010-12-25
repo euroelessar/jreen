@@ -20,11 +20,6 @@
 namespace jreen
 {
 
-J_STRING(iq)
-
-static const QStringList iq_types = QStringList() << QLatin1String("get") << QLatin1String("set")
-									<< QLatin1String("result") << QLatin1String("error");
-
 IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 {
 	Q_D(IQ);
@@ -33,38 +28,20 @@ IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 	d->id = id;
 }
 
-IQ::IQ(IQPrivate &p) : Stanza(p)
-{
-}
-
-IQ::IQ(const QDomElement &node) : Stanza(node, new IQPrivate)
+IQ::IQ() : Stanza(*new IQPrivate)
 {
 	Q_D(IQ);
-	if(node.nodeName() != iq_str)
-	{
-		d->subtype = Invalid;
-		return;
-	}
-	int type = iq_types.indexOf(node.attribute(QLatin1String("type")));
-	d->subtype = type < 0 ? Invalid : static_cast<Type>(type);
+	d->subtype = IQ::Invalid;
+}
+
+IQ::IQ(IQPrivate &p) : Stanza(p)
+{
 }
 
 IQ::Type IQ::subtype() const
 {
 	Q_D(const IQ);
 	return d->subtype;
-}
-
-void IQ::writeXml(QXmlStreamWriter *writer) const
-{
-	Q_D(const IQ);
-	writer->writeStartElement(iq_str);
-	d->setAttributes(writer);
-	if (d->subtype != Invalid) {
-		writer->writeAttribute(QLatin1String("type"), iq_types.at(d->subtype));
-		d->addExtensions(writer);
-	}
-	writer->writeEndElement();
 }
 
 void IQ::accept() const

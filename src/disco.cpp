@@ -19,6 +19,8 @@
 #include "dataform.h"
 #include "softwareversion.h"
 #include <QXmlStreamWriter>
+#define NS_DISCO_INFO QLatin1String("http://jabber.org/protocol/disco#info")
+#define NS_DISCO_ITEMS QLatin1String("http://jabber.org/protocol/disco#items")
 
 namespace jreen
 {
@@ -32,13 +34,13 @@ DiscoInfoFactory::DiscoInfoFactory()
 
 QStringList DiscoInfoFactory::features() const
 {
-	return QStringList(QLatin1String("http://jabber.org/protocol/disco#info"));
+	return QStringList(NS_DISCO_INFO);
 }
 
 bool DiscoInfoFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return name == QLatin1String("query") && uri == QLatin1String("http://jabber.org/protocol/disco#info");
+	return name == QLatin1String("query") && uri == NS_DISCO_INFO;
 }
 
 void DiscoInfoFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -90,8 +92,9 @@ void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	Disco::Info *info = se_cast<Disco::Info*>(extension);
 	if (!info)
 		return;
-	writer->writeStartElement(QLatin1String("info"));
-	writer->writeDefaultNamespace(QLatin1String("http://jabber.org/protocol/disco#info"));
+	writer->writeStartElement(QLatin1String("query"));
+	writer->writeAttribute(QLatin1String("node"),info->node());
+	writer->writeDefaultNamespace(NS_DISCO_INFO);
 	foreach (const Disco::Identity &identity, info->identities()) {
 		writer->writeEmptyElement(QLatin1String("identity"));
 		writer->writeAttribute(QLatin1String("category"), identity.category);
@@ -118,89 +121,71 @@ StanzaExtension::Ptr DiscoInfoFactory::createExtension()
 												m_features, dataForm.staticCast<DataForm>()));
 }
 
-Disco::Info::Info(const QDomElement &node) : m_form(0)
+DiscoItemsFactory::DiscoItemsFactory()
 {
-	//	if(node.isNull())
-	//		return;
-	//	m_node = node.attribute(ConstString::node);
-	//	forelements(const QDomElement &elem, node)
-	//	{
-	//		QString name = elem.nodeName();
-	//		if(name == QLatin1String("identity"))
-	//		{
-	//			m_identities.append(Disco::Identity(elem.attribute(QLatin1String("category")),
-	//												elem.attribute(ConstString::type),
-	//												elem.attribute(ConstString::name),
-	//												elem.attribute(ConstString::lang)));
-	//		}
-	//		else if(name == ConstString::feature)
-	//		{
-	//			QString var = elem.attribute(ConstString::var);
-	//			if(!var.isEmpty())
-	//				m_features.insert(var);
-	//		}
-	//		else if(!m_form && name == QLatin1String("x") && elem.namespaceURI() == ConstString::xmlns_data)
-	//		{
-	//			m_form = QSharedPointer<DataForm>(new DataForm(elem));
-	//		}
-	//	}
+
 }
 
-QDomElement Disco::Info::node(QDomDocument *document) const
+QStringList DiscoItemsFactory::features() const
 {
-	QDomElement node;/* = createElement(document, ConstString::query);
- node.setAttribute(ConstString::xmlns, ConstString::xmlns_disco_info);
- foreach(const Disco::Identity &identity, m_identities)
- {
-  QDomElement id = createElement(document, QLatin1String("identity"));
-  if(!identity.lang.isEmpty())
-   id.setAttribute(ConstString::lang, identity.lang);
-  id.setAttribute(QLatin1String("category"), identity.category);
-  id.setAttribute(ConstString::type, identity.type);
-  if(!identity.name.isEmpty())
-   id.setAttribute(ConstString::name, identity.name);
-  node.appendChild(id);
- }
- foreach(const QString &feature, m_features)
- {
-  QDomElement ftr = createElement(document, ConstString::feature);
-  ftr.setAttribute(ConstString::var, feature);
-  node.appendChild(ftr);
- }
- if(m_form)
-  node.appendChild(m_form->node(document));*/
-	return node;
+	return QStringList(NS_DISCO_ITEMS);
 }
 
-Disco::Items::Items(const QDomElement &node)
+bool DiscoItemsFactory::canParse(const QStringRef &name, const QStringRef &uri,
+			  const QXmlStreamAttributes &attributes)
 {
-	//	m_node = node.attribute(ConstString::node);
-	//	forelements(const QDomElement &elem, node)
-	//	{
-	//		QString name = elem.nodeName();
-	//		if(name == QLatin1String("item"))
-	//		{
-	//			m_items.append(Disco::Item(elem.attribute(ConstString::jid),
-	//									   elem.attribute(ConstString::node),
-	//									   elem.attribute(ConstString::name)));
-	//		}
-	//	}
+	Q_UNUSED(attributes);
+	return name == QLatin1String("query") && uri == NS_DISCO_ITEMS;
 }
 
-QDomElement Disco::Items::node(QDomDocument *document) const
+void DiscoItemsFactory::handleStartElement(const QStringRef &name,
+						const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	QDomElement node; /*= createElement(document, ConstString::query);
- node.setAttribute(ConstString::xmlns, ConstString::xmlns_disco_items);
- node.setAttribute(ConstString::node, m_node);
- foreach(const Disco::Item &item, m_items)
- {
-  QDomElement elem = createElement(document, QLatin1String("item"));
-  elem.setAttribute(ConstString::jid, item.jid);
-  elem.setAttribute(ConstString::node, item.node);
-  elem.setAttribute(ConstString::name, item.name);
-  node.appendChild(elem);
- }*/
-	return node;
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	m_depth++;
+	if(m_depth == 1) {
+		m_items.clear();
+		m_node = attributes.value("node").toString();
+	} else if(m_depth == 2) {
+		Disco::Item item;
+		item.jid = attributes.value("jid").toString();
+		item.name = attributes.value("name").toString();
+		item.node = attributes.value("node").toString();
+		m_items.append(item);
+	}
+}
+
+void DiscoItemsFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+{
+	Q_UNUSED(name);
+	Q_UNUSED(uri);
+	m_depth--;
+}
+
+void DiscoItemsFactory::handleCharacterData(const QStringRef &text)
+{
+	Q_UNUSED(text);
+}
+
+void DiscoItemsFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+{
+	Disco::Items *items = se_cast<Disco::Items*>(extension);
+	writer->writeStartElement(QLatin1String("query"));
+	writer->writeDefaultNamespace(NS_DISCO_ITEMS);
+	writer->writeAttribute(QLatin1String("node"),items->node());
+	foreach(const Disco::Item &item,items->items()) {
+		writer->writeEmptyElement(QLatin1String("item"));
+		writer->writeAttribute(QLatin1String("jid"),item.jid);
+		writer->writeAttribute(QLatin1String("node"),item.node);
+		writer->writeAttribute(QLatin1String("name"),item.name);
+	}
+	writer->writeEndElement();
+}
+
+StanzaExtension::Ptr DiscoItemsFactory::createExtension()
+{
+	return StanzaExtension::Ptr(new Disco::Items(m_node,m_items));
 }
 
 Disco::Disco(Client *client) : d_ptr(new DiscoPrivate)
@@ -224,6 +209,11 @@ Disco::IdentityList &Disco::identities()
 {
 	Q_D(Disco);
 	return d->identities;
+}
+
+void Disco::addIdentity(const Identity &identity)
+{
+	d_func()->identities.append(identity);
 }
 
 const QSet<QString> &Disco::features() const
@@ -278,7 +268,7 @@ void Disco::setSoftwareVersion(const QString &name, const QString &version, cons
 	d->os = os;
 	QSharedPointer<DataForm> form(new DataForm(DataForm::Submit,QString()));
 	DataFormFieldList fields;
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("FORM_TYPE"), ConstString::xmlns_softwareinfo, QString(), DataFormField::Hidden)));
+	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("FORM_TYPE"),QLatin1String("urn:xmpp:dataforms:softwareinfo"), QString(), DataFormField::Hidden)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("ip_version"), QStringList()<< QLatin1String("ipv4") << QLatin1String("ipv6"), QString(), DataFormField::None)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("os"), os, QString(), DataFormField::None)));
 	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("software"), name, QString(), DataFormField::None)));

@@ -36,8 +36,10 @@ struct JREEN_EXPORT DataFormOption
 typedef QSharedPointer<DataFormOption> DataFormOptionPointer;
 typedef QList<DataFormOptionPointer> DataFormOptionList;
 
+class DataFormFieldPrivate;
 class JREEN_EXPORT DataFormField
 {
+	Q_DECLARE_PRIVATE(DataFormField)
 public:
 	enum Type
 	{
@@ -81,37 +83,28 @@ public:
 		None,
 		Invalid
 	};
-	inline DataFormField(Type type = TextSingle) : m_type(type), m_required(false) {}
-	inline DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle)
-		: m_type(type), m_var(var), m_label(label), m_values(QStringList()<<value), m_required(false) {}
-	inline DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle)
-		: m_type(type), m_var(var), m_label(label), m_values(values), m_required(false) {}
-	inline DataFormField(const QString &var, const QString &label, Type type)
-		: m_type(type), m_var(var), m_label(label), m_required(false) {}
-	//	inline ~DataFormField() {}
-	inline Type type() const { return m_type; }
-	inline bool isValid() const { return m_type != Invalid; }
-	inline const DataFormOptionList &options() const { return m_options; }
-	inline DataFormOptionList &options() { return m_options; }
-	inline void setOptions(const DataFormOptionList &options) { m_options = options; }
-	inline QStringList &values() { return m_values; }
-	inline const QStringList &values() const { return m_values; }
-	inline void setValues(const QStringList &values) { m_values = values; }
-	inline const QString &var() const { return m_var; }
-	inline void setVar(const QString &var) { m_var = var; }
-	inline bool required() const { return m_required; }
-	inline void setRequired(bool required) { m_required = required; }
-	inline const QString &desc() const { return m_desc; }
-	inline void setDesc(const QString &desc) { m_desc = desc; }																																																			  																																																																																																													QDomElement node(QDomDocument *doc) const;
-protected:
-	DataFormField(const QDomElement &node);
-	Type m_type;
-	QString m_var;
-	QString m_desc;
-	QString m_label;
-	QStringList m_values;
-	bool m_required;
-	DataFormOptionList m_options;
+	DataFormField(Type type = TextSingle);
+	DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle);
+	DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle);
+	DataFormField(const QString &var, const QString &label, Type type);
+	~DataFormField();
+	Type type() const;
+	bool isValid() const;
+	DataFormOptionList options() const;
+	DataFormOptionList &options();
+	void setOptions(const DataFormOptionList &options);
+	QStringList &values();
+	QString value() const;
+	QStringList values() const;
+	void setValues(const QStringList &values);
+	QString var() const;
+	void setVar(const QString &var);
+	bool required() const;
+	void setRequired(bool required);
+	QString desc() const;
+	void setDesc(const QString &desc);
+private:
+	QScopedPointer<DataFormFieldPrivate> d_ptr;
 };
 
 //class DataFormFieldBoolean : public DataFormField
@@ -200,8 +193,9 @@ class JREEN_EXPORT DataFormFieldContainer
 public:
 	const DataFormFieldList &fields() const { return m_fields_list; }
 	DataFormFieldList &fields() { return m_fields_list; }
+	DataFormFieldPointer field(const QString &var) const;
 	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
-	inline void addField(DataFormFieldPointer field) {m_fields_list.append(field);}
+	inline void appendField(DataFormFieldPointer field) {m_fields_list.append(field);}
 	//	inline void appendField(DataFormField *field);
 	//	inline QSharedPointer<DataFormField> appendField(DataFormField *field);
 	//	QSharedPointer<DataFormField> addField(DataFormField::Type,
@@ -238,7 +232,6 @@ public:
 	};
 	DataForm(Type type,const QString &title = QString());
 	const QString &title() { return m_title; }
-	QDomElement node(QDomDocument *document) const;
 private:
 	QString m_title;
 	DataFormReportedList m_reported;

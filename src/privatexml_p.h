@@ -38,8 +38,9 @@ signals:
 	void newResult(const QDomElement &node, PrivateXml::Result result, QSharedPointer<Error> error);
 };
 
-struct PrivateXmlPrivate
+class PrivateXmlPrivate
 {
+public:
 	QHash<QString, PrivateXmlTrack *> tracks;
 	Client *client;
 };
@@ -48,28 +49,45 @@ class PrivateXml::Query : public StanzaExtension
 {
 	J_EXTENSION(jreen::PrivateXml::Query,"/iq/query[@xmlns='jabber:iq:private']");
 public:
-	Query(const QDomElement &node = QDomElement())
+	enum Type {
+		Get,
+		Result
+	};
+	Query(const QDomElement &xml)
 	{
-		if(node.nodeName() == QLatin1String("query") && node.namespaceURI() == QLatin1String("jabber:iq:private"))
-			m_node = node.firstChildElement();
-		else
-			m_node = node;
+		m_type = Result;
+		m_node = xml;
 	}
 	Query(const QString &name, const QString &xmlns)
 	{
-//		m_node = DomCreater::instance().createElement(name);
-//		m_node.setAttribute(ConstString::xmlns, xmlns);
+		m_type = Get;
+		QDomDocument doc;
+		m_node = doc.createElementNS(xmlns,name);
 	}
-	QDomElement node(QDomDocument *document) const
-	{
-		QDomElement node;/* = createElement(document, ConstString::query);
-		node.setAttribute(ConstString::xmlns, ConstString::xmlns_private_xml);
-		node.appendChild(m_node);*/
-		return node;
-	}
-	inline const QDomElement &xml() { return m_node; }
+	QDomElement xml() const { return m_node; }
+	QString name() const { return m_node.nodeName(); }
+	QString namespaceURI() const { return m_node.namespaceURI(); }
+	Type type() const { return m_type; }
 private:
 	QDomElement m_node;
+	Type m_type;
+};
+
+class PrivateXml::QueryFactory : public StanzaExtensionFactory<PrivateXml::Query>
+{
+public:
+	QueryFactory();
+	virtual ~QueryFactory();
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
+private:
+	int m_depth;
+	QDomElement m_xml;
 };
 
 enum PrivateXmlContext

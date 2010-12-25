@@ -48,14 +48,13 @@ public:
 class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
-	Q_DISABLE_COPY(Client);
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
-	ClientPrivate *impl;
+	Q_DECLARE_PRIVATE(Client);
 	friend class ClientPrivate;
 public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
-	~Client();
+	virtual ~Client();
 	const JID &jid();
 	void setJID(const JID &jid);
 	void setPassword(const QString &password);
@@ -72,7 +71,6 @@ public:
 	void send(const Stanza &stanza);
 	void send(const IQ &iq, QObject *handler, const char *member, int context);
 	void setConnectionImpl(Connection *conn);
-	void registerStanzaExtension(StanzaExtension *stanza_extension);
 	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:
@@ -98,6 +96,8 @@ protected:
 	virtual void handlePresence(const Presence &presence);
 	virtual void handleIQ(const IQ &iq);
 	virtual void handleMessage(const Message &message);
+private:
+	QScopedPointer<ClientPrivate> d_ptr;
 };
 
 }

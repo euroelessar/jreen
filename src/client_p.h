@@ -24,7 +24,6 @@
 #include "parser.h"
 #include "directconnection.h"
 #include "streamfeature.h"
-#include "xquerycontainer_p.h"
 #include "iq.h"
 #include "message.h"
 #include "presence.h"
@@ -37,6 +36,7 @@
 #include "buffereddatastream.h"
 #include <QTimer>
 #include <QTextCodec>
+#include "stanza_p.h"
 
 namespace jreen
 {
@@ -93,7 +93,7 @@ class ClientPrivate : public QObject
 {
 	Q_OBJECT
 public:
-	static ClientPrivate *get(Client *client) { return client->impl; }
+	static ClientPrivate *get(Client *client) { return client->d_func(); }
 	
 	ClientPrivate(const Presence &p, Client *parent)
 		: QObject(parent), presence(p), current_id(0), conn(0)
@@ -145,79 +145,9 @@ public:
 	//	void registerMessageHandler(const JID &jid, QObject *handler, const char *member);
 
 	void handleStanza(const Stanza::Ptr &stanza);
-	void elementParsed(const QDomElement &)
-	{
-		//		elementToString(node);
-		//		static const QString stream_features_str(QLatin1String("stream:features"));
-		//		if(current_stream_feature)
-		//		{
-		//			processStreamFeature(current_stream_feature, node);
-		//		}
-		//		else if(node.nodeName() == stream_features_str && node.namespaceURI() == ConstString::ns_etherx)
-		//		{
-		//			StreamFeature *stream = security_layers.findStreamFeature(node);
-		//			if(!stream)
-		//				stream = compressions.findStreamFeature(node);
-		//			if(!stream)
-		//				stream = sasl_auths.findStreamFeature(node);
-		//			if(!stream)
-		//				stream = compressions.findStreamFeature(node);
-		//			if(!stream)
-		//				stream = non_sasl_auths.findStreamFeature(node);
-		//			if(stream)
-		//				processStreamFeature(stream, node);
-		//			return;
-		//		}
-
-		//		if(node.nodeName() == QLatin1String("iq"))
-		//		{
-		//			IQ stanza(node);
-		//			xquery.parseElement(stanza, node);
-		//			IQTrack *track = iq_tracks.take(stanza.id());
-		//			if(track)
-		//			{
-		//				emit track->newIQ(stanza, track->context);
-		//				delete track;
-		//			}
-		//			else
-		//			{
-		//				client->handleIQ(stanza);
-		//				if(!stanza.accepted() && (stanza.subtype() == IQ::Set || stanza.subtype() == IQ::Get))
-		//				{
-		//					IQ error(IQ::Error, stanza.from(), stanza.id());
-		//					error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
-		//					send(error);
-		//				}
-		//			}
-		//		}
-		//		else if(node.nodeName() == QLatin1String("message"))
-		//		{
-		//			Message stanza(node);
-		//			xquery.parseElement(stanza, node);
-		//			client->handleMessage(stanza);
-		//		}
-		//		else if(node.nodeName() == QLatin1String("presence"))
-		//		{
-		//			QString type = node.attribute(ConstString::type);
-		//			if(type == QLatin1String("subscribe")  || type == QLatin1String("unsubscribe")
-		//				|| type == QLatin1String("subscribed") || type == QLatin1String("unsubscribed"))
-		//			{
-		//				Subscription stanza(node);
-		//				xquery.parseElement(stanza, node);
-		//				client->handleSubscription(stanza);
-		//			}
-		//			else
-		//			{
-		//				Presence stanza(node);
-		//				xquery.parseElement(stanza, node);
-		//				client->handlePresence(stanza);
-		//			}
-		//		}
-	}
 	StreamInfo *stream_info;
 	Client *client;
 	JID jid;
-	XQueryContainer xquery;
 	QString sid;
 	QString server;
 	QString password;
@@ -229,11 +159,7 @@ public:
 	Connection *conn;
 	DataStream *device;
 	bool authorized;
-	XQueryContainer security_layers;
-	XQueryContainer compressions;
-	XQueryContainer sasl_auths;
 	// And again compression
-	XQueryContainer non_sasl_auths;
 	Disco *disco;
 	StreamFeature *current_stream_feature;
 	QHash<QString,IQTrack *> iq_tracks;
@@ -296,10 +222,6 @@ public slots:
 	{
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamEnd();
-		non_sasl_auths.resetFeatures();
-		sasl_auths.resetFeatures();
-		compressions.resetFeatures();
-		security_layers.resetFeatures();
 		authorized = false;
 		current_stream_feature = 0;
 		presence.setSubtype(Presence::Unavailable);

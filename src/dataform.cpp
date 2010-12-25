@@ -21,57 +21,126 @@
 namespace jreen
 {
 
-J_STRING(field)
-J_STRING(option)
-J_STRING(label)
-J_STRING(desc)
-J_STRING(required)
-
-static const QStringList dataformfield_types = QStringList()
-											   << QLatin1String("boolean") << QLatin1String("fixed")
-											   << QLatin1String("hidden") << QLatin1String("jid-multi")
-											   << QLatin1String("jid-single") << QLatin1String("list-multi")
-											   << QLatin1String("list-single") << QLatin1String("text-multi")
-											   << QLatin1String("text-private") << QLatin1String("text-single")
-											   << QString();
-
-static const QStringList dataform_types = QStringList()
-										  << QLatin1String("form") << QLatin1String("submit")
-										  << QLatin1String("cancel") << QLatin1String("result");
-
-static inline DataFormField::Type getDataFormFieldType(const QString &type)
+class DataFormFieldPrivate
 {
-	int t = dataformfield_types.indexOf(type);
-	return t < 0 ? DataFormField::Invalid : static_cast<DataFormField::Type>(t);
+public:
+	DataFormField::Type type;
+	QString var;
+	QString desc;
+	QString label;
+	QStringList values;
+	bool required;
+	DataFormOptionList options;
+};
+
+DataFormField::DataFormField(const QString &var, const QString &label, Type type) :
+	d_ptr(new DataFormFieldPrivate)
+{
+	Q_D(DataFormField);
+	d->var = var;
+	d->label = label;
+	d->type = type;
 }
 
-DataFormField::DataFormField(const QDomElement &node)
+DataFormField::DataFormField(const QString &var, const QString &value,
+							 const QString &label, Type type) :
+	d_ptr(new DataFormFieldPrivate)
 {
+	Q_D(DataFormField);
+	d->var = var;
+	d->label = label;
+	d->type = type;
+	d->values = QStringList(value);
 }
 
-QDomElement DataFormField::node(QDomDocument *doc) const
+DataFormField::DataFormField(const QString &var, const QStringList &values,
+							 const QString &label, Type type) :
+	d_ptr(new DataFormFieldPrivate)
 {
-	if(m_type == Invalid)
-		return QDomElement();
-	QDomElement node;/* = createElement(doc, field_str);
-	if(m_type != None)
-		node.setAttribute(ConstString::type, dataformfield_types.at(m_type));
-	node.setAttribute(ConstString::var, m_var);
-	if(!m_label.isEmpty())
-		node.setAttribute(label_str, m_label);
-	if(m_required)
-		createElement(node, required_str);
-	if(!m_desc.isEmpty())
-		createElement(node, desc_str, m_desc);
-	foreach(const QString &value, m_values)
-		createElement(node, ConstString::value, value);
-	foreach(const QSharedPointer<DataFormOption> &option, m_options)
-	{
-		QDomElement opt = createElement(node, option_str);
-		opt.setAttribute(label_str, option->label);
-		createElement(opt, ConstString::value, option->value);
-	}*/
-	return node;
+	Q_D(DataFormField);
+	d->var = var;
+	d->label = label;
+	d->type = type;
+	d->values = values;
+}
+
+DataFormField::DataFormField(Type type) :
+	d_ptr(new DataFormFieldPrivate)
+{
+	Q_D(DataFormField);
+	d->type = type;
+}
+
+DataFormField::Type DataFormField::type() const
+{
+	return d_func()->type;
+}
+
+bool DataFormField::isValid() const
+{
+	return d_func()->type != DataFormField::Invalid;
+}
+
+DataFormOptionList DataFormField::options() const
+{
+	return d_func()->options;
+}
+
+DataFormOptionList &DataFormField::options()
+{
+	return d_func()->options;
+}
+void DataFormField::setOptions(const DataFormOptionList &options)
+{
+	d_func()->options = options;
+}
+QStringList &DataFormField::values()
+{
+	return d_func()->values;
+}
+
+QString DataFormField::value() const
+{
+	Q_D(const DataFormField);
+	return d->values.size() ? d->values.first() : QString();
+}
+QStringList DataFormField::values() const
+{
+	return d_func()->values;
+}
+
+void DataFormField::setValues(const QStringList &values)
+{
+	d_func()->values = values;
+}
+
+QString DataFormField::var() const
+{
+	return d_func()->var;
+}
+
+void DataFormField::setVar(const QString &var)
+{
+	d_func()->var = var;
+}
+
+bool DataFormField::required() const
+{
+	return d_func()->required;
+}
+
+void DataFormField::setRequired(bool required)
+{
+	d_func()->required = required;
+}
+
+QString DataFormField::desc() const
+{
+	return d_func()->desc;
+}
+void DataFormField::setDesc(const QString &desc)
+{
+	d_func()->desc = desc;
 }
 
 DataForm::DataForm(Type type, const QString &title)
@@ -80,16 +149,13 @@ DataForm::DataForm(Type type, const QString &title)
 	m_form_type = Result;
 }
 
-QDomElement DataForm::node(QDomDocument *document) const
+DataFormFieldPointer DataFormFieldContainer::field(const QString &var) const
 {
-	if(m_form_type == Invalid)
-		return QDomElement();
-	QDomElement node;/* = createElement(document, QLatin1String("x"));
-	node.setAttribute(ConstString::type, dataform_types.at(m_form_type));
-	node.setAttribute(ConstString::xmlns, ConstString::xmlns_data);
-	foreach(const QSharedPointer<DataFormField> &field, m_fields_list)
-		node.appendChild(field->node(document));*/
-	return node;
+	foreach(DataFormFieldPointer field,fields()) {
+		if (field->var() == var)
+			return field;
+	}
+	return DataFormFieldPointer(0);
 }
 
 }

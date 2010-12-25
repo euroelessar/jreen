@@ -3,10 +3,13 @@
 #include <QStringList>
 #include <QXmlStreamWriter>
 #include "jstrings.h"
+#include "util.h"
 
 #define NS_SOFTWAREVERSION QLatin1String("jabber:iq:version")
 
 namespace jreen {
+
+using namespace Util;
 
 static const char *query_strings[] = {"name","version","os"};
 
@@ -82,10 +85,11 @@ void SoftwareVersionFactory::handleCharacterData(const QStringRef &text)
 void SoftwareVersionFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	SoftwareVersion *softwareVersion = se_cast<SoftwareVersion*>(extension);
-	writer->writeStartElement(NS_SOFTWAREVERSION,QLatin1String("query"));
-	writer->writeTextElement(QLatin1String("name"),softwareVersion->name());
-	writer->writeTextElement(QLatin1String("version"),softwareVersion->version());
-	writer->writeTextElement(QLatin1String("os"),softwareVersion->os());
+	writer->writeStartElement(QLatin1String("query"));
+	writer->writeDefaultNamespace(NS_SOFTWAREVERSION);
+	writeTextElement(writer,QLatin1String("name"),softwareVersion->name());
+	writeTextElement(writer,QLatin1String("version"),softwareVersion->version());
+	writeTextElement(writer,QLatin1String("os"),softwareVersion->os());
 	writer->writeEndElement();
 }
 

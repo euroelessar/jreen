@@ -72,22 +72,53 @@ public:
 		ClassConfidential	/**< Confidential. */
 	};
 
+	class NamePrivate;
+	class PhotoPrivate;
+	class AddressPrivate;
+	class TelephonePrivate;
+	class EMailPrivate;
+
 	class Name
 	{
 	public:
-		QString family;         /**< Family name. */
-		QString given;          /**< Given name. */
-		QString middle;         /**< Middle name. */
-		QString prefix;         /**< Name prefix. */
-		QString suffix;         /**< Name suffix. */
+		Name();
+		Name(const Name &o);
+		Name(NamePrivate &p);
+		~Name();
+		Name &operator =(const Name &o);
+		
+		QString family() const;
+		void setFamily(const QString &);
+		QString given() const;
+		void setGiven(const QString &);
+		QString middle() const;
+		void setMiddle(const QString &);
+		QString prefix() const;
+		void setPrefix(const QString &);
+		QString suffix() const;
+		void setSuffix(const QString &);
+	private:
+		QSharedDataPointer<NamePrivate> d_ptr;
+		friend class NamePrivate;
 	};
+
 	class Photo
 	{
 	public:
-		QString extval;         /**< The photo is not stored inside the VCard. This is a hint (URL?)
-		  * where to look for it. */
-		QString binval;         /**< This is the photo (base64). */
-		QString type;           /**< This is a hint at the mime-type. May be forged! */
+		Photo();
+		Photo(const Photo &o);
+		Photo(PhotoPrivate &p);
+		~Photo();
+		Photo &operator =(const Photo &o);
+		
+		QString external() const;
+		void setExternal(const QString &);
+		void setData(const QByteArray &data, const QString &mimeType = QString());
+		QByteArray data() const;
+		QString mimeType() const;
+	private:
+		QSharedDataPointer<PhotoPrivate> d_ptr;
+		friend class PhotoPrivate;
 	};
 	
 	class Telephone
@@ -110,9 +141,22 @@ public:
 			Preferred = 0x1000
 		};
 		typedef QFlags<Type> Types;
-		int types;
-		QString number;
+		
+		Telephone();
+		Telephone(const Telephone &o);
+		Telephone(TelephonePrivate &p);
+		~Telephone();
+		Telephone &operator =(const Telephone &o);
+
+		bool testType(Type t) const;
+		void setType(Type t, bool value);
+		QString number() const;
+		void setNumber(const QString &);
+	private:
+		QSharedDataPointer<TelephonePrivate> d_ptr;
+		friend class TelephonePrivate;
 	};
+
 	class EMail
 	{
 	public:
@@ -124,9 +168,20 @@ public:
 			Preferred = 0x08,
 			X400      = 0x10,
 		};
-		int types;
-		QString userId;
+		EMail();
+		EMail(const EMail &o);
+		EMail(EMailPrivate &p);
+		~EMail();
+		EMail &operator =(const EMail &o);
+		bool testType(Type t) const;
+		const QString &userId() const;
+		void setUserId(const QString &userId);
+		void setType(Type t, bool value);
+	private:
+		QSharedDataPointer<EMailPrivate> d_ptr;
+		friend class EMailPrivate;
 	};
+
 	class Address
 	{
 	public:
@@ -140,14 +195,14 @@ public:
 			International = 0x20,
 			Preferred     = 0x40
 		};
-		int types;
-		QString pobox;
-		QString extendedAddress;
-		QString street;
-		QString locality;
-		QString region;
-		QString pcode;
-		QString country;
+		Address();
+		Address(const Address &o);
+		Address(AddressPrivate &p);
+		~Address();
+		Address &operator =(const Address &o);
+	private:
+		QSharedDataPointer<AddressPrivate> d_ptr;
+		friend class AddressPrivate;
 	};
 
 	VCard(const QString &formattedName = QString(), Classification classification = ClassNone);
@@ -157,42 +212,42 @@ public:
 	* Sets the formatted name.
 	* @param name The formatted name.
 	*/
-	void setFormattedName(const QString &fn) {m_formattedName = fn;}
+	inline void setFormattedName(const QString &fn);
 	/**
 	* Returns the formatted name.
 	* @return The formatted name.
 	*/
-	const QString &formattedName() const {return m_formattedName;}
-	inline void setName(const QString& family, const QString& given,
-						const QString& middle = QString(),
-						const QString& prefix = QString(),
-						const QString& suffix = QString());
-	void setName(const Name &name) {m_name = name;}
+	const QString &formattedName() const;
+	void setName(const QString& family, const QString& given,
+				 const QString& middle = QString(),
+				 const QString& prefix = QString(),
+				 const QString& suffix = QString());
+	void setName(const Name &name);
 	/**
    * Returns a full name.
    * @return A full name.
    */
-	const Name& name() const {return m_name;}
+	const Name& name() const;
 	/**
 	* Sets a nickname.
 	* @param nickname The nickname.
 	*/
-	void setNickname(const QString& nickname) {m_nickname = nickname;}
+	void setNickname(const QString& nickname);
 	/**
 	* Returns the nickname.
 	* @return The nickname.
 	*/
-	const QString& nickname() const {return m_nickname;}
+	QString nickname() const;
 	/**
 	* Sets the birthday.
 	* @param bday The birthday
 	*/
-	void setBday(const QDateTime& bday) {m_bday = bday;}
+	void setBday(const QDateTime& bday);
 	/**
 	* Returns the birthday.
 	* @return The birthday.
 	*/
-	const QDateTime& bday() const {return m_bday;}
+	QDateTime bday() const;
 	/**
 	* Sets a URI to a photo.
 	* @param extval The URI to the photo.
@@ -209,22 +264,55 @@ public:
 	* Returns photo information.
 	* @return Info about the photo.
 	*/
-	const Photo& photo() const {return m_photo;}
+	Photo photo() const;
 	/**
-	* Sets a URI to a organization logo.
-	* @param extval The URI to the logo.
+	* Returns the url.
+	* @return The url.
 	*/
-	//I want to be able to do so
-	//Nickname *nickname() const {return findExtension<Nickname>().data();}
-	//Photo *photo() const {return findExtension<Photo>().data();}
+	const QUrl& url() const;
+	/**
+	* Returns a list of telephone numbers.
+	* @return A list of telephone numbers.
+	*/
+	QList<VCard::Telephone> telephones() const;
+	/**
+	* Adds a telephone number.
+	* @param number The telephone number.
+	* @param type Bit-wise ORed @ref AddressType.
+	*/
+	void addTelephone(const Telephone &telephone);
+	/**
+	* Adds an email address.
+	* @param userid The email address.
+	* @param type Bit-wise ORed @ref AddressType.
+	*/
+	void addEmail(const EMail &email);
+	/**
+	* Returns a list of email addresses.
+	* @return A list of email addresses.
+	*/
+	QList<VCard::EMail> emails() const;
+	/**
+	* Returns a list of addresses.
+	* @return A list of addresses.
+	*/
+	//AddressList& addresses() const;
+	///**
+	//* Adds an address.
+	//*/
+	//void addAdress(const Address &adr);
+	/**
+	* Sets a "free-form descriptive text".
+	* @param desc The descriptive text.
+	*/
+	void setDesc(const QString& desc);
+	/**
+	* Returns the "free-form descriptive text".
+	* @return The descriptive text.
+	*/
+	const QString& desc() const;
 private:
 	QScopedPointer<VCardPrivate> d_ptr;
-	QString m_formattedName;
-	QString m_nickname;
-	Classification m_classification;
-	Name m_name;
-	QDateTime m_bday;
-	Photo m_photo;
 };
 
 } // namespace jreen

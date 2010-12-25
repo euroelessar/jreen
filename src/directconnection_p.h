@@ -71,16 +71,13 @@ public slots:
 	{
 		const QJDns::Response *response = SJDns::instance().servers(host_name);
 		dns_records.clear();
-		if(!response || !response->answerRecords.size())
-		{
+		if(!response || !response->answerRecords.size()) {
 			Record record;
 			record.host = host_name;
 			dns_records << record;
 		}
-		else
-		{
-			foreach(const QJDns::Record &qrecord, response->answerRecords)
-			{
+		else {
+			foreach(const QJDns::Record &qrecord, response->answerRecords)	{
 				Record record;
 				record.host = QString::fromUtf8(qrecord.name);
 				record.port = qrecord.port;
@@ -98,12 +95,20 @@ public slots:
 		qDebug() << ss;
 		if(socket_state == ss)
 			return;
-		if(ss == QAbstractSocket::ConnectedState)
-		{
+
+		switch(ss) {
+		case QAbstractSocket::ConnectedState: {
 			socket_state = QAbstractSocket::ListeningState;
 			parent->open();
 			return;
 		}
+		case QAbstractSocket::ClosingState:
+			parent->close();
+			break;
+		default:
+			break;
+		}
+
 		socket_state = ss;
 		emit parent->stateChanged(static_cast<Connection::SocketState>(ss));
 	}

@@ -40,6 +40,8 @@
 #include "vcardfactory_p.h"
 #include "pingfactory_p.h"
 #include "vcardupdatefactory_p.h"
+#include "ping.h"
+#include "privatexml_p.h"
 
 namespace jreen
 {
@@ -97,7 +99,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(capsFactory);
 	client->registerStanzaExtension(new DataFormFactory);
 	client->registerStanzaExtension(new DiscoInfoFactory);
-	client->registerStanzaExtension(new Disco::Items);
+	client->registerStanzaExtension(new DiscoItemsFactory);
 	client->registerStanzaExtension(new ChatStateFactory);
 	client->registerStanzaExtension(new DelayedDeliveryFactory);
 	client->registerStanzaExtension(new ReceiptFactory);
@@ -106,6 +108,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new VCardFactory);
 	client->registerStanzaExtension(new PingFactory);
 	client->registerStanzaExtension(new VCardUpdateFactory);
+	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
 	client->registerStreamFeature(new SASLFeature);
@@ -117,50 +120,53 @@ void ClientPrivate::init()
 }
 
 Client::Client(const JID &jid, const QString &password, int port)
-	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
+	: d_ptr(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
-	impl->init();
-	impl->jid = jid;
-	impl->server = jid.domain();
-	impl->password = password;
-	impl->server_port = port;
+	Q_D(Client);
+	d->init();
+	d->jid = jid;
+	d->server = jid.domain();
+	d->password = password;
+	d->server_port = port;
+	d->presence.setFrom(d->jid);
 }
 
 Client::Client()
-	: impl(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
+	: d_ptr(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
-	impl->init();
+	d_func()->init();
 }
 
 Client::~Client()
 {
-	delete impl;
 }
 
 const JID &Client::jid()
 {
-	return impl->jid;
+	return d_func()->jid;
 }
 
 void Client::setJID(const JID &jid)
 {
-	impl->jid = jid;
-	impl->server = jid.domain();
+	Q_D(Client);
+	d->jid = jid;
+	d->server = jid.domain();
+	d->presence.setFrom(jid);
 }
 
 void Client::setPassword(const QString &password)
 {
-	impl->password = password;
+	d_func()->password = password;
 }
 
 void Client::setServer(const QString &server)
 {
-	impl->server = server;
+	d_func()->server = server;
 }
 
 void Client::setPort(int port)
 {
-	impl->server_port = port;
+	d_func()->server_port = port;
 }
 
 void Client::addXmlStreamHandler(XmlStreamHandler *handler)
@@ -170,81 +176,86 @@ void Client::addXmlStreamHandler(XmlStreamHandler *handler)
 
 QSet<QString> Client::serverFeatures() const
 {
-	return impl->serverFeatures;
+	return d_func()->serverFeatures;
 }
 
 void Client::setResource(const QString &resource)
 {
-	impl->jid.setResource(resource);
+	d_func()->jid.setResource(resource);
 }
 
 const QString &Client::server() const
 {
-	return impl->server;
+	return d_func()->server;
 }
 
 int Client::port() const
 {
-	return impl->server_port;
+	return d_func()->server_port;
 }
 
 const QString Client::getID()
 {
-	return QLatin1Literal("jreen:") % QString::number(qHash(this), 16) % QLatin1Char(':') % QString::number(impl->current_id++);
+	return QLatin1Literal("jreen:") % QString::number(qHash(this), 16) % QLatin1Char(':') % QString::number(d_func()->current_id++);
 }
 
 Presence &Client::presence()
 {
-	return impl->presence;
+	return d_func()->presence;
 }
 
 Disco *Client::disco()
 {
-	return impl->disco;
+	return d_func()->disco;
 }
 
 void Client::send(const Stanza &stanza)
 {
-	if(!impl->conn || !impl->conn->isOpen())
+	Q_D(Client);
+	if(!d->conn || !d->conn->isOpen())
 		return;
-	impl->send(stanza);
+	d->send(stanza);
 }
 
 void Client::send(const IQ &iq, QObject *handler, const char *member, int context)
 {
-	if(!impl->conn || !impl->conn->isOpen())
+	Q_D(Client);
+	if(!d->conn || !d->conn->isOpen())
 		return;
 	if (iq.id().isEmpty()) {
 		const StanzaPrivate *p = StanzaPrivate::get(iq);
 		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
-	qDebug() << iq.to();
+
+	if(iq.from().full().isEmpty()) {
+		const StanzaPrivate *p = StanzaPrivate::get(iq);
+		const_cast<StanzaPrivate*>(p)->from = d->jid;
+	}
+
+	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
 	QString id = iq.id();
-	impl->iq_tracks.insert(id, new IQTrack(handler, member, context));
-	impl->send(iq);
+	d->iq_tracks.insert(id, new IQTrack(handler, member, context));
+	d->send(iq);
 }
 
 void Client::setConnectionImpl(Connection *conn)
 {
-	delete impl->conn;
-	impl->conn = conn;
-	impl->device->setDevice(conn);
+	Q_D(Client);
+	delete d->conn;
+	d->conn = conn;
+	d->device->setDevice(conn);
 	//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
-	connect(conn, SIGNAL(connected()), impl, SLOT(connected()));
-	connect(conn, SIGNAL(disconnected()), impl, SLOT(disconnected()));
-}
-
-void Client::registerStanzaExtension(StanzaExtension *stanza_extension)
-{
-	impl->xquery.registerStanzaExtension(stanza_extension, impl->disco);
+	connect(conn, SIGNAL(connected()), d, SLOT(connected()));
+	connect(conn, SIGNAL(disconnected()),d, SLOT(disconnected()));
 }
 
 void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
 {
-	delete impl->factories.value(factory->extensionType(), 0);
-	impl->factories.insert(factory->extensionType(), factory);
+	Q_D(Client);
+	delete d->factories.value(factory->extensionType(), 0);
+	d->factories.insert(factory->extensionType(), factory);
 	foreach (const QString &feature, factory->features())
-		DiscoPrivate::get(impl->disco)->features << feature;
+		DiscoPrivate::get(d->disco)->features << feature;
 }
 
 inline bool featureLessThan(StreamFeature *a, StreamFeature *b)
@@ -254,54 +265,58 @@ inline bool featureLessThan(StreamFeature *a, StreamFeature *b)
 
 void Client::registerStreamFeature(StreamFeature *stream_feature)
 {
+	Q_D(Client);
 	if(!stream_feature)
 		return;
-	impl->features.insert(qLowerBound(impl->features.begin(), impl->features.end(),
+	d->features.insert(qLowerBound(d->features.begin(), d->features.end(),
 									  stream_feature, featureLessThan), stream_feature);
-	stream_feature->setStreamInfo(impl->stream_info);
+	stream_feature->setStreamInfo(d->stream_info);
 }
 
 void Client::whitespacePing(int period)
 {
-	impl->send(QLatin1String(" "));
-	if(!impl)
+	Q_D(Client);
+	d->send(QLatin1String(" "));
+	if(!d_ptr)
 		QTimer::singleShot(period, this, SLOT(whitespacePing()));
 }
 
 void Client::setPresence()
 {
-	send(impl->presence);
+	send(d_func()->presence);
 }
 
 void Client::setPresence(Presence::Type type, const QString &text, int priority)
 {
-	if(impl->presence.subtype() == type || type == Presence::Error || type == Presence::Invalid || type == Presence::Probe)
+	Q_D(Client);
+	if(d->presence.subtype() == type || type == Presence::Error || type == Presence::Invalid || type == Presence::Probe)
 		return;
-	impl->presence.setSubtype(type);
-	impl->presence.addStatus(text);
+	d->presence.setSubtype(type);
+	d->presence.addStatus(text);
 	if(priority > -129 && priority < 128)
-		impl->presence.setPriority(priority);
+		d->presence.setPriority(priority);
 	setPresence();
 }
 
 void Client::connectToServer()
 {
-	if(!impl->conn)
-		setConnectionImpl(new TcpConnection(impl->server, impl->server_port));
+	Q_D(Client);
+	if(!d->conn)
+		setConnectionImpl(new TcpConnection(d->server, d->server_port));
 
-	if(!impl->conn->isOpen())
-		impl->conn->open();
+	if(!d->conn->isOpen())
+		d->conn->open();
 
 }
 
 void Client::disconnectFromServer(bool force)
 {
-	if(impl->conn && impl->conn->isOpen())
-	{
-		impl->presence.setSubtype(Presence::Unavailable);
-		setPresence();
+	Q_D(Client);
+	if(d->conn && d->conn->isOpen()) {
+		setPresence(Presence::Unavailable);
+		d->writer->writeEndElement();
 		if(force)
-			impl->conn->close();
+			d->conn->close();
 	}
 }
 
@@ -318,9 +333,10 @@ void ClientPrivate::onIqReceived(const IQ &iq, int context)
 
 void Client::handleConnect()
 {
-	IQ iq(IQ::Get, impl->jid.domain());
+	Q_D(Client);
+	IQ iq(IQ::Get, d->jid.domain());
 	iq.addExtension(new Disco::Info);
-	send(iq, impl, SLOT(onIqReceived(jreen::IQ,int)), 0);
+	send(iq, d, SLOT(onIqReceived(jreen::IQ,int)), 0);
 	emit connected();
 }
 
@@ -346,6 +362,13 @@ void Client::handlePresence(const Presence &presence)
 
 void Client::handleIQ(const IQ &iq)
 {
+	//handle XMPP::ping
+	if(iq.containsExtension<Ping>()) {
+		iq.accept();
+		IQ pong(IQ::Result,iq.from(),iq.id());
+		pong.setFrom(d_func()->jid);
+		send(pong); //FIXME remove warning
+	}
 	emit newIQ(iq);
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
- *  softwareversion.h
+ *  multimediadata.h
  *
- *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -13,34 +13,37 @@
  ***************************************************************************
 *****************************************************************************/
 
-#ifndef SOFTWAREVERSION_H
-#define SOFTWAREVERSION_H
-
+#ifndef MULTIMEDIADATA_H
+#define MULTIMEDIADATA_H
+#include <QVariantMap>
 #include "stanzaextension.h"
 
 namespace jreen
 {
 
-/*
- * Implementation of XEP-0092
- * http://xmpp.org/extensions/xep-0092.html
- */
-
-class JREEN_EXPORT SoftwareVersion : public StanzaExtension
+// XEP-0221
+// http://xmpp.org/extensions/xep-0221.html
+class MultimediaDataPrivate;
+class JREEN_EXPORT MultimediaData
 {
-	J_EXTENSION(jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
 public:
-	SoftwareVersion() {}
-	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
-	inline const QString &name() const { return m_name; }
-	inline const QString &version() const { return m_version; }
-	inline const QString &os() const { return m_os; }
+	enum Type
+	{
+		Audio,
+		Image
+	};
+	MultimediaData(Type type,const QVariantList &data,const QVariantMap &attributes = QVariantMap());
+	MultimediaData(const MultimediaData &other);
+	~MultimediaData();
+	MultimediaData &operator =(const MultimediaData &o);
+	QVariantMap attributes() const;
+	QVariantList data() const;
+	void setData(const QVariantList &data);
+	void setAttributes(const QVariantMap &attributes);
 private:
-	QString m_name;
-	QString m_version;
-	QString m_os;
+	QSharedDataPointer<MultimediaDataPrivate> d_ptr;
+	friend class MultimediaDataPrivate;
 };
 
-}
-
-#endif // SOFTWAREVERSION_H
+} // namespace jreen
+#endif // MULTIMEDIADATA_H

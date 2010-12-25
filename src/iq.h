@@ -21,8 +21,7 @@
 namespace jreen
 {
 
-struct IQPrivate;
-
+class IQPrivate;
 class JREEN_EXPORT IQ : public Stanza
 {
 	Q_DECLARE_PRIVATE(IQ)
@@ -42,12 +41,11 @@ public:
 		Invalid                     /**< The stanza is invalid */
 	};
 	IQ(Type type, const JID& to, const QString& id = QString());
+	IQ();
 	IQ(IQPrivate &p);
-	IQ(const QDomElement &node);
 	inline IQ &operator =(const IQ &stanza)
 		{ return *static_cast<IQ *>(&Stanza::operator =(stanza)); }
 	Type subtype() const;
-	void writeXml(QXmlStreamWriter *writer) const;
 	void accept() const;
 	bool accepted() const;
 };

@@ -53,8 +53,7 @@ private:
 	{
 		J_EXTENSION(jreen::NonSaslAuth::Query,"/iq/query[@xmlns='jabber:iq:auth']")
 	public:
-		Query(const QDomElement &node = QDomElement());
-		QDomElement node(QDomDocument *document) const;
+		Query();
 		Query *instance(const JID &jid, const QString &password, const QString &sid) const;
 	private:
 		QString m_username;

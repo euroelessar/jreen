@@ -39,13 +39,14 @@ class AbstractRosterPrivate
 {
 public:
 	Client *client;
+	QHash<QString,IQ> iqHash;
 };
 
 class AbstractRosterQuery : public StanzaExtension
 {
 	J_EXTENSION(jreen::AbstractRosterQuery,"/iq/query[@xmlns='jabber:iq:roster']");
 public:
-	AbstractRosterQuery(const QString &ver = QString()) {}
+	AbstractRosterQuery(const QString &ver = QString()) : m_ver(ver) {}
 	AbstractRosterQuery(const QList<AbstractRosterItem::Ptr> &items) : m_items(items) {}
 	AbstractRosterQuery(const QSharedPointer<AbstractRosterItem> &item) { m_items << item; }
 	QList<QSharedPointer<AbstractRosterItem> > items() const { return m_items; }

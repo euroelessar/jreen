@@ -128,12 +128,21 @@ bool MoodFactory::canParse(const QStringRef &name, const QStringRef &uri,
 	return can;
 }
 
+//inline bool moodLessThen(const char *a, const QStringRef &b)
+//{
+//	return QLatin1String(a) < b;
+//}
+
 void MoodFactory::handleStartElement(const QStringRef &name, const QStringRef &,
 									 const QXmlStreamAttributes &)
 {
 	m_depth++;
-	if(m_depth == 1 && name != QLatin1String("text"))
+	if(m_depth == 1 && name != QLatin1String("text")) {
+//		int n = sizeof(mood_types)/sizeof(char*);
+//		const char *res = qLowerBound(mood_types, mood_types + n, name, moodLessThen);
+//		m_subtype = static_cast<Mood::Type>(res == mood_types + n ? -1 : (res - mood_types));
 		m_subtype = strToEnum<Mood::Type>(name,mood_types);
+	}
 }
 
 void MoodFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)

@@ -24,9 +24,11 @@ namespace jreen
 
 class Client;
 class IQ;
-struct PrivateXmlPrivate;
+class PrivateXmlPrivate;
 
 // XEP-0049
+//http://xmpp.org/extensions/xep-0049.html
+//TODO may be need to move to StreamWriter
 
 class PrivateXml : public QObject
 {
@@ -49,6 +51,7 @@ private slots:
 	void handleIQ(const IQ &iq, int context);
 private:
 	class Query;
+	class QueryFactory;
 	QScopedPointer<PrivateXmlPrivate> d_ptr;
 };
 

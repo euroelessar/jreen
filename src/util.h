@@ -18,6 +18,7 @@
 
 #include "jreen.h"
 #include <QDateTime>
+#include <QXmlStreamWriter>
 
 namespace jreen
 {
@@ -35,6 +36,20 @@ inline int log2(register uint n)
 	while(n > 1) { ++pos; n >>= 1; }
 	return (n == 0) ? (-1) : pos;
 }
+
+inline void writeAttribute(QXmlStreamWriter *writer,
+						   const QLatin1String &name,const QString &value)
+{
+	if(!value.isEmpty())
+		writer->writeAttribute(name,value);
+}
+inline void writeTextElement(QXmlStreamWriter *writer,
+							 const QLatin1String &name,const QString &value)
+{
+	if(!value.isEmpty())
+		writer->writeTextElement(name,value);
+}
+
 }
 
 }

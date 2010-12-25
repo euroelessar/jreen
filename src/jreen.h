@@ -51,8 +51,6 @@ private:
 	Class() {} \
 	virtual ~Class() {}
 
-# define J_STRING(text) static const QString text##_str(QLatin1String(#text));
-
 #define J_PURE_EXTENSION(Extension,XPath) \
 	public: \
 		inline static const StanzaExtensionMeta &meta() \
@@ -117,6 +115,7 @@ namespace jreen
 	public:
 		virtual void serialize(T *obj, QXmlStreamWriter *writer) = 0;
 	};
+
 }
 
 #endif // JREEN_H

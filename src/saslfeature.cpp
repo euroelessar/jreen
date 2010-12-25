@@ -118,12 +118,13 @@ bool SASLFeature::isActivatable()
 
 bool SASLFeature::activate()
 {
-	qDebug() << Q_FUNC_INFO << m_info->password();
 	m_sasl->setPassword(QCA::SecureArray(m_info->password().toUtf8()));
 	m_sasl->setUsername(m_info->jid().node());
 	m_sasl->setRealm(m_info->jid().domain());
 	m_sasl->setAuthzid(m_info->jid().bare());
+	m_sasl->setConstraints(QCA::SASL::AllowPlain);
 	m_sasl->startClient("xmpp", QUrl::toAce(m_info->jid().domain()), m_mechs, QCA::SASL::AllowClientSendFirst);
+	qDebug() << Q_FUNC_INFO << m_sasl->mechanismList();
 	return true;
 }
 

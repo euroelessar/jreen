@@ -39,7 +39,8 @@ void AbstractStructureParser::handleStartElement(const QStringRef &name, const Q
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
 	m_depth++;
-	m_current = 0;
+	m_currentString = 0;
+	m_currentArray = 0;
 	if (m_depth == 1) {
 		for (int i = 0; i < m_strings.size(); i++)
 			m_strings.at(i).second->clear();
@@ -47,7 +48,14 @@ void AbstractStructureParser::handleStartElement(const QStringRef &name, const Q
 		for (int i = 0; i < m_strings.size(); i++) {
 			const QPair<QLatin1String, QString*> &p = m_strings.at(i);
 			if (p.first == name) {
-				m_current = p.second;
+				m_currentString = p.second;
+				return;
+			}
+		}
+		for (int i = 0; i < m_byteArrays.size(); i++) {
+			const QPair<QLatin1String, QByteArray*> &p = m_byteArrays.at(i);
+			if (p.first == name) {
+				m_currentArray = p.second;
 				return;
 			}
 		}
@@ -68,13 +76,22 @@ void AbstractStructureParser::handleEndElement(const QStringRef &name, const QSt
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
 	m_depth--;
-	m_current = 0;
+	m_currentString = 0;
 }
 
 void AbstractStructureParser::handleCharacterData(const QStringRef &text)
 {
-	if (m_current)
-		*m_current = text.toString();
+	if (m_currentString) {
+		*m_currentString = text.toString();
+	} else if (m_currentArray) {
+		const QString str = QString::fromRawData(text.unicode(), text.size());
+		*m_currentArray = QByteArray::fromBase64(str.toLatin1());
+	}
+}
+
+void AbstractStructureParser::addByteArray(const QLatin1String &name, QByteArray *str)
+{
+	m_byteArrays.append(qMakePair(name, str));
 }
 
 void AbstractStructureParser::addString(const QLatin1String &name, QString *str)
@@ -101,6 +118,11 @@ void AbstractStructureParser::serialize(void *zero, void *data, QXmlStreamWriter
 		QString *str = reinterpret_cast<QString*>(reinterpret_cast<char*>(data) + offset);
 		hasAnyChild = !str->isEmpty();
 	}
+	for (int i = 0; !hasAnyChild && i < m_byteArrays.size(); i++) {
+		int offset = reinterpret_cast<char*>(m_byteArrays.at(i).second) - zeroc;
+		QByteArray *str = reinterpret_cast<QByteArray*>(reinterpret_cast<char*>(data) + offset);
+		hasAnyChild = !str->isEmpty();
+	}
 	for (int i = 0; !hasAnyChild && i < m_flags.size(); i++)
 		hasAnyChild = *m_flags.at(i).value;
 	if (!hasAnyChild)
@@ -111,6 +133,15 @@ void AbstractStructureParser::serialize(void *zero, void *data, QXmlStreamWriter
 		QString *str = reinterpret_cast<QString*>(reinterpret_cast<char*>(data) + offset);
 		if (!str->isEmpty())
 			writer->writeTextElement(m_strings.at(i).first, *str);
+	}
+	for (int i = 0; !hasAnyChild && i < m_byteArrays.size(); i++) {
+		int offset = reinterpret_cast<char*>(m_byteArrays.at(i).second) - zeroc;
+		QByteArray *str = reinterpret_cast<QByteArray*>(reinterpret_cast<char*>(data) + offset);
+		if (!str->isEmpty()) {
+			QByteArray data = str->toBase64();
+			QString encoded = QString::fromLatin1(data, data.size());
+			writer->writeTextElement(m_byteArrays.at(i).first, encoded);
+		}
 	}
 	for (int i = 0; i < m_flags.size(); i++) {
 		const FlagInfo &info = m_flags.at(i);
@@ -130,10 +161,10 @@ static const char* vcardNameTypes[] = {
 	"SUFFIX"
 };
 
-class VCardNameParser : public StructureParser<VCard::Name>
+class VCardNameParser : public StructurePrivateParser<VCard::NamePrivate, VCard::Name>
 {
 public:
-	VCardNameParser() : StructureParser<VCard::Name>(QLatin1String("NAME"))
+	VCardNameParser() : StructurePrivateParser<VCard::NamePrivate, VCard::Name>(QLatin1String("NAME"))
 	{
 		QString *strings[] = {
 			&m_data.family, &m_data.given, &m_data.middle,
@@ -145,21 +176,22 @@ public:
 };
 
 static const char* vcardPhotoTypes[] = {
-	"EXTVAL",
 	"BINVAL",
+	"EXTVAL",
 	"TYPE"
 };
 
-class VCardPhotoParser : public StructureParser<VCard::Photo>
+class VCardPhotoParser : public StructurePrivateParser<VCard::PhotoPrivate, VCard::Photo>
 {
 public:
-	VCardPhotoParser() : StructureParser<VCard::Photo>(QLatin1String("PHOTO"))
+	VCardPhotoParser() : StructurePrivateParser<VCard::PhotoPrivate, VCard::Photo>(QLatin1String("PHOTO"))
 	{
 		QString *strings[] = {
-			&m_data.extval, &m_data.binval, &m_data.type
+			&m_data.extval, &m_data.type
 		};
-		for (int i = 0, size = sizeof(strings)/sizeof(QString*); i < size; i++)
+		for (int i = 1, size = sizeof(strings)/sizeof(QString*); i < size; i++)
 			addString(QLatin1String(vcardPhotoTypes[i]), strings[i]);
+		addByteArray(QLatin1String(vcardPhotoTypes[0]), &m_data.binval);
 	}
 };
 
@@ -179,10 +211,10 @@ static const char* vcardTelTypes[] = {
     "PREF"
 };
 
-class VCardTelParser : public StructureParser<VCard::Telephone>
+class VCardTelParser : public StructurePrivateParser<VCard::TelephonePrivate, VCard::Telephone>
 {
 public:
-	VCardTelParser() : StructureParser<VCard::Telephone>(QLatin1String("TEL"))
+	VCardTelParser() : StructurePrivateParser<VCard::TelephonePrivate, VCard::Telephone>(QLatin1String("TEL"))
 	{
 		addString(QLatin1String("NUMBER"), &m_data.number);
 		addFlag(vcardTelTypes, &m_data.types);
@@ -197,10 +229,10 @@ static const char* vcardEMailTypes[] = {
 	"X400"
 };
 
-class VCardEMailParser : public StructureParser<VCard::EMail>
+class VCardEMailParser : public StructurePrivateParser<VCard::EMailPrivate, VCard::EMail>
 {
 public:
-	VCardEMailParser() : StructureParser<VCard::EMail>(QLatin1String("EMAIL"))
+	VCardEMailParser() : StructurePrivateParser<VCard::EMailPrivate, VCard::EMail>(QLatin1String("EMAIL"))
 	{
 		addString(QLatin1String("USERID"), &m_data.userId);
 		addFlag(vcardEMailTypes, &m_data.types);
@@ -227,10 +259,10 @@ static const char* vcardAddressFields[] = {
 	"CTRY"
 };
 
-class VCardAddressParser : public StructureParser<VCard::Address>
+class VCardAddressParser : public StructurePrivateParser<VCard::AddressPrivate, VCard::Address>
 {
 public:
-	VCardAddressParser() : StructureParser<VCard::Address>(QLatin1String("ADR"))
+	VCardAddressParser() : StructurePrivateParser<VCard::AddressPrivate, VCard::Address>(QLatin1String("ADR"))
 	{
 		QString *strings[] = {
 			&m_data.pobox, &m_data.extendedAddress, &m_data.street,
@@ -318,6 +350,7 @@ VCardFactory::VCardFactory() : d_ptr(new VCardFactoryPrivate)
 {
 	Q_D(VCardFactory);
 	d->currentParser = 0;
+	d->depth = 0;
 	d->classification = VCard::ClassNone;
 }
 
@@ -401,7 +434,9 @@ void VCardFactory::handleEndElement(const QStringRef& name, const QStringRef& ur
 	} else if (d->depth == 2 && d->currentString) {
 		if (d->currentString == &d->tmpString) {
 			int index = d->state - LastState;
-			if (index == Birthday)
+			if (index == FormattedName)
+				d->vcard->formattedName = d->tmpString;
+			else if (index == Birthday)
 				d->vcard->bday = Util::fromStamp(d->tmpString);
 			else if (index == Url)
 				d->vcard->url = QUrl::fromUserInput(d->tmpString);
@@ -429,7 +464,9 @@ void VCardFactory::serialize(StanzaExtension* extension, QXmlStreamWriter* write
 	QString tmp;
 	for (int i = 0; i < LastVCardType; i++) {
 		QString *current = &tmp;
-		if (i == Birthday)
+		if (i == FormattedName)
+			tmp = vcard->formattedName;
+		else if (i == Birthday)
 			tmp = Util::toStamp(vcard->bday);
 		else if (i == Url)
 			tmp = QString::fromUtf8(vcard->url.toEncoded());

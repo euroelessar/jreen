@@ -19,8 +19,6 @@
 namespace jreen
 {
 
-J_STRING(nick)
-
 Nickname::Nickname(const QString &nick) : m_nick(nick)
 {
 }

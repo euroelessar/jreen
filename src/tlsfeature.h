@@ -40,12 +40,14 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
+	virtual void setStreamInfo(StreamInfo *info);
 	bool isActivatable();
 	bool activate();
 private slots:
 	void onHandshaken();
 	void onClosed();
 	void onError();
+	void onDisconnected();
 private:
 	QCA::TLS *m_tls;
 	bool m_required;

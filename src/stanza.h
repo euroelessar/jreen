@@ -51,7 +51,6 @@ public:
 	void removeExtensions();
 	Q_DECL_DEPRECATED virtual void writeXml(QXmlStreamWriter *) const {};
 protected:
-	Stanza(const QDomElement &node, StanzaPrivate *sp = 0);
 	Stanza(StanzaPrivate &);
 	Stanza &operator =(const Stanza &stanza);
 	StanzaPrivate *d_ptr;

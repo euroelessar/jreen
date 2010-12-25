@@ -23,32 +23,109 @@
 
 namespace jreen
 {
-	class VCardPrivate
-	{
-	public:
-		QString formattedName;
-		QString nickname;
-		QDateTime bday;
-		QUrl url;
-		JID jabberId;
-		QString title;
-		QString role;
-		QString note;
-		QString description;
-		QString mailer;
-		QString timeZone;
-		QString productID;
-		QString revision;
-		QString sortString;
-		QString userID;
-		VCard::Classification classification;
-		VCard::Name name;
-		VCard::Photo photo;
-		QList<VCard::Telephone> telephones;
-		QList<VCard::EMail> emails;
-		
-		static VCardPrivate *get(VCard *v) { return v->d_func(); }
-	};
+class VCard::NamePrivate : public QSharedData
+{
+public:
+	NamePrivate() {}
+	NamePrivate(NamePrivate &o) :
+		QSharedData(o), family(o.family), given(o.given),
+		middle(o.middle), prefix(o.prefix), suffix(o.suffix) {}
+
+	QString family;
+	QString given;
+	QString middle;
+	QString prefix;
+	QString suffix;
+
+	static const VCard::NamePrivate *get(const VCard::Name *o) { return o->d_ptr.data(); }
+};
+
+class VCard::PhotoPrivate : public QSharedData
+{
+public:
+	PhotoPrivate() {}
+	PhotoPrivate(PhotoPrivate &o) :
+		QSharedData(o), extval(o.extval), binval(o.binval), type(o.type) {}
+
+	QString extval;
+	QByteArray binval;
+	QString type;
+
+	static const VCard::PhotoPrivate *get(const VCard::Photo *o) { return o->d_ptr.data(); }
+};
+
+class VCard::TelephonePrivate : public QSharedData
+{
+public:
+	TelephonePrivate() {}
+	TelephonePrivate(TelephonePrivate &o) : QSharedData(o), types(o.types), number(o.number) {}
+
+	int types;
+	QString number;
+
+	static const VCard::TelephonePrivate *get(const VCard::Telephone *o) { return o->d_ptr.data(); }
+};
+
+class VCard::EMailPrivate : public QSharedData
+{
+public:
+	EMailPrivate() {}
+	EMailPrivate(EMailPrivate &o) : QSharedData(o), types(o.types), userId(o.userId) {}
+
+	int types;
+	QString userId;
+
+	static const VCard::EMailPrivate *get(const VCard::EMail *o) { return o->d_ptr.data(); }
+};
+
+class VCard::AddressPrivate : public QSharedData
+{
+public:
+	AddressPrivate() {}
+	AddressPrivate(AddressPrivate &o) :
+		QSharedData(o), types(o.types), pobox(o.pobox),
+		extendedAddress(o.extendedAddress), street(o.street),
+		locality(o.locality), region(o.region), pcode(o.pcode) ,
+		country(o.country) {}
+
+	int types;
+	QString pobox;
+	QString extendedAddress;
+	QString street;
+	QString locality;
+	QString region;
+	QString pcode;
+	QString country;
+
+	static const VCard::AddressPrivate *get(const VCard::Address *o) { return o->d_ptr.data(); }
+};
+
+class VCardPrivate
+{
+public:
+	QString formattedName;
+	QString nickname;
+	QDateTime bday;
+	QUrl url;
+	JID jabberId;
+	QString title;
+	QString role;
+	QString note;
+	QString description;
+	QString mailer;
+	QString timeZone;
+	QString productID;
+	QString revision;
+	QString sortString;
+	QString userID;
+	VCard::Classification classification;
+	VCard::Name name;
+	VCard::Photo photo;
+	QList<VCard::Telephone> telephones;
+	QList<VCard::EMail> emails;
+
+	static VCardPrivate *get(VCard *v) { return v->d_func(); }
+};
 }
 
 #endif // VCARD_P_H

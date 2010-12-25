@@ -48,16 +48,15 @@ struct MessageFilterMeta
 class JREEN_EXPORT MessageFilter
 {
 public:
-	inline MessageFilter(MessageSession *session);
+	MessageFilter(MessageSession *session);
 	virtual ~MessageFilter() {}
 	virtual void filter(Message &message) = 0;
 	virtual void decorate(Message &message) = 0;
 	virtual void reset() = 0;
 	virtual int filterType() const = 0;
 protected:
-	inline void send(const Message &message);
+	void send(const Message &message);
 private:
-	Q_DISABLE_COPY(MessageFilter)
 	MessageSession *m_session;
 };
 
@@ -68,22 +67,26 @@ class JREEN_EXPORT MessageSession : public QObject
 public:
 	MessageSession(MessageSessionManager *manager, const JID &jid, bool ignore_thread = true, const QString &thread = QString());
 	virtual ~MessageSession();
-	inline const QString &thread() { return m_thread; }
-	inline const JID &jid() { return m_jid; }
-	inline bool ignoreThread() { return m_ignore_thread; }
+	const QString &thread() { return m_thread; }
+	const JID &jid() { return m_jid; }
+	bool ignoreThread() { return m_ignore_thread; }
 	void resetResource();
-	inline void registerMessageFilter(MessageFilter *filter) { if(filter) m_filters.insert(filter->filterType(), filter); }
+	void registerMessageFilter(MessageFilter *filter);
 	template< typename T >
-	inline T messageFilter() { return static_cast<T>(m_filters.value(static_cast<T>(0).meta().type, 0)); }
+	Q_INLINE_TEMPLATE T messageFilter()
+	{
+		return static_cast<T>(m_filters.value(static_cast<T>(0).meta().type, 0));
+	}
 	void sendMessage(const QString &body, const QString &subject = QString());
+	void sendMessage(const Message &message);
 	virtual void handleMessage(const Message &message);
 signals:
 	void newMessage(const Message &message);
 	void jidChanged(const JID &from, const JID &to);
 protected:
 	virtual void send(const Message &message);
-	inline void filter(Message &message);
-	inline void decorate(Message &message);
+	void filter(Message &message);
+	void decorate(Message &message);
 	void setJid(const JID &jid);
 	QString m_thread;
 	MessageSessionManager *m_manager;
@@ -101,12 +104,14 @@ public:
 	virtual void handleMessageSession(MessageSession *session) = 0;
 };
 
+class MessageSessionManagerPrivate;
 class JREEN_EXPORT MessageSessionManager : public QObject
 {
 	Q_OBJECT
+	Q_DECLARE_PRIVATE(MessageSessionManager)
 public:
 	MessageSessionManager(Client *client);
-	virtual ~MessageSessionManager() {}
+	virtual ~MessageSessionManager();
 	void send(const Message &message);
 	void registerMessageSession(MessageSession *session);
 	void registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types);//WTF? O_o
@@ -116,38 +121,11 @@ public slots:
 	virtual void handleMessage(const jreen::Message &message);
 signals:
 	void newMessage(const jreen::Message &message);
+	void sessionCreated(jreen::MessageSession *session);
 private:
-	Client *m_client;
-	QMultiHash<QString, QPointer<MessageSession> > m_full_sessions;
-	QMultiHash<QString, QPointer<MessageSession> > m_bare_sessions;
-	QVector<MessageSessionHandler *> m_session_handlers;
+	QScopedPointer<MessageSessionManagerPrivate> d_ptr;
 	friend class MessageSession;
 };
-
-inline MessageFilter::MessageFilter(MessageSession *session) : m_session(session)
-{
-	//Pure virtual function call!
-	//if(m_session)
-	//	m_session->registerMessageFilter(this);
-}
-
-inline void MessageFilter::send(const Message &message)
-{
-	if(m_session)
-		m_session->send(message);
-}
-
-inline void MessageSession::filter(Message &message)
-{
-	foreach(MessageFilter *filter, m_filters)
-		filter->filter(message);
-}
-
-inline void MessageSession::decorate(Message &message)
-{
-	foreach(MessageFilter *filter, m_filters)
-		filter->decorate(message);
-}
 
 }
 
