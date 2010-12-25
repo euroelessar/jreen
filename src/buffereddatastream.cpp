@@ -15,6 +15,7 @@
  ****************************************************************************/
 
 #include "buffereddatastream.h"
+#include "client.h"
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QDebug>
@@ -24,6 +25,7 @@ namespace jreen
 class BufferedDataStreamPrivate
 {
 public:
+	QList<XmlStreamHandler *> *handlers;
 	QByteArray buffer;
 	int offset;
 	int len;
@@ -36,11 +38,13 @@ public:
 	}
 };
 
-BufferedDataStream::BufferedDataStream() : d_ptr(new BufferedDataStreamPrivate)
+BufferedDataStream::BufferedDataStream(QList<XmlStreamHandler *> *handlers) :
+		d_ptr(new BufferedDataStreamPrivate)
 {
 	Q_D(BufferedDataStream);
 	d->offset = 0;
 	d->len = 0;
+	d->handlers = handlers;
 }
 
 BufferedDataStream::~BufferedDataStream()
@@ -99,6 +103,8 @@ qint64 BufferedDataStream::writeData(const char *data, qint64 len)
 void BufferedDataStream::flush()
 {
 	Q_D(BufferedDataStream);
+	foreach (XmlStreamHandler *handler, *d->handlers)
+		handler->handleOutgoingData(d->outBuffer.constData(), d->outBuffer.size());
 	device()->write(d->outBuffer.constData(), d->outBuffer.size());
 	qDebug("> \"%s\"", d->outBuffer.constData());
 	d->outBuffer.clear();
@@ -109,6 +115,8 @@ qint64 BufferedDataStream::readData(char *data, qint64 maxlen)
 	Q_D(BufferedDataStream);
 	int len = qMin<int>(maxlen, d->len);
 	qMemCopy(data, d->buffer.data() + d->offset, len);
+	foreach (XmlStreamHandler *handler, *d->handlers)
+		handler->handleIncomingData(d->buffer.data() + d->offset, len);
 	if (maxlen < d->len) {
 		d->len -= maxlen;
 		d->offset += maxlen;

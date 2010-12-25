@@ -102,7 +102,7 @@ public:
 		current_stream_feature = 0;
 		authorized = false;
 		client = parent;
-		device = new BufferedDataStream;
+		device = new BufferedDataStream(&streamHandlers);
 		device->open(QIODevice::ReadWrite);
 		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
 	}
@@ -222,6 +222,7 @@ public:
 	QString server;
 	QString password;
 	int server_port;
+	QList<XmlStreamHandler*> streamHandlers;
 	Presence presence;
 	int current_id;
 	Parser *parser;
@@ -258,6 +259,8 @@ public slots:
 		qDebug() << device;
 		delete writer;
 		qDebug() << device;
+		foreach (XmlStreamHandler *handler, streamHandlers)
+			handler->handleStreamBegin();
 		writer = new QXmlStreamWriter(device);
 		qDebug() << conn;
 		writer->writeStartDocument(QLatin1String("1.0"));
@@ -291,6 +294,8 @@ public slots:
 	}
 	void disconnected()
 	{
+		foreach (XmlStreamHandler *handler, streamHandlers)
+			handler->handleStreamEnd();
 		non_sasl_auths.resetFeatures();
 		sasl_auths.resetFeatures();
 		compressions.resetFeatures();

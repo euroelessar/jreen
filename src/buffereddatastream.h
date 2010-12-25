@@ -21,13 +21,14 @@
 
 namespace jreen
 {
+	class XmlStreamHandler;
 	class BufferedDataStreamPrivate;
 	class BufferedDataStream : public DataStream
 	{
 		Q_OBJECT
 		Q_DECLARE_PRIVATE(BufferedDataStream)
 	public:
-		BufferedDataStream();
+		BufferedDataStream(QList<XmlStreamHandler *> *handlers);
 		~BufferedDataStream();
 		
 		qint64 bytesAvailable() const;

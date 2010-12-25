@@ -34,6 +34,17 @@ class Subscription;
 class StreamFeature;
 class Disco;
 
+class XmlStreamHandler
+{
+public:
+	virtual ~XmlStreamHandler();
+	
+	virtual void handleStreamBegin() = 0;
+	virtual void handleStreamEnd() = 0;
+	virtual void handleIncomingData(const char *data, qint64 size) = 0;
+	virtual void handleOutgoingData(const char *data, qint64 size) = 0;
+};
+
 class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
@@ -51,6 +62,7 @@ public:
 	void setServer(const QString &server);
 	void setResource(const QString &resource);
 	void setPort(int port);
+	void addXmlStreamHandler(XmlStreamHandler *handler);
 	QSet<QString> serverFeatures() const;
 	const QString &server() const;
 	int port() const;
