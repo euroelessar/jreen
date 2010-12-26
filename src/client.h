@@ -37,7 +37,7 @@ class Disco;
 class XmlStreamHandler
 {
 public:
-	virtual ~XmlStreamHandler();
+	virtual ~XmlStreamHandler() {}
 	
 	virtual void handleStreamBegin() = 0;
 	virtual void handleStreamEnd() = 0;
@@ -50,7 +50,6 @@ class JREEN_EXPORT Client : public QObject
 	Q_OBJECT
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
 	Q_DECLARE_PRIVATE(Client);
-	friend class ClientPrivate;
 public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();

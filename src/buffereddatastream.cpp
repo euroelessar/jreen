@@ -84,7 +84,7 @@ void BufferedDataStream::incomingDataReady()
 	int bytes = device()->bytesAvailable();
 	d->ensureSize(bytes);
 	device()->read(d->buffer.data() + d->offset + d->len, bytes);
-	qDebug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
+//	qDebug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
 	d->len += bytes;
 	emit readyRead();
 }
@@ -106,7 +106,7 @@ void BufferedDataStream::flush()
 	foreach (XmlStreamHandler *handler, *d->handlers)
 		handler->handleOutgoingData(d->outBuffer.constData(), d->outBuffer.size());
 	device()->write(d->outBuffer.constData(), d->outBuffer.size());
-	qDebug("> \"%s\"", d->outBuffer.constData());
+//	qDebug("> \"%s\"", d->outBuffer.constData());
 	d->outBuffer.clear();
 }
 

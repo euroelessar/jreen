@@ -171,7 +171,7 @@ void Client::setPort(int port)
 
 void Client::addXmlStreamHandler(XmlStreamHandler *handler)
 {
-	//impl->streamHandlers << handler;
+	d_func()->streamHandlers << handler;
 }
 
 QSet<QString> Client::serverFeatures() const
