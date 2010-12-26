@@ -56,6 +56,11 @@ ActivityFactory::ActivityFactory()
 	m_depth = 0;
 }
 
+ActivityFactory::~ActivityFactory()
+{
+
+}
+
 QStringList ActivityFactory::features() const
 {
 	return QStringList(NS_ACTIVITY);
