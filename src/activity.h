@@ -36,7 +36,8 @@ public:
 		Relaxing,
 		Talking,
 		Traveling,
-		Working
+		Working,
+		Invalid
 	};
 	enum DoingChores {
 		BuyingGroceries,
