@@ -15,6 +15,7 @@
 
 #include "stanza.h"
 #include "stanza_p.h"
+#include "error.h"
 #include <QTextStream>
 
 namespace jreen
@@ -83,5 +84,9 @@ void Stanza::removeExtensions()
 	d_ptr->extensions.clear();
 }
 
+const Error *Stanza::error() const
+{
+	return findExtension<Error>().data();
+}
 
 }

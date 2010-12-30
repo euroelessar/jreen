@@ -40,6 +40,7 @@ void MessageFactory::clear()
 	m_subject.clear();
 	m_thread.clear();
 	m_subtype = Message::Normal;
+	m_state = AtMessage;
 }
 
 int MessageFactory::stanzaType()
@@ -99,12 +100,10 @@ void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("body"))
 			m_state = AtBody;
-		else if(name == QLatin1String("subject")) {
+		else if(name == QLatin1String("subject"))
 			m_state = AtSubject;
-		}
-		else if(name == QLatin1String("thread")) {
+		else if(name == QLatin1String("thread"))
 			m_state = AtThread;
-		}
 	}
 }
 
@@ -112,6 +111,8 @@ void MessageFactory::handleEndElement(const QStringRef &name, const QStringRef &
 {
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
+	if (m_depth == 2)
+		m_state = AtMessage;
 	m_depth--;
 }
 

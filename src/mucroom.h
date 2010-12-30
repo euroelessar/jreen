@@ -41,6 +41,15 @@ namespace jreen
 			Participant();
 			~Participant();
 		public:
+			Affiliation affiliation() const;
+			Role role() const;
+			bool isSelf() const;
+			bool isNickChanged() const;
+			bool isBanned() const;
+			bool isKicked() const;
+			QString newNick() const;
+			QString reason() const;
+			JID realJID() const;
 		private:
 			QScopedPointer<ParticipantPrivate> d_ptr;
 			friend class MUCRoomPrivate;

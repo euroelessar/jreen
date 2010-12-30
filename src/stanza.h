@@ -26,6 +26,7 @@ namespace jreen
 {
 
 class StanzaPrivate;
+class Error;
 
 class JREEN_EXPORT Stanza
 {
@@ -49,6 +50,7 @@ public:
 	inline bool containsExtension() const
 	{ return extensions().contains(reinterpret_cast<T*>(0)->staticExtensionType()); }
 	void removeExtensions();
+	const Error *error() const;
 	Q_DECL_DEPRECATED virtual void writeXml(QXmlStreamWriter *) const {};
 protected:
 	Stanza(StanzaPrivate &);

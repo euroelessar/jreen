@@ -14,6 +14,7 @@
 *****************************************************************************/
 
 #include <QCryptographicHash>
+#include <QXmlStreamAttributes>
 #include "nonsaslauth.h"
 #include "iq.h"
 #include "client.h"

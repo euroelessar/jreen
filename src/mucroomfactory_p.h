@@ -47,6 +47,11 @@ namespace jreen
 		void handleCharacterData(const QStringRef &text);
 		void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 		StanzaExtension::Ptr createExtension();
+	private:
+		QScopedPointer<MUCRoomUserQuery> m_query;
+		int m_depth;
+		enum State { AtNowhere, AtItem, AtActor, AtReason };
+		State m_state;
 	};
 }
 #endif // MUCROOMFACTORY_P_H

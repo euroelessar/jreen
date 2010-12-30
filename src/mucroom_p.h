@@ -74,14 +74,35 @@ namespace jreen
 	{
 		J_EXTENSION(jreen::MUCRoomUserQuery, "")
 	public:
-		JID nick;
+		MUCRoomUserQuery() : affiliation(MUCRoom::AffiliationNone), role(MUCRoom::RoleNone), flags(0)
+		{
+		}
+		enum Flag
+		{
+			NonAnonymous         = 0x0001,
+			SemiAnonymous        = 0x0002,
+			FullyAnonymous       = 0x0004,
+			AffiliationChangeWNR = 0x0008,
+			Self                 = 0x0010,
+			LoggingEnabled       = 0x0020,
+			LoggingDisabled      = 0x0040,
+			NewRoom              = 0x0080,
+			NickAssigned         = 0x0100,
+			Banned               = 0x0200,
+			NickChanged          = 0x0400,
+			Kicked               = 0x0800,
+			AffiliationChanged   = 0x1000,
+			MembershipRequired   = 0x2000,
+			RoomSegfaulted       = 0x4000
+		};
+
 		MUCRoom::Affiliation affiliation;
 		MUCRoom::Role role;
 		JID jid;
 		int flags;
 		QString reason;
 		JID actor;
-		QString newNick;
+		QString nick;
 		QString status;
 		JID alternate;
 	};

@@ -24,7 +24,7 @@ namespace jreen
 class MessageFactory : public StanzaFactory
 {
 public:
-	enum State { AtBody, AtSubject,AtThread };
+	enum State { AtMessage, AtBody, AtSubject,AtThread };
 	MessageFactory(Client *client);
 	int stanzaType();
 	Stanza::Ptr createStanza();

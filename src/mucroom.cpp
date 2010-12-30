@@ -68,6 +68,51 @@ namespace jreen
 	{
 	}
 	
+	MUCRoom::Affiliation MUCRoom::Participant::affiliation() const
+	{
+		return d_func()->query->affiliation;
+	}
+	
+	MUCRoom::Role MUCRoom::Participant::role() const
+	{
+		return d_func()->query->role;
+	}
+	
+	bool MUCRoom::Participant::isSelf() const
+	{
+		return d_func()->query->flags & MUCRoomUserQuery::Self;
+	}
+	
+	bool MUCRoom::Participant::isNickChanged() const
+	{
+		return d_func()->query->flags & MUCRoomUserQuery::NickChanged;
+	}
+	
+	bool MUCRoom::Participant::isBanned() const
+	{
+		return d_func()->query->flags & MUCRoomUserQuery::Banned;
+	}
+	
+	bool MUCRoom::Participant::isKicked() const
+	{
+		return d_func()->query->flags & MUCRoomUserQuery::Kicked;
+	}
+	
+	QString MUCRoom::Participant::newNick() const
+	{
+		return d_func()->query->nick;
+	}
+	
+	QString MUCRoom::Participant::reason() const
+	{
+		return d_func()->query->reason;
+	}
+	
+	JID MUCRoom::Participant::realJID() const
+	{
+		return d_func()->query->jid;
+	}
+	
 	void MUCRoomPrivate::handlePresence(const Presence &pres)
 	{
 		Q_Q(MUCRoom);
@@ -84,9 +129,9 @@ namespace jreen
 		if (!msg.subject().isEmpty()) {
 			subject = msg.subject();
 			emit q->subjectChanged(subject, msg.from().resource());
-		}
-		if (!msg.body().isEmpty())
+		} else if (!msg.body().isEmpty()) {
 			emit q->messageReceived(msg, msg.subtype() != Message::Groupchat);
+		}
 	}
 	
 	MUCRoom::MUCRoom(Client *client, const JID &jid) : d_ptr(new MUCRoomPrivate(this))

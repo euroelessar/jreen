@@ -81,8 +81,8 @@ public:
 	void sendMessage(const Message &message);
 	virtual void handleMessage(const Message &message);
 signals:
-	void newMessage(const Message &message);
-	void jidChanged(const JID &from, const JID &to);
+	void newMessage(const jreen::Message &message);
+	void jidChanged(const jreen::JID &from, const jreen::JID &to);
 protected:
 	virtual void send(const Message &message);
 	void filter(Message &message);
