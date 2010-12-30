@@ -21,7 +21,7 @@ namespace jreen {
 
 //XEP-108
 //http://xmpp.org/extensions/xep-0108.html
-class Activity : public StanzaExtension
+class JREEN_EXPORT Activity : public StanzaExtension
 {
 	J_EXTENSION(jreen::Activity,"/message/activity[@xmlns='http://jabber.org/protocol/activity']")
 public:
@@ -36,7 +36,8 @@ public:
 		Relaxing,
 		Talking,
 		Traveling,
-		Working
+		Working,
+		Invalid
 	};
 	enum DoingChores {
 		BuyingGroceries,
