@@ -77,7 +77,7 @@ public:
 	{
 		return static_cast<T>(m_filters.value(static_cast<T>(0).meta().type, 0));
 	}
-	void sendMessage(const QString &body, const QString &subject = QString());
+	virtual void sendMessage(const QString &body, const QString &subject = QString());
 	void sendMessage(const Message &message);
 	virtual void handleMessage(const Message &message);
 signals:

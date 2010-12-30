@@ -89,6 +89,7 @@ void ErrorFactory::serialize(StanzaExtension* obj, QXmlStreamWriter* writer)
 	writer->writeAttribute(QLatin1String("type"),enumToStr(error->type(),error_types));
 	writer->writeEmptyElement(enumToStr(error->condition(),error_conditions));
 	writer->writeDefaultNamespace(NS_ERROR);
+	writer->writeEndElement();
 }
 
 ErrorFactory::~ErrorFactory()

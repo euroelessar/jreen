@@ -42,6 +42,7 @@ namespace jreen
 {
 
 class ClientPrivate;
+class MUCRoomPrivate;
 
 class IQTrack : public QObject
 {
@@ -100,6 +101,8 @@ public:
 	{
 		disco = 0;
 		current_stream_feature = 0;
+		messageSessionManager = 0;
+		roster = 0;
 		authorized = false;
 		client = parent;
 		device = new BufferedDataStream(&streamHandlers);
@@ -167,7 +170,10 @@ public:
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
 	QSet<QString> serverFeatures;
+	QMap<QString, MUCRoomPrivate*> rooms;
 	StanzaExtensionFactoryMap factories;
+	MessageSessionManager *messageSessionManager;
+	AbstractRoster *roster;
 	int depth;
 public slots:
 	void onIqReceived(const jreen::IQ &iq, int context);

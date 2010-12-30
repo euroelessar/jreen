@@ -61,7 +61,7 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	writer->writeStartElement(QLatin1String("presence"));
 	writeAttributes(stanza, writer);
 
-	QString type  = QLatin1String("available");
+	QString type;
 	QString show;
 	switch (presence->subtype()) {
 	case Presence::Away:
@@ -104,11 +104,11 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	}
 
 	if(!type.isEmpty())
-		writer->writeAttribute(QLatin1String("type"),type);
+		writer->writeAttribute(QLatin1String("type"), type);
 	writeStanzaExtensions(stanza, writer);
-	writeLangMap(QLatin1String("status"),presence->status(),writer);
+	writeLangMap(QLatin1String("status"),presence->status(), writer);
 	if(!show.isEmpty())
-		writer->writeTextElement(QLatin1String("show"),show);
+		writer->writeTextElement(QLatin1String("show"), show);
 	writer->writeEndElement();
 }
 
@@ -127,9 +127,7 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 		clear();
 		parseAttributes(attributes);
 		QStringRef type = attributes.value(QLatin1String("type"));
-		if (type == QLatin1String("available"))
-			m_subtype = Presence::Available;
-		else if (type == QLatin1String("unavailable"))
+		if (type == QLatin1String("unavailable"))
 			m_subtype = Presence::Unavailable;
 		else if (type == QLatin1String("probe"))
 			m_subtype = Presence::Probe;

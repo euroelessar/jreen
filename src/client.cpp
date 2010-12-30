@@ -42,6 +42,7 @@
 #include "vcardupdatefactory_p.h"
 #include "ping.h"
 #include "privatexml_p.h"
+#include "mucroomfactory_p.h"
 
 namespace jreen
 {
@@ -75,7 +76,10 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	} else if (type == StanzaPrivate::StanzaMessage) {
 		client->handleMessage(*stanza.staticCast<Message>());
 	} else if (type == StanzaPrivate::StanzaPresence) {
-		client->handlePresence(*stanza.staticCast<Presence>());
+		if (MUCRoomPrivate *room = rooms.value(stanza->from().bare()))
+			room->handlePresence(*stanza.staticCast<Presence>());
+		else
+			client->handlePresence(*stanza.staticCast<Presence>());
 	}/* else if (type == StanzaPrivate::StanzaSubscription) {
 		client->handleSubscription(*stanza.staticCast<Subscription>());
 	}*/
@@ -108,6 +112,8 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new VCardFactory);
 	client->registerStanzaExtension(new PingFactory);
 	client->registerStanzaExtension(new VCardUpdateFactory);
+	client->registerStanzaExtension(new MUCRoomQueryFactory);
+	client->registerStanzaExtension(new MUCRoomUserQueryFactory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
@@ -209,12 +215,37 @@ Disco *Client::disco()
 	return d_func()->disco;
 }
 
+MessageSessionManager *Client::messageSessionManager()
+{
+	return d_func()->messageSessionManager;
+}
+
+AbstractRoster *Client::roster()
+{
+	return d_func()->roster;
+}
+
 void Client::send(const Stanza &stanza)
 {
 	Q_D(Client);
 	if(!d->conn || !d->conn->isOpen())
 		return;
 	d->send(stanza);
+}
+
+void Client::send(const Presence &pres)
+{
+	Q_D(Client);
+	if(!d->conn || !d->conn->isOpen())
+		return;
+	if (StanzaPrivate::get(pres) == StanzaPrivate::get(d->presence)) {
+		d->send(pres);
+		return;
+	}
+	Presence p = pres;
+	foreach (const StanzaExtension::Ptr &se, d->presence.extensions())
+		p.addExtension(se);
+	d->send(p);
 }
 
 void Client::send(const IQ &iq, QObject *handler, const char *member, int context)

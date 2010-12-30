@@ -33,6 +33,8 @@ class Connection;
 class Subscription;
 class StreamFeature;
 class Disco;
+class MessageSessionManager;
+class AbstractRoster;
 
 class XmlStreamHandler
 {
@@ -67,7 +69,10 @@ public:
 	const QString getID();
 	Presence &presence();
 	Disco *disco();
+	MessageSessionManager *messageSessionManager();
+	AbstractRoster *roster();
 	void send(const Stanza &stanza);
+	void send(const Presence &pres);
 	void send(const IQ &iq, QObject *handler, const char *member, int context);
 	void setConnectionImpl(Connection *conn);
 	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);

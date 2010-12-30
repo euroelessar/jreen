@@ -26,7 +26,7 @@ class JREEN_EXPORT VCardUpdate : public StanzaExtension
 	J_EXTENSION(jreen::VCardUpdate,
 				"/presence/vcard[@xmlns='vcard-temp:x:update']")
 public:
-	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash) {};
+	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash) {}
 	const QString &photoHash() const { return m_photoHash;}
 private:
 	QString m_photoHash;

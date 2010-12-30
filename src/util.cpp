@@ -15,11 +15,53 @@
 
 #include "util.h"
 #include "jid.h"
+#include <cstdio>
 #include <QCryptographicHash>
 
 namespace jreen
 {
 
+//enum TokenType
+//{
+//	TokenNumber,
+//	TokenChar,
+//	TokenNull
+//};
+
+//TokenType nextToken(const QChar * &s, int &val)
+//{
+//	if (!*s)
+//		return TokenNull;
+//	if (!s->isDigit()) {
+//		val = (s++)->unicode();
+//		return TokenChar;
+//	}
+//	val = 0;
+//	while (*s && s->isDigit())
+//		val = val * 10 + (s++)->unicode() - '0';
+//	return TokenNumber;
+//}
+	
+//QDateTime Util::fromStamp(const QChar *s)
+//{
+//	const QChar *s = stamp.constData();
+//	int val;
+//	if (TokenNumber != nextToken(s, val))
+//		return QDateTime();
+//	if (val >= 10000) { // deprecated stamp
+//		int year = val / 10000;
+//		int month = (val / 100) % 100;
+//		int day = val % 100;
+//		if (TokenChar != nextToken(s, val) || val != 'T')
+//			return QDateTime();
+//		QDate date(year, month, day);
+//		return QDateTime(date, fromStamp(s).time());
+//	}
+//	while (s) {
+		
+//	}
+//}
+	
 #define FULL_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss.zzz")
 #define FULLZ_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss.zzzZ")
 #define DATE_TIME_STAMP_STR QLatin1String("yyyy-MM-ddThh:mm:ss")
@@ -65,24 +107,32 @@ QString Util::toStamp(const QDateTime &date_time)
 
 QString Util::randomHash(const JID &jid)
 {
-	QCryptographicHash hash(QCryptographicHash::Sha1);
-	qptrdiff temp = QDateTime::currentDateTime().toTime_t();
-	QByteArray data;
-	data.append(jid.full().toUtf8());
-	data.append('\0');
-	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-		data.append(temp % 0x100);
-	data.append('\0');
-	temp = reinterpret_cast<qptrdiff>(&jid);
-	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-		data.append(temp % 0x100);
-	hash.addData(data);
-	data.append('\0');
-	temp = qrand();
-	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-		data.append(temp % 0x100);
-	hash.addData(data);
-	return QLatin1String(hash.result().toHex());
+//	Holy shit...
+//	QCryptographicHash hash(QCryptographicHash::Sha1);
+//	qptrdiff temp = QDateTime::currentDateTime().toTime_t();
+//	QByteArray data;
+//	data.append(jid.full().toUtf8());
+//	data.append('\0');
+//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
+//		data.append(temp % 0x100);
+//	data.append('\0');
+//	temp = reinterpret_cast<qptrdiff>(&jid);
+//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
+//		data.append(temp % 0x100);
+//	hash.addData(data);
+//	data.append('\0');
+//	temp = qrand();
+//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
+//		data.append(temp % 0x100);
+//	hash.addData(data);
+//	return QLatin1String(hash.result().toHex());
+//	Nobody whould find a differ
+	Q_UNUSED(jid);
+	const int BufSize = 160;
+	char buf[BufSize + 1];
+	for (int i = 0; i < BufSize; i += 4)
+		::snprintf(buf + i, 4, "%04x", qrand());
+	return QLatin1String(buf);
 }
 
 }

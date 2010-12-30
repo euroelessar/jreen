@@ -17,6 +17,7 @@
 #include "client.h"
 #include "jstrings.h"
 #include "iq.h"
+#include "client_p.h"
 #include "jid.h"
 #include <QXmlStreamWriter>
 #include <QDebug>
@@ -106,7 +107,7 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 		return;
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
-	if (m_items.isEmpty())
+	if (query->items().isEmpty())
 		writer->writeAttribute(QLatin1String("ver"), QLatin1String(""));
 	foreach (const AbstractRosterItem::Ptr &item, query->items()) {
 		writer->writeStartElement(QLatin1String("item"));
@@ -160,6 +161,8 @@ AbstractRoster::AbstractRoster(Client *client, AbstractRosterPrivate *data) : QO
 	AbstractRosterItemPrivate *d = m_self->d_ptr.data();
 	d->jid = client->jid().bare();
 	d->subscription = AbstractRosterItem::Both;
+	ClientPrivate::get(client)->roster = this;
+	connect(client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
 	//	 connect(client, SIGNAL(newPresence(jreen::Presence)), this, SLOT(handlePresence(jreen::Presence)));
 	init();
 }
@@ -237,23 +240,21 @@ QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
 
 void AbstractRoster::handleIQ(const IQ &iq)
 {
-	const AbstractRosterQuery *roster = iq.findExtension<AbstractRosterQuery>().data();
-	if(!roster)
+	const AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>();
+	if (!roster)
 		return;
 	iq.accept();
-	foreach(const QSharedPointer<AbstractRosterItem> &item, roster->items()) {
+	foreach (const AbstractRosterItem::Ptr &item, roster->items()) {
 		qDebug() << "handle item" << item->jid();
 		if(item->subscriptionType() == AbstractRosterItem::Remove) {
 			m_items.remove(item->jid());
 			onItemRemoved(item->jid());
-		}
-		else {
-			QHash<QString, QSharedPointer<AbstractRosterItem> >::iterator item_iter = m_items.find(iq.from().bare());
-			if(item_iter == m_items.end()) {
+		} else {
+			QHash<QString, AbstractRosterItem::Ptr>::iterator item_iter = m_items.find(iq.from().bare());
+			if (item_iter == m_items.end()) {
 				m_items.insert(item->jid(), item);
 				onItemAdded(item);
-			}
-			else {
+			} else {
 				item_iter.value()->setData(item);
 				onItemUpdated(item_iter.value());
 			}
@@ -278,12 +279,12 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 	case AddRosterItem:
 	case RemoveRosterItem: {
 		qDebug() << "handle add/remove item" << (iq.subtype() == IQ::Error);
-		IQ request = d->iqHash.take(iq.id());
-		Q_ASSERT(request.subtype() != IQ::Invalid);
-		if(iq.subtype() == IQ::Error)
-			return;
-		handleIQ(request);
-		iq.accept();
+//		IQ request = d->iqHash.take(iq.id());
+//		Q_ASSERT(request.subtype() != IQ::Invalid);
+//		if(iq.subtype() == IQ::Error)
+//			return;
+//		handleIQ(request);
+//		iq.accept();
 		break;
 	}
 	case SyncContext: {

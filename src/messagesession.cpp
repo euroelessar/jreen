@@ -14,7 +14,7 @@
 *****************************************************************************/
 
 #include "messagesession.h"
-#include "client.h"
+#include "client_p.h"
 #include "util.h"
 #include <QDebug>
 
@@ -148,6 +148,7 @@ MessageSessionManager::MessageSessionManager(Client *client) :
 	d->sessionHandlers.resize(Message::Invalid);
 	qsrand(QDateTime::currentDateTime().toTime_t());
 	connect(client, SIGNAL(newMessage(jreen::Message)), this, SLOT(handleMessage(jreen::Message)));
+	ClientPrivate::get(d->client)->messageSessionManager = this;
 }
 
 MessageSessionManager::~MessageSessionManager()
