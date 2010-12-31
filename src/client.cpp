@@ -43,6 +43,7 @@
 #include "ping.h"
 #include "privatexml_p.h"
 #include "mucroomfactory_p.h"
+#include "entitytimefactory_p.h"
 
 namespace jreen
 {
@@ -114,6 +115,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new VCardUpdateFactory);
 	client->registerStanzaExtension(new MUCRoomQueryFactory);
 	client->registerStanzaExtension(new MUCRoomUserQueryFactory);
+	client->registerStanzaExtension(new EntityTimeFactory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
@@ -399,6 +401,12 @@ void Client::handleIQ(const IQ &iq)
 		IQ pong(IQ::Result,iq.from(),iq.id());
 		pong.setFrom(d_func()->jid);
 		send(pong); //FIXME remove warning
+	}
+	if (iq.containsExtension<EntityTime>()) {
+		iq.accept();
+		IQ result(IQ::Result,iq.from(),iq.id());
+		result.addExtension(new EntityTime(QDateTime::currentDateTime()));
+		send(result);
 	}
 	emit newIQ(iq);
 }

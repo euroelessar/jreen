@@ -267,13 +267,11 @@ void Disco::setSoftwareVersion(const QString &name, const QString &version, cons
 	d->software_version = version;
 	d->os = os;
 	QSharedPointer<DataForm> form(new DataForm(DataForm::Submit,QString()));
-	DataFormFieldList fields;
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("FORM_TYPE"),QLatin1String("urn:xmpp:dataforms:softwareinfo"), QString(), DataFormField::Hidden)));
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("ip_version"), QStringList()<< QLatin1String("ipv4") << QLatin1String("ipv6"), QString(), DataFormField::None)));
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("os"), os, QString(), DataFormField::None)));
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("software"), name, QString(), DataFormField::None)));
-	fields.append(QSharedPointer<DataFormField>(new DataFormField(QLatin1String("software_version"), version, QString(), DataFormField::None)));
-	form->setFields(fields);
+	form->appendField(DataFormFieldHidden(QLatin1String("FORM_TYPE"), QLatin1String("urn:xmpp:dataforms:softwareinfo")));
+	form->appendField(DataFormFieldNone(QLatin1String("ip_version"), QStringList() << QLatin1String("ipv4") << QLatin1String("ipv6")));
+	form->appendField(DataFormFieldNone(QLatin1String("os"), QStringList(os)));
+	form->appendField(DataFormFieldNone(QLatin1String("software"), QStringList(name)));
+	form->appendField(DataFormFieldNone(QLatin1String("software_version"), QStringList(version)));
 	d->form = form;
 }
 

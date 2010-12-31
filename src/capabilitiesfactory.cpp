@@ -43,11 +43,12 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 	if(data) {
 		QString form_type;
 		QMap<QString,QStringList> fields;
-		foreach(const QSharedPointer<DataFormField> &field, data->fields())	{
-			if(field->var() == QLatin1String("FORM_TYPE"))
-				form_type = field->values().first();
+		for (int i = 0; i < data->fieldsCount(); i++) {
+			DataFormField field = data->field(i);
+			if(field.var() == QLatin1String("FORM_TYPE"))
+				form_type = field.cast<DataFormFieldHidden>().value();
 			else
-				fields.insert(field->var(), field->values());
+				fields.insert(field.var(), QVariant(field.values()).toStringList());
 		}	
 		s.append(form_type).append(QLatin1Char('<'));
 

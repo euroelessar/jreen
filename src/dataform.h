@@ -21,25 +21,17 @@
 #include "stanzaextension.h"
 #include <QStringList>
 #include <QHash>
+#include <QVariant>
 
 namespace jreen
 {
 
 // XEP-0004
 // http://xmpp.org/extensions/xep-0004.html
-struct JREEN_EXPORT DataFormOption
-{
-	QString label;
-	QString value;
-};
-
-typedef QSharedPointer<DataFormOption> DataFormOptionPointer;
-typedef QList<DataFormOptionPointer> DataFormOptionList;
 
 class DataFormFieldPrivate;
 class JREEN_EXPORT DataFormField
 {
-	Q_DECLARE_PRIVATE(DataFormField)
 public:
 	enum Type
 	{
@@ -83,130 +75,221 @@ public:
 		None,
 		Invalid
 	};
-	DataFormField(Type type = TextSingle);
-	DataFormField(const QString &var, const QString &value, const QString &label = QString(), Type type = TextSingle);
-	DataFormField(const QString &var, const QStringList &values, const QString &label = QString(), Type type = TextSingle);
-	DataFormField(const QString &var, const QString &label, Type type);
+	
+	DataFormField(Type type = Invalid, const QString &var = QString(), const QString &label = QString());
+	DataFormField(const DataFormField &that);
+	DataFormField &operator =(const DataFormField &that);
 	~DataFormField();
+	
 	Type type() const;
-	bool isValid() const;
-	DataFormOptionList options() const;
-	DataFormOptionList &options();
-	void setOptions(const DataFormOptionList &options);
-	QStringList &values();
-	QString value() const;
-	QStringList values() const;
-	void setValues(const QStringList &values);
+	bool isRequired() const;
+	void setRequired(bool required);
 	QString var() const;
 	void setVar(const QString &var);
-	bool required() const;
-	void setRequired(bool required);
-	QString desc() const;
-	void setDesc(const QString &desc);
-private:
-	QScopedPointer<DataFormFieldPrivate> d_ptr;
+	QString label() const;
+	void setLabel(const QString &label);
+	QString description() const;
+	void setDescription(const QString &desc);
+	
+	QVariantList values() const;
+	QVariant value() const;
+	
+	template <typename T> T cast()
+	{ return T(static_cast<DataFormField::Type>(T::StaticType) == type() ? *this : DataFormField()); }
+
+protected:
+	QExplicitlySharedDataPointer<DataFormFieldPrivate> d_ptr;
+	friend class DataFormFieldPrivate;
 };
 
-//class DataFormFieldBoolean : public DataFormField
-//{
-//public:
-//	inline DataFormFieldBoolean(const QString &var, bool value = false, const QString &label = QString())
-//			: DataFormField(var,label,Boolean) { m_values = QStringList() << QLatin1String(value?"1":"0"); }
-//	inline DataFormFieldBoolean(const QDomElement &node) : DataFormField(node) {}
-//	inline bool value() const { return m_values.at(0) == QLatin1String("1") || m_values.at(0) == QLatin1String("true"); }
-//	inline void setValue(bool value) { m_values[0] = QLatin1String(value ? "1" : "0"); }
-//};
-//
-//class DataFormFieldFixed : public DataFormField
-//{
-//public:
-//	inline DataFormFieldFixed(const QString &var, const QString &value = QString(), const QString &label = QString())
-//			: DataFormField(var,label,Fixed) { m_values = QStringList() << value; }
-//	inline DataFormFieldFixed(const QDomElement &node) : DataFormField(node) {}
-//	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
-//
-//class DataFormFieldHidden : public DataFormField
-//{
-//public:
-//	inline DataFormFieldHidden(const QString &var, const QString &value = QString())
-//			: DataFormField(var,QString(),Hidden) { m_values = QStringList() << value; }
-//	inline DataFormFieldHidden(const QDomElement &node) : DataFormField(node) {}
-//	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
-//
-////JidMulti
-//
-//class DataFormFieldJidSingle : public DataFormField
-//{
-//public:
-//	inline DataFormFieldJidSingle(const QString &var, const JID &value = JID(), const QString &label = QString())
-//			: DataFormField(var,label,JidSingle) { m_values = QStringList() << value; }
-//	inline DataFormFieldJidSingle(const QDomElement &node) : DataFormField(node) {}
-//	inline JID value() const { return m_values.at(0); }
-//	inline void setValue(const JID &value) { m_values[0] = value; }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
-//
-////ListMulti
-////ListSingle
-////TextMulti
-//
-//class DataFormFieldTextPrivate : public DataFormField
-//{
-//public:
-//	inline DataFormFieldTextPrivate(const QString &var, const QString &value = QString(), const QString &label = QString())
-//			: DataFormField(var,label,TextPrivate) { m_values = QStringList() << value; }
-//	inline DataFormFieldTextPrivate(const QDomElement &node) : DataFormField(node) {}
-//	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
-//
-//class DataFormFieldTextSingle : public DataFormField
-//{
-//public:
-//	inline DataFormFieldTextSingle(const QString &var, const QString &value = QString(), const QString &label = QString())
-//			: DataFormField(var,label,TextSingle) { m_values = QStringList() << value; }
-//	inline DataFormFieldTextSingle(const QDomElement &node) : DataFormField(node) {}
-//	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
-//
-//class DataFormFieldNone : public DataFormField
-//{
-//public:
-//	inline DataFormFieldNone(const QString &var, const QString &value = QString(), const QString &label = QString())
-//			: DataFormField(var,label,None) { m_values = QStringList() << value; }
-//	inline DataFormFieldNone(const QDomElement &node) : DataFormField(node) {}
-//	inline const QString &value() const { return m_values.at(0); }
-//	inline void setValue(const QString &value) { m_values[0] = value; }
-//};
+class JREEN_EXPORT DataFormFieldBoolean : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::Boolean };
+	DataFormFieldBoolean(const QString &var, bool value = false, const QString &label = QString());
+
+	bool value() const;
+	void setValue(bool value);
+protected:
+	DataFormFieldBoolean(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldFixed : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::Fixed };
+	DataFormFieldFixed(const QString &var, const QString &value = QString(), const QString &label = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldFixed(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldHidden : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::Hidden };
+	DataFormFieldHidden(const QString &var, const QString &value = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldHidden(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldJidMulti : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::JidMulti };
+	DataFormFieldJidMulti(const QString &var, const QList<JID> &values = QList<JID>(), const QString &label = QString());
+
+	QList<JID> values() const;
+	void setValues(const QList<JID> &values);
+protected:
+	DataFormFieldJidMulti(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldJidSingle : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::JidSingle };
+	DataFormFieldJidSingle(const QString &var, const JID &value = JID(), const QString &label = QString());
+
+	JID value() const;
+	void setValue(const JID &value);
+protected:
+	DataFormFieldJidSingle(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormOptionContainer : public DataFormField
+{
+public:
+	int optionsCount() const;
+	QString optionLabel(int index) const;
+	QString optionValue(int index) const;
+	void addOption(const QString &label, const QString &value);
+	void removeOption(int index);
+protected:
+	DataFormOptionContainer(const DataFormField &that);
+	DataFormOptionContainer(Type type = Invalid, const QString &var = QString(), const QString &label = QString());
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldListMulti : public DataFormOptionContainer
+{
+public:
+	enum { StaticType = DataFormField::ListMulti };
+	DataFormFieldListMulti(const QString &var, const QStringList &values = QStringList(), const QString &label = QString());
+
+	bool isChecked(int index) const;
+	void setChecked(int index, bool checked);
+protected:
+	DataFormFieldListMulti(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldListSingle : public DataFormOptionContainer
+{
+public:
+	enum { StaticType = DataFormField::ListSingle };
+	DataFormFieldListSingle(const QString &var, const QString &value = QString(), const QString &label = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldListSingle(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldTextMulti : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::TextMulti };
+	DataFormFieldTextMulti(const QString &var, const QString &value = QString(), const QString &label = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldTextMulti(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldTextPrivate : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::TextPrivate };
+	DataFormFieldTextPrivate(const QString &var, const QString &value = QString(), const QString &label = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldTextPrivate(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldTextSingle : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::TextSingle };
+	DataFormFieldTextSingle(const QString &var, const QString &value = QString(), const QString &label = QString());
+
+	QString value() const;
+	void setValue(const QString &value);
+protected:
+	DataFormFieldTextSingle(const DataFormField &o);
+	friend class DataFormField;
+};
+
+class JREEN_EXPORT DataFormFieldNone : public DataFormField
+{
+public:
+	enum { StaticType = DataFormField::None };
+	DataFormFieldNone(const QString &var, const QStringList &values = QStringList(), const QString &label = QString());
+
+	QStringList values() const;
+	void setValues(const QStringList &values);
+protected:
+	DataFormFieldNone(const DataFormField &o);
+	friend class DataFormField;
+};
 
 typedef QSharedPointer<DataFormField> DataFormFieldPointer;
-typedef QList<DataFormFieldPointer> DataFormFieldList;
-typedef QHash<QString,DataFormFieldPointer> DataFormFieldHash;
+typedef QList<DataFormField> DataFormFieldList;
+typedef QHash<QString, DataFormField> DataFormFieldHash;
+
+class DataFormFieldContainerPrivate;
 
 class JREEN_EXPORT DataFormFieldContainer
 {
+	Q_DECLARE_PRIVATE(DataFormFieldContainer)
+	Q_DISABLE_COPY(DataFormFieldContainer)
 public:
-	const DataFormFieldList &fields() const { return m_fields_list; }
-	DataFormFieldList &fields() { return m_fields_list; }
-	DataFormFieldPointer field(const QString &var) const;
-	inline void setFields(const DataFormFieldList &fields) { m_fields_list = fields; }
-	inline void appendField(DataFormFieldPointer field) {m_fields_list.append(field);}
-	//	inline void appendField(DataFormField *field);
-	//	inline QSharedPointer<DataFormField> appendField(DataFormField *field);
-	//	QSharedPointer<DataFormField> addField(DataFormField::Type,
+	int fieldsCount() const;
+	DataFormField field(int index) const;
+	DataFormField field(const QString &var) const;
+	DataFormField field(const QLatin1String &var) const;
+	
+	void removeField(int index);
+	void appendField(const DataFormField &field);
+	void setFields(const QList<DataFormField> &fields);
 protected:
-	DataFormFieldList m_fields_list;
-	DataFormFieldHash m_fields_hash;
+	DataFormFieldContainer();
+	DataFormFieldContainer(DataFormFieldContainerPrivate &d);
+	virtual ~DataFormFieldContainer();
+
+	QScopedPointer<DataFormFieldContainerPrivate> d_ptr;
 };
 
 class JREEN_EXPORT DataFormItem : public DataFormFieldContainer
 {
 public:
+	typedef QSharedPointer<DataFormItem> Ptr;
 };
 
 typedef QList<QSharedPointer<DataFormItem> > DataFormItemList;
@@ -214,13 +297,16 @@ typedef QList<QSharedPointer<DataFormItem> > DataFormItemList;
 class JREEN_EXPORT DataFormReported : public DataFormFieldContainer
 {
 public:
+	typedef QSharedPointer<DataFormReported> Ptr;
 };
 
 typedef QList<QSharedPointer<DataFormReported> > DataFormReportedList;
 
+class DataFormPrivate;
 class JREEN_EXPORT DataForm : public StanzaExtension, public DataFormFieldContainer
 {
 	J_EXTENSION(jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
+	Q_DECLARE_PRIVATE(DataForm)
 public:
 	enum Type
 	{
@@ -231,13 +317,19 @@ public:
 		Invalid
 	};
 	DataForm(Type type,const QString &title = QString());
-	const QString &title() { return m_title; }
-private:
-	QString m_title;
-	DataFormReportedList m_reported;
-	DataFormItemList m_items;
-	Type m_form_type;
+	virtual ~DataForm();
+	
+	QString title() const;
+	QList<DataFormItem::Ptr> items() const;
+	DataFormReported::Ptr reported() const;
 };
+
+template <>
+Q_INLINE_TEMPLATE DataFormOptionContainer DataFormField::cast()
+{
+	bool ok = type() == ListMulti || type() == ListSingle;
+	return DataFormOptionContainer(ok ? *this : DataFormField());
+}
 
 }
 

@@ -15,7 +15,7 @@
 
 #ifndef DATAFORMFACTORY_P_H
 #define DATAFORMFACTORY_P_H
-#include "dataform.h"
+#include "dataform_p.h"
 
 namespace jreen {
 

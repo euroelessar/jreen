@@ -24,7 +24,7 @@ namespace jreen {
 
 using namespace Util;
 
-class DataFormOptionParser : XmlStreamFactory<DataFormOption>
+class DataFormOptionParser : XmlStreamFactory<const QPair<QString, QString> >
 {
 public:
 	DataFormOptionParser()
@@ -62,25 +62,21 @@ public:
 		if(m_depth == 1)
 			m_value = text.toString();
 	}
-	virtual void serialize(DataFormOption *option, QXmlStreamWriter *writer)
+	virtual void serialize(const QPair<QString, QString> *option, QXmlStreamWriter *writer)
 	{
 		writer->writeStartElement(QLatin1String("option"));
-		writeAttribute(writer,QLatin1String("label"),option->label);
-		writeTextElement(writer,QLatin1String("value"),option->value);
+		writeAttribute(writer,QLatin1String("label"), option->first);
+		writeTextElement(writer,QLatin1String("value"), option->second);
 		writer->writeEndElement();
 	}
-	void serialize(const DataFormOptionList &options, QXmlStreamWriter *writer)
+	void serialize(const QList<QPair<QString, QString> > &options, QXmlStreamWriter *writer)
 	{
-		foreach(DataFormOptionPointer optionPtr,options)
-			serialize(optionPtr.data(),writer);
+		for (int i = 0; i < options.size(); i++)
+			serialize(&options.at(i), writer);
 	}
-	DataFormOptionPointer create()
+	const QPair<QString, QString> create()
 	{
-		DataFormOption *opt = new DataFormOption();
-		opt->label = m_label;
-		opt->value = m_value;
-		clear();
-		return DataFormOptionPointer(opt);
+		return qMakePair(m_label, m_value);
 	}
 private:
 	void clear()
@@ -171,25 +167,33 @@ public:
 	{
 		writer->writeStartElement(QLatin1String("field"));
 		writeAttribute(writer,QLatin1String("type"),enumToStr(field->type(),datafield_types));
-		writeAttribute(writer,QLatin1String("label"),field->desc());
+		writeAttribute(writer,QLatin1String("label"),field->description());
 		writeAttribute(writer,QLatin1String("var"),field->var());
-		m_optionParser.serialize(field->options(),writer);
-		foreach(const QString &value,field->values())
-			writeTextElement(writer,QLatin1String("value"),value);
-		if(field->required())
+		m_optionParser.serialize(DataFormFieldPrivate::get(field)->options, writer);
+		foreach(const QVariant &value, field->values())
+			writeTextElement(writer,QLatin1String("value"), value.toString());
+		if(field->isRequired())
 			writer->writeEmptyElement(QLatin1String("required"));
 		writer->writeEndElement();
 	}
-	void serialize(const DataFormFieldList &fields, QXmlStreamWriter *writer)
+	void serialize(const DataFormFieldContainer &fields, QXmlStreamWriter *writer)
 	{
-		foreach(DataFormFieldPointer fieldPtr,fields)
-			serialize(fieldPtr.data(),writer);
+		for (int i = 0; i < fields.fieldsCount(); i++) {
+			DataFormField field = fields.field(i);
+			serialize(&field, writer);
+		}
 	}
-	DataFormFieldPointer create()
+	DataFormField create()
 	{
-		DataFormField *field = new DataFormField(m_var,m_values,m_label,m_type);
+		DataFormField field;
+		DataFormFieldPrivate *d = DataFormFieldPrivate::get(&field);
+		d->var = m_var;
+		d->values = QVariant(m_values).toList();
+		d->label = m_label;
+		d->type = m_type;
+		d->required = m_required;
 		clear();
-		return DataFormFieldPointer(field);
+		return field;
 	}
 private:
 	enum State {
@@ -211,7 +215,7 @@ private:
 	QString m_label;
 	QString m_var;
 	QStringList m_values;
-	DataFormOptionList m_options;
+	QList<QPair<QString, QString> > m_options;
 	bool m_required;
 	DataFormOptionParser m_optionParser;
 	MultimediaDataFactory m_multimediaDataFactory;
@@ -325,7 +329,7 @@ void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	writer->writeDefaultNamespace(NS_DATAFORM);
 	writeTextElement(writer,QLatin1String("title"),form->title());
 	//writer->writeTextElement(QLatin1String("instruction"),form->));
-	d->fieldParser.serialize(form->fields(),writer);
+	d->fieldParser.serialize(*form, writer);
 	writer->writeEndElement();
 }
 
