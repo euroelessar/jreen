@@ -33,11 +33,13 @@ namespace jreen
 		QString var;
 		QString desc;
 		QString label;
-		QVariantList values;
+		QStringList values;
 		bool required;
 		QList<QPair<QString,QString> > options;
 		
 		static DataFormFieldPrivate *get(DataFormField *field) { return field->d_ptr.data(); }
+	private:
+		DataFormFieldPrivate &operator =(const DataFormFieldPrivate &o);
 	};
 	
 	class DataFormFieldContainerPrivate

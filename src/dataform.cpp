@@ -87,12 +87,22 @@ void DataFormField::setDescription(const QString &desc)
 	d_ptr->desc = desc;
 }
 
-QVariantList DataFormField::values() const
+void DataFormField::setValues(const QStringList &values)
+{
+	d_ptr->values = values;
+}
+
+QStringList DataFormField::values() const
 {
 	return d_ptr->values;
 }
 
-QVariant DataFormField::value() const
+void DataFormField::setValue(const QString &value)
+{
+	d_ptr->values = QStringList(value);
+}
+
+QString DataFormField::value() const
 {
 	return d_ptr->values.value(0);
 }
@@ -100,7 +110,7 @@ QVariant DataFormField::value() const
 DataFormFieldBoolean::DataFormFieldBoolean(const QString &var, bool value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values << QLatin1String(value ? "1" : "0");
+	setValue(value);
 }
 
 DataFormFieldBoolean::DataFormFieldBoolean(const DataFormField &o) : DataFormField(o)
@@ -110,18 +120,18 @@ DataFormFieldBoolean::DataFormFieldBoolean(const DataFormField &o) : DataFormFie
 bool DataFormFieldBoolean::value() const
 {
 	// QVariant::toBool() handles both "1" and "true"
-	return d_ptr->values.value(0).toBool();
+	return QVariant(d_ptr->values.value(0)).toBool();
 }
 
 void DataFormFieldBoolean::setValue(bool value)
 {
-	d_ptr->values = QVariantList() << QLatin1String(value ? "1" : "0");
+	d_ptr->values = QStringList(QLatin1String(value ? "1" : "0"));
 }
 
 DataFormFieldFixed::DataFormFieldFixed(const QString &var, const QString &value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldFixed::DataFormFieldFixed(const DataFormField &o) : DataFormField(o)
@@ -130,19 +140,19 @@ DataFormFieldFixed::DataFormFieldFixed(const DataFormField &o) : DataFormField(o
 
 QString DataFormFieldFixed::value() const
 {
-	return d_ptr->values.value(0).toString();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldFixed::setValue(const QString &value)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 
 DataFormFieldHidden::DataFormFieldHidden(const QString &var, const QString &value)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldHidden::DataFormFieldHidden(const DataFormField &o) : DataFormField(o)
@@ -151,17 +161,18 @@ DataFormFieldHidden::DataFormFieldHidden(const DataFormField &o) : DataFormField
 
 QString DataFormFieldHidden::value() const
 {
-	return d_ptr->values.value(0).toString();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldHidden::setValue(const QString &value)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldJidMulti::DataFormFieldJidMulti(const QString &var, const QList<JID> &values, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
+	setValues(values);
 }
 
 DataFormFieldJidMulti::DataFormFieldJidMulti(const DataFormField &o) : DataFormField(o)
@@ -172,7 +183,7 @@ QList<JID> DataFormFieldJidMulti::values() const
 {
 	QList<JID> jids;
 	for (int i = 0; i < d_ptr->values.size(); i++) {
-		JID jid = d_ptr->values.at(i).value<JID>();
+		JID jid = d_ptr->values.at(i);
 		if (jid.isValid())
 			jids << jid;
 	}
@@ -183,17 +194,16 @@ void DataFormFieldJidMulti::setValues(const QList<JID> &values)
 {
 	d_ptr->values.clear();
 	for (int i = 0; i < values.size(); i++) {
-		QVariant var = qVariantFromValue(values.at(i));
-		if (d_ptr->values.contains(var))
+		if (d_ptr->values.contains(values.at(i)))
 			continue;
-		d_ptr->values << var;
+		d_ptr->values << values.at(i);
 	}
 }
 
 DataFormFieldJidSingle::DataFormFieldJidSingle(const QString &var, const JID &value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << qVariantFromValue(value);
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldJidSingle::DataFormFieldJidSingle(const DataFormField &o) : DataFormField(o)
@@ -237,18 +247,18 @@ void DataFormOptionContainer::removeOption(int index)
 
 JID DataFormFieldJidSingle::value() const
 {
-	return d_ptr->values.value(0).value<JID>();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldJidSingle::setValue(const JID &value)
 {
-	d_ptr->values = QVariantList() << qVariantFromValue(value);
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldListMulti::DataFormFieldListMulti(const QString &var, const QStringList &values, const QString &label)
 	: DataFormOptionContainer(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariant(values).toList();
+	d_ptr->values = values;
 }
 
 DataFormFieldListMulti::DataFormFieldListMulti(const DataFormField &o) : DataFormOptionContainer(o)
@@ -263,9 +273,8 @@ bool DataFormFieldListMulti::isChecked(int index) const
 struct DataFormValueLessThen
 {
 	const QList<QPair<QString, QString> > &options;
-	int index(const QVariant &v)
+	int index(const QVariant &s)
 	{
-		const QString s = v.toString();
 		for (int i = 0; i < options.size(); i++) {
 			if (options.at(i).second == s)
 				return i;
@@ -273,7 +282,7 @@ struct DataFormValueLessThen
 		return -1;
 	}
 
-	bool operator()(const QVariant &a, const QVariant &b)
+	bool operator()(const QString &a, const QString &b)
 	{
 		return index(a) < index(b);
 	}
@@ -281,14 +290,14 @@ struct DataFormValueLessThen
 
 void DataFormFieldListMulti::setChecked(int index, bool checked)
 {
-	QVariant value = d_ptr->options.value(index).second;
+	QString value = d_ptr->options.value(index).second;
 	if (!checked) {
 		d_ptr->values.removeOne(value);
 	} else {
 		if (d_ptr->values.contains(value))
 			return;
 		DataFormValueLessThen lessThen = { d_ptr->options };
-		QVariantList::iterator it = qLowerBound(d_ptr->values.begin(), d_ptr->values.end(), value, lessThen);
+		QStringList::iterator it = qLowerBound(d_ptr->values.begin(), d_ptr->values.end(), value, lessThen);
 		d_ptr->values.insert(it, value);
 	}
 }
@@ -296,7 +305,7 @@ void DataFormFieldListMulti::setChecked(int index, bool checked)
 DataFormFieldListSingle::DataFormFieldListSingle(const QString &var, const QString &value, const QString &label)
 	: DataFormOptionContainer(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldListSingle::DataFormFieldListSingle(const DataFormField &o) : DataFormOptionContainer(o)
@@ -305,18 +314,18 @@ DataFormFieldListSingle::DataFormFieldListSingle(const DataFormField &o) : DataF
 
 QString DataFormFieldListSingle::value() const
 {
-	return d_ptr->values.value(0).toString();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldListSingle::setValue(const QString &value)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldTextMulti::DataFormFieldTextMulti(const QString &var, const QString &value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldTextMulti::DataFormFieldTextMulti(const DataFormField &o) : DataFormField(o)
@@ -325,27 +334,18 @@ DataFormFieldTextMulti::DataFormFieldTextMulti(const DataFormField &o) : DataFor
 
 QString DataFormFieldTextMulti::value() const
 {
-	QString result;
-	for (int i = 0; i < d_ptr->values.size(); i++) {
-		if (i)
-			result += QLatin1Char('\n');
-		result += d_ptr->values.at(i).toString();
-	}
-	return result;
+	return d_ptr->values.join(QLatin1String("\n"));
 }
 
 void DataFormFieldTextMulti::setValue(const QString &value)
 {
-	d_ptr->values.clear();
-	foreach (const QString &str, value.split(QLatin1Char('\n')))
-		d_ptr->values << str;
+	d_ptr->values = value.split(QLatin1Char('\n'));
 }
-
 
 DataFormFieldTextPrivate::DataFormFieldTextPrivate(const QString &var, const QString &value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldTextPrivate::DataFormFieldTextPrivate(const DataFormField &o) : DataFormField(o)
@@ -354,18 +354,18 @@ DataFormFieldTextPrivate::DataFormFieldTextPrivate(const DataFormField &o) : Dat
 
 QString DataFormFieldTextPrivate::value() const
 {
-	return d_ptr->values.value(0).toString();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldTextPrivate::setValue(const QString &value)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldTextSingle::DataFormFieldTextSingle(const QString &var, const QString &value, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldTextSingle::DataFormFieldTextSingle(const DataFormField &o) : DataFormField(o)
@@ -374,18 +374,18 @@ DataFormFieldTextSingle::DataFormFieldTextSingle(const DataFormField &o) : DataF
 
 QString DataFormFieldTextSingle::value() const
 {
-	return d_ptr->values.value(0).toString();
+	return d_ptr->values.value(0);
 }
 
 void DataFormFieldTextSingle::setValue(const QString &value)
 {
-	d_ptr->values = QVariantList() << value;
+	d_ptr->values = QStringList(value);
 }
 
 DataFormFieldNone::DataFormFieldNone(const QString &var, const QStringList &values, const QString &label)
 	: DataFormField(static_cast<DataFormField::Type>(StaticType), var, label)
 {
-	d_ptr->values = QVariant(values).toList();
+	d_ptr->values = values;
 }
 
 DataFormFieldNone::DataFormFieldNone(const DataFormField &o) : DataFormField(o)
@@ -394,12 +394,12 @@ DataFormFieldNone::DataFormFieldNone(const DataFormField &o) : DataFormField(o)
 
 QStringList DataFormFieldNone::values() const
 {
-	return QVariant(d_ptr->values).toStringList();
+	return d_ptr->values;
 }
 
 void DataFormFieldNone::setValues(const QStringList &values)
 {
-	d_ptr->values = QVariant(values).toList();
+	d_ptr->values = values;
 }
 
 DataFormFieldContainer::DataFormFieldContainer() : d_ptr(new DataFormFieldContainerPrivate)
@@ -458,6 +458,21 @@ DataForm::DataForm(Type type, const QString &title) : DataFormFieldContainer(*ne
 
 DataForm::~DataForm()
 {
+}
+
+DataForm::Type DataForm::type() const
+{
+	return d_func()->type;
+}
+
+void DataForm::setType(Type type)
+{
+	d_func()->type = type;
+}
+
+QString DataForm::typeName() const
+{
+	return field(QLatin1String("FORM_TYPE")).value();
 }
 
 QString DataForm::title() const

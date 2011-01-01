@@ -70,12 +70,12 @@ namespace jreen
 	
 	MUCRoom::Affiliation MUCRoom::Participant::affiliation() const
 	{
-		return d_func()->query->affiliation;
+		return d_func()->query->item.affiliation;
 	}
 	
 	MUCRoom::Role MUCRoom::Participant::role() const
 	{
-		return d_func()->query->role;
+		return d_func()->query->item.role;
 	}
 	
 	bool MUCRoom::Participant::isSelf() const
@@ -100,17 +100,17 @@ namespace jreen
 	
 	QString MUCRoom::Participant::newNick() const
 	{
-		return d_func()->query->nick;
+		return d_func()->query->item.nick;
 	}
 	
 	QString MUCRoom::Participant::reason() const
 	{
-		return d_func()->query->reason;
+		return d_func()->query->item.reason;
 	}
 	
 	JID MUCRoom::Participant::realJID() const
 	{
-		return d_func()->query->jid;
+		return d_func()->query->item.jid;
 	}
 	
 	void MUCRoomPrivate::handlePresence(const Presence &pres)
@@ -158,6 +158,7 @@ namespace jreen
 	{
 		Q_D(MUCRoom);
 		Presence pres(type, d->jid, message, priority);
+		qDebug() << Q_FUNC_INFO << type << d->jid;
 		MUCRoomQuery *query = new MUCRoomQuery(d->password);
 		query->setMaxChars(d->maxChars);
 		query->setMaxStanzas(d->maxStanzas);
@@ -172,6 +173,28 @@ namespace jreen
 		Q_D(MUCRoom);
 		Presence pres = d->client->presence();
 		join(pres.subtype(), pres.status(), pres.priority());
+	}
+	
+	enum MUCRoomRequestContext
+	{
+		MUCRoomRequestConfig = 100,
+		MUCRoomSubmitConfig
+	};
+	
+	void MUCRoom::requestRoomConfig()
+	{
+		Q_D(MUCRoom);
+		IQ iq(IQ::Get, d->jid.bareJID());
+		iq.addExtension(new MUCRoomOwnerQuery);
+		d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomRequestConfig);
+	}
+	
+	void MUCRoom::setRoomConfig(const jreen::DataForm::Ptr &form)
+	{
+		Q_D(MUCRoom);
+		IQ iq(IQ::Get, d->jid.bareJID());
+		iq.addExtension(new MUCRoomOwnerQuery(form));
+		d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomSubmitConfig);
 	}
 	
 	void MUCRoom::leave(const QString &message)
@@ -192,6 +215,22 @@ namespace jreen
 		d->jid.setResource(nick);
 	}
 	
+	void MUCRoom::setRole(const QString &nick, Role role, const QString &reason)
+	{
+		Q_D(MUCRoom);
+		IQ iq(IQ::Set, d->jid.bareJID());
+		iq.addExtension(new MUCRoomAdminQuery(nick, role, reason));
+		d->client->send(iq);
+	}
+	
+	void MUCRoom::setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason)
+	{
+		Q_D(MUCRoom);
+		IQ iq(IQ::Set, d->jid.bareJID());
+		iq.addExtension(new MUCRoomAdminQuery(nick, affiliation, reason));
+		d->client->send(iq);
+	}
+	
 	void MUCRoom::send(const QString &message)
 	{
 		Q_D(MUCRoom);
@@ -209,4 +248,17 @@ namespace jreen
 		d->session->setSubject(subject);
 	}
 	
+	void MUCRoom::handleIQ(const jreen::IQ &iq, int context)
+	{
+		if (Error::Ptr e = iq.findExtension<Error>()) {
+			emit error(e);
+			return;
+		}
+		if (context == MUCRoomRequestConfig) {
+			MUCRoomOwnerQuery::Ptr query = iq.findExtension<MUCRoomOwnerQuery>();
+			if (!query)
+				return;
+			emit configurationReceived(query->form);
+		}
+	}
 }

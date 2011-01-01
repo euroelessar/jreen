@@ -21,6 +21,8 @@
 
 #define NS_MUC QLatin1String("http://jabber.org/protocol/muc")
 #define NS_MUCUSER QLatin1String("http://jabber.org/protocol/muc#user")
+#define NS_MUCADMIN QLatin1String("http://jabber.org/protocol/muc#admin")
+#define NS_MUCOWNER QLatin1String("http://jabber.org/protocol/muc#owner")
 
 namespace jreen
 {
@@ -100,6 +102,86 @@ namespace jreen
 		"none", "visitor", "participant", "moderator"
 	};
 	
+	MUCRoomItemFactory::MUCRoomItemFactory()
+	{
+		m_depth = 0;
+		m_state = AtNowhere;
+	}
+	
+	MUCRoomItemFactory::~MUCRoomItemFactory()
+	{
+	}
+	
+	bool MUCRoomItemFactory::canParse(const QStringRef &name, const QStringRef &uri,
+										   const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(uri);
+		Q_UNUSED(attributes);
+		return name == QLatin1String("item");
+	}
+	
+	void MUCRoomItemFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
+													 const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(uri);
+		m_depth++;
+		if (m_depth == 1) {
+			m_item.reset(new MUCRoomItem);
+			m_item->jid = attributes.value(QLatin1String("jid")).toString();
+			m_item->nick = attributes.value(QLatin1String("nick")).toString();
+			QStringRef tmp = attributes.value(QLatin1String("affiliation"));
+			m_item->affiliation = strToEnum<MUCRoom::Affiliation>(tmp, mucroom_affiliations);
+			tmp = attributes.value(QLatin1String("role"));
+			m_item->role = strToEnum<MUCRoom::Role>(tmp, mucroom_roles);
+		}  else if (m_depth == 2) {
+			if (name == QLatin1String("actor"))
+				m_item->actor = attributes.value(QLatin1String("jid")).toString();
+			else if (name == QLatin1String("reason"))
+				m_state = AtReason;
+		}
+	}
+	
+	void MUCRoomItemFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+	{
+		Q_UNUSED(name);
+		Q_UNUSED(uri);
+		if (m_depth == 2 && m_state == AtReason)
+			m_state = AtNowhere;
+		m_depth--;
+	}
+	
+	void MUCRoomItemFactory::handleCharacterData(const QStringRef &text)
+	{
+		if (m_state == AtReason)
+			m_item->reason = text.toString();
+	}
+	
+	void MUCRoomItemFactory::serialize(MUCRoomItem *item, QXmlStreamWriter *writer)
+	{
+		writer->writeStartElement(QLatin1String("item"));
+		if (item->jid.isValid())
+			writer->writeAttribute(QLatin1String("jid"), item->jid);
+		if (!item->nick.isEmpty())
+			writer->writeAttribute(QLatin1String("nick"), item->nick);
+		if (item->affiliation != MUCRoom::AffiliationInvalid)
+			writer->writeAttribute(QLatin1String("affiliation"), enumToStr(item->affiliation, mucroom_affiliations));
+		if (item->role != MUCRoom::RoleInvalid)
+			writer->writeAttribute(QLatin1String("role"), enumToStr(item->role, mucroom_roles));
+		if (item->actor.isValid()) {
+			writer->writeEmptyElement(QLatin1String("actor"));
+			writer->writeAttribute(QLatin1String("jid"), item->actor);
+		}
+		if (!item->reason.isEmpty())
+			writer->writeTextElement(QLatin1String("reason"), item->reason);
+		writer->writeEndElement();
+	}
+	
+	void MUCRoomItemFactory::result(MUCRoomItem *item)
+	{
+		*item = *m_item;
+		m_item.reset(0);
+	}
+	
 	MUCRoomUserQueryFactory::MUCRoomUserQueryFactory()
 	{
 		m_depth = 0;
@@ -165,56 +247,187 @@ namespace jreen
 	void MUCRoomUserQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
 													 const QXmlStreamAttributes &attributes)
 	{
-		Q_UNUSED(uri);
 		m_depth++;
 		if (m_depth == 1) {
 			m_query.reset(new MUCRoomUserQuery);
 		} else if (m_depth == 2) {
-			if (name == QLatin1String("item")) {
-				m_query->jid = attributes.value(QLatin1String("jid")).toString();
-				m_query->nick = attributes.value(QLatin1String("nick")).toString();
-				m_query->affiliation = strToEnum<MUCRoom::Affiliation>(attributes.value(QLatin1String("affiliation")), mucroom_affiliations);
-				m_query->role = strToEnum<MUCRoom::Role>(attributes.value(QLatin1String("role")), mucroom_roles);
+			if (m_item.canParse(name, uri, attributes)) {
 				m_state = AtItem;
 			} else if (name == QLatin1String("status")) {
 				QStringRef code = attributes.value(QLatin1String("code"));
 				int codeInt = QString::fromRawData(code.data(), code.size()).toInt(); 
 				m_query->flags |= userQueryCodeToFlag(codeInt);
 			}
-		} else if (m_depth == 3) {
-			if (m_state == AtItem && name == QLatin1String("actor"))
-				m_query->actor = attributes.value(QLatin1String("jid")).toString();
-			else if (m_state == AtItem && name == QLatin1String("reason"))
-				m_state = AtReason;
 		}
+		if (m_state == AtItem)
+			m_item.handleStartElement(name, uri, attributes);
 	}
 	
 	void MUCRoomUserQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 	{
-		Q_UNUSED(name);
-		Q_UNUSED(uri);
-		if (m_depth == 3 && m_state == AtReason)
-			m_state = AtItem;
-		else if (m_depth == 2 && m_state == AtItem)
-			m_state = AtNowhere;
+		if (m_state == AtItem) {
+			m_item.handleEndElement(name, uri);
+			if (m_depth == 2) {
+				m_item.result(&m_query->item);
+				m_state = AtNowhere;
+			}
+		}
 		m_depth--;
 	}
 	
 	void MUCRoomUserQueryFactory::handleCharacterData(const QStringRef &text)
 	{
-		if (m_state == AtReason)
-			m_query->reason = text.toString();
+		if (m_state == AtItem)
+			m_item.handleCharacterData(text);
 	}
 	
 	void MUCRoomUserQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 	{
 		Q_UNUSED(extension);
-		writer->writeStartElement(QLatin1String("x"));
+		writer->writeStartElement(QLatin1String("query"));
 		writer->writeDefaultNamespace(NS_MUCUSER);
 		writer->writeEndElement();
 	}
 	
 	StanzaExtension::Ptr MUCRoomUserQueryFactory::createExtension()
+	{
+		return StanzaExtension::Ptr(m_query.take());
+	}
+	
+	MUCRoomAdminQueryFactory::MUCRoomAdminQueryFactory()
+	{
+		m_depth = 0;
+		m_state = AtNowhere;
+	}
+	
+	MUCRoomAdminQueryFactory::~MUCRoomAdminQueryFactory()
+	{
+	}
+	
+	QStringList MUCRoomAdminQueryFactory::features() const
+	{
+		return QStringList(NS_MUCADMIN);
+	}
+	
+	bool MUCRoomAdminQueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
+											const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(uri);
+		Q_UNUSED(attributes);
+		return name == QLatin1String("query") && uri == NS_MUCADMIN;
+	}
+	
+	void MUCRoomAdminQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
+													  const QXmlStreamAttributes &attributes)
+	{
+		m_depth++;
+		if (m_depth == 1)
+			m_query.reset(new MUCRoomAdminQuery);
+		else if (m_depth == 2 && m_item.canParse(name, uri, attributes))
+			m_state = AtItem;
+		if (m_state == AtItem)
+			m_item.handleStartElement(name, uri, attributes);
+	}
+	
+	void MUCRoomAdminQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+	{
+		if (m_state == AtItem) {
+			m_item.handleEndElement(name, uri);
+			if (m_depth == 2) {
+				MUCRoomItem item;
+				m_item.result(&item);
+				m_query->items.append(item);
+				m_state = AtNowhere;
+			}
+		}
+		m_depth--;
+	}
+	
+	void MUCRoomAdminQueryFactory::handleCharacterData(const QStringRef &text)
+	{
+		if (m_state == AtItem)
+			m_item.handleCharacterData(text);
+	}
+	
+	void MUCRoomAdminQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+	{
+		MUCRoomAdminQuery *query = se_cast<MUCRoomAdminQuery*>(extension);
+		writer->writeStartElement(QLatin1String("query"));
+		writer->writeDefaultNamespace(NS_MUCADMIN);
+		for (int i = 0; i < query->items.size(); i++)
+			m_item.serialize(&query->items[i], writer);
+		writer->writeEndElement();
+	}
+	
+	StanzaExtension::Ptr MUCRoomAdminQueryFactory::createExtension()
+	{
+		return StanzaExtension::Ptr(m_query.take());
+	}
+	
+	MUCRoomOwnerQueryFactory::MUCRoomOwnerQueryFactory()
+	{
+		m_depth = 0;
+		m_state = AtNowhere;
+	}
+	
+	MUCRoomOwnerQueryFactory::~MUCRoomOwnerQueryFactory()
+	{
+	}
+	
+	QStringList MUCRoomOwnerQueryFactory::features() const
+	{
+		return QStringList(NS_MUCOWNER);
+	}
+	
+	bool MUCRoomOwnerQueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
+											const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(uri);
+		Q_UNUSED(attributes);
+		return name == QLatin1String("query") && uri == NS_MUCOWNER;
+	}
+	
+	void MUCRoomOwnerQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
+													  const QXmlStreamAttributes &attributes)
+	{
+		m_depth++;
+		if (m_depth == 1)
+			m_query.reset(new MUCRoomOwnerQuery);
+		else if (m_depth == 2 && m_form.canParse(name, uri, attributes))
+			m_state = AtForm;
+		if (m_state == AtForm)
+			m_form.handleStartElement(name, uri, attributes);
+	}
+	
+	void MUCRoomOwnerQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+	{
+		if (m_state == AtForm) {
+			m_form.handleEndElement(name, uri);
+			if (m_depth == 2) {
+				m_query->form = m_form.createExtension().staticCast<DataForm>();
+				m_state = AtNowhere;
+			}
+		}
+		m_depth--;
+	}
+	
+	void MUCRoomOwnerQueryFactory::handleCharacterData(const QStringRef &text)
+	{
+		if (m_state == AtForm)
+			m_form.handleCharacterData(text);
+	}
+	
+	void MUCRoomOwnerQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+	{
+		MUCRoomOwnerQuery *query = se_cast<MUCRoomOwnerQuery*>(extension);
+		writer->writeStartElement(QLatin1String("query"));
+		writer->writeDefaultNamespace(NS_MUCOWNER);
+		if (query->form)
+			m_form.serialize(query->form.data(), writer);
+		writer->writeEndElement();
+	}
+	
+	StanzaExtension::Ptr MUCRoomOwnerQueryFactory::createExtension()
 	{
 		return StanzaExtension::Ptr(m_query.take());
 	}

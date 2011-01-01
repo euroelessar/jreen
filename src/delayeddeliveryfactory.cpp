@@ -4,7 +4,7 @@
 #include "util.h"
 
 
-#define NS_DELAY "jabber:x:delay"
+#define NS_DELAY "urn:xmpp:delay"
 
 namespace jreen {
 

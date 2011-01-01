@@ -222,6 +222,11 @@ const QSet<QString> &Disco::features() const
 	return d->features;
 }
 
+void Disco::addFeature(const QString &feature)
+{
+	d_func()->features << feature;
+}
+
 QSet<QString> &Disco::features()
 {
 	Q_D(Disco);

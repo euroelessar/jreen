@@ -91,10 +91,12 @@ public:
 	QString description() const;
 	void setDescription(const QString &desc);
 	
-	QVariantList values() const;
-	QVariant value() const;
+	void setValues(const QStringList &values);
+	QStringList values() const;
+	void setValue(const QString &value);
+	QString value() const;
 	
-	template <typename T> T cast()
+	template <typename T> T cast() const
 	{ return T(static_cast<DataFormField::Type>(T::StaticType) == type() ? *this : DataFormField()); }
 
 protected:
@@ -319,13 +321,16 @@ public:
 	DataForm(Type type,const QString &title = QString());
 	virtual ~DataForm();
 	
+	Type type() const;
+	void setType(Type type);
+	QString typeName() const;
 	QString title() const;
 	QList<DataFormItem::Ptr> items() const;
 	DataFormReported::Ptr reported() const;
 };
 
 template <>
-Q_INLINE_TEMPLATE DataFormOptionContainer DataFormField::cast()
+Q_INLINE_TEMPLATE DataFormOptionContainer DataFormField::cast() const
 {
 	bool ok = type() == ListMulti || type() == ListSingle;
 	return DataFormOptionContainer(ok ? *this : DataFormField());

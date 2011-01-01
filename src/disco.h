@@ -97,6 +97,7 @@ public:
 	IdentityList &identities();
 	const QSet<QString> &features() const;
 	QSet<QString> &features();
+	void addFeature(const QString &feature);
 	void setSoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
 	const DataForm *form() const;
 	void setForm(DataForm *form);

@@ -70,11 +70,24 @@ namespace jreen
 		friend class MUCRoomQueryFactory;
 	};
 	
+	class MUCRoomItem
+	{
+	public:
+		MUCRoomItem() : affiliation(MUCRoom::AffiliationNone), role(MUCRoom::RoleNone) {}
+		
+		MUCRoom::Affiliation affiliation;
+		MUCRoom::Role role;
+		JID jid;
+		QString reason;
+		JID actor;
+		QString nick;
+	};
+	
 	class MUCRoomUserQuery : public StanzaExtension
 	{
 		J_EXTENSION(jreen::MUCRoomUserQuery, "")
 	public:
-		MUCRoomUserQuery() : affiliation(MUCRoom::AffiliationNone), role(MUCRoom::RoleNone), flags(0)
+		MUCRoomUserQuery() : flags(0)
 		{
 		}
 		enum Flag
@@ -95,16 +108,43 @@ namespace jreen
 			MembershipRequired   = 0x2000,
 			RoomSegfaulted       = 0x4000
 		};
-
-		MUCRoom::Affiliation affiliation;
-		MUCRoom::Role role;
-		JID jid;
-		int flags;
-		QString reason;
-		JID actor;
-		QString nick;
-		QString status;
+		MUCRoomItem item;
 		JID alternate;
+		int flags;
+		QString status;
+	};
+	
+	class MUCRoomAdminQuery : public StanzaExtension
+	{
+		J_EXTENSION(jreen::MUCRoomAdminQuery, "")
+	public:
+		MUCRoomAdminQuery() {}
+		MUCRoomAdminQuery(const QString &nick, MUCRoom::Affiliation a, const QString &reason)
+		{
+			MUCRoomItem item;
+			item.affiliation = a;
+			item.nick = nick;
+			item.reason = reason;
+			items << item;
+		}
+		MUCRoomAdminQuery(const QString &nick, MUCRoom::Role r, const QString &reason)
+		{
+			MUCRoomItem item;
+			item.role = r;
+			item.nick = nick;
+			item.reason = reason;
+			items << item;
+		}
+		QList<MUCRoomItem> items;
+	};
+	
+	class MUCRoomOwnerQuery : public StanzaExtension
+	{
+		J_EXTENSION(jreen::MUCRoomOwnerQuery, "")
+	public:
+		MUCRoomOwnerQuery() {}
+		MUCRoomOwnerQuery(const DataForm::Ptr &f) : form(f) {}
+		DataForm::Ptr form;
 	};
 }
 

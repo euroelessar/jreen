@@ -79,27 +79,31 @@ namespace jreen
 		//	void setRequestHistory(int value, HistoryRequest type);
 		//	void setRequestHistory(const QDateTime &since);
 		//	void requestVoice();
-		//	void kick(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleNone, reason); }
-		//	void ban(const QString &nick, const QString &reason = QString()) { setAffiliation(nick, AffiliationOutcast, reason); }
+			void kick(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleNone, reason); }
+			void ban(const QString &nick, const QString &reason = QString()) { setAffiliation(nick, AffiliationOutcast, reason); }
 		//	void grantVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleParticipant, reason); }
 		//	void revokeVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleVisitor, reason); }
-		//	void setRole(const QString &nick, Role role, const QString &reason = QString());
-		//	void setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason = QString());
+			void setRole(const QString &nick, Role role, const QString &reason = QString());
+			void setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason = QString());
 		
 	public slots:
 		void join();
 		//	void getRoomInfo();
 		//	void getRoomItems();
-		//	void requestRoomConfig();
+		void requestRoomConfig();
+		void setRoomConfig(const jreen::DataForm::Ptr &form);
 	signals:
 		void presenceReceived(const jreen::MUCRoom::Participant *part, const jreen::Presence &presence);
 		void messageReceived(const jreen::Message &message, bool priv);
 		void subjectChanged(const QString &subject, const QString &actor);
 		void created();
 		void inviteDeclined(const jreen::JID &jid, const QString &reason);
-		void error(const jreen::Error &error);
+		void error(const jreen::Error::Ptr &error);
+		void configurationReceived(const jreen::DataForm::Ptr &form);
 		void roomInfoReceived(QSet<QString> features, const QString &name, QSharedPointer<jreen::DataForm> form);
 		void roomItemsReceived(const jreen::Disco::ItemList &items);
+	protected slots:
+		void handleIQ(const jreen::IQ &iq, int context);
 	protected:
 		QScopedPointer<MUCRoomPrivate> d_ptr;
 	};

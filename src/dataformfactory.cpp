@@ -18,6 +18,7 @@
 #include <QXmlStreamWriter>
 #include "util.h"
 #include "multimediadatafactory_p.h"
+#include <QDebug>
 #define NS_DATAFORM QLatin1String("jabber:x:data")
 
 namespace jreen {
@@ -29,6 +30,7 @@ class DataFormOptionParser : XmlStreamFactory<const QPair<QString, QString> >
 public:
 	DataFormOptionParser()
 	{
+		m_depth = 0;
 		clear();
 	}
 	virtual ~DataFormOptionParser()
@@ -48,8 +50,10 @@ public:
 		Q_UNUSED(name);
 		Q_UNUSED(uri);
 		m_depth++;
-		if(m_depth == 1)
+		if(m_depth == 1) {
+			m_value.clear();
 			m_label = attributes.value(QLatin1String("label")).toString();
+		}
 	}
 	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri)
 	{
@@ -108,6 +112,7 @@ public:
 	DataFormFieldParser()
 	{
 		m_depth = 0;
+		m_state = AtNowhere;
 	}
 	virtual ~DataFormFieldParser()
 	{
@@ -131,9 +136,9 @@ public:
 		} else if (m_depth == 2) {
 			if(name == QLatin1String("value"))
 				m_state = AtValue;
-			else if(m_optionParser.canParse(name,uri,attributes))
+			else if(m_optionParser.canParse(name,uri,attributes)) {
 				m_state = AtOption;
-			else if(name == QLatin1String("required")) {
+			} else if(name == QLatin1String("required")) {
 				m_state = AtRequied;
 				m_required = true;
 			}
@@ -144,11 +149,14 @@ public:
 	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri)
 	{
 		if(m_state == AtOption) {
-			if(m_depth == 2)
+			m_optionParser.handleEndElement(name,uri);
+			if(m_depth == 2) {
+				qDebug() << m_optionParser.create();
 				m_options.append(m_optionParser.create());
-			else
-				m_optionParser.handleEndElement(name,uri);
+			}
 		}
+		if (m_depth == 2)
+			m_state = AtNowhere;
 		m_depth--;
 	}
 	virtual void handleCharacterData(const QStringRef &text)
@@ -188,9 +196,11 @@ public:
 		DataFormField field;
 		DataFormFieldPrivate *d = DataFormFieldPrivate::get(&field);
 		d->var = m_var;
-		d->values = QVariant(m_values).toList();
+		d->values = m_values;
 		d->label = m_label;
 		d->type = m_type;
+		d->options = m_options;
+//		qDebug() << m_label << m_var << field.var() << field.label() << d->var << d->label;
 		d->required = m_required;
 		clear();
 		return field;
@@ -199,7 +209,8 @@ private:
 	enum State {
 		AtValue,
 		AtOption,
-		AtRequied
+		AtRequied,
+		AtNowhere
 	};
 	void clear() {
 		m_options.clear();
@@ -300,10 +311,9 @@ void DataFormFactory::handleEndElement(const QStringRef &name, const QStringRef 
 {
 	Q_D(DataFormFactory);
 	if(d->state == AtField) {
+		d->fieldParser.handleEndElement(name,uri);
 		if(d->depth == 2)
 			d->fields.append(d->fieldParser.create());
-		else
-			d->fieldParser.handleEndElement(name,uri);
 	}
 	d->depth--;
 }
