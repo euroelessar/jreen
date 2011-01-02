@@ -264,7 +264,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 
 void AbstractRoster::handleIQ(const IQ &iq, int context)
 {
-	Q_D(AbstractRoster);
+	//Q_D(AbstractRoster);
 	switch(context)
 	{
 	case LoadRoster:
