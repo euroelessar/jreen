@@ -93,7 +93,7 @@ VCard::Photo::Photo() : d_ptr(new PhotoPrivate)
 {
 }
 
-VCard::Photo::Photo(const VCard::Photo::Photo &o) : d_ptr(o.d_ptr)
+VCard::Photo::Photo(const Photo &o) : d_ptr(o.d_ptr)
 {
 }
 
@@ -105,7 +105,7 @@ VCard::Photo::~Photo()
 {
 }
 
-VCard::Photo &VCard::Photo::operator =(const VCard::Photo::Photo &o)
+VCard::Photo &VCard::Photo::operator =(const Photo &o)
 {
 	d_ptr = o.d_ptr;
 	return *this;
@@ -144,7 +144,7 @@ VCard::Telephone::Telephone() : d_ptr(new VCard::TelephonePrivate)
 {
 }
 
-VCard::Telephone::Telephone(const VCard::Telephone::Telephone &o) : d_ptr(o.d_ptr)
+VCard::Telephone::Telephone(const Telephone &o) : d_ptr(o.d_ptr)
 {
 }
 
@@ -206,7 +206,7 @@ VCard::EMail::EMail() : d_ptr(new VCard::EMailPrivate)
 {
 }
 
-VCard::EMail::EMail(const VCard::EMail::EMail &o) : d_ptr(o.d_ptr)
+VCard::EMail::EMail(const EMail &o) : d_ptr(o.d_ptr)
 {
 }
 
@@ -218,7 +218,7 @@ VCard::EMail::~EMail()
 {
 }
 
-VCard::EMail &VCard::EMail::operator =(const VCard::EMail &o)
+VCard::EMail &VCard::EMail::operator =(const EMail &o)
 {
 	d_ptr = o.d_ptr;
 	return *this;
@@ -228,7 +228,7 @@ VCard::Address::Address() : d_ptr(new VCard::AddressPrivate)
 {
 }
 
-VCard::Address::Address(const VCard::Address::Address &o) : d_ptr(o.d_ptr)
+VCard::Address::Address(const Address &o) : d_ptr(o.d_ptr)
 {
 }
 
