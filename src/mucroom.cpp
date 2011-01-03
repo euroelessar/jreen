@@ -120,7 +120,7 @@ namespace jreen
 		part.d_func()->query = pres.findExtension<MUCRoomUserQuery>();
 		if (!part.d_func()->query)
 			return;
-		emit q->presenceReceived(&part, pres);
+		emit q->presenceReceived(pres, &part);
 	}
 	
 	void MUCRoomPrivate::handleMessage(const Message &msg)

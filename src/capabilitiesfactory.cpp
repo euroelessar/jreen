@@ -118,9 +118,7 @@ void CapabilitesFactory::serialize(StanzaExtension *extension, QXmlStreamWriter 
 
 StanzaExtension::Ptr CapabilitesFactory::createExtension()
 {
-	Capabilities *caps = new Capabilities(m_ver);
-	caps->setNode(m_node);
-	return StanzaExtension::Ptr(caps);
+	return StanzaExtension::Ptr(new Capabilities(m_ver, m_node));
 }
 
 

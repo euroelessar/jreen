@@ -14,20 +14,43 @@
 *****************************************************************************/
 
 #include <QStringList>
-#include <QMap>
-#include <QStringBuilder>
 #include <QXmlStreamWriter>
 #include "capabilities.h"
-#include "disco.h"
-#include "jstrings.h"
 
 namespace jreen
 {
 
-Capabilities::Capabilities(const QString &ver) :
-	m_ver(ver),
-	m_node(QLatin1String("http://jreen.org/"))
+class CapabilitiesPrivate
 {
+public:
+	QString ver;
+	QString node;
+};
+	
+Capabilities::Capabilities(const QString &ver, const QString &node) : d_ptr(new CapabilitiesPrivate)
+{
+	Q_D(Capabilities);
+	d->ver = ver;
+	d->node = node;
+}
+
+Capabilities::~Capabilities()
+{
+}
+
+void Capabilities::setNode(const QString &node)
+{
+	d_func()->node = node;
+}
+
+QString Capabilities::node() const
+{
+	return d_func()->node;
+}
+
+QString Capabilities::ver() const
+{
+	return d_func()->ver;
 }
 
 }

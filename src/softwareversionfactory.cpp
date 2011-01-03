@@ -51,6 +51,11 @@ void SoftwareVersionFactory::handleStartElement(const QStringRef &name, const QS
 	Q_UNUSED(attributes);
 	Q_D(SoftwareVersionFactory);
 	d->depth++;
+	if (d->depth == 1) {
+		d->name.clear();
+		d->os.clear();
+		d->version.clear();
+	}
 	if(d->depth == 2)
 		d->state = strToEnum<SoftwareVersionFactoryPrivate::State>(name,query_strings);
 }

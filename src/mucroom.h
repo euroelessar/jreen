@@ -93,7 +93,7 @@ namespace jreen
 		void requestRoomConfig();
 		void setRoomConfig(const jreen::DataForm::Ptr &form);
 	signals:
-		void presenceReceived(const jreen::MUCRoom::Participant *part, const jreen::Presence &presence);
+		void presenceReceived(const jreen::Presence &presence, const jreen::MUCRoom::Participant *part);
 		void messageReceived(const jreen::Message &message, bool priv);
 		void subjectChanged(const QString &subject, const QString &actor);
 		void created();

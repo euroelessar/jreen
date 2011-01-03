@@ -21,21 +21,20 @@
 namespace jreen
 {
 
-class Disco;
-
+class CapabilitiesPrivate;
 class JREEN_EXPORT Capabilities : public StanzaExtension
 {
+	Q_DECLARE_PRIVATE(Capabilities)
 	J_EXTENSION(jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
 public:
-	Capabilities(const QString &ver);
-//	Capabilities(const QDomElement &node = QDomElement());
-//	void writeXml(QXmlStreamWriter *writer) const;
-	inline void setNode(const QString &node) { m_node = node; }
-	inline const QString &node() const { return m_node; }
-	QString ver() const { return m_ver; };
+	Capabilities(const QString &ver, const QString &node = QString());
+	~Capabilities();
+	
+	void setNode(const QString &node);
+	QString node() const;
+	QString ver() const;
 private:
-	QString m_ver;
-	QString m_node;
+	QScopedPointer<CapabilitiesPrivate> d_ptr;
 };
 
 }

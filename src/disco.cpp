@@ -93,7 +93,8 @@ void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	if (!info)
 		return;
 	writer->writeStartElement(QLatin1String("query"));
-	writer->writeAttribute(QLatin1String("node"),info->node());
+	if (!info->node().isEmpty())
+		writer->writeAttribute(QLatin1String("node"),info->node());
 	writer->writeDefaultNamespace(NS_DISCO_INFO);
 	foreach (const Disco::Identity &identity, info->identities()) {
 		writer->writeEmptyElement(QLatin1String("identity"));
@@ -173,11 +174,13 @@ void DiscoItemsFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *
 	Disco::Items *items = se_cast<Disco::Items*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(NS_DISCO_ITEMS);
-	writer->writeAttribute(QLatin1String("node"),items->node());
+	if (!items->node().isEmpty())
+		writer->writeAttribute(QLatin1String("node"), items->node());
 	foreach(const Disco::Item &item,items->items()) {
 		writer->writeEmptyElement(QLatin1String("item"));
 		writer->writeAttribute(QLatin1String("jid"),item.jid);
-		writer->writeAttribute(QLatin1String("node"),item.node);
+		if (!item.node.isEmpty())
+			writer->writeAttribute(QLatin1String("node"),item.node);
 		writer->writeAttribute(QLatin1String("name"),item.name);
 	}
 	writer->writeEndElement();

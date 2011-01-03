@@ -33,15 +33,19 @@ TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 	qcaInit();
 	m_required = false;
 	m_available = false;
-	if(QCA::isSupported("tls")) {
-		m_tls = new QCA::TLS(this);
+	resetTls(true);
+}
+
+void TLSFeature::resetTls(bool first)
+{
+	if((first && QCA::isSupported("tls")) || (!first && m_tls)) {
+		m_tls.reset(new QCA::TLS(this));
 		m_tls->setTrustedCertificates(QCA::systemStore());
-		connect(m_tls, SIGNAL(handshaken()), SLOT(onHandshaken()));
-		connect(m_tls, SIGNAL(closed()), SLOT(onClosed()));
-		connect(m_tls, SIGNAL(error()), SLOT(onError()));
+		connect(m_tls.data(), SIGNAL(handshaken()), SLOT(onHandshaken()));
+		connect(m_tls.data(), SIGNAL(closed()), SLOT(onClosed()));
+		connect(m_tls.data(), SIGNAL(error()), SLOT(onError()));
 	} else {
 		qWarning("Jreen: TLS is not provided by QCA");
-		m_tls = 0;
 	}
 }
 
@@ -80,7 +84,7 @@ void TLSFeature::handleStartElement(const QStringRef &name, const QStringRef &ur
 	else if (name == QLatin1String("required"))
 		m_required = true;
 	else if (name == QLatin1String("proceed")) {
-		m_info->addDataStream(new TLSDataStream(m_tls));
+		m_info->addDataStream(new TLSDataStream(m_tls.data()));
 		m_tls->startClient(m_info->jid().domain());
 	}
 	//		Q_UNUSED(uri);
@@ -170,8 +174,8 @@ void TLSFeature::onError()
 
 void TLSFeature::onDisconnected()
 {
+	resetTls(false);
 	qDebug() << Q_FUNC_INFO;
-	m_tls->close();
 }
 
 } //namespace jreen
