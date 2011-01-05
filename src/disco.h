@@ -19,7 +19,6 @@
 #include <QObject>
 #include <QString>
 #include <QSet>
-#include "client.h"
 #include "dataform.h"
 #include "jid.h"
 #include "stanzaextension.h"
@@ -29,6 +28,7 @@ namespace jreen
 {
 
 class IQ;
+class Client;
 class DiscoPrivate;
 class JREEN_EXPORT Disco : public QObject
 {
@@ -110,5 +110,10 @@ protected:
 };
 
 }
+
+Q_DECLARE_METATYPE(jreen::Disco::Identity)
+Q_DECLARE_METATYPE(jreen::Disco::IdentityList)
+Q_DECLARE_METATYPE(jreen::Disco::Item)
+Q_DECLARE_METATYPE(jreen::Disco::ItemList)
 
 #endif // DISCO_H

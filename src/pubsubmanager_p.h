@@ -2,7 +2,7 @@
  *
  *  This file is part of qutIM
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,31 +14,31 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "mucmessagesession_p.h"
-#include "mucroom_p.h"
-#include "client.h"
+#ifndef PUBSUBMANAGER_P_H
+#define PUBSUBMANAGER_P_H
+
+#include "pubsubmanager.h"
 
 namespace jreen
 {
-	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
-			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())
+	namespace PubSub
 	{
-		m_room = MUCRoomPrivate::get(room);
-	}
-	
-	void MUCMessageSession::setSubject(const QString &subject)
-	{
-		sendMessage(QString(), subject);
-	}
-	
-	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
-	{
-		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
-	}
-	
-	void MUCMessageSession::handleMessage(const Message &message)
-	{
-		m_room->handleMessage(message);
+		class ManagerPrivate
+		{
+		public:
+			Client *client;
+			QList<AbstractStanzaExtensionFactory *> factories;
+		};
+		
+		class Publish : public StanzaExtension
+		{
+			J_EXTENSION(jreen::PubSub::Publish, "")
+		public:
+			Publish() {}
+			Publish(const QList<StanzaExtension::Ptr> &i) : items(i) {}
+			QList<StanzaExtension::Ptr> items;
+			QString node;
+		};
 	}
 }
+#endif // PUBSUBMANAGER_P_H

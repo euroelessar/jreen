@@ -33,6 +33,9 @@ public:
 	void handleCharacterData(const QStringRef &text);
 	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 	StanzaExtension::Ptr createExtension();
+	
+	static QLatin1String typeName(Mood::Type type);
+	static Mood::Type typeByName(const QStringRef &name);
 private:
 	int m_depth;
 	Mood::Type m_subtype;

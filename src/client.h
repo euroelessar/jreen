@@ -21,6 +21,7 @@
 #include <QSet>
 #include "jreen.h"
 #include "presence.h"
+#include "disco.h"
 
 namespace jreen
 {
@@ -51,7 +52,8 @@ class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
-	Q_DECLARE_PRIVATE(Client);
+	Q_PROPERTY(jreen::Disco::IdentityList serverIdentities READ serverIdentities NOTIFY serverIdentitiesReceived)
+	Q_DECLARE_PRIVATE(Client)
 public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
@@ -64,6 +66,7 @@ public:
 	void setPort(int port);
 	void addXmlStreamHandler(XmlStreamHandler *handler);
 	QSet<QString> serverFeatures() const;
+	Disco::IdentityList serverIdentities() const;
 	const QString &server() const;
 	int port() const;
 	const QString getID();
@@ -92,6 +95,7 @@ signals:
 	void newIQ(const jreen::IQ &iq);
 	void newMessage(const jreen::Message &message);
 	void serverFeaturesReceived(const QSet<QString> &features);
+	void serverIdentitiesReceived(const jreen::Disco::IdentityList &identities) const;
 protected:
 	virtual void handleConnect();
 	virtual void handleDisconnect();

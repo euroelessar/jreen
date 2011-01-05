@@ -2,7 +2,7 @@
  *
  *  This file is part of qutIM
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,31 +14,30 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "mucmessagesession_p.h"
-#include "mucroom_p.h"
-#include "client.h"
+#ifndef TUNEFACTORY_P_H
+#define TUNEFACTORY_P_H
+
+#include "tune.h"
+#include <QVector>
 
 namespace jreen
 {
-	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
-			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())
+	class TuneFactory : public StanzaExtensionFactory<Tune>
 	{
-		m_room = MUCRoomPrivate::get(room);
-	}
-	
-	void MUCMessageSession::setSubject(const QString &subject)
-	{
-		sendMessage(QString(), subject);
-	}
-	
-	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
-	{
-		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
-	}
-	
-	void MUCMessageSession::handleMessage(const Message &message)
-	{
-		m_room->handleMessage(message);
-	}
+	public:
+		TuneFactory();
+		QStringList features() const;
+		bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+		void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+		void handleEndElement(const QStringRef &name, const QStringRef &uri);
+		void handleCharacterData(const QStringRef &text);
+		void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+		StanzaExtension::Ptr createExtension();
+	private:
+		int m_depth;
+		int m_state;
+		QVector<QString> m_data;
+	};
 }
+
+#endif // TUNEFACTORY_P_H

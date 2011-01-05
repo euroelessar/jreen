@@ -31,6 +31,8 @@ namespace jreen
 
 class Client;
 
+// TODO: Rename to Payload or XmlEntity, it'd be more appropriate for current ideas
+
 class JREEN_EXPORT StanzaExtension
 {
 	Q_DISABLE_COPY(StanzaExtension)

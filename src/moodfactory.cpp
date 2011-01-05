@@ -16,14 +16,15 @@
 #include "moodfactory_p.h"
 #include "jstrings.h"
 #include <QXmlStreamWriter>
+#include <QDebug>
 
 #define NS_MOOD QLatin1String("http://jabber.org/protocol/mood")
 
 static const char *mood_types[] = {
 	"afraid",
 	"amazed",
-	"angry",
 	"amorous",
+	"angry",
 	"annoyed",
 	"anxious",
 	"aroused",
@@ -52,6 +53,8 @@ static const char *mood_types[] = {
 	"excited",
 	"flirtatious",
 	"frustrated",
+	"grateful",
+	"grieving",
 	"grumpy",
 	"guilty",
 	"happy",
@@ -70,6 +73,7 @@ static const char *mood_types[] = {
 	"invincible",
 	"jealous",
 	"lonely",
+	"lost",
 	"lucky",
 	"mean",
 	"moody",
@@ -85,6 +89,7 @@ static const char *mood_types[] = {
 	"restless",
 	"sad",
 	"sarcastic",
+	"satisfied",
 	"serious",
 	"shocked",
 	"shy",
@@ -122,27 +127,31 @@ QStringList MoodFactory::features() const
 bool MoodFactory::canParse(const QStringRef &name, const QStringRef &uri,
 						   const QXmlStreamAttributes &)
 {
-	bool can = name == QLatin1String("mood") && uri == NS_MOOD;
-	if(can)
-		m_text.clear();
-	return can;
+	return name == QLatin1String("mood") && uri == NS_MOOD;
 }
 
-//inline bool moodLessThen(const char *a, const QStringRef &b)
-//{
-//	return QLatin1String(a) < b;
-//}
+struct MoodLessThen
+{
+	bool operator()(const QStringRef &a, const char *b)
+	{
+		return a.compare(QLatin1String(b)) < 0;
+	}
+	
+	bool operator()(const char *a, const QStringRef &b)
+	{
+		return b.compare(QLatin1String(a)) > 0;
+	}
+};
 
 void MoodFactory::handleStartElement(const QStringRef &name, const QStringRef &,
 									 const QXmlStreamAttributes &)
 {
 	m_depth++;
-	if(m_depth == 1 && name != QLatin1String("text")) {
-//		int n = sizeof(mood_types)/sizeof(char*);
-//		const char *res = qLowerBound(mood_types, mood_types + n, name, moodLessThen);
-//		m_subtype = static_cast<Mood::Type>(res == mood_types + n ? -1 : (res - mood_types));
-		m_subtype = strToEnum<Mood::Type>(name,mood_types);
-	}
+	if (m_depth == 1)
+		m_text.clear(), m_subtype = Mood::Empty;
+	else if(m_depth == 2 && name != QLatin1String("text"))
+		m_subtype = typeByName(name);
+//		m_subtype = strToEnum<Mood::Type>(name,mood_types);
 }
 
 void MoodFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -161,18 +170,36 @@ void MoodFactory::handleCharacterData(const QStringRef &text)
 void MoodFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	Mood *mood = se_cast<Mood*>(extension);
-	if(mood->subtype() == Mood::Invalid)
+	if(mood->type() == Mood::Invalid)
 		return;
 	writer->writeStartElement(QLatin1String("mood"));
 	writer->writeDefaultNamespace(NS_MOOD);
-	writer->writeEmptyElement(enumToStr(m_subtype,mood_types));
-	if(!m_text.isEmpty())
-		writer->writeTextElement(QLatin1String("text"),m_text);
+	if (mood->type() != Mood::Empty) {
+		writer->writeEmptyElement(enumToStr(mood->type(), mood_types));
+		if(!mood->text().isEmpty())
+			writer->writeTextElement(QLatin1String("text"), mood->text());
+	}
+	writer->writeEndElement();
 }
 
 StanzaExtension::Ptr MoodFactory::createExtension()
 {
-	return StanzaExtension::Ptr(new Mood(m_subtype,m_text));
+	return StanzaExtension::Ptr(new Mood(m_subtype, m_text));
+}
+
+QLatin1String MoodFactory::typeName(Mood::Type type)
+{
+	return QLatin1String(type <= Mood::Invalid ? 0 : mood_types[type]);
+}
+
+Mood::Type MoodFactory::typeByName(const QStringRef &name)
+{
+	if (name.isEmpty())
+		return Mood::Empty;
+	int n = sizeof(mood_types)/sizeof(char*);
+	MoodLessThen moodLessThen;
+	const char **res = qBinaryFind(mood_types, mood_types + n, name, moodLessThen);
+	return static_cast<Mood::Type>((res == mood_types + n) ? -1 : (res - mood_types));
 }
 
 } // namespace jreen

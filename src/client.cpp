@@ -44,6 +44,9 @@
 #include "privatexml_p.h"
 #include "mucroomfactory_p.h"
 #include "entitytimefactory_p.h"
+#include "pubsubevent.h"
+#include "pubsubmanager_p.h"
+#include "tunefactory_p.h"
 
 namespace jreen
 {
@@ -110,6 +113,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new ReceiptFactory);
 	client->registerStanzaExtension(new SoftwareVersionFactory);
 	client->registerStanzaExtension(new MoodFactory);
+	client->registerStanzaExtension(new TuneFactory);
 	client->registerStanzaExtension(new VCardFactory);
 	client->registerStanzaExtension(new PingFactory);
 	client->registerStanzaExtension(new VCardUpdateFactory);
@@ -118,6 +122,8 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new MUCRoomAdminQueryFactory);
 	client->registerStanzaExtension(new MUCRoomOwnerQueryFactory);
 	client->registerStanzaExtension(new EntityTimeFactory);
+//	client->registerStanzaExtension(new PubSub::EventFactory);
+//	client->registerStanzaExtension(new PubSub::PublishFacatory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
 	client->registerStreamFeature(new NonSaslAuth);
@@ -187,6 +193,11 @@ void Client::addXmlStreamHandler(XmlStreamHandler *handler)
 QSet<QString> Client::serverFeatures() const
 {
 	return d_func()->serverFeatures;
+}
+
+Disco::IdentityList Client::serverIdentities() const
+{
+	return d_func()->serverIdentities;
 }
 
 void Client::setResource(const QString &resource)
@@ -363,7 +374,9 @@ void ClientPrivate::onIqReceived(const IQ &iq, int context)
 	QSharedPointer<Disco::Info> info = iq.findExtension<Disco::Info>();
 	if (info) {
 		serverFeatures = info->features();
+		serverIdentities = info->identities();
 		emit client->serverFeaturesReceived(serverFeatures);
+		emit client->serverIdentitiesReceived(serverIdentities);
 		qDebug() << serverFeatures;
 	}
 }

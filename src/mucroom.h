@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include "error.h"
 #include "disco.h"
+#include "presence.h"
+#include "message.h"
 
 namespace jreen
 {

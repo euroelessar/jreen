@@ -2,7 +2,7 @@
  *
  *  This file is part of qutIM
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,31 +14,21 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "mucmessagesession_p.h"
-#include "mucroom_p.h"
-#include "client.h"
+#include "xmlentity.h"
+#include "stanzaextension.h"
 
 namespace jreen
 {
-	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
-			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())
+	XmlEntity::XmlEntity()
 	{
-		m_room = MUCRoomPrivate::get(room);
 	}
 	
-	void MUCMessageSession::setSubject(const QString &subject)
+	XmlEntity::~XmlEntity()
 	{
-		sendMessage(QString(), subject);
 	}
 	
-	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
+	int XmlEntity::registerXmlEntityType(const char *type)
 	{
-		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
+		return StanzaExtension::registerExtensionType(type);
 	}
-	
-	void MUCMessageSession::handleMessage(const Message &message)
-	{
-		m_room->handleMessage(message);
-	}
-}
+}	

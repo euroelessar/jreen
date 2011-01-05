@@ -18,7 +18,9 @@
 #include "jstrings.h"
 #include "dataform.h"
 #include "softwareversion.h"
+#include "client.h"
 #include <QXmlStreamWriter>
+
 #define NS_DISCO_INFO QLatin1String("http://jabber.org/protocol/disco#info")
 #define NS_DISCO_ITEMS QLatin1String("http://jabber.org/protocol/disco#items")
 

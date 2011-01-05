@@ -17,17 +17,19 @@
 #define MOOD_H
 #include "stanzaextension.h"
 
-namespace jreen {
-
-class JREEN_EXPORT Mood : public StanzaExtension
+namespace jreen
 {
-	J_EXTENSION(jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
-public:
-	enum Type {
+	class MoodPrivate;
+	class JREEN_EXPORT Mood : public StanzaExtension
+	{
+		Q_DECLARE_PRIVATE(Mood);
+		J_EXTENSION(jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
+	public:
+		enum Type {
 			Afraid = 0,
 			Amazed,
-			Angry,
 			Amorous,
+			Angry,
 			Annoyed,
 			Anxious,
 			Aroused,
@@ -56,6 +58,8 @@ public:
 			Excited,
 			Flirtatious,
 			Frustrated,
+			Grateful,
+			Grieving,
 			Grumpy,
 			Guilty,
 			Happy,
@@ -74,6 +78,7 @@ public:
 			Invincible,
 			Jealous,
 			Lonely,
+			Lost,
 			Lucky,
 			Mean,
 			Moody,
@@ -89,6 +94,7 @@ public:
 			Restless,
 			Sad,
 			Sarcastic,
+			Satisfied,
 			Serious,
 			Shocked,
 			Shy,
@@ -104,17 +110,24 @@ public:
 			Undefined,
 			Weak,
 			Worried,
-			Invalid = -1
+			Invalid = -1,
+			Empty = -2
+		};
+		
+		Mood(Type type = Invalid, const QString &text = QString());
+		Mood(const QString &type, const QString &text);
+		~Mood();
+		
+		Type type() const;
+		QString typeName() const;
+		void setType(const QString &type);
+		void setType(Type type);
+		
+		QString text() const;
+		void setText(const QString &text);
+	private:
+		QScopedPointer<MoodPrivate> d_ptr;
 	};
-	Mood(Type type,const QString &text)
-	: m_type(type),m_text(text) {}
-	Type subtype() const {return m_type;}
-	QString text() const {return m_text;}
-private:
-	Type m_type;
-	QString m_text;
-};
-
 } // namespace jreen
 
 #endif // MOOD_H

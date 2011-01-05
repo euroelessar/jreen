@@ -170,6 +170,7 @@ public:
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
 	QSet<QString> serverFeatures;
+	jreen::Disco::IdentityList serverIdentities;
 	QMap<QString, MUCRoomPrivate*> rooms;
 	StanzaExtensionFactoryMap factories;
 	MessageSessionManager *messageSessionManager;

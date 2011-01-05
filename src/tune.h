@@ -2,7 +2,7 @@
  *
  *  This file is part of qutIM
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,31 +14,39 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "mucmessagesession_p.h"
-#include "mucroom_p.h"
-#include "client.h"
+#ifndef TUNE_H
+#define TUNE_H
+
+#include "stanzaextension.h"
 
 namespace jreen
 {
-	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
-			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())
+	class TunePrivate;
+	class JREEN_EXPORT Tune : public StanzaExtension
 	{
-		m_room = MUCRoomPrivate::get(room);
-	}
-	
-	void MUCMessageSession::setSubject(const QString &subject)
-	{
-		sendMessage(QString(), subject);
-	}
-	
-	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
-	{
-		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
-	}
-	
-	void MUCMessageSession::handleMessage(const Message &message)
-	{
-		m_room->handleMessage(message);
-	}
+		J_EXTENSION(jreen::Tune, "")
+		Q_DECLARE_PRIVATE(Tune)
+	public:
+		Tune();
+		~Tune();
+		
+		void setArtist(const QString &);
+		QString artist() const;
+		void setLength(int);
+		int length() const;
+		void setRating(int );
+		int rating() const;
+		void setSource(const QString &);
+		QString source() const;
+		void setTitle(const QString &);
+		QString title() const;
+		void setTrack(const QString &);
+		QString track() const;
+		void setUri(const QUrl &);
+		QUrl uri() const;
+	private:
+		QScopedPointer<TunePrivate> d_ptr;
+	};
 }
+
+#endif // TUNE_H

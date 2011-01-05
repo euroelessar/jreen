@@ -2,7 +2,7 @@
  *
  *  This file is part of qutIM
  *
- *  Copyright (c) 2010 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,31 +14,35 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "mucmessagesession_p.h"
-#include "mucroom_p.h"
-#include "client.h"
+#ifndef PUBSUBEVENT_H
+#define PUBSUBEVENT_H
+
+#include "stanzaextension.h"
 
 namespace jreen
 {
-	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
-			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())
+	namespace PubSub
 	{
-		m_room = MUCRoomPrivate::get(room);
-	}
-	
-	void MUCMessageSession::setSubject(const QString &subject)
-	{
-		sendMessage(QString(), subject);
-	}
-	
-	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
-	{
-		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
-	}
-	
-	void MUCMessageSession::handleMessage(const Message &message)
-	{
-		m_room->handleMessage(message);
+		class EventPrivate;
+		class JREEN_EXPORT Event : public StanzaExtension
+		{
+			Q_DECLARE_PRIVATE(Event)
+			J_EXTENSION(jreen::PubSub::Event, "")
+		public:
+			Event(const QString &node = QString());
+			Event(const StanzaExtension::Ptr &item);
+			Event(const QList<StanzaExtension::Ptr> &items);
+			~Event();
+			
+			void setNode(const QString &node);
+			QString node() const;
+			void addItem(StanzaExtension *item);
+			void addItem(const StanzaExtension::Ptr &item);
+			QList<StanzaExtension::Ptr> items() const;
+		private:
+			QScopedPointer<EventPrivate> d_ptr;
+		};		
 	}
 }
+
+#endif // PUBSUBEVENT_H
