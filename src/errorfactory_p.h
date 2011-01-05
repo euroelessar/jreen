@@ -33,6 +33,8 @@ public:
     virtual void handleEndElement(const QStringRef& name, const QStringRef& uri);
     virtual void serialize(StanzaExtension* obj, QXmlStreamWriter* writer);
 private:
+	enum State {AtCondition,AtText};
+	State m_state;
 	int m_depth;
 	Error::Type m_type;
 	Error::Condition m_condition;

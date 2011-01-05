@@ -206,7 +206,7 @@ public slots:
 		writer->writeAttribute(QLatin1String("version"), QLatin1String("1.0"));
 		writer->writeCharacters(QString());
 	}
-	
+
 	void connected()
 	{
 		writer = 0;

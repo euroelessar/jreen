@@ -25,6 +25,7 @@ namespace jreen
 PrivateXmlQueryFactory::PrivateXmlQueryFactory(Client *client)
 {
 	m_client = ClientPrivate::get(client);
+	m_factory = 0;
 }
 
 PrivateXmlQueryFactory::~PrivateXmlQueryFactory()
@@ -38,15 +39,15 @@ QStringList PrivateXmlQueryFactory::features() const
 }
 
 bool PrivateXmlQueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
-										const QXmlStreamAttributes &attributes)
+									  const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
 	return name == QLatin1String("query") && uri == NS_PRIVATE_XML;
 }
 
 void PrivateXmlQueryFactory::handleStartElement(const QStringRef &name,
-												  const QStringRef &uri,
-												  const QXmlStreamAttributes &attributes)
+												const QStringRef &uri,
+												const QXmlStreamAttributes &attributes)
 {
 	m_depth++;
 	if (m_depth == 1) {

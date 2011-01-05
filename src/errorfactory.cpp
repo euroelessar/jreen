@@ -19,6 +19,10 @@
 #include "jstrings.h"
 
 #define NS_ERROR QLatin1String("urn:ietf:params:xml:ns:xmpp-stanzas")
+//from rfc for messages and presence
+//http://xmpp.org/rfcs/rfc3921.html#stanzas
+#define NS_ERROR2 QLatin1String("jabber:client")
+
 
 namespace jreen {
 
@@ -45,7 +49,7 @@ ErrorFactory::ErrorFactory()
 
 bool ErrorFactory::canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes&)
 {
-	return name == QLatin1String("error") && uri == NS_ERROR;
+	return name == QLatin1String("error") && (uri == NS_ERROR || uri == NS_ERROR2);
 }
 
 StanzaExtension::Ptr ErrorFactory::createExtension()
@@ -66,7 +70,12 @@ void ErrorFactory::handleStartElement(const QStringRef& name, const QStringRef& 
 		QStringRef subtype = attributes.value(QLatin1String("type"));
 		m_type = strToEnum<Error::Type>(subtype,error_types);
 	} else if(m_depth == 2)
-		m_condition = strToEnum<Error::Condition>(name,error_conditions);
+		if(name == QLatin1String("text"))
+			m_state = AtText;
+		else {
+			m_condition = strToEnum<Error::Condition>(name,error_conditions);
+			m_state = AtCondition;
+		}
 }
 
 void ErrorFactory::handleCharacterData(const QStringRef& text)
