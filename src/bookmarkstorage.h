@@ -14,33 +14,39 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef PUBSUBMANAGER_P_H
-#define PUBSUBMANAGER_P_H
+#ifndef BOOKMARKSTORAGE_H
+#define BOOKMARKSTORAGE_H
 
-#include "pubsubmanager.h"
-#include "dataform.h"
+#include "bookmark.h"
+#include "privatexml.h"
+#include "error.h"
 
 namespace jreen
 {
-	namespace PubSub
+	class PrivateXml;
+	namespace PubSub { class Manager; }
+	
+	class BookmarkStoragePrivate;
+	class JREEN_EXPORT BookmarkStorage : public QObject
 	{
-		class ManagerPrivate
-		{
-		public:
-			Client *client;
-			QList<AbstractStanzaExtensionFactory *> factories;
-		};
+		Q_OBJECT
+		Q_DECLARE_PRIVATE(BookmarkStorage)
+	public:
+		BookmarkStorage(Client *client);
+		~BookmarkStorage();
 		
-		class Publish : public StanzaExtension
-		{
-			J_EXTENSION(jreen::PubSub::Publish, "")
-		public:
-			Publish() {}
-			Publish(const QList<StanzaExtension::Ptr> &i, const DataForm::Ptr &f) : items(i), form(f) {}
-			QList<StanzaExtension::Ptr> items;
-			QString node;
-			DataForm::Ptr form;
-		};
-	}
+		void setPubSubManager(PubSub::Manager *manager);
+		void setPrivateXml(PrivateXml *privateXml);
+		
+		void requestBookmarks();
+		void storeBookmarks(const Bookmark::Ptr &bookmarks);
+	signals:
+		void bookmarksReceived(const jreen::Bookmark::Ptr &bookrmark);
+	private slots:
+		void onResultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
+	private:
+		QScopedPointer<BookmarkStoragePrivate> d_ptr;
+	};
 }
-#endif // PUBSUBMANAGER_P_H
+
+#endif // BOOKMARKSTORAGE_H

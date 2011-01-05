@@ -47,6 +47,7 @@
 #include "pubsubevent.h"
 #include "pubsubmanager_p.h"
 #include "tunefactory_p.h"
+#include "bookmarkfactory.h"
 
 namespace jreen
 {
@@ -122,6 +123,8 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new MUCRoomAdminQueryFactory);
 	client->registerStanzaExtension(new MUCRoomOwnerQueryFactory);
 	client->registerStanzaExtension(new EntityTimeFactory);
+	client->registerStanzaExtension(new BookmarkFactory);
+	client->registerStanzaExtension(new PrivateXmlQueryFactory(client));
 //	client->registerStanzaExtension(new PubSub::EventFactory);
 //	client->registerStanzaExtension(new PubSub::PublishFacatory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
@@ -300,10 +303,12 @@ void Client::setConnectionImpl(Connection *conn)
 void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
 {
 	Q_D(Client);
-	delete d->factories.value(factory->extensionType(), 0);
+//	delete d->factories.value(factory->extensionType(), 0);
 	d->factories.insert(factory->extensionType(), factory);
-	foreach (const QString &feature, factory->features())
+	foreach (const QString &feature, factory->features()) {
 		DiscoPrivate::get(d->disco)->features << feature;
+		d->factoriesByUri.insert(feature, factory);
+	}
 }
 
 inline bool featureLessThan(StreamFeature *a, StreamFeature *b)

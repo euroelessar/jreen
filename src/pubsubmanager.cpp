@@ -23,6 +23,56 @@ namespace jreen
 {
 	namespace PubSub
 	{
+		class PublishOptionsPrivate : public QSharedData
+		{
+		public:
+			PublishOptionsPrivate() : accessModel(PublishOptions::PresenceAccess), persistent(true) {}
+			PublishOptionsPrivate(PublishOptionsPrivate &o)
+				: QSharedData(o), accessModel(o.accessModel), persistent(o.persistent) {}
+			PublishOptions::AccessModel accessModel;
+			bool persistent;
+		};
+		
+		PublishOptions::PublishOptions() : d_ptr(new PublishOptionsPrivate)
+		{
+			d_ptr->accessModel = PresenceAccess;
+			d_ptr->persistent = true;
+		}
+
+		PublishOptions::PublishOptions(const PublishOptions &o) : d_ptr(o.d_ptr)
+		{
+		}
+
+		PublishOptions &PublishOptions::operator =(const PublishOptions &o)
+		{
+			d_ptr = o.d_ptr;
+			return *this;
+		}
+
+		PublishOptions::~PublishOptions()
+		{
+		}
+		
+		PublishOptions::AccessModel PublishOptions::accessModel() const
+		{
+			return d_ptr->accessModel;
+		}
+		
+		void PublishOptions::setAccessModel(AccessModel model)
+		{
+			d_ptr->accessModel = model;
+		}
+
+		bool PublishOptions::isPersistent() const
+		{
+			return d_ptr->persistent;
+		}
+		
+		void PublishOptions::setPersistent(bool persistent)
+		{
+			d_ptr->persistent = persistent;
+		}
+		
 		Manager::Manager(Client *client) : QObject(client), d_ptr(new ManagerPrivate)
 		{
 			Q_D(Manager);
@@ -37,10 +87,31 @@ namespace jreen
 		{
 		}
 		
+		static const char *access_strs[] = {
+			"authorize",
+			"open",
+			"presence",
+			"roster",
+			"whitelist"
+		};
+		
 		void Manager::publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to)
 		{
 			IQ iq(IQ::Set, to);
-			iq.addExtension(new Publish(items));
+			iq.addExtension(new Publish(items, DataForm::Ptr()));
+			d_func()->client->send(iq);
+		}
+		
+		void Manager::publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
+								   const PublishOptions &options)
+		{
+			IQ iq(IQ::Set, to);
+			DataForm::Ptr form(new DataForm(DataForm::Submit));
+			form->setTypeName(QLatin1String("http://jabber.org/protocol/pubsub#publish-options"));
+			form->appendField(DataFormFieldNone(QLatin1String("pubsub#access_model"),
+												QStringList(enumToStr(options.accessModel(), access_strs))));
+			form->appendField(DataFormFieldBoolean(QLatin1String("pubsub#persist_items"), true));
+			iq.addExtension(new Publish(items, form));
 			d_func()->client->send(iq);
 		}
 

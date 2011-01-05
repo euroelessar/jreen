@@ -37,21 +37,11 @@ using namespace Util;
 BookmarkFactory::BookmarkFactory()
 {
 	m_depth = 0;
-	clear();
+	m_state = AtNowhere;
 }
 
 BookmarkFactory::~BookmarkFactory()
 {
-
-}
-
-void BookmarkFactory::clear()
-{
-	m_jid.clear();
-	m_autoJoin = false;
-	m_name.clear();
-	m_nick.clear();
-	m_password.clear();
 }
 
 QStringList BookmarkFactory::features() const
@@ -59,22 +49,30 @@ QStringList BookmarkFactory::features() const
 	return QStringList(NS_BOOKMARKS);
 }
 
-bool BookmarkFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+bool BookmarkFactory::canParse(const QStringRef &name, const QStringRef &uri,
+							   const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
 	return name == QLatin1String("storage") && uri == NS_BOOKMARKS;
 }
 
-void BookmarkFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
+void BookmarkFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
+										 const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(uri);
 	m_depth++;
 	if(m_depth == 1) {
-		m_name = attributes.value(QLatin1String("name")).toString();
-		m_autoJoin = strToEnum<bool>(attributes.value(QLatin1String("autojoin")),autojoin_types);
-		m_jid = attributes.value(QLatin1String("jid")).toString();
-	} else if(m_depth == 2) {
-		m_state = strToEnum<State>(name,bookmark_strings);
+		m_state = AtNowhere;
+		m_bookmark.reset(new Bookmark);
+	} else if (m_depth == 2 && name == QLatin1String("conference")) {
+		m_state = AtConference;
+		m_conference = Bookmark::Conference();
+		m_conference.setName(attributes.value(QLatin1String("name")).toString());
+		QStringRef autojoin = attributes.value(QLatin1String("autojoin"));
+		m_conference.setAutojoin(autojoin == QLatin1String("true"));
+		m_conference.setJid(attributes.value(QLatin1String("jid")).toString());
+	} else if(m_depth == 3 && m_state == AtConference) {
+		m_state = strToEnum<State>(name, bookmark_strings);
 	}
 }
 
@@ -82,6 +80,10 @@ void BookmarkFactory::handleEndElement(const QStringRef &name, const QStringRef 
 {
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
+	if (m_state < AtNowhere && m_depth == 3)
+		m_state = AtConference;
+	else if (m_state == AtConference && m_depth == 2)
+		m_bookmark->addConference(m_conference);
 	m_depth--;
 }
 
@@ -89,9 +91,13 @@ void BookmarkFactory::handleCharacterData(const QStringRef &text)
 {
 	switch(m_state) {
 	case AtNick:
-		m_nick = text.toString();
+		m_conference.setNick(text.toString());
+		break;
 	case AtPassword:
-		m_password = text.toString();
+		m_conference.setPassword(text.toString());
+		break;
+	default:
+		break;
 	}
 }
 
@@ -100,23 +106,21 @@ void BookmarkFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	Bookmark *bookmark = se_cast<Bookmark*>(extension);
 	writer->writeStartElement(QLatin1String("storage"));
 	writer->writeDefaultNamespace(NS_BOOKMARKS);
-	writer->writeStartElement(QLatin1String("conference"));
-	writeAttribute(writer,QLatin1String("jid"),bookmark->jid().full());
-	writeAttribute(writer,QLatin1String("name"),bookmark->name());
-	writeAttribute(writer,QLatin1String("autojoin"),enumToStr(bookmark->autojoin(),autojoin_types));
-	writeTextElement(writer,QLatin1String("nick"),bookmark->nick());
-	writeTextElement(writer,QLatin1String("password"),bookmark->password());
-	writer->writeEndElement();
+	foreach (const Bookmark::Conference &conf, bookmark->conferences()) {
+		writer->writeStartElement(QLatin1String("conference"));
+		writeAttribute(writer,QLatin1String("jid"), conf.jid().full());
+		writeAttribute(writer,QLatin1String("name"), conf.name());
+		writeAttribute(writer,QLatin1String("autojoin"), enumToStr(conf.autojoin(), autojoin_types));
+		writeTextElement(writer,QLatin1String("nick"), conf.nick());
+		writeTextElement(writer,QLatin1String("password"), conf.password());
+		writer->writeEndElement();
+	}
 	writer->writeEndElement();
 }
 
 StanzaExtension::Ptr BookmarkFactory::createExtension()
 {
-	Bookmark *bookmark = new Bookmark(m_jid,m_name,m_nick);
-	bookmark->setAutojoin(m_autoJoin);
-	bookmark->setPassword(m_password);
-	clear();
-	return StanzaExtension::Ptr(bookmark);
+	return StanzaExtension::Ptr(m_bookmark.take());
 }
 
 

@@ -17,12 +17,11 @@
 #define PRIVATEXML_H
 
 #include <QObject>
-#include "jreen.h"
+#include "stanzaextension.h"
 
 namespace jreen
 {
 
-class Client;
 class IQ;
 class PrivateXmlPrivate;
 
@@ -30,7 +29,7 @@ class PrivateXmlPrivate;
 //http://xmpp.org/extensions/xep-0049.html
 //TODO may be need to move to StreamWriter
 
-class PrivateXml : public QObject
+class JREEN_EXPORT PrivateXml : public QObject
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(PrivateXml)
@@ -44,14 +43,12 @@ public:
 	};
 	PrivateXml(Client *client);
 	~PrivateXml();
-	// SLOT(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>))
+	// SLOT(newResult(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr))
 	void request(const QString &name, const QString &xmlns, QObject *handler, const char *member);
-	void store(const QDomElement &node, QObject *handler, const char *member);
+	void store(const StanzaExtension::Ptr &node, QObject *handler, const char *member);
 private slots:
-	void handleIQ(const IQ &iq, int context);
+	void handleIQ(const jreen::IQ &iq, int context);
 private:
-	class Query;
-	class QueryFactory;
 	QScopedPointer<PrivateXmlPrivate> d_ptr;
 };
 

@@ -16,76 +16,144 @@
 #include "bookmark.h"
 
 namespace jreen {
+	class Bookmark::ConferencePrivate : public QSharedData
+	{
+	public:
+		ConferencePrivate() : autojoin(false) {}
+		ConferencePrivate(const ConferencePrivate &o)
+			: QSharedData(o), jid(o.jid), name(o.name), nick(o.nick),
+			password(o.password), autojoin(o.autojoin) {}
+		JID jid;
+		QString name;
+		QString nick;
+		QString password;
+		bool autojoin;
+	};
+	
+	Bookmark::Conference::Conference() : d_ptr(new Bookmark::ConferencePrivate)
+	{
+	}
+	
+	Bookmark::Conference::Conference(const QString &name, const JID &jid, const QString &nick,
+									 const QString &password, bool autojoin)
+										 : d_ptr(new Bookmark::ConferencePrivate)
+	{
+		d_ptr->name = name;
+		setJid(jid);
+		d_ptr->nick = nick;
+		d_ptr->password = password;
+		d_ptr->autojoin = autojoin;
+	}
 
-class BookmarkPrivate
-{
-public:
-	JID jid;
-	QString name;
-	QString nick;
-	QString password;
-	bool autojoin;
-};
+	Bookmark::Conference::Conference(const Bookmark::Conference &o) : d_ptr(o.d_ptr)
+	{
+	}
 
-Bookmark::Bookmark(const JID &jid, const QString &name, const QString &nick) :
-	d_ptr(new BookmarkPrivate)
-{
-	Q_D(Bookmark);
-	d->jid = jid;
-	d->name = name;
-	d->nick = nick;
-	d->autojoin = false;
-}
+	Bookmark::Conference &Bookmark::Conference::operator =(const Bookmark::Conference &o)
+	{
+		d_ptr = o.d_ptr;
+		return *this;
+	}
 
-Bookmark::~Bookmark()
-{
+	Bookmark::Conference::~Conference()
+	{
+	}
+	
+	bool Bookmark::Conference::operator ==(const Conference &o)
+	{
+		return d_ptr == o.d_ptr;
+	}
 
-}
+	bool Bookmark::Conference::operator !=(const Conference &o)
+	{
+		return d_ptr != o.d_ptr;
+	}
 
-void Bookmark::setName(const QString &name)
-{
-	d_func()->name = name;
-}
+	bool Bookmark::Conference::isValid() const
+	{
+		return d_ptr->jid.isValid() && !d_ptr->nick.isEmpty();
+	}
+	
+	void Bookmark::Conference::setJid(const JID &jid)
+	{
+		if (!jid.isBare())
+			d_ptr->jid = jid.bareJID();
+		else
+			d_ptr->jid = jid;
+	}
 
-void Bookmark::setNick(const QString &nick)
-{
-	d_func()->nick = nick;
-}
-
-void Bookmark::setPassword(const QString &password)
-{
-	d_func()->password = password;
-}
-
-QString Bookmark::name() const
-{
-	return d_func()->name;
-}
-
-QString Bookmark::nick() const
-{
-	return d_func()->nick;
-}
-
-QString Bookmark::password() const
-{
-	return d_func()->password;
-}
-
-JID Bookmark::jid() const
-{
-	return d_func()->jid;
-}
-
-void Bookmark::setAutojoin(bool set)
-{
-	d_func()->autojoin = set;
-}
-
-bool Bookmark::autojoin() const
-{
-	return d_func()->autojoin;
-}
-
-
+	void Bookmark::Conference::setName(const QString &name)
+	{
+		d_ptr->name = name;
+	}
+	
+	void Bookmark::Conference::setNick(const QString &nick)
+	{
+		d_ptr->nick = nick;
+	}
+	
+	void Bookmark::Conference::setPassword(const QString &password)
+	{
+		d_ptr->password = password;
+	}
+	
+	QString Bookmark::Conference::name() const
+	{
+		return d_ptr->name;
+	}
+	
+	QString Bookmark::Conference::nick() const
+	{
+		return d_ptr->nick;
+	}
+	
+	QString Bookmark::Conference::password() const
+	{
+		return d_ptr->password;
+	}
+	
+	JID Bookmark::Conference::jid() const
+	{
+		return d_ptr->jid;
+	}
+	
+	void Bookmark::Conference::setAutojoin(bool set)
+	{
+		d_ptr->autojoin = set;
+	}
+	
+	bool Bookmark::Conference::autojoin() const
+	{
+		return d_ptr->autojoin;
+	}
+	
+	class BookmarkPrivate
+	{
+	public:
+		QList<Bookmark::Conference> conferences;
+	};
+	
+	Bookmark::Bookmark() : d_ptr(new BookmarkPrivate)
+	{
+	}
+	
+	Bookmark::~Bookmark()
+	{
+		
+	}
+	
+	QList<Bookmark::Conference> Bookmark::conferences() const
+	{
+		return d_func()->conferences;
+	}
+	
+	void Bookmark::addConference(const Conference &conf)
+	{
+		d_func()->conferences << conf;
+	}
+	
+	void Bookmark::setConferences(const QList<Conference> &conferences)
+	{
+		d_func()->conferences = conferences;
+	}
 } // namespace jreen

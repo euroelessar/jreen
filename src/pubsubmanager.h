@@ -26,6 +26,32 @@ namespace jreen
 	
 	namespace PubSub
 	{
+		class PublishOptionsPrivate;
+		class PublishOptions
+		{
+		public:
+			enum AccessModel
+			{
+				AuthorizeAccess,
+				OpenAccess,
+				PresenceAccess,
+				RosterAccess,
+				WhitelistAccess
+			};
+			
+			PublishOptions();
+			PublishOptions(const PublishOptions &o);
+			PublishOptions &operator =(const PublishOptions &o);
+			~PublishOptions();
+			
+			AccessModel accessModel() const;
+			void setAccessModel(AccessModel model);
+			bool isPersistent() const;
+			void setPersistent(bool persistent);
+		private:
+			QExplicitlySharedDataPointer<PublishOptionsPrivate> d_ptr;
+		};
+		
 		class ManagerPrivate;
 		class JREEN_EXPORT Manager : public QObject
 		{
@@ -36,6 +62,8 @@ namespace jreen
 			virtual ~Manager();
 			
 			void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to);
+			void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
+							  const PublishOptions &options);
 			
 			template <typename T>
 			void addEntityType(T *entity = 0) { addEntityType(entity->staticExtensionType()); }

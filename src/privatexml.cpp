@@ -15,84 +15,99 @@
 *****************************************************************************/
 
 #include "privatexml_p.h"
+#include "client_p.h"
 #include <QXmlStreamWriter>
 #define NS_PRIVATE_XML QLatin1String("jabber:iq:private")
 
 namespace jreen
 {
 
-PrivateXml::QueryFactory::QueryFactory()
+PrivateXmlQueryFactory::PrivateXmlQueryFactory(Client *client)
+{
+	m_client = ClientPrivate::get(client);
+}
+
+PrivateXmlQueryFactory::~PrivateXmlQueryFactory()
 {
 
 }
 
-PrivateXml::QueryFactory::~QueryFactory()
-{
-
-}
-
-QStringList PrivateXml::QueryFactory::features() const
+QStringList PrivateXmlQueryFactory::features() const
 {
 	return QStringList(NS_PRIVATE_XML);
 }
 
-bool PrivateXml::QueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
+bool PrivateXmlQueryFactory::canParse(const QStringRef &name, const QStringRef &uri,
 										const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
 	return name == QLatin1String("query") && uri == NS_PRIVATE_XML;
 }
 
-void PrivateXml::QueryFactory::handleStartElement(const QStringRef &name,
+void PrivateXmlQueryFactory::handleStartElement(const QStringRef &name,
 												  const QStringRef &uri,
 												  const QXmlStreamAttributes &attributes)
 {
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
-	Q_UNUSED(attributes);
 	m_depth++;
+	if (m_depth == 1) {
+		m_node.clear();
+	} else if (m_depth == 2) {
+		foreach (m_factory, m_client->factoriesByUri.values(uri.toString())) {
+			if (m_factory->canParse(name, uri, attributes))
+				break;
+			else
+				m_factory = 0;
+		}
+	}
+	if (m_factory)
+		m_factory->handleStartElement(name, uri, attributes);
 }
 
-void PrivateXml::QueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
+void PrivateXmlQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
+	if (m_factory)
+		m_factory->handleEndElement(name, uri);
+	if (m_depth == 2) {
+		m_node = m_factory->createExtension();
+		m_factory = 0;
+	}
 	m_depth--;
 }
 
-void PrivateXml::QueryFactory::handleCharacterData(const QStringRef &text)
+void PrivateXmlQueryFactory::handleCharacterData(const QStringRef &text)
 {
-	if(m_depth == 2) {
-		QDomDocument doc;
-		doc.setContent(text.toString());
-		m_xml = doc.firstChildElement();
-	}
+	if (m_factory)
+		m_factory->handleCharacterData(text);
 }
 
-void PrivateXml::QueryFactory::serialize(StanzaExtension *extension,
-										 QXmlStreamWriter *writer)
+void PrivateXmlQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
-	PrivateXml::Query *query = se_cast<PrivateXml::Query*>(extension);
+	PrivateXmlQuery *query = se_cast<PrivateXmlQuery*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(NS_PRIVATE_XML);
-
-	writer->writeStartElement(query->name());
-	writer->writeDefaultNamespace(query->namespaceURI());
-	writer->writeEndElement();
-
+	if (query->type() == PrivateXmlQuery::Get) {
+		writer->writeEmptyElement(query->name());
+		writer->writeDefaultNamespace(query->namespaceURI());
+	} else if (query->xml()) {
+		StanzaExtension::Ptr node = query->xml();
+		AbstractStanzaExtensionFactory *factory = m_client->factories.value(node->extensionType());
+		if (factory)
+			factory->serialize(node.data(), writer);
+	}
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr PrivateXml::QueryFactory::createExtension()
+StanzaExtension::Ptr PrivateXmlQueryFactory::createExtension()
 {
-	return StanzaExtension::Ptr(new PrivateXml::Query(m_xml));
+	StanzaExtension::Ptr node;
+	m_node.swap(node);
+	return StanzaExtension::Ptr(new PrivateXmlQuery(node));
 }
 
 PrivateXml::PrivateXml(Client *client) : QObject(client), d_ptr(new PrivateXmlPrivate)
 {
 	Q_D(PrivateXml);
 	d->client = client;
-	d->client->registerStanzaExtension(new PrivateXml::QueryFactory);
 }
 
 PrivateXml::~PrivateXml()
@@ -104,19 +119,19 @@ void PrivateXml::request(const QString &name, const QString &xmlns, QObject *han
 	Q_D(PrivateXml);
 	QString id = d->client->getID();
 	IQ iq(IQ::Get, JID(), id);
-	iq.addExtension(new Query(name, xmlns));
+	iq.addExtension(new PrivateXmlQuery(name, xmlns));
 	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
-	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), Request);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), Request);
 }
 
-void PrivateXml::store(const QDomElement &node, QObject *handler, const char *member)
+void PrivateXml::store(const StanzaExtension::Ptr &node, QObject *handler, const char *member)
 {
 	Q_D(PrivateXml);
 	QString id = d->client->getID();
 	IQ iq(IQ::Get, JID(), id);
-	iq.addExtension(new Query(node));
+	iq.addExtension(new PrivateXmlQuery(node));
 	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
-	d->client->send(iq, this, SLOT(handleIQ(IQ,int)), Store);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), Store);
 }
 
 void PrivateXml::handleIQ(const IQ &iq, int context)
@@ -126,17 +141,16 @@ void PrivateXml::handleIQ(const IQ &iq, int context)
 	if(!track)
 		return;
 	const QSharedPointer<Error> error = iq.findExtension<Error>();
-	const QSharedPointer<Query> query = iq.findExtension<Query>();
+	const QSharedPointer<PrivateXmlQuery> query = iq.findExtension<PrivateXmlQuery>();
 	bool is_error = !query;
-	if(query)
-	{
+	if(query) {
 		if(iq.subtype() == IQ::Result)
-			track->newResult(query->xml(), context == Store ? StoreOk : RequestOk, error);
+			track->resultReady(query->xml(), context == Store ? StoreOk : RequestOk, error);
 		else if(iq.subtype() == IQ::Error)
 			is_error = true;
 	}
 	if(is_error)
-		track->newResult(QDomElement(), context == Store ? StoreError : RequestError, error);
+		track->resultReady(StanzaExtension::Ptr(), context == Store ? StoreError : RequestError, error);
 	delete track;
 }
 

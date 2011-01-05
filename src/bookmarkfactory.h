@@ -32,15 +32,11 @@ public:
 	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 	StanzaExtension::Ptr createExtension();
 private:
-	enum State {AtNick,AtPassword};
+	enum State { AtNick, AtPassword, AtNowhere, AtConference };
 	State m_state;
 	int m_depth;
-	void clear();
-	JID m_jid;
-	QString m_nick;
-	QString m_name;
-	QString m_password;
-	bool m_autoJoin;
+	QScopedPointer<Bookmark> m_bookmark;
+	Bookmark::Conference m_conference;
 };
 
 } // namespace jreen

@@ -475,6 +475,18 @@ QString DataForm::typeName() const
 	return field(QLatin1String("FORM_TYPE")).value();
 }
 
+void DataForm::setTypeName(const QString &type)
+{
+	Q_D(DataForm);
+	DataFormField f = field(QLatin1String("FORM_TYPE"));
+	if (f.type() == DataFormField::Invalid) {
+		f = DataFormFieldHidden(QLatin1String("FORM_TYPE"), type);
+		d->fields.prepend(f);
+	} else {
+		f.setValue(type);
+	}
+}
+
 QString DataForm::title() const
 {
 	return d_func()->title;

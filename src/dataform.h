@@ -324,6 +324,7 @@ public:
 	Type type() const;
 	void setType(Type type);
 	QString typeName() const;
+	void setTypeName(const QString &type);
 	QString title() const;
 	QList<DataFormItem::Ptr> items() const;
 	DataFormReported::Ptr reported() const;

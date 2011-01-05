@@ -119,6 +119,11 @@ namespace jreen
 				writer->writeEndElement();
 			}
 			writer->writeEndElement();
+			if (publish->form) {
+				writer->writeStartElement(QLatin1String("publish-options"));
+				m_form.serialize(publish->form.data(), writer);
+				writer->writeEndElement();
+			}
 			writer->writeEndElement();
 		}
 

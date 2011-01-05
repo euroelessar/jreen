@@ -18,6 +18,7 @@
 #define PUBSUBPUBLISHFACTORY_P_H
 
 #include "pubsubmanager_p.h"
+#include "dataformfactory_p.h"
 
 namespace jreen
 {
@@ -44,6 +45,7 @@ namespace jreen
 			AbstractStanzaExtensionFactory *m_factory;
 			QList<AbstractStanzaExtensionFactory*> &m_factories;
 			int m_depth;
+			DataFormFactory m_form;
 		};
 	}
 }

@@ -32,10 +32,11 @@ class PrivateXmlTrack : public QObject
 	friend class PrivateXml;
 	inline PrivateXmlTrack(QObject *handler, const char *member)
 	{
-		connect(this, SIGNAL(newResult(QDomElement,PrivateXml::Result,QSharedPointer<Error>)), handler, member);
+		connect(this, SIGNAL(resultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)),
+				handler, member);
 	}
 signals:
-	void newResult(const QDomElement &node, PrivateXml::Result result, QSharedPointer<Error> error);
+	void resultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
 };
 
 class PrivateXmlPrivate
@@ -45,39 +46,41 @@ public:
 	Client *client;
 };
 
-class PrivateXml::Query : public StanzaExtension
+class PrivateXmlQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::PrivateXml::Query,"/iq/query[@xmlns='jabber:iq:private']");
+	J_EXTENSION(jreen::PrivateXmlQuery,"/iq/query[@xmlns='jabber:iq:private']");
 public:
 	enum Type {
 		Get,
 		Result
 	};
-	Query(const QDomElement &xml)
+	PrivateXmlQuery(const StanzaExtension::Ptr &xml)
 	{
 		m_type = Result;
 		m_node = xml;
 	}
-	Query(const QString &name, const QString &xmlns)
+	PrivateXmlQuery(const QString &name, const QString &xmlns)
 	{
 		m_type = Get;
-		QDomDocument doc;
-		m_node = doc.createElementNS(xmlns,name);
+		m_name = name;
+		m_namespaceUri = xmlns;
 	}
-	QDomElement xml() const { return m_node; }
-	QString name() const { return m_node.nodeName(); }
-	QString namespaceURI() const { return m_node.namespaceURI(); }
+	StanzaExtension::Ptr xml() const { return m_node; }
+	QString name() const { return m_name; }
+	QString namespaceURI() const { return m_namespaceUri; }
 	Type type() const { return m_type; }
 private:
-	QDomElement m_node;
+	StanzaExtension::Ptr m_node;
+	QString m_name;
+	QString m_namespaceUri;
 	Type m_type;
 };
 
-class PrivateXml::QueryFactory : public StanzaExtensionFactory<PrivateXml::Query>
+class PrivateXmlQueryFactory : public StanzaExtensionFactory<PrivateXmlQuery>
 {
 public:
-	QueryFactory();
-	virtual ~QueryFactory();
+	PrivateXmlQueryFactory(Client *client);
+	virtual ~PrivateXmlQueryFactory();
 	QStringList features() const;
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
@@ -87,7 +90,9 @@ public:
 	StanzaExtension::Ptr createExtension();
 private:
 	int m_depth;
-	QDomElement m_xml;
+	AbstractStanzaExtensionFactory *m_factory;
+	ClientPrivate *m_client;
+	StanzaExtension::Ptr m_node;
 };
 
 enum PrivateXmlContext
