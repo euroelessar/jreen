@@ -52,11 +52,17 @@ namespace jreen
 		void onAuthCheck(const QString &user, const QString &authzid);
 		void onError();
 	private:
+		void init();
+		
 		int m_depth;
 		State m_state;
-		bool m_firstStep;
 		QStringList m_mechs;
-		QCA::SASL *m_sasl;
+		struct ScopedPointerEventDeleter
+		{
+			static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
+		};
+		QScopedPointer<QCA::SASL, ScopedPointerEventDeleter> m_sasl;
+		bool m_hasSasl;
 	};
 }
 #endif // SASLFEATURE_H

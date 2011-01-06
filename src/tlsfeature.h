@@ -49,13 +49,14 @@ private slots:
 	void onError();
 	void onDisconnected();
 private:
-	void resetTls(bool first);
+	void init();
 	
 	struct ScopedPointerEventDeleter
 	{
 		static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
 	};
 	QScopedPointer<QCA::TLS, ScopedPointerEventDeleter> m_tls;
+	bool m_hasTls;
 	bool m_required;
 	bool m_available;
 };

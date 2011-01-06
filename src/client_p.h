@@ -161,6 +161,7 @@ public:
 	Parser *parser;
 	Connection *conn;
 	DataStream *device;
+	QList<DataStream*> devices;
 	bool authorized;
 	// And again compression
 	Disco *disco;
@@ -211,6 +212,7 @@ public slots:
 	{
 		writer = 0;
 		depth = 0;
+		parser->reset();
 		sendHeader();
 		//		QString head = "<?xml version='1.0' ?>"
 		//		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
@@ -234,6 +236,10 @@ public slots:
 		current_stream_feature = 0;
 		presence.setSubtype(Presence::Unavailable);
 		client->handleDisconnect();
+		foreach (DataStream *dataStream, devices)
+			dataStream->deleteLater();
+		devices.clear();
+		device->setDevice(conn);
 	}
 	inline void emitAuthorized() { client->handleAuthorized(); }
 	inline void emitConnected() { client->handleConnect(); }
@@ -301,6 +307,7 @@ public:
 	}
 	void addDataStream(DataStream *dataStream) 
 	{
+		m_client_private->devices.append(dataStream);
 		dataStream->setDevice(m_client_private->device->device());
 		m_client_private->device->setDevice(dataStream);
 		//		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);

@@ -33,20 +33,20 @@ TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 	qcaInit();
 	m_required = false;
 	m_available = false;
-	resetTls(true);
+	m_hasTls = QCA::isSupported("tls");
+	if (!m_hasTls)
+		qWarning("Jreen: TLS is not provided by QCA");
 }
 
-void TLSFeature::resetTls(bool first)
+void TLSFeature::init()
 {
-	if((first && QCA::isSupported("tls")) || (!first && m_tls)) {
-		m_tls.reset(new QCA::TLS(this));
-		m_tls->setTrustedCertificates(QCA::systemStore());
-		connect(m_tls.data(), SIGNAL(handshaken()), SLOT(onHandshaken()));
-		connect(m_tls.data(), SIGNAL(closed()), SLOT(onClosed()));
-		connect(m_tls.data(), SIGNAL(error()), SLOT(onError()));
-	} else {
-		qWarning("Jreen: TLS is not provided by QCA");
-	}
+	Q_ASSERT(m_hasTls);
+	Q_ASSERT(!m_tls);
+	m_tls.reset(new QCA::TLS(this));
+	m_tls->setTrustedCertificates(QCA::systemStore());
+	connect(m_tls.data(), SIGNAL(handshaken()), SLOT(onHandshaken()));
+	connect(m_tls.data(), SIGNAL(closed()), SLOT(onClosed()));
+	connect(m_tls.data(), SIGNAL(error()), SLOT(onError()));
 }
 
 void TLSFeature::setStreamInfo(StreamInfo *info)
@@ -139,6 +139,7 @@ bool TLSFeature::isActivatable()
 
 bool TLSFeature::activate()
 {
+	init();
 	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeEmptyElement(QLatin1String("starttls"));
 	writer->writeDefaultNamespace(NS_TLS);
@@ -174,7 +175,7 @@ void TLSFeature::onError()
 
 void TLSFeature::onDisconnected()
 {
-	resetTls(false);
+	m_tls.reset(0);
 	qDebug() << Q_FUNC_INFO;
 }
 

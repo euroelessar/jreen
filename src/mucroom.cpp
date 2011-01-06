@@ -120,6 +120,10 @@ namespace jreen
 		part.d_func()->query = pres.findExtension<MUCRoomUserQuery>();
 		if (!part.d_func()->query)
 			return;
+		if (!isJoined && pres.from().resource() == jid.resource()) {
+			isJoined = true;
+			emit q->joined();
+		}
 		emit q->presenceReceived(pres, &part);
 	}
 	
@@ -141,6 +145,8 @@ namespace jreen
 		d->jid = jid;
 		d->session = new MUCMessageSession(this);
 		ClientPrivate::get(d->client)->rooms.insert(d->jid.bare(), d);
+		connect(client, SIGNAL(connected()), this, SLOT(onConnected()));
+		connect(client, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 	}
 	
 	MUCRoom::~MUCRoom()
@@ -165,6 +171,7 @@ namespace jreen
 		query->setSeconds(d->seconds);
 		query->setSince(d->since);
 		pres.addExtension(query);
+		d->currentPresence = pres;
 		d->client->send(pres);
 	}
 	
@@ -200,7 +207,11 @@ namespace jreen
 	void MUCRoom::leave(const QString &message)
 	{
 		Q_D(MUCRoom);
+		if (d->currentPresence.subtype() == Presence::Unavailable)
+			return;
+		d->isJoined = false;
 		Presence pres(Presence::Unavailable, d->jid, message);
+		d->currentPresence = pres;
 		d->client->send(pres);
 	}
 	
@@ -259,6 +270,22 @@ namespace jreen
 			if (!query)
 				return;
 			emit configurationReceived(query->form);
+		}
+	}
+	
+	void MUCRoom::onConnected()
+	{
+		Q_D(MUCRoom);
+		if (d->currentPresence.subtype() != Presence::Unavailable)
+			d->client->send(d->currentPresence);
+	}
+
+	void MUCRoom::onDisconnected()
+	{
+		Q_D(MUCRoom);
+		if (d->currentPresence.subtype() != Presence::Unavailable) {
+			d->isJoined = false;
+			emit leaved();
 		}
 	}
 }

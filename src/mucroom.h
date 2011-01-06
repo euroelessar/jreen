@@ -40,7 +40,7 @@ namespace jreen
 		{
 			Q_DECLARE_PRIVATE(Participant)
 		private:
-			Participant();
+					Participant();
 			~Participant();
 		public:
 			Affiliation affiliation() const;
@@ -81,12 +81,12 @@ namespace jreen
 		//	void setRequestHistory(int value, HistoryRequest type);
 		//	void setRequestHistory(const QDateTime &since);
 		//	void requestVoice();
-			void kick(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleNone, reason); }
-			void ban(const QString &nick, const QString &reason = QString()) { setAffiliation(nick, AffiliationOutcast, reason); }
+		void kick(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleNone, reason); }
+		void ban(const QString &nick, const QString &reason = QString()) { setAffiliation(nick, AffiliationOutcast, reason); }
 		//	void grantVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleParticipant, reason); }
 		//	void revokeVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleVisitor, reason); }
-			void setRole(const QString &nick, Role role, const QString &reason = QString());
-			void setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason = QString());
+		void setRole(const QString &nick, Role role, const QString &reason = QString());
+		void setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason = QString());
 		
 	public slots:
 		void join();
@@ -99,6 +99,8 @@ namespace jreen
 		void messageReceived(const jreen::Message &message, bool priv);
 		void subjectChanged(const QString &subject, const QString &actor);
 		void created();
+		void joined();
+		void leaved();
 		void inviteDeclined(const jreen::JID &jid, const QString &reason);
 		void error(const jreen::Error::Ptr &error);
 		void configurationReceived(const jreen::DataForm::Ptr &form);
@@ -106,6 +108,8 @@ namespace jreen
 		void roomItemsReceived(const jreen::Disco::ItemList &items);
 	protected slots:
 		void handleIQ(const jreen::IQ &iq, int context);
+		void onConnected();
+		void onDisconnected();
 	protected:
 		QScopedPointer<MUCRoomPrivate> d_ptr;
 	};

@@ -29,7 +29,8 @@ namespace jreen
 		
 		MUCRoomPrivate(MUCRoom *room) :
 				q_ptr(room), client(0), affiliation(MUCRoom::AffiliationOutcast),
-				role(MUCRoom::RoleNone), maxChars(-1), maxStanzas(-1), seconds(-1)
+				role(MUCRoom::RoleNone), maxChars(-1), maxStanzas(-1), seconds(-1),
+				currentPresence(Presence::Unavailable, JID(), QString()), isJoined(false)
 		{
 		}
 		
@@ -46,6 +47,8 @@ namespace jreen
 		int maxChars;
 		int maxStanzas;
 		int seconds;
+		Presence currentPresence;
+		bool isJoined;
 		QDateTime since;
 		MUCMessageSession *session;
 		QString subject;

@@ -28,36 +28,39 @@ SASLFeature::SASLFeature() : StreamFeature(SASL)
 	QCA::setAppName("qutim");
 	qcaInit();
 	m_depth = 0;
-	m_firstStep = true;
 	qDebug() << QCA::supportedFeatures();
-	if(QCA::isSupported("sasl")) {
-		m_sasl = new QCA::SASL(this);
-		connect(m_sasl, SIGNAL(clientStarted(bool,QByteArray)),
-				this, SLOT(onClientStarted(bool,QByteArray)));
-		connect(m_sasl, SIGNAL(nextStep(QByteArray)),
-				this, SLOT(onNextStep(QByteArray)));
-		connect(m_sasl, SIGNAL(needParams(QCA::SASL::Params)),
-				this, SLOT(onNeedParams(QCA::SASL::Params)));
-		connect(m_sasl, SIGNAL(authCheck(QString,QString)),
-				this, SLOT(onAuthCheck(QString,QString)));
-		connect(m_sasl, SIGNAL(error()), this, SLOT(onError()));
-	} else {
+	m_hasSasl = QCA::isSupported("sasl");
+	if (!m_hasSasl)
 		qWarning("Jreen: SASL is not provided by QCA");
-		m_sasl = 0;
-	}
+}
+
+void SASLFeature::init()
+{
+	Q_ASSERT(m_hasSasl);
+	Q_ASSERT(!m_sasl);
+	m_sasl.reset(new QCA::SASL(this));
+	connect(m_sasl.data(), SIGNAL(clientStarted(bool,QByteArray)),
+			this, SLOT(onClientStarted(bool,QByteArray)));
+	connect(m_sasl.data(), SIGNAL(nextStep(QByteArray)),
+			this, SLOT(onNextStep(QByteArray)));
+	connect(m_sasl.data(), SIGNAL(needParams(QCA::SASL::Params)),
+			this, SLOT(onNeedParams(QCA::SASL::Params)));
+	connect(m_sasl.data(), SIGNAL(authCheck(QString,QString)),
+			this, SLOT(onAuthCheck(QString,QString)));
+	connect(m_sasl.data(), SIGNAL(error()), this, SLOT(onError()));
 }
 
 void SASLFeature::reset()
 {
-	m_firstStep = true;
 	m_depth = 0;
 	m_mechs.clear();
+	m_sasl.reset(0);
 }
 
 bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	// All other methods shouldn't be called is canParse returnes false
-	if (!m_sasl)
+	if (!m_hasSasl)
 		return false;
 	Q_UNUSED(name);
 	Q_UNUSED(attributes);
@@ -104,20 +107,18 @@ void SASLFeature::handleCharacterData(const QStringRef &text)
 		m_mechs.append(text.toString());
 	} else if (m_state == AtChallenge) {
 		qDebug() << Q_FUNC_INFO << "challenge" << text;
-		//			if (m_firstStep)
-		//				m_sasl->putServerFirstStep("DIGEST-MD5");
 		m_sasl->putStep(QByteArray::fromBase64(text.toString().toLatin1()));
-		m_firstStep = false;
 	}
 }
 
 bool SASLFeature::isActivatable()
 {
-	return m_sasl && !m_mechs.isEmpty();
+	return m_hasSasl && !m_mechs.isEmpty();
 }
 
 bool SASLFeature::activate()
 {
+	init();
 	m_sasl->setPassword(QCA::SecureArray(m_info->password().toUtf8()));
 	m_sasl->setUsername(m_info->jid().node());
 	m_sasl->setRealm(m_info->jid().domain());
