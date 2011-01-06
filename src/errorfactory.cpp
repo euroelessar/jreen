@@ -42,7 +42,7 @@ const char *error_conditions[] = {"bad-request","conflict",
 								  "resource-constraint", "service-unavailable",
 								  "subscription-required", "undefined-condition",
 								  "unexpected-request", "unknown-sender"};
-  
+
 ErrorFactory::ErrorFactory()
 {
 }
@@ -69,13 +69,14 @@ void ErrorFactory::handleStartElement(const QStringRef& name, const QStringRef& 
 	if (m_depth == 1) {
 		QStringRef subtype = attributes.value(QLatin1String("type"));
 		m_type = strToEnum<Error::Type>(subtype,error_types);
-	} else if(m_depth == 2)
+	} else if(m_depth == 2) {
 		if(name == QLatin1String("text"))
 			m_state = AtText;
 		else {
 			m_condition = strToEnum<Error::Condition>(name,error_conditions);
 			m_state = AtCondition;
 		}
+	}
 }
 
 void ErrorFactory::handleCharacterData(const QStringRef& text)

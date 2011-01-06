@@ -78,7 +78,7 @@ public:
 	class TelephonePrivate;
 	class EMailPrivate;
 
-	class Name
+	class JREEN_EXPORT Name
 	{
 	public:
 		Name();
@@ -102,7 +102,7 @@ public:
 		friend class NamePrivate;
 	};
 
-	class Photo
+	class JREEN_EXPORT Photo
 	{
 	public:
 		Photo();
@@ -121,7 +121,7 @@ public:
 		friend class PhotoPrivate;
 	};
 	
-	class Telephone
+	class JREEN_EXPORT Telephone
 	{
 	public:
 		enum Type
@@ -157,7 +157,7 @@ public:
 		friend class TelephonePrivate;
 	};
 
-	class EMail
+	class JREEN_EXPORT EMail
 	{
 	public:
 		enum Type
@@ -182,7 +182,7 @@ public:
 		friend class EMailPrivate;
 	};
 
-	class Address
+	class JREEN_EXPORT Address
 	{
 	public:
 		enum Type
