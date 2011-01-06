@@ -21,12 +21,11 @@
 
 namespace jreen
 {
-Q_GLOBAL_STATIC(QCA::Initializer, qcaInit)
 
 SASLFeature::SASLFeature() : StreamFeature(SASL)
 {
-	QCA::setAppName("qutim");
-	qcaInit();
+	QCA::init();
+	QCA::setAppName("qutim");	
 	m_depth = 0;
 	m_firstStep = true;
 	qDebug() << QCA::supportedFeatures();
