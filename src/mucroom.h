@@ -40,7 +40,7 @@ namespace jreen
 		{
 			Q_DECLARE_PRIVATE(Participant)
 		private:
-					Participant();
+			Participant();	
 			~Participant();
 		public:
 			Affiliation affiliation() const;

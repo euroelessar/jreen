@@ -35,7 +35,7 @@ class JREEN_EXPORT Bookmark : public StanzaExtension
 	J_EXTENSION(jreen::Bookmark,"") //dummy
 public:
 	class ConferencePrivate;
-	class Conference
+	class JREEN_EXPORT Conference
 	{
 	public:
 		Conference();
