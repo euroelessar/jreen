@@ -1,3 +1,18 @@
+/****************************************************************************
+ *  mucroom.cpp
+ *
+ *  Copyright (c) 2010-2011 by Nigmatullin Ruslan <euroelessar@gmail.com>
+ *  Copyright (c) 2011 by Sidorov Aleksey <sauron@citadelspb.com>
+ *
+ ***************************************************************************
+ *                                                                         *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+*****************************************************************************/
 #include "mucroom_p.h"
 #include "client_p.h"
 
@@ -125,10 +140,15 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 	part.d_func()->query = pres.findExtension<MUCRoomUserQuery>();
 	if (!part.d_func()->query)
 		return;
-		if (!isJoined && pres.from().resource() == jid.resource()) {
+	if (pres.from().resource() == jid.resource()) {
+		if(pres.subtype() == Presence::Unavailable) {
+			isJoined = false;
+			emit q->leaved();
+		} else if (!isJoined) {
 			isJoined = true;
 			emit q->joined();
 		}
+	}
 	emit q->presenceReceived(pres, &part);
 }
 
@@ -150,8 +170,8 @@ MUCRoom::MUCRoom(Client *client, const JID &jid) : d_ptr(new MUCRoomPrivate(this
 	d->jid = jid;
 	d->session = new MUCMessageSession(this);
 	ClientPrivate::get(d->client)->rooms.insert(d->jid.bare(), d);
-		connect(client, SIGNAL(connected()), this, SLOT(onConnected()));
-		connect(client, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+	connect(client, SIGNAL(connected()), this, SLOT(onConnected()));
+	connect(client, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 }
 
 MUCRoom::~MUCRoom()
@@ -176,7 +196,7 @@ void MUCRoom::join(Presence::Type type, const QString &message, int priority)
 	query->setSeconds(d->seconds);
 	query->setSince(d->since);
 	pres.addExtension(query);
-		d->currentPresence = pres;
+	d->currentPresence = pres;
 	d->client->send(pres);
 }
 
@@ -212,11 +232,11 @@ void MUCRoom::setRoomConfig(const jreen::DataForm::Ptr &form)
 void MUCRoom::leave(const QString &message)
 {
 	Q_D(MUCRoom);
-		if (d->currentPresence.subtype() == Presence::Unavailable)
-			return;
-		d->isJoined = false;
+	if (d->currentPresence.subtype() == Presence::Unavailable)
+		return;
+	d->isJoined = false;
 	Presence pres(Presence::Unavailable, d->jid, message);
-		d->currentPresence = pres;
+	d->currentPresence = pres;
 	d->client->send(pres);
 }
 
@@ -275,22 +295,22 @@ void MUCRoom::handleIQ(const jreen::IQ &iq, int context)
 		if (!query)
 			return;
 		emit configurationReceived(query->form);
-		}
 	}
-	
-	void MUCRoom::onConnected()
-	{
-		Q_D(MUCRoom);
-		if (d->currentPresence.subtype() != Presence::Unavailable)
-			d->client->send(d->currentPresence);
-	}
+}
 
-	void MUCRoom::onDisconnected()
-	{
-		Q_D(MUCRoom);
-		if (d->currentPresence.subtype() != Presence::Unavailable) {
-			d->isJoined = false;
-			emit leaved();
+void MUCRoom::onConnected()
+{
+	Q_D(MUCRoom);
+	if (d->currentPresence.subtype() != Presence::Unavailable)
+		d->client->send(d->currentPresence);
+}
+
+void MUCRoom::onDisconnected()
+{
+	Q_D(MUCRoom);
+	if (d->currentPresence.subtype() != Presence::Unavailable) {
+		d->isJoined = false;
+		emit leaved();
 	}
 }
 }
