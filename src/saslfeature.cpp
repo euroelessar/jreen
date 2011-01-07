@@ -38,6 +38,7 @@ void SASLFeature::init()
 	Q_ASSERT(m_hasSasl);
 	Q_ASSERT(!m_sasl);
 	m_sasl.reset(new QCA::SASL(this));
+	m_sasl->setConstraints(QCA::SASL::AllowPlain);
 	connect(m_sasl.data(), SIGNAL(clientStarted(bool,QByteArray)),
 			this, SLOT(onClientStarted(bool,QByteArray)));
 	connect(m_sasl.data(), SIGNAL(nextStep(QByteArray)),
@@ -132,10 +133,13 @@ void SASLFeature::onClientStarted(bool init, const QByteArray &data)
 {
 	qDebug() << Q_FUNC_INFO << init << data << m_sasl->mechanism();
 	QXmlStreamWriter *writer = ClientPrivate::get(m_client)->writer;
-	writer->writeEmptyElement(QLatin1String("auth"));
+	writer->writeStartElement(QLatin1String("auth"));
 	writer->writeDefaultNamespace(QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl"));
 	writer->writeAttribute(QLatin1String("mechanism"), m_sasl->mechanism());
-	writer->writeCharacters(QString());
+	if (init)
+		writer->writeCharacters(QString::fromLatin1(data.toBase64()));
+	writer->writeEndElement();
+//	writer->writeCharacters(QString());
 }
 
 void SASLFeature::onNextStep(const QByteArray &data)
