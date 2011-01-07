@@ -438,4 +438,10 @@ void Client::handleMessage(const Message &message)
 	qDebug() << "Handle message" << message.from();
 	emit newMessage(message);
 }
+
+bool Client::isConnected() const
+{
+	return d_func()->isConnected;
+}
+
 }

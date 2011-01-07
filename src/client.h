@@ -74,6 +74,7 @@ public:
 	Disco *disco();
 	MessageSessionManager *messageSessionManager();
 	AbstractRoster *roster();
+	bool isConnected() const;
 	void send(const Stanza &stanza);
 	void send(const Presence &pres);
 	void send(const IQ &iq, QObject *handler, const char *member, int context);

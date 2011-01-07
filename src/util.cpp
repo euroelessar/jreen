@@ -18,6 +18,10 @@
 #include <cstdio>
 #include <QCryptographicHash>
 
+#if _MSC_VER
+#define snprintf _snprintf
+#endif
+
 namespace jreen
 {
 

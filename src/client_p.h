@@ -105,6 +105,7 @@ public:
 		roster = 0;
 		authorized = false;
 		client = parent;
+		isConnected = false;
 		device = new BufferedDataStream(&streamHandlers);
 		device->open(QIODevice::ReadWrite);
 		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
@@ -163,6 +164,7 @@ public:
 	DataStream *device;
 	QList<DataStream*> devices;
 	bool authorized;
+	bool isConnected;
 	// And again compression
 	Disco *disco;
 	StreamFeature *current_stream_feature;
@@ -214,6 +216,7 @@ public slots:
 		depth = 0;
 		parser->reset();
 		sendHeader();
+		isConnected = true;
 		//		QString head = "<?xml version='1.0' ?>"
 		//		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
 		//		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
@@ -230,6 +233,7 @@ public slots:
 	}
 	void disconnected()
 	{
+		isConnected = false;
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamEnd();
 		authorized = false;
