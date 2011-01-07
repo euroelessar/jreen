@@ -71,10 +71,13 @@ namespace jreen
 										PrivateXml::Result result, const Error::Ptr &error)
 	{
 		Bookmark *bookmark = se_cast<Bookmark*>(node.data());
-		qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
+
+		if(bookmark)
+			qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
+
 		if (bookmark && result == PrivateXml::RequestOk)
 			emit bookmarksReceived(node.staticCast<Bookmark>());
 		else
-			emit bookmarksReceived(Bookmark::Ptr::create());
+			emit bookmarksReceived(Bookmark::Ptr::create());		
 	}
 }

@@ -66,11 +66,12 @@ void PrivateXmlQueryFactory::handleStartElement(const QStringRef &name,
 
 void PrivateXmlQueryFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-	if (m_factory)
+	if (m_factory) {
 		m_factory->handleEndElement(name, uri);
-	if (m_depth == 2) {
-		m_node = m_factory->createExtension();
-		m_factory = 0;
+		if (m_depth == 2) {
+			m_node = m_factory->createExtension();
+			m_factory = 0;
+		}
 	}
 	m_depth--;
 }
