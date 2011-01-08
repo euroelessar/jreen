@@ -69,6 +69,7 @@ public:
 	Disco::IdentityList serverIdentities() const;
 	const QString &server() const;
 	int port() const;
+	QString password() const;
 	const QString getID();
 	Presence &presence();
 	Disco *disco();

@@ -446,4 +446,9 @@ bool Client::isConnected() const
 	return d_func()->isConnected;
 }
 
+QString Client::password() const
+{
+	return d_func()->password;
+}
+
 }
