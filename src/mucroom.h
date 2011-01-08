@@ -115,6 +115,7 @@ public slots:
 signals:
 	void presenceReceived(const jreen::Presence &presence, const jreen::MUCRoom::Participant *part);
 	void messageReceived(const jreen::Message &message, bool priv);
+	void serviceMessageReceived(const jreen::Message &message);
 	void subjectChanged(const QString &subject, const QString &actor);
 	void created();
 	void joined();
