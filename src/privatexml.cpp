@@ -130,7 +130,7 @@ void PrivateXml::store(const StanzaExtension::Ptr &node, QObject *handler, const
 {
 	Q_D(PrivateXml);
 	QString id = d->client->getID();
-	IQ iq(IQ::Get, JID(), id);
+	IQ iq(IQ::Set, JID(), id);
 	iq.addExtension(new PrivateXmlQuery(node));
 	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), Store);

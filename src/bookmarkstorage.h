@@ -23,30 +23,30 @@
 
 namespace jreen
 {
-	class PrivateXml;
-	namespace PubSub { class Manager; }
-	
-	class BookmarkStoragePrivate;
-	class JREEN_EXPORT BookmarkStorage : public QObject
-	{
-		Q_OBJECT
-		Q_DECLARE_PRIVATE(BookmarkStorage)
-	public:
-		BookmarkStorage(Client *client);
-		~BookmarkStorage();
-		
-		void setPubSubManager(PubSub::Manager *manager);
-		void setPrivateXml(PrivateXml *privateXml);
-		
-		void requestBookmarks();
-		void storeBookmarks(const Bookmark::Ptr &bookmarks);
-	signals:
-		void bookmarksReceived(const jreen::Bookmark::Ptr &bookrmark);
-	private slots:
-		void onResultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
-	private:
-		QScopedPointer<BookmarkStoragePrivate> d_ptr;
-	};
+class PrivateXml;
+namespace PubSub { class Manager; }
+
+class BookmarkStoragePrivate;
+class JREEN_EXPORT BookmarkStorage : public QObject
+{
+	Q_OBJECT
+	Q_DECLARE_PRIVATE(BookmarkStorage)
+public:
+	BookmarkStorage(Client *client);
+	~BookmarkStorage();
+
+	void setPubSubManager(PubSub::Manager *manager);
+	void setPrivateXml(PrivateXml *privateXml);
+
+	void requestBookmarks();
+	void storeBookmarks(const Bookmark::Ptr &bookmarks);
+signals:
+	void bookmarksReceived(const jreen::Bookmark::Ptr &bookrmark);
+private slots:
+	void onResultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
+private:
+	QScopedPointer<BookmarkStoragePrivate> d_ptr;
+};
 }
 
 #endif // BOOKMARKSTORAGE_H

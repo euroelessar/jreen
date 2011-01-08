@@ -163,7 +163,9 @@ void MUCRoomPrivate::handleMessage(const Message &msg)
 	}
 }
 
-MUCRoom::MUCRoom(Client *client, const JID &jid) : d_ptr(new MUCRoomPrivate(this))
+MUCRoom::MUCRoom(Client *client, const JID &jid) :
+	QObject(client),
+	d_ptr(new MUCRoomPrivate(this))
 {
 	Q_D(MUCRoom);
 	d->client = client;

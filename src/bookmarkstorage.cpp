@@ -21,63 +21,63 @@
 
 namespace jreen
 {
-	class BookmarkStoragePrivate
-	{
-	public:
-		Client *client;
-		QPointer<PubSub::Manager> pubSubManager;
-		QPointer<PrivateXml> privateXml;
-	};
-	
-	BookmarkStorage::BookmarkStorage(Client *client) : d_ptr(new BookmarkStoragePrivate)
-	{
-		Q_D(BookmarkStorage);
-		d->client = client;
-	}
-	
-	BookmarkStorage::~BookmarkStorage()
-	{
-	}
+class BookmarkStoragePrivate
+{
+public:
+	Client *client;
+	QPointer<PubSub::Manager> pubSubManager;
+	QPointer<PrivateXml> privateXml;
+};
 
-	void BookmarkStorage::setPubSubManager(PubSub::Manager *manager)
-	{
-		d_func()->pubSubManager = manager;
-	}
+BookmarkStorage::BookmarkStorage(Client *client) : d_ptr(new BookmarkStoragePrivate)
+{
+	Q_D(BookmarkStorage);
+	d->client = client;
+}
 
-	void BookmarkStorage::setPrivateXml(PrivateXml *privateXml)
-	{
-		d_func()->privateXml = privateXml;
-	}
-	
-	void BookmarkStorage::requestBookmarks()
-	{
-		Q_D(BookmarkStorage);
-		if (!d->privateXml)
-			return;
-		d->privateXml->request(QLatin1String("storage"), QLatin1String("storage:bookmarks"), this,
-							   SLOT(onResultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)));
-	}
-	
-	void BookmarkStorage::storeBookmarks(const Bookmark::Ptr &bookmarks)
-	{
-		Q_D(BookmarkStorage);
-		if (!d->privateXml)
-			return;
-		d->privateXml->store(bookmarks, this,
-							 SLOT(onResultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)));
-	}
-	
-	void BookmarkStorage::onResultReady(const StanzaExtension::Ptr &node,
-										PrivateXml::Result result, const Error::Ptr &error)
-	{
-		Bookmark *bookmark = se_cast<Bookmark*>(node.data());
+BookmarkStorage::~BookmarkStorage()
+{
+}
 
-		if(bookmark)
-			qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
+void BookmarkStorage::setPubSubManager(PubSub::Manager *manager)
+{
+	d_func()->pubSubManager = manager;
+}
 
-		if (bookmark && result == PrivateXml::RequestOk)
-			emit bookmarksReceived(node.staticCast<Bookmark>());
-		else
-			emit bookmarksReceived(Bookmark::Ptr::create());		
-	}
+void BookmarkStorage::setPrivateXml(PrivateXml *privateXml)
+{
+	d_func()->privateXml = privateXml;
+}
+
+void BookmarkStorage::requestBookmarks()
+{
+	Q_D(BookmarkStorage);
+	if (!d->privateXml)
+		return;
+	d->privateXml->request(QLatin1String("storage"), QLatin1String("storage:bookmarks"), this,
+						   SLOT(onResultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)));
+}
+
+void BookmarkStorage::storeBookmarks(const Bookmark::Ptr &bookmarks)
+{
+	Q_D(BookmarkStorage);
+	if (!d->privateXml)
+		return;
+	d->privateXml->store(bookmarks, this,
+						 SLOT(onResultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)));
+}
+
+void BookmarkStorage::onResultReady(const StanzaExtension::Ptr &node,
+									PrivateXml::Result result, const Error::Ptr &error)
+{
+	Bookmark *bookmark = se_cast<Bookmark*>(node.data());
+
+	if(bookmark)
+		qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
+
+	if (bookmark && result == PrivateXml::RequestOk)
+		emit bookmarksReceived(node.staticCast<Bookmark>());
+	else
+		emit bookmarksReceived(Bookmark::Ptr::create());
+}
 }
