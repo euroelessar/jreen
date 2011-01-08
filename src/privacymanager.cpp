@@ -17,6 +17,7 @@
 #include "privacymanager_p.h"
 #include "client.h"
 #include "iq.h"
+#include <QDebug>
 
 namespace jreen
 {
@@ -144,6 +145,11 @@ QString PrivacyManager::activeList() const
 	return d_func()->activeList;
 }
 
+void PrivacyManager::desetActiveList()
+{
+	setActiveList(QLatin1String(""));
+}
+
 void PrivacyManager::setActiveList(const QString &name)
 {
 	Q_D(PrivacyManager);
@@ -151,6 +157,7 @@ void PrivacyManager::setActiveList(const QString &name)
 	PrivacyQuery *query = new PrivacyQuery;
 	query->activeList = name;
 	iq.addExtension(query);
+	d->activeListSetter.insert(iq.id(), name);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetActiveList);
 }
 
@@ -161,6 +168,7 @@ void PrivacyManager::setDefaultList(const QString &name)
 	PrivacyQuery *query = new PrivacyQuery;
 	query->defaultList = name;
 	iq.addExtension(query);
+	d->defaultListSetter.insert(iq.id(), name);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetDefaultList);
 }
 
@@ -209,10 +217,19 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq)
 
 void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 {
+	Q_D(PrivacyManager);
+	if (context == SetActiveList) {
+		QString name = d->activeListSetter.take(iq.id());
+		if (iq.subtype() == IQ::Result)
+			d->activeList = name;
+	} else if (context == SetDefaultList) {
+		QString name = d->defaultListSetter.take(iq.id());
+		if (iq.subtype() == IQ::Result)
+			d->defaultList = name;
+	}
 	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
 	if (!query)
 		return;
-	Q_D(PrivacyManager);
 	if (context == RequestList && !query->lists.isEmpty()) {
 		const PrivacyQuery::List &list = query->lists.at(0);
 		emit listReceived(list.name, list.items);
@@ -223,6 +240,7 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 		d->lists = lists;
 		d->defaultList = query->defaultList;
 		d->activeList = query->activeList;
+		qDebug() << Q_FUNC_INFO << d->lists << d->defaultList << d->activeList;
 		if (d->activeList.isEmpty())
 			d->activeList = d->defaultList;
 		emit listsReceived();

@@ -60,14 +60,15 @@ void PrivacyQueryFactory::handleStartElement(const QStringRef &name, const QStri
 	if (m_depth == 1) {
 		m_query.reset(new PrivacyQuery);
 	} if (m_depth == 2) {
-		QStringRef name = attributes.value(QLatin1String("name"));
+		QStringRef listName = attributes.value(QLatin1String("name"));
 		if (name == QLatin1String("list")) {
 			m_state = AtList;
-			m_name = name.toString();
+			m_name = listName.toString();
+			
 		} else if (name == QLatin1String("active")) {
-			m_query->activeList = name.toString();
+			m_query->activeList = listName.toString();
 		} else if (name == QLatin1String("default")) {
-			m_query->defaultList = name.toString();
+			m_query->defaultList = listName.toString();
 		}
 	} else if (m_depth == 3 && m_state == AtList && name == QLatin1String("item")) {
 		// We should provide fallback as said in rfc-3920
@@ -130,13 +131,15 @@ void PrivacyQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter
 	Q_ASSERT(query);
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(NS_PRIVACY);
-	if (!query->activeList.isEmpty()) {
+	if (!query->activeList.isNull()) {
 		writer->writeEmptyElement(QLatin1String("active"));
-		writer->writeAttribute(QLatin1String("name"), query->activeList);
+		if (!query->activeList.isEmpty())
+			writer->writeAttribute(QLatin1String("name"), query->activeList);
 	}
-	if (!query->defaultList.isEmpty()) {
+	if (!query->defaultList.isNull()) {
 		writer->writeEmptyElement(QLatin1String("default"));
-		writer->writeAttribute(QLatin1String("name"), query->defaultList);
+		if (!query->defaultList.isEmpty())
+			writer->writeAttribute(QLatin1String("name"), query->defaultList);
 	}
 	for (int i = 0; i < query->lists.size(); i++) {
 		const PrivacyQuery::List &list = query->lists.at(i);

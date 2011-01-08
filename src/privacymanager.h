@@ -92,6 +92,7 @@ public:
 	
 	QString defaultList() const;
 	QString activeList() const;
+	void desetActiveList();
 	void setActiveList(const QString &name);
 	void setDefaultList(const QString &name);
 	QStringList lists() const;

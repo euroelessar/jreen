@@ -47,6 +47,8 @@ public:
 	QString defaultList;
 	QString activeList;
 	QStringList lists;
+	QHash<QString, QString> activeListSetter;
+	QHash<QString, QString> defaultListSetter;
 };
 
 class PrivacyQuery : public StanzaExtension
