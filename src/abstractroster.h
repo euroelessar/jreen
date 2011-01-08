@@ -190,6 +190,9 @@ class JREEN_EXPORT AbstractRoster : public QObject
 public:
 	AbstractRoster(Client *client, AbstractRosterPrivate *data = 0);
 	virtual ~AbstractRoster();	
+	
+	QString version() const;
+	void fillRoster(const QString &version, const QList<AbstractRosterItem::Ptr> &items);
 public slots:
 	virtual void load();
 	virtual void synchronize();

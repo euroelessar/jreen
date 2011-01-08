@@ -108,7 +108,7 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
 	if (query->items().isEmpty())
-		writer->writeAttribute(QLatin1String("ver"), QLatin1String(""));
+		writer->writeAttribute(QLatin1String("ver"), query->ver());
 	foreach (const AbstractRosterItem::Ptr &item, query->items()) {
 		writer->writeStartElement(QLatin1String("item"));
 		writeAttribute(writer,QLatin1String("name"), item->name());
@@ -124,7 +124,7 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 
 StanzaExtension::Ptr AbstractRosterQueryFactory::createExtension()
 {
-	return StanzaExtension::Ptr(new AbstractRosterQuery(m_items));
+	return StanzaExtension::Ptr(new AbstractRosterQuery(m_items, m_ver));
 }
 
 static const QStringList roster_subscriptions = QStringList()
@@ -171,11 +171,23 @@ AbstractRoster::~AbstractRoster()
 {
 }
 
+QString AbstractRoster::version() const
+{
+	return d_func()->version;
+}
+
+void AbstractRoster::fillRoster(const QString &version, const QList<AbstractRosterItem::Ptr> &items)
+{
+	d_func()->version = version;
+	onLoaded(items);
+}
+
 void AbstractRoster::load()
 {
 	Q_D(AbstractRoster);
 	IQ iq(IQ::Get, JID(), d->client->getID());
-	iq.addExtension(new AbstractRosterQuery);
+	qDebug() << Q_FUNC_INFO << d->version;
+	iq.addExtension(new AbstractRosterQuery(d->version));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), LoadRoster);
 }
 
@@ -211,7 +223,6 @@ void AbstractRoster::add(const JID &jid, const QString &name, const QStringList 
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), AddRosterItem);
-	d->iqHash.insert(iq.id(),iq);
 }
 
 void AbstractRoster::remove(const JID &jid)
@@ -225,7 +236,6 @@ void AbstractRoster::remove(const JID &jid)
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RemoveRosterItem);
-	d->iqHash.insert(iq.id(),iq);
 }
 
 QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
@@ -268,12 +278,13 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 	switch(context)
 	{
 	case LoadRoster:
-		// By xep-0237 if tno newer version of roster
+		// By xep-0237 if no newer version of roster
 		// presents there is no query element in stanza
 		if (AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>()) {
-			m_items.clear();
+			d_func()->version = roster->ver();
 			onLoaded(roster->items());
-			iq.accept();
+		} else {
+			emit loaded();
 		}
 		break;
 	case AddRosterItem:

@@ -48,6 +48,7 @@
 #include "pubsubmanager_p.h"
 #include "tunefactory_p.h"
 #include "bookmarkfactory.h"
+#include "privacyqueryfactory_p.h"
 
 namespace jreen
 {
@@ -125,6 +126,7 @@ void ClientPrivate::init()
 	client->registerStanzaExtension(new EntityTimeFactory);
 	client->registerStanzaExtension(new BookmarkFactory);
 	client->registerStanzaExtension(new PrivateXmlQueryFactory(client));
+	client->registerStanzaExtension(new PrivacyQueryFactory);
 //	client->registerStanzaExtension(new PubSub::EventFactory);
 //	client->registerStanzaExtension(new PubSub::PublishFacatory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
