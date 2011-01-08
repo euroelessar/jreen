@@ -155,10 +155,20 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 void MUCRoomPrivate::handleMessage(const Message &msg)
 {
 	Q_Q(MUCRoom);
+	bool nice = false;
+	if (msg.from() == jid.bare()) {
+		qDebug() << "service message" << msg.from() << jid;
+		emit q->serviceMessageReceived(msg);
+		nice = true;
+	}
 	if (!msg.subject().isEmpty()) {
+		qDebug() << "subject message" << msg.from() << jid;
 		subject = msg.subject();
 		emit q->subjectChanged(subject, msg.from().resource());
-	} else if (!msg.body().isEmpty()) {
+		nice = true;
+	}
+	if (!nice && !msg.body().isEmpty()) {
+		qDebug() << "common message" << msg.from() << jid;
 		emit q->messageReceived(msg, msg.subtype() != Message::Groupchat);
 	}
 }
