@@ -23,6 +23,7 @@ namespace jreen
 {
 class Client;
 class IQ;
+class AbstractRosterItem;
 class PrivacyManagerPrivate;
 class PrivacyItemPrivate;
 
@@ -78,6 +79,9 @@ public:
 	void setStanzaTypes(StanzaTypes types);
 	uint order() const;
 	void setOrder(uint order);
+	
+	bool check(const AbstractRosterItem *item) const;
+	bool check(const JID &jid) const;
 private:
 	QSharedDataPointer<PrivacyItemPrivate> d_ptr;
 };
@@ -105,6 +109,8 @@ private slots:
 	void handleIQ(const jreen::IQ &iq);
 	void handleIQ(const jreen::IQ &iq, int context);
 signals:
+	void activeListChanged(const QString &name);
+	void defaultListChanged(const QString &name);
 	void listsReceived();
 	void listReceived(const QString &name, const QList<jreen::PrivacyItem> &list);
 	void listChanged(const QString &name);

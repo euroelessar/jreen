@@ -26,6 +26,7 @@ namespace jreen
 PresenceFactory::PresenceFactory(Client *client) : StanzaFactory(client)
 {
 	m_depth = 0;
+	m_state = AtNowhere;
 	clear();
 }
 
@@ -158,6 +159,8 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 
 void PresenceFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	if (m_depth == 2)
+		m_state = AtNowhere;
 	m_depth--;
 	Q_UNUSED(name);
 	Q_UNUSED(uri);

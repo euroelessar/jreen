@@ -48,7 +48,7 @@ bool PrivacyQueryFactory::canParse(const QStringRef &name, const QStringRef &uri
 }
 
 static const char *privacy_types[] = { "jid", "group", "subscription" };
-static const char *privacy_actions[] = { "allow", "deny" };
+static const char *privacy_actions[] = { "deny", "allow" };
 static const char *subscription_types[] = { "from", "to", "both", "remove", "none" };
 static const char *privacy_stanzas[] = { "message", "presence-in", "presence-out", "iq" };
 
@@ -96,6 +96,7 @@ void PrivacyQueryFactory::handleStartElement(const QStringRef &name, const QStri
 		data = attributes.value(QLatin1String("action"));
 		item.setAction(strToEnum<PrivacyItem::Action>(data, privacy_actions));
 		item.setOrder(attributes.value(QLatin1String("order")).toString().toInt());
+		item.setStanzaTypes(0);
 	} else if (m_depth == 4 && m_state == AtItem) {
 		int data = strToEnum(name, privacy_stanzas);
 		if (data == -1)

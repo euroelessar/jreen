@@ -187,6 +187,21 @@ QString MUCRoom::id() const
 	return d_func()->jid.bare();
 }
 
+QString MUCRoom::service() const
+{
+	return d_func()->jid.domain();
+}
+
+bool MUCRoom::isJoined() const
+{
+	return d_func()->isJoined;
+}
+
+Presence::Type MUCRoom::presence() const
+{
+	return d_func()->currentPresence.subtype();
+}
+
 void MUCRoom::join(Presence::Type type, const QString &message, int priority)
 {
 	Q_D(MUCRoom);
@@ -304,7 +319,7 @@ void MUCRoom::onConnected()
 {
 	Q_D(MUCRoom);
 	if (d->currentPresence.subtype() != Presence::Unavailable)
-		d->client->send(d->currentPresence);
+		join(d->currentPresence.subtype(), d->currentPresence.status(), d->currentPresence.priority());
 }
 
 void MUCRoom::onDisconnected()

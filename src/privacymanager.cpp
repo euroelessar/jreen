@@ -15,6 +15,7 @@
  ****************************************************************************/
 
 #include "privacymanager_p.h"
+#include "abstractroster.h"
 #include "client.h"
 #include "iq.h"
 #include <QDebug>
@@ -109,10 +110,51 @@ void PrivacyItem::setOrder(uint order)
 	d_ptr->order = order;
 }
 
+bool PrivacyItem::check(const AbstractRosterItem *item) const
+{
+	const PrivacyItemPrivate *d = d_ptr.data();
+	if (d->type == ByJID)
+		return check(item->jid());
+	if (d->type == ByGroup)
+		return item->groups().contains(d->data.toString());
+	if (d->type == BySubscription) {
+		SubscriptionType itemType = static_cast<SubscriptionType>(item->subscriptionType());
+		SubscriptionType type = static_cast<SubscriptionType>(d->data.toInt());
+		if (itemType == Invalid)
+			itemType = None;
+		if (type == Invalid)
+			type = None;
+		if (itemType == Both && type != None)
+			return true;
+		return itemType == type;
+	}
+	return true;
+}
+
+bool PrivacyItem::check(const JID &itemJid) const
+{
+	const PrivacyItemPrivate *d = d_ptr.data();
+	if (d->type == All)
+		return true;
+	if (d->type != ByJID)
+		return false;
+	JID jid = d->data.value<JID>();
+	if (jid.isFull())
+		return jid == itemJid;
+	if (jid.isDomain())
+		return itemJid.domain() == jid.domain();
+	if (jid.isBare())
+		return itemJid.bare() == jid.bare();
+	if (jid.node().isEmpty())
+		return itemJid.domain() == jid.domain() && itemJid.resource() == jid.resource();
+	return false;
+}
+
 PrivacyManager::PrivacyManager(Client *client) : QObject(client), d_ptr(new PrivacyManagerPrivate)
 {
 	Q_D(PrivacyManager);
 	d->client = client;
+	connect(d->client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
 }
 
 PrivacyManager::~PrivacyManager()
@@ -133,6 +175,11 @@ void PrivacyManager::request()
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	iq.addExtension(new PrivacyQuery);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RequestAll);
+	d->lastListName.clear();
+	d->lastList.clear();
+	d->listRequests.clear();
+	d->activeListSetter.clear();
+	d->defaultListSetter.clear();
 }
 
 QString PrivacyManager::defaultList() const
@@ -177,6 +224,13 @@ void PrivacyManager::setList(const QString &name, const QList<jreen::PrivacyItem
 	Q_D(PrivacyManager);
 	IQ iq(IQ::Set, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
+	QList<jreen::PrivacyItem> fixedList = list;
+	qint64 lastOrder = -1;
+	for (int i = 0; i < fixedList.size(); i++) {
+		if (fixedList.at(i).order() == lastOrder)
+			fixedList[i].setOrder(lastOrder + 1);
+		lastOrder = fixedList.at(i).order();
+	}
 	query->lists << PrivacyQuery::List(name, list);
 	iq.addExtension(query);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetDefaultList);
@@ -195,6 +249,16 @@ QStringList PrivacyManager::lists() const
 void PrivacyManager::requestList(const QString &name)
 {
 	Q_D(PrivacyManager);
+	if (d->lastListName == name) {
+		emit listReceived(name, d->lastList);
+		return;
+	} else if (!d->lists.contains(name)) {
+		emit listReceived(name, QList<jreen::PrivacyItem>());
+		return;
+	} else if (d->listRequests.contains(name)) {
+		return;
+	}
+	d->listRequests << name;
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
 	query->lists << PrivacyQuery::List(name);
@@ -210,8 +274,16 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq)
 		iq.accept();
 		IQ res(IQ::Result, JID());
 		d->client->send(res);
-		for (int i = 0; i < query->lists.size(); i++)
-			emit listChanged(query->lists.at(i).name);
+		for (int i = 0; i < query->lists.size(); i++) {
+			const PrivacyQuery::List &list = query->lists.at(i);
+			if (list.name == d->lastListName) {
+				d->lastListName.clear();
+				d->lastList.clear();
+			}
+			if (!d->lists.contains(list.name))
+				d->lists.append(list.name);
+			emit listChanged(list.name);
+		}
 	}
 }
 
@@ -220,18 +292,27 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 	Q_D(PrivacyManager);
 	if (context == SetActiveList) {
 		QString name = d->activeListSetter.take(iq.id());
-		if (iq.subtype() == IQ::Result)
+		if (iq.subtype() == IQ::Result) {
 			d->activeList = name;
+			emit activeListChanged(name);
+		}
 	} else if (context == SetDefaultList) {
 		QString name = d->defaultListSetter.take(iq.id());
-		if (iq.subtype() == IQ::Result)
+		if (iq.subtype() == IQ::Result) {
 			d->defaultList = name;
+			emit defaultListChanged(name);
+		}
 	}
 	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
 	if (!query)
 		return;
-	if (context == RequestList && !query->lists.isEmpty()) {
+	if (context == RequestList) {
 		const PrivacyQuery::List &list = query->lists.at(0);
+		d->lastListName = list.name;
+		d->lastList = list.items;
+		if (list.items.isEmpty())
+			d->lists.removeOne(list.name);
+		d->listRequests.remove(list.name);
 		emit listReceived(list.name, list.items);
 	} else if (context == RequestAll) {
 		QStringList lists;

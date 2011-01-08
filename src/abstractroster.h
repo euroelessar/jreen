@@ -151,6 +151,8 @@ public:
 		Invalid = -1
 	};
 	typedef QSharedPointer<AbstractRosterItem> Ptr;
+	AbstractRosterItem(const QString &jid, const QString &name,
+					   const QStringList &groups, SubscriptionType s10n);
 	AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data = 0);
 	virtual ~AbstractRosterItem();
 	const QString &jid() const;

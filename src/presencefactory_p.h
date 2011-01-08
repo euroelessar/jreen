@@ -26,7 +26,7 @@ namespace jreen
 class PresenceFactory : public StanzaFactory
 {
 public:
-	enum State { AtShow, AtStatus,AtPriority };
+	enum State { AtNowhere, AtShow, AtStatus,AtPriority };
     PresenceFactory(Client *client);
 	int stanzaType();
 	Stanza::Ptr createStanza();

@@ -116,7 +116,6 @@ bool JID::setJID(const QString &jid)
 		if(!d_ptr->valid)
 			return false;
 	}
-
 	d_ptr->domain = Prep::instance().namePrep(jid.mid(at < 0 ? 0 : at + 1, slash - at - 1), &d_ptr->valid);
 	if(!d_ptr->valid)
 		return false;

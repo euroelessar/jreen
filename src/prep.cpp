@@ -46,7 +46,6 @@ namespace jreen
 			*ok = false;
 			return QString();
 		}
-		
 		QByteArray in = s.toUtf8();
 		in.resize(JID_PORTION_SIZE);
 		int rc = _idn_stringprep(in.data(), JID_PORTION_SIZE, 0, profile);

@@ -131,6 +131,18 @@ static const QStringList roster_subscriptions = QStringList()
 << QLatin1String("from") << QLatin1String("to")
 << QLatin1String("both") << QLatin1String("remove");
 
+AbstractRosterItem::AbstractRosterItem(const QString &jid, const QString &name,
+									   const QStringList &groups, SubscriptionType s10n)
+	: d_ptr(new AbstractRosterItemPrivate)
+{
+	Q_D(AbstractRosterItem);
+	d->roster = 0;
+	d->jid = jid;
+	d->name = name;
+	d->groups = groups;
+	d->subscription = s10n;
+}
+
 AbstractRosterItem::AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data)
 	: d_ptr(data ? data : new AbstractRosterItemPrivate())
 {
@@ -253,6 +265,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	const AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>();
 	if (!roster)
 		return;
+	d_func()->version = roster->ver();
 	iq.accept();
 	foreach (const AbstractRosterItem::Ptr &item, roster->items()) {
 		qDebug() << "handle item" << item->jid();
@@ -313,12 +326,13 @@ void AbstractRoster::onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &
 		it.next();
 		jidsForRemove.insert(it.key());
 	}
-	for (int i = 0; i < items.size(); i++)
+	for (int i = 0; !jidsForRemove.isEmpty() && i < items.size(); i++)
 		jidsForRemove.remove(items.at(i)->jid());
 	foreach (const AbstractRosterItem::Ptr &item, items) {
 		QHash<QString, AbstractRosterItem::Ptr>::iterator item_iter = m_items.find(item->jid());
 		if (item_iter == m_items.end()) {
 			m_items.insert(item->jid(), item);
+			item->d_func()->roster = this;
 			onItemAdded(item);
 		} else {
 			item_iter.value()->setData(item);

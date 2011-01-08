@@ -76,11 +76,14 @@ public:
 	virtual ~MUCRoom();
 
 	QString id() const;
+	QString service() const;
 
 	//	inline void setPassword(const QString &password) { m_password = password; }
 	//	inline const QString &name() const { return m_jid.node(); }
 	//	inline const QString &service() const { return m_jid.domain(); }
 	//	inline const QString &nick() const { return m_jid.resource(); }
+	bool isJoined() const;
+	Presence::Type presence() const;
 	void join(Presence::Type type, const QString &message = QString(), int priority = 0);
 	void leave(const QString &message = QString());
 	void send(const QString &message);

@@ -20,6 +20,7 @@
 #include "privacymanager.h"
 #include "stanzaextension.h"
 #include <QVariant>
+#include <QSet>
 #include <QStringList>
 
 namespace jreen
@@ -28,7 +29,7 @@ class PrivacyItemPrivate : public QSharedData
 {
 public:
 	PrivacyItemPrivate() :
-			type(PrivacyItem::ByJID), types(PrivacyItem::All),
+			type(PrivacyItem::All), types(PrivacyItem::AllStanzas),
 			action(PrivacyItem::Deny), order(0) {}
 	PrivacyItemPrivate(const PrivacyItemPrivate &o) :
 			QSharedData(o), type(o.type), types(o.types),
@@ -49,6 +50,9 @@ public:
 	QStringList lists;
 	QHash<QString, QString> activeListSetter;
 	QHash<QString, QString> defaultListSetter;
+	QSet<QString> listRequests;
+	QString lastListName;
+	QList<PrivacyItem> lastList;
 };
 
 class PrivacyQuery : public StanzaExtension
