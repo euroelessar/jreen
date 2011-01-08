@@ -36,7 +36,9 @@
 #include "buffereddatastream.h"
 #include <QTimer>
 #include <QTextCodec>
+#include <QBuffer>
 #include "stanza_p.h"
+#include "streamprocessor.h"
 
 namespace jreen
 {
@@ -124,6 +126,10 @@ public:
 	}
 	void send(const Stanza &stanza)
 	{
+		if(stanza.from().full().isEmpty()) {
+			const StanzaPrivate *p = StanzaPrivate::get(stanza);
+			const_cast<StanzaPrivate*>(p)->from = jid;
+		}
 		foreach (StanzaFactory *factory, stanzas) {
 			if (factory->stanzaType() == StanzaPrivate::get(stanza)->type) {
 				factory->serialize(const_cast<Stanza*>(&stanza), writer);
@@ -162,6 +168,7 @@ public:
 	Parser *parser;
 	Connection *conn;
 	DataStream *device;
+	StreamProcessor *streamProcessor;
 	QList<DataStream*> devices;
 	bool authorized;
 	bool isConnected;
@@ -193,13 +200,23 @@ public slots:
 	void readMore();
 	void sendHeader()
 	{
-		qDebug() << device;
 		delete writer;
-		qDebug() << device;
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamBegin();
+		if (streamProcessor) {
+			QByteArray data;
+			QBuffer buffer(&data);
+			buffer.open(QIODevice::WriteOnly);
+			streamProcessor->restartStream();
+			writer = new QXmlStreamWriter(&buffer);
+			writer->writeStartDocument(QLatin1String("1.0"));
+			writer->writeStartElement(QLatin1String("stream:stream"));
+			writer->writeDefaultNamespace(QLatin1String("jabber:client"));
+			writer->writeCharacters(QString());
+			writer->setDevice(device);
+			return;
+		}
 		writer = new QXmlStreamWriter(device);
-		qDebug() << conn;
 		writer->writeStartDocument(QLatin1String("1.0"));
 		writer->writeStartElement(QLatin1String("stream:stream"));
 		writer->writeAttribute(QLatin1String("to"), jid.domain());
@@ -217,19 +234,6 @@ public slots:
 		parser->reset();
 		sendHeader();
 		isConnected = true;
-		//		QString head = "<?xml version='1.0' ?>"
-		//		"<stream:stream to='" + jid.domain() + "' xmlns='jabber:client' "
-		//		"xmlns:stream='http://etherx.jabber.org/streams' xml:lang='" "en" "' "
-		//		"version='1.0'>";
-		//		conn->write(head.toUtf8());
-		
-		//	<stream:stream to='qutim.org' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' xml:lang='en' version='1.0'>
-		//  <stream:stream to="qutim.org" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
-		//  <stream xmlns="jabber:client" to="qutim.org" xmlns:n1="stream" n1:xmlns="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
-		//  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xml:lang="en" version="1.0">
-		//  <stream xmlns="stream" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0"><!---->
-		//  <stream xmlns:stream="jabber:client" to="qutim.org" xmlns="http://etherx.jabber.org/streams" xmlns:n1="xml" n1:lang="en" version="1.0">
-		//		client->handleConnect();
 	}
 	void disconnected()
 	{
@@ -252,27 +256,29 @@ public slots:
 class StreamInfoImpl : public StreamInfo
 {
 public:
-	StreamInfoImpl(ClientPrivate *client_private)
+	StreamInfoImpl(ClientPrivate *clientPrivate)
 	{
-		m_client_private = client_private;
+		d = clientPrivate;
 	}
 	QString streamID()
 	{
 		//		if(!m_client_private->current_stream_feature)
 		//			return QString();
-		return m_client_private->sid;
+		if (d->streamProcessor)
+			return d->streamProcessor->sessionID();
+		return d->sid;
 	}
 	QString connectionServer()
 	{
 		//		if(!m_client_private->current_stream_feature)
 		//			return QString();
-		return m_client_private->server;
+		return d->server;
 	}
 	JID jid()
 	{
 		//		if(!m_client_private->current_stream_feature)
 		//			return JID();
-		return m_client_private->jid;
+		return d->jid;
 	}
 	QString password()
 	{
@@ -280,47 +286,49 @@ public:
 		//			|| (m_client_private->current_stream_feature->type() != StreamFeature::SASL
 		//			&& m_client_private->current_stream_feature->type() != StreamFeature::SimpleAuthorization))
 		//			return QString();
-		return m_client_private->password;
+		return d->password;
 	}
 	Client *client()
 	{
-		return m_client_private->client;
+		return d->client;
 	}
 	QXmlStreamWriter *writer()
 	{
-		return m_client_private->writer;
+		return d->writer;
 	}
 	void completed(const CompletedFlags &flags)
 	{
 		if(flags & Authorized)
-			m_client_private->emitAuthorized();
+			d->emitAuthorized();
 		if (flags & ResendHeader) {
-			m_client_private->device->readAll();
-			m_client_private->sendHeader();
-			m_client_private->parser->reset();
-			m_client_private->current_stream_feature = 0;
+			d->device->readAll();
+			d->sendHeader();
+			d->parser->reset();
+			d->current_stream_feature = 0;
 		}
 		if (flags & AcitvateNext)
-			m_client_private->parser->activateFeature();
+			d->parser->activateFeature();
 		if (flags & Connected)
-			m_client_private->emitConnected();
+			d->emitConnected();
 	}
 	void setJID(const JID &jid)
 	{
-		m_client_private->jid = jid;
+		const StanzaPrivate *p = StanzaPrivate::get(d->presence);
+		const_cast<StanzaPrivate*>(p)->from = jid;
+		d->jid = jid;
 	}
 	void addDataStream(DataStream *dataStream) 
 	{
-		m_client_private->devices.append(dataStream);
-		dataStream->setDevice(m_client_private->device->device());
-		m_client_private->device->setDevice(dataStream);
+		d->devices.append(dataStream);
+		dataStream->setDevice(d->device->device());
+		d->device->setDevice(dataStream);
 		//		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);
 		//		m_client_private->device = dataStream;
 		dataStream->open(QIODevice::ReadWrite);
 		//		QObject::connect(m_client_private->device, SIGNAL(readyRead()), m_client_private, SLOT(newData()));
 	}
 private:
-	ClientPrivate *m_client_private;
+	ClientPrivate *d;
 };
 
 }

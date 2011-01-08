@@ -280,11 +280,6 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
 
-	if(iq.from().full().isEmpty()) {
-		const StanzaPrivate *p = StanzaPrivate::get(iq);
-		const_cast<StanzaPrivate*>(p)->from = d->jid;
-	}
-
 	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
 	QString id = iq.id();
 	d->iq_tracks.insert(id, new IQTrack(handler, member, context));
@@ -296,6 +291,7 @@ void Client::setConnectionImpl(Connection *conn)
 	Q_D(Client);
 	delete d->conn;
 	d->conn = conn;
+	d->streamProcessor = qobject_cast<StreamProcessor*>(conn);
 	d->device->setDevice(conn);
 	//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), d, SLOT(connected()));
@@ -359,8 +355,13 @@ void Client::connectToServer()
 	if(!d->conn)
 		setConnectionImpl(new TcpConnection(d->server, d->server_port));
 
-	if(!d->conn->isOpen())
+	if(!d->conn->isOpen()) {
+		if (d->streamProcessor) {
+			d->streamProcessor->setJID(d->jid);
+			d->streamProcessor->setStreamParser(d->parser);
+		}
 		d->conn->open();
+	}
 
 }
 

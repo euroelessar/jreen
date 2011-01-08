@@ -44,9 +44,6 @@ public:
 	QList<StanzaExtension::Ptr> extensions;
 	int depth;
 	ClientPrivate *client;
-
-	inline bool canParse(XmlStreamParser *parser)
-	{ return parser->canParse(reader->name(), reader->namespaceUri(), reader->attributes()); }
 };
 }
 

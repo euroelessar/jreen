@@ -29,7 +29,7 @@ namespace Util
 {
 JREEN_EXPORT QDateTime fromStamp(const QString &stamp);
 JREEN_EXPORT QString toStamp(const QDateTime &date_time);
-JREEN_EXPORT QString randomHash(const JID &jid);
+JREEN_EXPORT QByteArray randomHash();
 inline int log2(register uint n)
 {
 	register int pos = 0;

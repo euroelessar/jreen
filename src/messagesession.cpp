@@ -108,7 +108,7 @@ void MessageSession::handleMessage(const Message &message_orig)
 	if(m_thread.isEmpty())
 	{
 		if(message.thread().trimmed().isEmpty())
-			message.setThread(m_thread = Util::randomHash(message.from()));
+			message.setThread(m_thread = QLatin1String(Util::randomHash()));
 		else
 			m_thread = message.thread();
 	}

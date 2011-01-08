@@ -25,7 +25,7 @@ namespace jreen
 class Client;
 class ParserPrivate;
 
-class Parser
+class Parser : public XmlStreamParser
 {
 	Q_DECLARE_PRIVATE(Parser)
 public:
@@ -41,6 +41,12 @@ public:
 	~Parser();
 	void reset();
 	void activateFeature();
+	
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	
 	void appendData(const QByteArray &a);
 private:
 	QScopedPointer<ParserPrivate> d_ptr;

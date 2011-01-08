@@ -66,7 +66,7 @@ void TLSFeature::reset()
 bool TLSFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	// All other methods shouldn't be called is canParse returnes false
-	if (!m_tls)
+	if (!m_hasTls)
 		return false;
 	Q_UNUSED(uri);
 	Q_UNUSED(name);
@@ -134,7 +134,7 @@ void TLSFeature::handleCharacterData(const QStringRef &text)
 
 bool TLSFeature::isActivatable()
 {
-	return m_tls && m_available;
+	return m_hasTls && m_available;
 }
 
 bool TLSFeature::activate()

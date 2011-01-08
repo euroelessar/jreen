@@ -15,12 +15,7 @@
 
 #include "util.h"
 #include "jid.h"
-#include <cstdio>
 #include <QCryptographicHash>
-
-#if _MSC_VER
-#define snprintf _snprintf
-#endif
 
 namespace jreen
 {
@@ -109,7 +104,7 @@ QString Util::toStamp(const QDateTime &date_time)
 	return date_time.toUTC().toString(FULLZ_STAMP_STR);
 }
 
-QString Util::randomHash(const JID &jid)
+QByteArray Util::randomHash( /*const JID &jid*/ )
 {
 //	Holy shit...
 //	QCryptographicHash hash(QCryptographicHash::Sha1);
@@ -131,12 +126,10 @@ QString Util::randomHash(const JID &jid)
 //	hash.addData(data);
 //	return QLatin1String(hash.result().toHex());
 //	Nobody whould find a differ
-	Q_UNUSED(jid);
-	const int BufSize = 160;
-	char buf[BufSize + 1];
-	for (int i = 0; i < BufSize; i += 4)
-		::snprintf(buf + i, 4, "%04x", qrand());
-	return QLatin1String(buf);
+	qint32 buf[5];
+	for (int i = 0; i < 5; i++)
+		buf[i] = qrand();
+	return QByteArray(reinterpret_cast<char*>(buf), sizeof(buf)).toHex();
 }
 
 }
