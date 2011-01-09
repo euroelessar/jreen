@@ -20,30 +20,34 @@
 #include "connection.h"
 #include "streamprocessor.h"
 
+class QNetworkReply;
+
 namespace jreen
 {
 class ConnectionBOSHPrivate;
-class ConnectionBOSH : public Connection, public StreamProcessor
+class JREEN_EXPORT ConnectionBOSH : public Connection, public StreamProcessor
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(ConnectionBOSH)
 	Q_INTERFACES(jreen::StreamProcessor)
 public:
-	ConnectionBOSH();
+	ConnectionBOSH(const QString &host, int port = 5280);
 	~ConnectionBOSH();
 
 	bool open();
 	void close();
-//	qint64 bytesAvailable() const;
-//	SocketState socketState() const;
-//	SocketError socketError() const;
+	qint64 bytesAvailable() const;
+	SocketState socketState() const;
+	SocketError socketError() const;
 protected:
 	QString sessionID() const;
 	void setJID(const JID &jid);
 	void setStreamParser(XmlStreamParser *parser);
 	void restartStream();
-//	qint64 readData(char *data, qint64 maxlen);
-//	qint64 writeData(const char *data, qint64 len);
+	qint64 readData(char *data, qint64 maxlen);
+	qint64 writeData(const char *data, qint64 len);
+protected slots:
+	void onRequestFinished(QNetworkReply *);
 private:
 	QScopedPointer<ConnectionBOSHPrivate> d_ptr;
 };

@@ -58,6 +58,7 @@ public:
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
 	virtual ~Client();
+	void setPingInterval(int interval);
 	const JID &jid();
 	void setJID(const JID &jid);
 	void setPassword(const QString &password);
@@ -83,7 +84,6 @@ public:
 	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:
-	void whitespacePing(int period = 0);
 	void setPresence();
 	void setPresence(jreen::Presence::Type type, const QString &text = QString(), int priority = -129);
 	void connectToServer();
@@ -99,6 +99,7 @@ signals:
 	void serverFeaturesReceived(const QSet<QString> &features);
 	void serverIdentitiesReceived(const jreen::Disco::IdentityList &identities) const;
 protected:
+	virtual void timerEvent(QTimerEvent *);
 	virtual void handleConnect();
 	virtual void handleDisconnect();
 	virtual void handleAuthorized();

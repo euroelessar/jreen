@@ -155,6 +155,7 @@ public:
 	//	void registerMessageHandler(const JID &jid, QObject *handler, const char *member);
 
 	void handleStanza(const Stanza::Ptr &stanza);
+	QBasicTimer *pingTimer;
 	StreamInfo *stream_info;
 	Client *client;
 	JID jid;
@@ -204,16 +205,17 @@ public slots:
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamBegin();
 		if (streamProcessor) {
-			QByteArray data;
-			QBuffer buffer(&data);
-			buffer.open(QIODevice::WriteOnly);
-			streamProcessor->restartStream();
-			writer = new QXmlStreamWriter(&buffer);
-			writer->writeStartDocument(QLatin1String("1.0"));
-			writer->writeStartElement(QLatin1String("stream:stream"));
-			writer->writeDefaultNamespace(QLatin1String("jabber:client"));
-			writer->writeCharacters(QString());
-			writer->setDevice(device);
+			writer = new QXmlStreamWriter(device);
+//			QByteArray data;
+//			QBuffer buffer(&data);
+//			buffer.open(QIODevice::WriteOnly);
+//			streamProcessor->restartStream();
+//			writer = new QXmlStreamWriter(&buffer);
+//			writer->writeStartDocument(QLatin1String("1.0"));
+//			writer->writeStartElement(QLatin1String("stream:stream"));
+//			writer->writeDefaultNamespace(QLatin1String("jabber:client"));
+//			writer->writeCharacters(QString());
+//			writer->setDevice(device);
 			return;
 		}
 		writer = new QXmlStreamWriter(device);

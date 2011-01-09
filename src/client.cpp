@@ -324,12 +324,13 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 	stream_feature->setStreamInfo(d->stream_info);
 }
 
-void Client::whitespacePing(int period)
+void Client::setPingInterval(int interval)
 {
 	Q_D(Client);
-	d->send(QLatin1String(" "));
-	if(!d_ptr)
-		QTimer::singleShot(period, this, SLOT(whitespacePing()));
+	if (d->pingTimer->isActive())
+		d->pingTimer->stop();
+	if (interval > 0 && isConnected())
+		d->pingTimer->start(interval, this);
 }
 
 void Client::setPresence()
@@ -387,6 +388,10 @@ void ClientPrivate::onIqReceived(const IQ &iq, int context)
 		emit client->serverIdentitiesReceived(serverIdentities);
 		qDebug() << serverFeatures;
 	}
+}
+
+void Client::timerEvent(QTimerEvent *timerEvent)
+{
 }
 
 void Client::handleConnect()

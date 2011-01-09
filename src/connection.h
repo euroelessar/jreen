@@ -26,7 +26,7 @@ namespace jreen
 {
 
 // Why there is no Qt 5 today?..
-class Connection : public QIODevice
+class JREEN_EXPORT Connection : public QIODevice
 {
 	Q_OBJECT
 public:
@@ -85,7 +85,7 @@ private:
 	bool open(OpenMode) { return false; }
 };
 
-class ConnectionListener : public QObject
+class JREEN_EXPORT ConnectionListener : public QObject
 {
 	Q_OBJECT
 public:
