@@ -41,7 +41,7 @@ public:
 	};
 	Q_DECLARE_FLAGS(CompletedFlags, CompletedFlag)
 
-	virtual ~StreamInfo() = 0;
+	virtual ~StreamInfo() {}
 	virtual QString streamID() = 0;
 	virtual QString connectionServer() = 0;
 	virtual JID jid() = 0;
