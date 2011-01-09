@@ -39,7 +39,7 @@ public:
 	void handleMessage(const Message &msg);
 
 	MUCRoom *q_ptr;
-	Client *client;
+	QPointer<Client> client;
 	JID jid;
 	MUCRoom::Affiliation affiliation;
 	MUCRoom::Role role;

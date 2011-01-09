@@ -45,6 +45,7 @@ public:
 	QBuffer resultBuffer;
 	QXmlStreamWriter writer;
 	QXmlStreamReader reader;
+	bool streamInitiation;
 	
 	QByteArray generateKey()
 	{
@@ -76,6 +77,7 @@ void ConnectionBOSHPrivate::send()
 
 void ConnectionBOSHPrivate::sendHeader(bool first)
 {
+	streamInitiation = first;
 	writer.writeEmptyElement(QLatin1String("body"));
 	writer.writeAttribute(QLatin1String("rid"), QString::number(rid++));
 	if (first) {
@@ -102,6 +104,7 @@ void ConnectionBOSHPrivate::sendHeader(bool first)
 ConnectionBOSH::ConnectionBOSH(const QString &host, int port) : d_ptr(new ConnectionBOSHPrivate)
 {
 	Q_D(ConnectionBOSH);
+	d->streamInitiation = false;
 	d->rid = 0;
 	d->streamParser = 0;
 	d->host.setScheme(QLatin1String("http"));
@@ -200,6 +203,7 @@ qint64 ConnectionBOSH::writeData(const char *payloaddata, qint64 payloadlen)
 void ConnectionBOSH::onRequestFinished(QNetworkReply *reply)
 {
 	Q_D(ConnectionBOSH);
+	reply->deleteLater();
 	qDebug() << reply->rawHeaderList();
 	qDebug() << Q_FUNC_INFO << reply->error() << reply->errorString();
 	if (reply->error() != QNetworkReply::NoError) {
@@ -218,7 +222,11 @@ void ConnectionBOSH::onRequestFinished(QNetworkReply *reply)
 				d->streamParser->handleStartElement(d->reader.name(), d->reader.namespaceUri(),
 													d->reader.attributes());
 			} else {
-				
+				Q_ASSERT(d->reader.name() == QLatin1String("body"));
+				const QXmlStreamAttributes attributes = d->reader.attributes();
+				if (d->streamInitiation) {
+					d->sessionId = attributes.value(QLatin1String("sid")).toString();
+				}
 			}
 			break;
 		case QXmlStreamReader::EndElement:

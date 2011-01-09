@@ -189,6 +189,8 @@ MUCRoom::MUCRoom(Client *client, const JID &jid) :
 MUCRoom::~MUCRoom()
 {
 	Q_D(MUCRoom);
+	if (!d->client)
+		return;
 	ClientPrivate::get(d->client)->rooms.remove(d->jid.bare());
 }
 
