@@ -18,6 +18,7 @@
 #include "abstractroster.h"
 #include "client.h"
 #include "iq.h"
+#include "error.h"
 #include <QDebug>
 
 namespace jreen
@@ -154,6 +155,7 @@ PrivacyManager::PrivacyManager(Client *client) : QObject(client), d_ptr(new Priv
 {
 	Q_D(PrivacyManager);
 	d->client = client;
+	d->validServer = true;
 	connect(d->client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
 }
 
@@ -172,6 +174,10 @@ enum {
 void PrivacyManager::request()
 {
 	Q_D(PrivacyManager);
+	if (!d->validServer) {
+		emit listsReceived();
+		return;
+	}
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	iq.addExtension(new PrivacyQuery);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RequestAll);
@@ -200,6 +206,8 @@ void PrivacyManager::desetActiveList()
 void PrivacyManager::setActiveList(const QString &name)
 {
 	Q_D(PrivacyManager);
+	if (!d->validServer)
+		return;
 	IQ iq(IQ::Set, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
 	query->activeList = name;
@@ -211,6 +219,8 @@ void PrivacyManager::setActiveList(const QString &name)
 void PrivacyManager::setDefaultList(const QString &name)
 {
 	Q_D(PrivacyManager);
+	if (!d->validServer)
+		return;
 	IQ iq(IQ::Set, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
 	query->defaultList = name;
@@ -222,6 +232,8 @@ void PrivacyManager::setDefaultList(const QString &name)
 void PrivacyManager::setList(const QString &name, const QList<jreen::PrivacyItem> &list)
 {
 	Q_D(PrivacyManager);
+	if (!d->validServer)
+		return;
 	IQ iq(IQ::Set, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
 	QList<jreen::PrivacyItem> fixedList = list;
@@ -252,7 +264,7 @@ void PrivacyManager::requestList(const QString &name)
 	if (d->lastListName == name) {
 		emit listReceived(name, d->lastList);
 		return;
-	} else if (!d->lists.contains(name)) {
+	} else if (!d->lists.contains(name) || !d->validServer) {
 		emit listReceived(name, QList<jreen::PrivacyItem>());
 		return;
 	} else if (d->listRequests.contains(name)) {
@@ -290,6 +302,10 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq)
 void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 {
 	Q_D(PrivacyManager);
+	if (const Error *error = iq.error()) {
+		if (error->condition() == Error::ServiceUnavailable)
+			d->validServer = false;
+	}
 	if (context == SetActiveList) {
 		QString name = d->activeListSetter.take(iq.id());
 		if (iq.subtype() == IQ::Result) {
@@ -304,9 +320,11 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 		}
 	}
 	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
-	if (!query)
-		return;
 	if (context == RequestList) {
+		if (!query) {
+			emit listReceived(QString(), QList<jreen::PrivacyItem>());
+			return;
+		}
 		const PrivacyQuery::List &list = query->lists.at(0);
 		d->lastListName = list.name;
 		d->lastList = list.items;
@@ -315,6 +333,10 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 		d->listRequests.remove(list.name);
 		emit listReceived(list.name, list.items);
 	} else if (context == RequestAll) {
+		if (!query) {
+			emit listsReceived();
+			return;
+		}
 		QStringList lists;
 		for (int i = 0; i < query->lists.size(); i++)
 			lists << query->lists.at(i).name;

@@ -148,6 +148,8 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 			emit q->joined();
 		}
 	}
+	if (part.isNickChanged() && pres.from().resource() == jid.resource())
+		jid.setResource(part.newNick());
 	emit q->presenceReceived(pres, &part);
 }
 
@@ -276,7 +278,15 @@ QString MUCRoom::nick() const
 void MUCRoom::setNick(const QString &nick)
 {
 	Q_D(MUCRoom);
-	d->jid.setResource(nick);
+	if (d->isJoined) {
+		JID newJid = d->jid;
+		newJid.setResource(nick);
+		Presence pres(d->currentPresence.subtype(), newJid,
+					  d->currentPresence.status(), d->currentPresence.priority());
+		d->client->send(pres);
+	} else {
+		d->jid.setResource(nick);
+	}
 }
 
 void MUCRoom::setRole(const QString &nick, Role role, const QString &reason)

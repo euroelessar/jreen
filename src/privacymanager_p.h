@@ -53,6 +53,7 @@ public:
 	QSet<QString> listRequests;
 	QString lastListName;
 	QList<PrivacyItem> lastList;
+	bool validServer;
 };
 
 class PrivacyQuery : public StanzaExtension
