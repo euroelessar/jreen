@@ -30,6 +30,7 @@ public:
     StreamProcessor();
 	virtual ~StreamProcessor();
 
+	virtual void authorized() = 0;
 	virtual QString sessionID() const = 0;
 	virtual void setJID(const JID &jid) = 0;
 	virtual void setStreamParser(XmlStreamParser *parser) = 0;

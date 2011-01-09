@@ -23,6 +23,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QBuffer>
+#include <QPointer>
 
 namespace jreen
 {
@@ -32,47 +33,55 @@ public:
 	ConnectionBOSHPrivate() : resultBuffer(&resultXml), writer(&resultBuffer) {}
 	quint64 rid;
 	QString sessionId;
-	QByteArray key;
+	QList<QByteArray> keys;
 	int keyNum;
-	int keyIndex;
 	JID jid;
+	bool authorized;
 	XmlStreamParser *streamParser;
 	QNetworkAccessManager manager;
 	QUrl host;
-	QNetworkReply *emptyRequest;
-	QNetworkReply *dataRequest;
+	QPointer<QNetworkReply> emptyRequest;
+	QPointer<QNetworkReply> dataRequest;
+	QByteArray payloads;
 	QByteArray resultXml;
 	QBuffer resultBuffer;
 	QXmlStreamWriter writer;
 	QXmlStreamReader reader;
 	bool streamInitiation;
+	int depth;
 	
 	QByteArray generateKey()
 	{
-		keyIndex = 0;
-		key = Util::randomHash();
-		return key;
+		QByteArray seed = Util::randomHash();
+		keys.clear();
+		qDebug() << Q_FUNC_INFO << keyNum;
+		for (int i = 0; i < keyNum; i++) {
+			seed = QCryptographicHash::hash(seed, QCryptographicHash::Sha1).toHex();
+			keys.append(seed);
+		}
+		return QCryptographicHash::hash(seed, QCryptographicHash::Sha1).toHex();
 	}
 	QByteArray nextKey()
 	{
-		key = QCryptographicHash::hash(key, QCryptographicHash::Sha1).toHex();
-		return key;
+		return keys.takeLast();
 	}
-	void send();
+	void send(bool empty, bool header = false);
 	void sendHeader(bool first);
 };
 
-void ConnectionBOSHPrivate::send()
+void ConnectionBOSHPrivate::send(bool empty, bool header)
 {
 	QByteArray data = resultXml;
 	resultBuffer.seek(0);
 	resultXml.clear();
 	qDebug() << Q_FUNC_INFO << data;
 	QNetworkRequest request(host);
-//	request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QByteArray("text/xml; charset=utf-8"));
-//	request.setRawHeader("Accept-Encoding", "gzip, deflate");
-	manager.post(request, data);
+	request.setRawHeader("Accept-Encoding", "gzip, deflate");
+	QNetworkReply *reply = manager.post(request, data);
+	(empty ? emptyRequest : dataRequest) = reply;
+	reply->setProperty("header", header);
 }
 
 void ConnectionBOSHPrivate::sendHeader(bool first)
@@ -86,10 +95,11 @@ void ConnectionBOSHPrivate::sendHeader(bool first)
 							  QLatin1String("xmpp:") + jid.domain() + QLatin1String(":5222"));
 		writer.writeAttribute(QLatin1String("secure"), QLatin1String("true"));
 		writer.writeAttribute(QLatin1String("hold"), QLatin1String("2"));
-		writer.writeAttribute(QLatin1String("ver"), QLatin1String("1.6"));
+		writer.writeAttribute(QLatin1String("ver"), QLatin1String("1.8"));
 		writer.writeAttribute(QLatin1String("xmpp:version"), QLatin1String("1.0"));
 		writer.writeAttribute(QLatin1String("xml:lang"), QLatin1String("en"));
 	} else {
+		writer.writeAttribute(QLatin1String("xmpp:restart"), QLatin1String("true"));
 		writer.writeAttribute(QLatin1String("key"), QLatin1String(nextKey()));
 		writer.writeAttribute(QLatin1String("sid"), sessionId);
 	}
@@ -98,7 +108,7 @@ void ConnectionBOSHPrivate::sendHeader(bool first)
 	writer.writeDefaultNamespace(QLatin1String("http://jabber.org/protocol/httpbind"));
 	writer.writeAttribute(QLatin1String("xmlns:xmpp"), QLatin1String("urn:xmpp:xbosh"));
 	writer.writeCharacters(QLatin1String(""));
-	send();
+	send(false, true);
 }
 
 ConnectionBOSH::ConnectionBOSH(const QString &host, int port) : d_ptr(new ConnectionBOSHPrivate)
@@ -106,6 +116,8 @@ ConnectionBOSH::ConnectionBOSH(const QString &host, int port) : d_ptr(new Connec
 	Q_D(ConnectionBOSH);
 	d->streamInitiation = false;
 	d->rid = 0;
+	d->keyNum = 20;
+	d->depth = 0;
 	d->streamParser = 0;
 	d->host.setScheme(QLatin1String("http"));
 	d->host.setHost(host);
@@ -130,9 +142,11 @@ bool ConnectionBOSH::open()
 {
 	Q_D(ConnectionBOSH);
 	d->rid = (quint64(qrand()) << 20) ^ quint64(qrand());
-	d->generateKey();
-	d->keyNum = qAbs(qrand()) % 100 + 50;
+	d->keyNum = (qAbs(qrand()) % 30) + 20;
 	d->sendHeader(true);
+	d->authorized = false;
+	d->depth = 0;
+	QIODevice::open(QIODevice::ReadWrite);
 	return true;
 }
 
@@ -153,6 +167,14 @@ ConnectionBOSH::SocketState ConnectionBOSH::socketState() const
 ConnectionBOSH::SocketError ConnectionBOSH::socketError() const
 {
 	return UnknownSocketError;
+}
+
+void ConnectionBOSH::authorized()
+{
+	Q_D(ConnectionBOSH);
+	d->authorized = true;
+	char c;
+	writeData(&c, 0);
 }
 
 QString ConnectionBOSH::sessionID() const
@@ -185,18 +207,29 @@ qint64 ConnectionBOSH::readData(char *data, qint64 maxlen)
 
 qint64 ConnectionBOSH::writeData(const char *payloaddata, qint64 payloadlen)
 {
+	qDebug() << Q_FUNC_INFO;
 	Q_D(ConnectionBOSH);
+	qDebug() << d->dataRequest << d->emptyRequest;
+	if (d->dataRequest && payloadlen > 0) {
+		d->payloads.append(payloaddata, payloadlen);
+		return payloadlen;
+	}
+	bool isEmpty = payloadlen == 0;
 	d->writer.writeStartElement(QLatin1String("body"));
 	d->writer.writeAttribute(QLatin1String("rid"), QString::number(d->rid++));
 	d->writer.writeAttribute(QLatin1String("sid"), d->sessionId);
 	d->writer.writeAttribute(QLatin1String("key"), QLatin1String(d->nextKey()));
-	if (d->keyIndex >= d->keyNum)
+	if (d->keys.size() == 1)
 		d->writer.writeAttribute(QLatin1String("newkey"), QLatin1String(d->generateKey()));
 	d->writer.writeDefaultNamespace(QLatin1String("http://jabber.org/protocol/httpbind"));
-	d->writer.writeCharacters(QLatin1String(""));
-	d->resultXml.append(payloaddata, payloadlen);
+	if (isEmpty)  {
+	} else {
+		d->writer.writeCharacters(QLatin1String(""));
+		d->resultXml.append(payloaddata, payloadlen);
+		d->resultBuffer.seek(d->resultXml.size());
+	}
 	d->writer.writeEndElement();
-	d->send();
+	d->send(isEmpty);
 	return payloadlen;
 }
 
@@ -204,43 +237,66 @@ void ConnectionBOSH::onRequestFinished(QNetworkReply *reply)
 {
 	Q_D(ConnectionBOSH);
 	reply->deleteLater();
-	qDebug() << reply->rawHeaderList();
+	qDebug() << reply->rawHeaderPairs();
 	qDebug() << Q_FUNC_INFO << reply->error() << reply->errorString();
 	if (reply->error() != QNetworkReply::NoError) {
 		// TODO: Implement
 		return;
 	}
+	bool header = reply->property("header").toBool();
 	QByteArray data = reply->readAll();
-	qDebug() << Q_FUNC_INFO << data;
+	qDebug() << Q_FUNC_INFO << header << data;
 	d->reader.addData(data);
-	int depth = 0;
+	// Hook for parsers invoked in eventloops, which are run inside parser
+	if (d->depth != 0)
+		return;
 	while (d->reader.readNext() > QXmlStreamReader::Invalid) {
 		switch(d->reader.tokenType()) {
 		case QXmlStreamReader::StartElement:
-			depth++;
-			if (depth > 1) {
+			d->depth++;
+			if (d->depth > 1) {
 				d->streamParser->handleStartElement(d->reader.name(), d->reader.namespaceUri(),
 													d->reader.attributes());
 			} else {
 				Q_ASSERT(d->reader.name() == QLatin1String("body"));
 				const QXmlStreamAttributes attributes = d->reader.attributes();
 				if (d->streamInitiation) {
+					d->streamInitiation = false;
 					d->sessionId = attributes.value(QLatin1String("sid")).toString();
+					emit connected();
 				}
+				if (header)
+					d->streamParser->handleStartElement(QStringRef(), QStringRef(),
+														QXmlStreamAttributes());
 			}
 			break;
 		case QXmlStreamReader::EndElement:
-			if (depth > 1)
+			if (d->depth > 1)
 				d->streamParser->handleEndElement(d->reader.name(), d->reader.namespaceUri());
-			depth--;
+			d->depth--;
 			break;
 		case QXmlStreamReader::Characters:
-			if (depth > 1)
+			if (d->depth > 1)
 				d->streamParser->handleCharacterData(d->reader.text());
 			break;
 		default:
 			break;
 		}
+	}
+	Q_ASSERT(d->depth == 0);
+	if (!d->payloads.isEmpty() && reply == d->dataRequest) {
+		d->dataRequest = 0;
+		writeData(d->payloads.constData(), d->payloads.size());
+		d->payloads.clear();
+		return;
+	} else if (reply == d->dataRequest) {
+		d->dataRequest = 0;
+	}
+	if (reply == d->emptyRequest)
+		d->emptyRequest = 0;
+	if (d->authorized && !d->emptyRequest) {
+		char c;
+		writeData(&c, 0);
 	}
 }
 }

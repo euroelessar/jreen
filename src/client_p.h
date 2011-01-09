@@ -305,13 +305,18 @@ public:
 		if (flags & ResendHeader) {
 			d->device->readAll();
 			d->sendHeader();
+			if (d->streamProcessor)
+				d->streamProcessor->restartStream();
 			d->parser->reset();
 			d->current_stream_feature = 0;
 		}
 		if (flags & AcitvateNext)
 			d->parser->activateFeature();
-		if (flags & Connected)
+		if (flags & Connected) {
 			d->emitConnected();
+			if (d->streamProcessor)
+				d->streamProcessor->authorized();
+		}
 	}
 	void setJID(const JID &jid)
 	{

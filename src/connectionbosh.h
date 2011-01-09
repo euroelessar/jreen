@@ -40,6 +40,7 @@ public:
 	SocketState socketState() const;
 	SocketError socketError() const;
 protected:
+	void authorized();
 	QString sessionID() const;
 	void setJID(const JID &jid);
 	void setStreamParser(XmlStreamParser *parser);
