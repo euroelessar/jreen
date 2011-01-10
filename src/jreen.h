@@ -21,6 +21,7 @@
 # endif // __cplusplus
 
 # include <QtGlobal>
+# include <QtCore/QString>
 
 # ifndef J_BUILD_STATIC
 #  ifdef J_BUILD_LIBRARY
