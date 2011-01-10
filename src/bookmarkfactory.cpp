@@ -23,8 +23,8 @@
 namespace jreen {
 
 static const char *autojoin_types[] = {
-	"true",
-	"false"
+	"false",
+	"true"
 };
 
 static const char *bookmark_strings[] = {
