@@ -75,9 +75,11 @@ void BookmarkStorage::onResultReady(const StanzaExtension::Ptr &node,
 	if(bookmark)
 		qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
 
-	if (bookmark && result == PrivateXml::RequestOk)
-		emit bookmarksReceived(node.staticCast<Bookmark>());
-	else
-		emit bookmarksReceived(Bookmark::Ptr::create());
+	if(result == PrivateXml::RequestOk) {
+		if (bookmark)
+			emit bookmarksReceived(node.staticCast<Bookmark>());
+		else
+			emit bookmarksReceived(Bookmark::Ptr::create());
+	}
 }
 }
