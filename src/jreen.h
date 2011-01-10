@@ -20,7 +20,6 @@
 #  error "C++ is needed"
 # endif // __cplusplus
 
-# include <QDomElement>
 # include <QtGlobal>
 
 # ifndef J_BUILD_STATIC
@@ -71,28 +70,6 @@ private:
 			return xpath; \
 		}
 
-# ifndef J_FORELEMENTS
-
-class ForElementContainer
-{
-public:
-	inline ForElementContainer(const QDomNode &parent) : list(parent.childNodes()), current(list.item(0).toElement()), i(0), test(true) {}
-	QDomNodeList list;
-	QDomElement current;
-	uint i;
-	bool test;
-	inline void check() { while((current=list.item(++i).toElement()).isNull() && i<list.length()) {} test=true; }
-};
-
-# define J_FORELEMENTS(_node_, _parent_) \
-	for(ForElementContainer _container_(_parent_); _container_.i<_container_.list.length(); _container_.check()) \
-		for(_node_=_container_.current; _container_.test; _container_.test=false)
-
-# endif // J_FORELEMENTS
-
-# ifndef forelements
-#  define forelements J_FORELEMENTS
-# endif
 			
 class QXmlStreamAttributes;
 class QXmlStreamWriter;

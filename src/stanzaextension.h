@@ -16,7 +16,6 @@
 #ifndef STANZAEXTENSION_H
 #define STANZAEXTENSION_H
 
-#include <QDomElement>
 #include <QObject>
 #include <QSharedPointer>
 #include <QMetaTypeId>

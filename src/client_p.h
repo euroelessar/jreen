@@ -113,17 +113,6 @@ public:
 		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
 	}
 	void init();
-	QString elementToString(const QDomElement &element)
-	{
-		static QTextCodec *utf = QTextCodec::codecForName("utf-8");
-		QString xml;
-		QTextStream *stream = new QTextStream(&xml, QIODevice::WriteOnly);
-		stream->setCodec(utf);
-		element.save(*stream, 0, QDomNode::EncodingFromTextStream);
-		delete stream;
-		qDebug("%s", qPrintable(xml));
-		return xml;
-	}
 	void send(const Stanza &stanza)
 	{
 		if(stanza.from().full().isEmpty()) {

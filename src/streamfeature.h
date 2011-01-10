@@ -17,7 +17,6 @@
 #define STREAMFEATURE_H
 
 #include <QObject>
-#include <QDomElement>
 #include "jid.h"
 
 class QXmlStreamWriter;
