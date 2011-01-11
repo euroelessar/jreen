@@ -25,8 +25,9 @@ namespace jreen
 class Client;
 class ParserPrivate;
 
-class Parser : public XmlStreamParser
+class Parser : public QObject, public XmlStreamParser
 {
+	Q_OBJECT
 	Q_DECLARE_PRIVATE(Parser)
 public:
 	enum State
@@ -47,7 +48,9 @@ public:
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
 	
+	bool event(QEvent *ev);
 	void appendData(const QByteArray &a);
+	void parseData();
 private:
 	QScopedPointer<ParserPrivate> d_ptr;
 };

@@ -26,6 +26,9 @@
 #include "client_p.h"
 #include <QStack>
 
+//#define PARSER_DEBUG_SPEED 1
+#define PARSER_SPLIT_STANZAS_EVENTS 1
+
 /*
  * WARNING!
  * This file is not a part of JReen API, it may be chagned or even removed
@@ -44,6 +47,12 @@ public:
 	QList<StanzaExtension::Ptr> extensions;
 	int depth;
 	ClientPrivate *client;
+#ifdef PARSER_DEBUG_SPEED
+	int parsingTime;
+	int totalParsingTime;
+	int totalLogicTime;
+	int stanzaLogicTime[4];
+#endif
 };
 }
 

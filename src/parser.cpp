@@ -17,7 +17,14 @@
 #include "message.h"
 #include "subscription.h"
 #include "presence.h"
+#include <QCoreApplication>
 #include <QDebug>
+#ifdef PARSER_DEBUG_SPEED
+#include <QTime>
+#endif
+
+Q_GLOBAL_STATIC_WITH_ARGS(QEvent::Type, parserHookEventId,
+						  (static_cast<QEvent::Type>(QEvent::registerEventType())))
 
 namespace jreen
 {
@@ -28,6 +35,12 @@ Parser::Parser(Client *client) : d_ptr(new ParserPrivate)
 	d->reader = new QXmlStreamReader;
 	d->state = WaitingForStanza;
 	d->depth = 0;
+#ifdef PARSER_DEBUG_SPEED
+	d->parsingTime = 0;
+	d->totalParsingTime = 0;
+	d->totalLogicTime = 0;
+	qMemSet(d->stanzaLogicTime, 0, sizeof(d->stanzaLogicTime));
+#endif
 }
 
 Parser::~Parser()
@@ -76,6 +89,12 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 {
 	Q_D(Parser);
 	d->parsersCount.push(d->parsers.count());
+#ifdef PARSER_DEBUG_SPEED
+	if (d->depth == 1)
+		d->parsingTime = 0;
+	QTime counter;
+	counter.start();
+#endif
 	if (d->depth == 1) {
 		if(name == QLatin1String("features")) {
 			d->state = ReadFeatures;
@@ -108,6 +127,9 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 	foreach (XmlStreamParser *parser, d->parsers)
 		parser->handleStartElement(name, uri, attributes);
 	//				qDebug() << d->reader->tokenString() << d->depth << name;
+#ifdef PARSER_DEBUG_SPEED
+	d->parsingTime += counter.elapsed();
+#endif
 	d->depth++;
 }
 
@@ -115,6 +137,10 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
 	Q_D(Parser);
 	d->depth--;
+#ifdef PARSER_DEBUG_SPEED
+	QTime counter;
+	counter.start();
+#endif
 	for (int i = 0; i < d->parsers.size(); i++) {
 		XmlStreamParser *parser = d->parsers.at(i);
 		parser->handleEndElement(name, uri);
@@ -124,7 +150,13 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 			d->extensions.append(se);
 		}
 	}
+#ifdef PARSER_DEBUG_SPEED
+	d->parsingTime += counter.elapsed();
+#endif
 	if (d->depth == 1) {
+#ifdef PARSER_DEBUG_SPEED
+		counter.restart();
+#endif
 		if (d->state == ReadFeatures) {
 			d->client->current_stream_feature = 0;
 			activateFeature();
@@ -133,9 +165,28 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 			Stanza::Ptr stanza = factory->createStanza();
 			foreach (const StanzaExtension::Ptr &se, d->extensions)
 				stanza->addExtension(se);
+#ifdef PARSER_DEBUG_SPEED
+			d->parsingTime += counter.elapsed();
+			counter.restart();
+#endif
 			d->client->handleStanza(stanza);
 			d->extensions.clear();
+#ifdef PARSER_DEBUG_SPEED
+			d->stanzaLogicTime[factory->stanzaType()] += counter.elapsed();
+#endif
 		}
+#ifdef PARSER_DEBUG_SPEED
+		d->totalParsingTime += d->parsingTime;
+		int logicTime = counter.elapsed();
+		d->totalLogicTime += logicTime;
+		qDebug("Total parsing time: %d ms", d->totalParsingTime);
+		qDebug("Parsing time: %d ms", d->parsingTime);
+		qDebug("Total logic time: %d ms", d->totalLogicTime);
+		qDebug("Total IQ logic time: %d ms", d->stanzaLogicTime[0]);
+		qDebug("Total Presence logic time: %d ms", d->stanzaLogicTime[1]);
+		qDebug("Total Message logic time: %d ms", d->stanzaLogicTime[2]);
+		qDebug("Logic time: %d ms", logicTime);
+#endif
 		d->state = WaitingForStanza;
 	} else if (d->depth == 0) {
 	}
@@ -150,10 +201,25 @@ void Parser::handleCharacterData(const QStringRef &text)
 		parser->handleCharacterData(text);
 }
 
+bool Parser::event(QEvent *ev)
+{
+	if (ev->type() == *parserHookEventId()) {
+		parseData();
+		return true;
+	}
+	return QObject::event(ev);
+}
+
 void Parser::appendData(const QByteArray &a)
 {
 	Q_D(Parser);
 	d->reader->addData(a);
+	parseData();
+}
+
+void Parser::parseData()
+{
+	Q_D(Parser);
 	while (d->reader->readNext() > QXmlStreamReader::Invalid) {
 		switch(d->reader->tokenType()) {
 		case QXmlStreamReader::StartElement:
@@ -168,6 +234,12 @@ void Parser::appendData(const QByteArray &a)
 		default:
 			break;
 		}
+#ifdef PARSER_SPLIT_STANZAS_EVENTS
+		if (d->depth == 1 && d->reader->tokenType() == QXmlStreamReader::EndElement) {
+			qApp->postEvent(this, new QEvent(*parserHookEventId()));
+			return;
+		}
+#endif
 	}
 }
 }
