@@ -22,7 +22,6 @@
 #include "disco.h"
 #include "presence.h"
 #include "message.h"
-#include "client_p.h"
 
 namespace jreen
 {

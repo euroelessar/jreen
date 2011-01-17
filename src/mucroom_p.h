@@ -19,6 +19,7 @@
 
 #include "mucroom.h"
 #include "mucmessagesession_p.h"
+#include "client_p.h"
 
 namespace jreen
 {
