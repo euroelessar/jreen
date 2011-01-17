@@ -25,12 +25,11 @@
 
 namespace jreen
 {
-Q_GLOBAL_STATIC(QCA::Initializer, qcaInit)
 
 TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 {
 	QCA::setAppName("qutim");
-	qcaInit();
+	QCA::init();
 	m_required = false;
 	m_available = false;
 	m_hasTls = QCA::isSupported("tls");
