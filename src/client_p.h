@@ -144,7 +144,7 @@ public:
 	//	void registerMessageHandler(const JID &jid, QObject *handler, const char *member);
 
 	void handleStanza(const Stanza::Ptr &stanza);
-	QBasicTimer *pingTimer;
+	QBasicTimer pingTimer;
 	StreamInfo *stream_info;
 	Client *client;
 	JID jid;

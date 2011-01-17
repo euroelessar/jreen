@@ -332,10 +332,10 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 void Client::setPingInterval(int interval)
 {
 	Q_D(Client);
-	if (d->pingTimer->isActive())
-		d->pingTimer->stop();
+	if (d->pingTimer.isActive())
+		d->pingTimer.stop();
 	if (interval > 0 && isConnected())
-		d->pingTimer->start(interval, this);
+		d->pingTimer.start(interval, this);
 }
 
 void Client::setPresence()
