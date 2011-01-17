@@ -237,7 +237,6 @@ void ConnectionBOSH::onRequestFinished(QNetworkReply *reply)
 {
 	Q_D(ConnectionBOSH);
 	reply->deleteLater();
-	qDebug() << reply->rawHeaderPairs();
 	qDebug() << Q_FUNC_INFO << reply->error() << reply->errorString();
 	if (reply->error() != QNetworkReply::NoError) {
 		// TODO: Implement

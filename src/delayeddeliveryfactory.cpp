@@ -5,6 +5,7 @@
 
 
 #define NS_DELAY "urn:xmpp:delay"
+#define NS_DELAY_DEPRECATED "jabber:x:delay"
 
 namespace jreen {
 
@@ -32,7 +33,8 @@ QStringList DelayedDeliveryFactory::features() const
 
 bool DelayedDeliveryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	return name == QLatin1String("delay") && uri == NS_DELAY;
+	return (name == QLatin1String("delay") && uri == NS_DELAY)
+			|| (name == QLatin1String("x") && uri == NS_DELAY_DEPRECATED);
 	Q_UNUSED(attributes);
 }
 

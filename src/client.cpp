@@ -298,6 +298,11 @@ void Client::setConnectionImpl(Connection *conn)
 	connect(conn, SIGNAL(disconnected()),d, SLOT(disconnected()));
 }
 
+Connection *Client::connection() const
+{
+	return d_func()->conn;
+}
+
 void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
 {
 	Q_D(Client);
