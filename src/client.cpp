@@ -397,6 +397,14 @@ void ClientPrivate::onIqReceived(const IQ &iq, int context)
 
 void Client::timerEvent(QTimerEvent *timerEvent)
 {
+	Q_D(Client);
+	if (timerEvent->timerId() == d->pingTimer.timerId()) {
+		IQ iq(IQ::Get, d->jid.bareJID());
+		iq.addExtension(new Ping());
+		d->send(iq);
+	} else {
+		return QObject::timerEvent(timerEvent);
+	}
 }
 
 void Client::handleConnect()

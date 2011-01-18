@@ -215,15 +215,14 @@ void Parser::appendData(const QByteArray &a)
 {
 	Q_D(Parser);
 	d->reader->addData(a);
-	if (!d->atParsing) {
-		d->atParsing = true;
-		parseData();
-		d->atParsing = false;
-	}
+	parseData();
 }
 
 void Parser::parseData()
 {
+	if (d->atParsing)
+		return;
+	d->atParsing = true;
 	Q_D(Parser);
 	while (d->reader->readNext() > QXmlStreamReader::Invalid) {
 		switch(d->reader->tokenType()) {
@@ -246,5 +245,6 @@ void Parser::parseData()
 		}
 #endif
 	}
+	d->atParsing = false;
 }
 }
