@@ -220,10 +220,10 @@ void Parser::appendData(const QByteArray &a)
 
 void Parser::parseData()
 {
+	Q_D(Parser);
 	if (d->atParsing)
 		return;
 	d->atParsing = true;
-	Q_D(Parser);
 	while (d->reader->readNext() > QXmlStreamReader::Invalid) {
 		switch(d->reader->tokenType()) {
 		case QXmlStreamReader::StartElement:
