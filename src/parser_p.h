@@ -46,6 +46,7 @@ public:
 	QStack<int> parsersCount;
 	QList<StanzaExtension::Ptr> extensions;
 	int depth;
+	bool atParsing;
 	ClientPrivate *client;
 #ifdef PARSER_DEBUG_SPEED
 	int parsingTime;

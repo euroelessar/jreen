@@ -41,6 +41,7 @@ Parser::Parser(Client *client) : d_ptr(new ParserPrivate)
 	d->totalLogicTime = 0;
 	qMemSet(d->stanzaLogicTime, 0, sizeof(d->stanzaLogicTime));
 #endif
+	d->atParsing = false;
 }
 
 Parser::~Parser()
@@ -214,7 +215,11 @@ void Parser::appendData(const QByteArray &a)
 {
 	Q_D(Parser);
 	d->reader->addData(a);
-	parseData();
+	if (!d->atParsing) {
+		d->atParsing = true;
+		parseData();
+		d->atParsing = false;
+	}
 }
 
 void Parser::parseData()
