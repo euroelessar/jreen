@@ -60,7 +60,7 @@ namespace jreen
 	{
 		if (!loadLibIDN()) {
 			*ok = true;
-			return node;
+			return node.toLower();
 		}
 		return prepare(node, ok, _idn_stringprep_xmpp_nodeprep);
 	}
@@ -69,7 +69,7 @@ namespace jreen
 	{
 		if (!loadLibIDN()) {
 			*ok = true;
-			return domain;
+			return domain.toLower();
 		}
 		return prepare(domain, ok, _idn_stringprep_nameprep);
 	}
@@ -78,7 +78,7 @@ namespace jreen
 	{
 		if (!loadLibIDN()) {
 			*ok = true;
-			return resource;
+			return resource.toLower();
 		}
 		return prepare(resource, ok, _idn_stringprep_xmpp_resourceprep);
 	}

@@ -48,7 +48,9 @@ public:
 	{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const QString &body(const QString &lang = QString()) const;
+	void setBody(const QString &text, const QString &lang = QString());
 	const QString &subject(const QString &lang = QString()) const;
+	void setSubject(const QString &text, const QString &lang = QString());
 	const QString &thread() const;
 	void setThread(const QString &thread);
 	void setID(const QString &id);

@@ -51,10 +51,20 @@ const QString &Message::body(const QString &lang) const
 	return d->body.value(lang);
 }
 
+void Message::setBody(const QString &text, const QString &lang)
+{
+	d_func()->body.insert(lang, text);
+}
+
 const QString &Message::subject(const QString &lang) const
 {
 	Q_D(const Message);
 	return d->subject.value(lang);
+}
+
+void Message::setSubject(const QString &text, const QString &lang)
+{
+	d_func()->subject.insert(lang, text);
 }
 
 const QString &Message::thread() const
