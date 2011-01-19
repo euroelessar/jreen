@@ -33,6 +33,7 @@ public:
 	StanzaExtension::Ptr createExtension();
 private:
 	QString m_hash;
+	bool m_hasPhoto;
 	int m_depth;
 	bool m_isPhoto;
 };

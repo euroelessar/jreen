@@ -23,7 +23,9 @@ namespace jreen
 
 VCardUpdateFactory::VCardUpdateFactory()
 {
-
+	m_hasPhoto = false;
+	m_depth = 0;
+	m_isPhoto = false;
 }
 
 VCardUpdateFactory::~VCardUpdateFactory()
@@ -49,14 +51,21 @@ void VCardUpdateFactory::handleStartElement(const QStringRef &name,
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
 	m_depth++;
-	if(m_depth == 2)
+	if (m_depth == 1) {
+		m_hasPhoto = false;
+		m_hash.clear();
+	} else if(m_depth == 2) {
 		m_isPhoto = name == QLatin1String("photo");
+		m_hasPhoto |= m_isPhoto;
+	}
 }
 
 void VCardUpdateFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
+	if (m_depth == 2)
+		m_isPhoto = false;
 	m_depth--;
 }
 
@@ -77,9 +86,10 @@ void VCardUpdateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter 
 
 StanzaExtension::Ptr VCardUpdateFactory::createExtension()
 {
-	QString hash = m_hash;
-	m_hash.clear();
-	return StanzaExtension::Ptr(new VCardUpdate(hash));
+	VCardUpdate *update = new VCardUpdate;
+	if (m_hasPhoto)
+		update->setPhotoHash(m_hash);
+	return StanzaExtension::Ptr(update);
 }
 
 } // namespace jreen

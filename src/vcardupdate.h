@@ -26,11 +26,14 @@ class JREEN_EXPORT VCardUpdate : public StanzaExtension
 	J_EXTENSION(jreen::VCardUpdate,
 				"/presence/vcard[@xmlns='vcard-temp:x:update']")
 public:
-	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash) {}
+	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash), m_hasPhotoInfo(true) {}
+	VCardUpdate() : m_hasPhotoInfo(false) {}
 	const QString &photoHash() const { return m_photoHash;}
-	void setPhotoHash(const QString &photoHash) { m_photoHash = photoHash; }
+	void setPhotoHash(const QString &photoHash) { m_photoHash = photoHash; m_hasPhotoInfo = !photoHash.isNull(); }
+	bool hasPhotoInfo() const { return m_hasPhotoInfo; }
 private:
 	QString m_photoHash;
+	bool m_hasPhotoInfo;
 };
 
 } // namespace jreen
