@@ -240,6 +240,7 @@ void Parser::parseData()
 		}
 #ifdef PARSER_SPLIT_STANZAS_EVENTS
 		if (d->depth == 1 && d->reader->tokenType() == QXmlStreamReader::EndElement) {
+			d->atParsing = false;
 			qApp->postEvent(this, new QEvent(*parserHookEventId()));
 			return;
 		}
