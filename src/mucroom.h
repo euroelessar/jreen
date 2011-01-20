@@ -104,8 +104,8 @@ public:
 	//	void setRequestHistory(int value, HistoryRequest type);
 	//	void setRequestHistory(const QDateTime &since);
 	//	void requestVoice();
-	void kick(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleNone, reason); }
-	void ban(const QString &nick, const QString &reason = QString()) { setAffiliation(nick, AffiliationOutcast, reason); }
+	void kick(const QString &nick, const QString &reason);
+	void ban(const QString &nick, const QString &reason);
 	//	void grantVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleParticipant, reason); }
 	//	void revokeVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleVisitor, reason); }
 	void setRole(const QString &nick, Role role, const QString &reason = QString());

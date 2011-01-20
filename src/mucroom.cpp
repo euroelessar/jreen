@@ -141,10 +141,10 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 		return;
 	if (pres.from().resource() == jid.resource()) {
 		if(pres.subtype() == Presence::Unavailable) {
+			realJidHash.clear();
 			isJoined = false;
 			emit q->leaved();
 		} else if (!isJoined) {
-			realJidHash.clear();
 			isJoined = true;
 			emit q->joined();
 		}
@@ -319,6 +319,27 @@ void MUCRoom::setHistorySince(const QDateTime &since)
 	d_func()->since = since;
 }
 
+void MUCRoom::kick(const QString &nick, const QString &reason)
+{
+	setRole(nick, RoleNone, reason);
+}
+
+void MUCRoom::ban(const QString &nick, const QString &reason)
+{
+	Q_D(MUCRoom);
+	QHash<QString,JID>::iterator it = d->realJidHash.find(nick);
+	JID victim;
+	if (it == d->realJidHash.end()) {
+		// May be it's already full jid, who knows?
+		victim = nick;
+		if (victim.node().isEmpty() || victim.domain().isEmpty())
+			return;
+	} else {
+		victim = it.value();
+	}
+	setAffiliation(victim, AffiliationOutcast, reason);
+}
+
 void MUCRoom::setRole(const QString &nick, Role role, const QString &reason)
 {
 	Q_D(MUCRoom);
@@ -377,6 +398,7 @@ void MUCRoom::onDisconnected()
 {
 	Q_D(MUCRoom);
 	if (d->currentPresence.subtype() != Presence::Unavailable) {
+		d->realJidHash.clear();
 		d->isJoined = false;
 		emit leaved();
 	}
