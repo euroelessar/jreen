@@ -144,10 +144,15 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 			isJoined = false;
 			emit q->leaved();
 		} else if (!isJoined) {
+			realJidHash.clear();
 			isJoined = true;
 			emit q->joined();
 		}
 	}
+	if (pres.subtype() == Presence::Unavailable)
+		realJidHash.remove(pres.from().resource());
+	else
+		realJidHash.insert(pres.from().resource(), part.realJID());
 	if (part.isNickChanged() && pres.from().resource() == jid.resource())
 		jid.setResource(part.newNick());
 	emit q->presenceReceived(pres, &part);
@@ -275,6 +280,11 @@ QString MUCRoom::nick() const
 	return d_func()->jid.resource();
 }
 
+JID MUCRoom::realJid(const QString &nick)
+{
+	return d_func()->realJidHash.value(nick);
+}
+
 void MUCRoom::setNick(const QString &nick)
 {
 	Q_D(MUCRoom);
@@ -287,6 +297,26 @@ void MUCRoom::setNick(const QString &nick)
 	} else {
 		d->jid.setResource(nick);
 	}
+}
+
+void MUCRoom::setHistoryMaxChars(int maxChars)
+{
+	d_func()->maxChars = maxChars;
+}
+
+void MUCRoom::setHistoryMaxStanzas(int maxStanzas)
+{
+	d_func()->maxStanzas = maxStanzas;
+}
+
+void MUCRoom::setHistorySeconds(int seconds)
+{
+	d_func()->seconds = seconds;
+}
+
+void MUCRoom::setHistorySince(const QDateTime &since)
+{
+	d_func()->since = since;
 }
 
 void MUCRoom::setRole(const QString &nick, Role role, const QString &reason)

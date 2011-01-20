@@ -78,7 +78,7 @@ namespace jreen
 	{
 		if (!loadLibIDN()) {
 			*ok = true;
-			return resource.toLower();
+			return resource;
 		}
 		return prepare(resource, ok, _idn_stringprep_xmpp_resourceprep);
 	}

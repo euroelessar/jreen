@@ -92,7 +92,12 @@ public:
 	//	Affiliation affiliation() const { return m_affiliation; }
 	//	Role role() const { return m_role; }
 	QString nick() const;
+	JID realJid(const QString &nick);
 	void setNick(const QString &nick);
+	void setHistoryMaxChars(int maxChars);
+	void setHistoryMaxStanzas(int maxStanzas);
+	void setHistorySeconds(int seconds);
+	void setHistorySince(const QDateTime &since);
 	//	void setPresence(Presence::Type type, const QString &message = QString(), int priority = 0);
 	//	void invite(const JID &jid, const QString &reason = QString(), const QString &thread = QString());
 	//	void addHistory(const QString &message, const JID &from, const QDateTime &when);

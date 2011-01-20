@@ -44,6 +44,7 @@ public:
 	JID jid;
 	MUCRoom::Affiliation affiliation;
 	MUCRoom::Role role;
+	QHash<QString, JID> realJidHash;
 	QString password;
 	int maxChars;
 	int maxStanzas;
