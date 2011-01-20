@@ -34,7 +34,7 @@ namespace jreen
 	void MUCMessageSession::sendMessage(const QString &body, const QString &subject)
 	{
 		Message message(Message::Groupchat, jid(), body, subject);
-		MessageSession::sendMessage(message);
+		m_manager->send(message);
 	}
 	
 	void MUCMessageSession::handleMessage(const Message &message)

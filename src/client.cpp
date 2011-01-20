@@ -237,7 +237,10 @@ Disco *Client::disco()
 
 MessageSessionManager *Client::messageSessionManager()
 {
-	return d_func()->messageSessionManager;
+	Q_D(Client);
+	if (!d->messageSessionManager)
+		d->messageSessionManager = new MessageSessionManager(this);
+	return d->messageSessionManager;
 }
 
 AbstractRoster *Client::roster()
