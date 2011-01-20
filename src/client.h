@@ -55,6 +55,20 @@ class JREEN_EXPORT Client : public QObject
 	Q_PROPERTY(jreen::Disco::IdentityList serverIdentities READ serverIdentities NOTIFY serverIdentitiesReceived)
 	Q_DECLARE_PRIVATE(Client)
 public:
+
+	enum DisconnectReason
+	{
+		User,
+		HostUnknown,
+		ItemNotFound,
+		AuthorizationError,
+		RemoteStreamError,
+		RemoteConnectionFailed,
+		InternalServerError,
+		SystemShutdown,
+		Conflict,
+		Unknown,
+	};
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
 	virtual ~Client();
