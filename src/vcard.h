@@ -224,9 +224,9 @@ public:
 				 const QString& suffix = QString());
 	void setName(const Name &name);
 	/**
-   * Returns a full name.
-   * @return A full name.
-   */
+	* Returns a full name.
+	* @return A full name.
+	*/
 	const Name& name() const;
 	/**
 	* Sets a nickname.

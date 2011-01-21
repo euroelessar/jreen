@@ -62,6 +62,7 @@ bool DirectConnection::open()
 void DirectConnection::close()
 {
 	Q_D(DirectConnection);
+	d->socket->flush();
 	d->socket->disconnectFromHost();
 	QIODevice::close();
 }

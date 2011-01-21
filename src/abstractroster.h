@@ -18,6 +18,15 @@
 #ifndef ABSTRACTROSTER_H
 #define ABSTRACTROSTER_H
 
+#include <qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+// Looks like this function was overloaded at this release, if not - tell me // EuroElessar
+template <class T> inline uint qHash(const T *key);
+template<typename T>
+inline uint qHash(const QSharedPointer<T> &key) { return qHash(key.data()); }
+#endif
+
 #include "stanzaextension.h"
 #include "presence.h"
 #include "langmap.h"
@@ -25,9 +34,6 @@
 #include <QStringList>
 #include <QHash>
 #include <QSet>
-
-//template<typename T>
-//inline uint qHash(QSharedPointer<T> key) { return qHash(key.data()); }
 
 namespace jreen
 {

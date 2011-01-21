@@ -82,10 +82,6 @@ void TLSFeature::handleStartElement(const QStringRef &name, const QStringRef &ur
 		m_available = true;
 	else if (name == QLatin1String("required"))
 		m_required = true;
-	else if (name == QLatin1String("proceed")) {
-		m_info->addDataStream(new TLSDataStream(m_tls.data()));
-		m_tls->startClient(m_info->jid().domain());
-	}
 	//		Q_UNUSED(uri);
 	//		m_depth++;
 	//		qDebug() << Q_FUNC_INFO << m_depth << name;
@@ -104,7 +100,11 @@ void TLSFeature::handleStartElement(const QStringRef &name, const QStringRef &ur
 void TLSFeature::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
 	Q_UNUSED(uri);
-	Q_UNUSED(name);
+	if (name == QLatin1String("proceed")) {
+		qDebug() << Q_FUNC_INFO;
+		m_info->addDataStream(new TLSDataStream(m_tls.data()));
+		m_tls->startClient(m_info->jid().domain());
+	}
 	//		if (m_depth == 2 && m_state == AtMechanism)
 	//			m_state = AtMechanisms;
 	//		else if (m_depth == 1) {
