@@ -30,8 +30,10 @@ namespace jreen
 	
 	static bool loadLibIDN()
 	{
-		if (_idn_stringprep || triedToInit)
+		if (_idn_stringprep)
 			return true;
+		if (triedToInit)
+			return false;
 		triedToInit = true;
 		QLibrary lib(QLatin1String("idn"));
 		if (!lib.load()) {
