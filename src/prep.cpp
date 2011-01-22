@@ -15,6 +15,7 @@
 
 #include "prep.h"
 #include <QLibrary>
+#include <QStringList>
 
 #define JID_PORTION_SIZE 1023
 
@@ -25,14 +26,29 @@ namespace jreen
 	static void *_idn_stringprep_xmpp_resourceprep = 0;
 	typedef int (*_idn_stringprep_) (char *in, size_t maxlen, int flags, void *profile);
 	static _idn_stringprep_ _idn_stringprep = 0;
+	static bool triedToInit = false;
 	
 	static bool loadLibIDN()
 	{
-		if (_idn_stringprep)
+		if (_idn_stringprep || triedToInit)
 			return true;
+		triedToInit = true;
 		QLibrary lib(QLatin1String("idn"));
-		if (!lib.load())
-			return false;
+		if (!lib.load()) {
+#ifdef Q_OS_WIN32
+			QStringList paths = QStringList()
+			        << QLatin1String("idn-11")
+			        << QLatin1String("libidn-11")
+			        << QLatin1String("libidn");
+			bool ok = false;
+			for (int i = 0; !ok && i < paths.size(); i++) {
+				lib.setFileName(paths.at(i));
+				ok |= lib.load();
+			}
+			if (!ok)
+#endif
+				return false;
+		}
 		_idn_stringprep_nameprep = lib.resolve("stringprep_nameprep");
 		_idn_stringprep_xmpp_nodeprep = lib.resolve("stringprep_xmpp_nodeprep");
 		_idn_stringprep_xmpp_resourceprep = lib.resolve("stringprep_xmpp_resourceprep");

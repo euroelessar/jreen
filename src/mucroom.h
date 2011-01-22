@@ -89,8 +89,10 @@ public:
 	void send(const QString &message);
 	QString subject() const;
 	void setSubject(const QString &subject);
-	//	Affiliation affiliation() const { return m_affiliation; }
-	//	Role role() const { return m_role; }
+	Affiliation affiliation() const;
+	Role role() const;
+	bool canKick(const QString &nick);
+	bool canBan(const QString &nick);
 	QString nick() const;
 	JID realJid(const QString &nick);
 	void setNick(const QString &nick);

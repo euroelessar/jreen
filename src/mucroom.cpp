@@ -140,8 +140,10 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 	if (!part.d_func()->query)
 		return;
 	if (pres.from().resource() == jid.resource()) {
+		role = part.role();
+		affiliation = part.affiliation();
 		if(pres.subtype() == Presence::Unavailable) {
-			realJidHash.clear();
+			participantsHash.clear();
 			isJoined = false;
 			emit q->leaved();
 		} else if (!isJoined) {
@@ -150,9 +152,9 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 		}
 	}
 	if (pres.subtype() == Presence::Unavailable)
-		realJidHash.remove(pres.from().resource());
+		participantsHash.remove(pres.from().resource());
 	else
-		realJidHash.insert(pres.from().resource(), part.realJID());
+		participantsHash.insert(pres.from().resource(), part.d_func()->query);
 	if (part.isNickChanged() && pres.from().resource() == jid.resource())
 		jid.setResource(part.newNick());
 	emit q->presenceReceived(pres, &part);
@@ -282,7 +284,8 @@ QString MUCRoom::nick() const
 
 JID MUCRoom::realJid(const QString &nick)
 {
-	return d_func()->realJidHash.value(nick);
+	MUCRoomUserQuery::Ptr query = d_func()->participantsHash.value(nick);
+	return query ? query->item.jid : JID();
 }
 
 void MUCRoom::setNick(const QString &nick)
@@ -327,15 +330,15 @@ void MUCRoom::kick(const QString &nick, const QString &reason)
 void MUCRoom::ban(const QString &nick, const QString &reason)
 {
 	Q_D(MUCRoom);
-	QHash<QString,JID>::iterator it = d->realJidHash.find(nick);
+	MUCRoomUserQuery::Ptr query = d->participantsHash.value(nick);
 	JID victim;
-	if (it == d->realJidHash.end()) {
+	if (!query) {
 		// May be it's already full jid, who knows?
 		victim = nick;
 		if (victim.node().isEmpty() || victim.domain().isEmpty())
 			return;
 	} else {
-		victim = it.value();
+		victim = query->item.jid;
 	}
 	setAffiliation(victim, AffiliationOutcast, reason);
 }
@@ -373,6 +376,38 @@ void MUCRoom::setSubject(const QString &subject)
 	d->session->setSubject(subject);
 }
 
+MUCRoom::Affiliation MUCRoom::affiliation() const
+{
+	return d_func()->affiliation;
+}
+
+MUCRoom::Role MUCRoom::role() const
+{
+	return d_func()->role;
+}
+
+bool MUCRoom::canKick(const QString &nick)
+{
+	Q_D(MUCRoom);
+	MUCRoomUserQuery::Ptr query = d->participantsHash.value(nick);
+	if (!query)
+		return false;
+	if (query->item.role == MUCRoom::RoleVisitor || query->item.role == MUCRoom::RoleParticipant)
+		return checkParticipantPrivelege(KickParticipantsAndVisitors, d->role);
+	return false;
+}
+
+bool MUCRoom::canBan(const QString &nick)
+{
+	Q_D(MUCRoom);
+	MUCRoomUserQuery::Ptr query = d->participantsHash.value(nick);
+	if (!query)
+		return false;
+	if (d->affiliation != MUCRoom::AffiliationAdmin && d->affiliation != MUCRoom::AffiliationOwner)
+		return false;
+	return query->item.affiliation <= MUCRoom::AffiliationMember;
+}
+
 void MUCRoom::handleIQ(const jreen::IQ &iq, int context)
 {
 	if (Error::Ptr e = iq.findExtension<Error>()) {
@@ -398,7 +433,7 @@ void MUCRoom::onDisconnected()
 {
 	Q_D(MUCRoom);
 	if (d->currentPresence.subtype() != Presence::Unavailable) {
-		d->realJidHash.clear();
+		d->participantsHash.clear();
 		d->isJoined = false;
 		emit leaved();
 	}

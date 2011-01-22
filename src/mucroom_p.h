@@ -23,6 +23,8 @@
 
 namespace jreen
 {
+class MUCRoomUserQuery;
+
 class MUCRoomPrivate
 {
 public:
@@ -44,7 +46,7 @@ public:
 	JID jid;
 	MUCRoom::Affiliation affiliation;
 	MUCRoom::Role role;
-	QHash<QString, JID> realJidHash;
+	QHash<QString, QSharedPointer<MUCRoomUserQuery> > participantsHash;
 	QString password;
 	int maxChars;
 	int maxStanzas;
