@@ -33,7 +33,8 @@ public:
 	MUCRoomPrivate(MUCRoom *room) :
 		q_ptr(room), client(0), affiliation(MUCRoom::AffiliationOutcast),
 		role(MUCRoom::RoleNone), maxChars(-1), maxStanzas(-1), seconds(-1),
-		currentPresence(Presence::Unavailable, JID(), QString()), isJoined(false)
+		currentPresence(Presence::Unavailable, JID(), QString()), isJoined(false),
+	    startedJoining(false)
 	{
 	}
 
@@ -53,6 +54,7 @@ public:
 	int seconds;
 	Presence currentPresence;
 	bool isJoined;
+	bool startedJoining;
 	QDateTime since;
 	MUCMessageSession *session;
 	QString subject;

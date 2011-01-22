@@ -139,6 +139,27 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 	part.d_func()->query = pres.findExtension<MUCRoomUserQuery>();
 	if (!part.d_func()->query)
 		return;
+	if (pres.subtype() == Presence::Unavailable) {
+		participantsHash.remove(pres.from().resource());
+	} else {
+		if (startedJoining) {
+			startedJoining = false;
+			QHashIterator<QString,MUCRoomUserQuery::Ptr> it(participantsHash);
+			MUCRoom::Participant tmp;
+			tmp.d_func()->query = MUCRoomUserQuery::Ptr::create();
+			Presence hookPres(Presence::Unavailable, client->jid());
+			JID bareJid = jid.bareJID();
+			while (it.hasNext()) {
+				QString nick = it.next().key();
+				hookPres.setFrom(bareJid.withResource(nick));
+				emit q->presenceReceived(hookPres, &tmp);
+			}
+		}
+		participantsHash.insert(pres.from().resource(), part.d_func()->query);
+	}
+	if (part.isNickChanged() && pres.from().resource() == jid.resource())
+		jid.setResource(part.newNick());
+	emit q->presenceReceived(pres, &part);
 	if (pres.from().resource() == jid.resource()) {
 		role = part.role();
 		affiliation = part.affiliation();
@@ -151,13 +172,6 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 			emit q->joined();
 		}
 	}
-	if (pres.subtype() == Presence::Unavailable)
-		participantsHash.remove(pres.from().resource());
-	else
-		participantsHash.insert(pres.from().resource(), part.d_func()->query);
-	if (part.isNickChanged() && pres.from().resource() == jid.resource())
-		jid.setResource(part.newNick());
-	emit q->presenceReceived(pres, &part);
 }
 
 void MUCRoomPrivate::handleMessage(const Message &msg)
@@ -225,6 +239,9 @@ Presence::Type MUCRoom::presence() const
 void MUCRoom::join(Presence::Type type, const QString &message, int priority)
 {
 	Q_D(MUCRoom);
+	if (!isJoined()) {
+		d->startedJoining = true;
+	}
 	Presence pres(type, d->jid, message, priority);
 	qDebug() << Q_FUNC_INFO << type << d->jid;
 	MUCRoomQuery *query = new MUCRoomQuery(d->password);
