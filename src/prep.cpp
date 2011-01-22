@@ -19,18 +19,33 @@
 
 #define JID_PORTION_SIZE 1023
 
+#ifdef HAVE_IDN
+#include <stringprep.h>
+
+#define jreen_idn_stringprep                   stringprep
+#define jreen_idn_stringprep_nameprep          stringprep_nameprep
+#define jreen_idn_stringprep_xmpp_nodeprep     stringprep_xmpp_nodeprep
+#define jreen_idn_stringprep_xmpp_resourceprep stringprep_xmpp_resourceprep
 namespace jreen
 {
-	static void *_idn_stringprep_nameprep = 0;
-	static void *_idn_stringprep_xmpp_nodeprep = 0;
-	static void *_idn_stringprep_xmpp_resourceprep = 0;
-	typedef int (*_idn_stringprep_) (char *in, size_t maxlen, int flags, void *profile);
-	static _idn_stringprep_ _idn_stringprep = 0;
+	static bool loadLibIDN() { return true; }
+}
+#else
+namespace jreen
+{
+	typedef void Stringprep_profile;
+	typedef int Stringprep_profile_flags;
+	static void *jreen_idn_stringprep_nameprep = 0;
+	static void *jreen_idn_stringprep_xmpp_nodeprep = 0;
+	static void *jreen_idn_stringprep_xmpp_resourceprep = 0;
+	typedef int (*jreen_idn_stringprep_) (char *in, size_t maxlen, Stringprep_profile_flags flags,
+	                                      const Stringprep_profile *profile);
+	static jreen_idn_stringprep_ jreen_idn_stringprep = 0;
 	static bool triedToInit = false;
 	
 	static bool loadLibIDN()
 	{
-		if (_idn_stringprep)
+		if (jreen_idn_stringprep)
 			return true;
 		if (triedToInit)
 			return false;
@@ -48,17 +63,21 @@ namespace jreen
 				ok |= lib.load();
 			}
 			if (!ok)
-#endif
+#endif // Q_OS_WIN32
 				return false;
 		}
-		_idn_stringprep_nameprep = lib.resolve("stringprep_nameprep");
-		_idn_stringprep_xmpp_nodeprep = lib.resolve("stringprep_xmpp_nodeprep");
-		_idn_stringprep_xmpp_resourceprep = lib.resolve("stringprep_xmpp_resourceprep");
-		_idn_stringprep = reinterpret_cast<_idn_stringprep_>(lib.resolve("stringprep"));
+		jreen_idn_stringprep_nameprep = lib.resolve("stringprep_nameprep");
+		jreen_idn_stringprep_xmpp_nodeprep = lib.resolve("stringprep_xmpp_nodeprep");
+		jreen_idn_stringprep_xmpp_resourceprep = lib.resolve("stringprep_xmpp_resourceprep");
+		jreen_idn_stringprep = reinterpret_cast<jreen_idn_stringprep_>(lib.resolve("stringprep"));
 		return true;
 	}
-	
-	static QString prepare(const QString &s, bool *ok, void *profile)
+}
+#endif // HAVE_IDN
+
+namespace jreen
+{
+	static QString prepare(const QString &s, bool *ok, const Stringprep_profile *profile)
 	{
 		if (s.isEmpty() || s.size() > JID_PORTION_SIZE) {
 			*ok = false;
@@ -66,7 +85,9 @@ namespace jreen
 		}
 		QByteArray in = s.toUtf8();
 		in.resize(JID_PORTION_SIZE);
-		int rc = _idn_stringprep(in.data(), JID_PORTION_SIZE, 0, profile);
+		int rc = jreen_idn_stringprep(in.data(), JID_PORTION_SIZE,
+		                              static_cast<Stringprep_profile_flags>(0),
+		                              profile);
 		*ok = rc == 0;
 		if (*ok)
 			return QString::fromUtf8(in);
@@ -80,7 +101,7 @@ namespace jreen
 			*ok = true;
 			return node.toLower();
 		}
-		return prepare(node, ok, _idn_stringprep_xmpp_nodeprep);
+		return prepare(node, ok, jreen_idn_stringprep_xmpp_nodeprep);
 	}
 	
 	QString Prep::namePrep(const QString &domain, bool *ok)
@@ -89,7 +110,7 @@ namespace jreen
 			*ok = true;
 			return domain.toLower();
 		}
-		return prepare(domain, ok, _idn_stringprep_nameprep);
+		return prepare(domain, ok, jreen_idn_stringprep_nameprep);
 	}
 	
 	QString Prep::resourcePrep(const QString &resource, bool *ok)
@@ -98,7 +119,7 @@ namespace jreen
 			*ok = true;
 			return resource;
 		}
-		return prepare(resource, ok, _idn_stringprep_xmpp_resourceprep);
+		return prepare(resource, ok, jreen_idn_stringprep_xmpp_resourceprep);
 	}
 	
 }
