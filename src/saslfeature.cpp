@@ -16,6 +16,7 @@
 
 #include "saslfeature.h"
 #include "client_p.h"
+#include <simplesasl/simplesasl.h>
 #include <QUrl>
 #include <QDebug>
 
@@ -28,14 +29,12 @@ SASLFeature::SASLFeature() : StreamFeature(SASL)
 	QCA::setAppName("qutim");	
 	m_depth = 0;
 	qDebug() << QCA::supportedFeatures();
-	m_hasSasl = QCA::isSupported("sasl");
-	if (!m_hasSasl)
-		qWarning("Jreen: SASL is not provided by QCA");
+	if (!QCA::isSupported("sasl"))
+		QCA::insertProvider(XMPP::createProviderSimpleSASL());
 }
 
 void SASLFeature::init()
 {
-	Q_ASSERT(m_hasSasl);
 	Q_ASSERT(!m_sasl);
 	m_sasl.reset(new QCA::SASL(this));
 	m_sasl->setConstraints(QCA::SASL::AllowPlain);
@@ -59,9 +58,6 @@ void SASLFeature::reset()
 
 bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	// All other methods shouldn't be called is canParse returnes false
-	if (!m_hasSasl)
-		return false;
 	Q_UNUSED(name);
 	Q_UNUSED(attributes);
 	qDebug() << Q_FUNC_INFO << name << uri;
@@ -113,7 +109,7 @@ void SASLFeature::handleCharacterData(const QStringRef &text)
 
 bool SASLFeature::isActivatable()
 {
-	return m_hasSasl && !m_mechs.isEmpty();
+	return !m_mechs.isEmpty();
 }
 
 bool SASLFeature::activate()

@@ -62,7 +62,6 @@ namespace jreen
 			static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
 		};
 		QScopedPointer<QCA::SASL, ScopedPointerEventDeleter> m_sasl;
-		bool m_hasSasl;
 	};
 }
 #endif // SASLFEATURE_H

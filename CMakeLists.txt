@@ -8,6 +8,12 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 FILE(GLOB SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 FILE(GLOB HDR "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
+# Add 3rd-party sources
+FILE(GLOB_RECURSE 3RD_PARTY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/*.cpp")
+FILE(GLOB_RECURSE 3RD_PARTY_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/*.h")
+LIST(APPEND SRC ${3RD_PARTY_SRC})
+LIST(APPEND HDR ${3RD_PARTY_HDR})
+
 # Require QT 4.6
 SET(QT_MIN_VERSION "4.6.0")
 
@@ -18,17 +24,6 @@ FIND_PACKAGE(QCA2 REQUIRED)
 FIND_PACKAGE(ZLIB REQUIRED)
 
 #add_subdirectory(3rdparty)
-
-# Add JDns sources
-LIST(APPEND SRC "3rdparty/jdns/jdns.c"
-		"3rdparty/jdns/jdns_mdnsd.c"
-		"3rdparty/jdns/jdns_packet.c"
-		"3rdparty/jdns/jdns_sys.c"
-		"3rdparty/jdns/jdns_util.c"
-		"3rdparty/jdns/qjdns_sock.cpp"
-		"3rdparty/jdns/qjdns.cpp" )
-LIST(APPEND HDR "3rdparty/jdns/qjdns.h"
-		"3rdparty/jdns/qjdns_p.h" )
 
 #spike
 
