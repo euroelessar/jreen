@@ -278,7 +278,7 @@ void MUCRoom::requestRoomConfig()
 void MUCRoom::setRoomConfig(const jreen::DataForm::Ptr &form)
 {
 	Q_D(MUCRoom);
-	IQ iq(IQ::Get, d->jid.bareJID());
+	IQ iq(IQ::Set, d->jid.bareJID());
 	iq.addExtension(new MUCRoomOwnerQuery(form));
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomSubmitConfig);
 }

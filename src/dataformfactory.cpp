@@ -53,17 +53,21 @@ public:
 		if(m_depth == 1) {
 			m_value.clear();
 			m_label = attributes.value(QLatin1String("label")).toString();
+		} else if (m_depth == 2 && name == QLatin1String("value")) {
+			m_atValue = 1;
 		}
 	}
 	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri)
 	{
 		Q_UNUSED(name);
 		Q_UNUSED(uri);
+		if (m_depth == 2)
+			m_atValue = 0;
 		m_depth--;
 	}
 	virtual void handleCharacterData(const QStringRef &text)
 	{
-		if(m_depth == 1)
+		if(m_depth == 2 && m_atValue)
 			m_value = text.toString();
 	}
 	virtual void serialize(const QPair<QString, QString> *option, QXmlStreamWriter *writer)
@@ -87,8 +91,10 @@ private:
 	{
 		m_label.clear();
 		m_value.clear();
+		m_atValue = 0;
 	}
-	int m_depth;
+	int m_depth : 31;
+	int m_atValue : 1;
 	QString m_label;
 	QString m_value;
 };
