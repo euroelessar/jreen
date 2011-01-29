@@ -15,6 +15,7 @@
 *****************************************************************************/
 
 #include "client_p.h"
+#include "abstractroster.h"
 #include "disco_p.h"
 #include "stanza_p.h"
 #include "tcpconnection.h"
@@ -72,6 +73,21 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			emit track->newIQ(*iq, track->context);
 			delete track;
 		} else {
+			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare());
+			if (!ok) {
+				AbstractRosterItem::Ptr item = roster->getItem(iq->from());
+				ok = item
+						&& item->subscriptionType() != AbstractRosterItem::None
+						&& item->subscriptionType() != AbstractRosterItem::To;
+			}
+			if (!ok) {
+				IQ error(IQ::Error, iq->from(), iq->id());
+				foreach (const StanzaExtension::Ptr &se, iq->extensions())
+					error.addExtension(se);
+				error.addExtension(new Error(Error::Cancel, Error::SubscriptionRequired));
+				send(error);
+				return;
+			}
 			client->handleIQ(*iq);
 			if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
 				IQ error(IQ::Error, iq->from(), iq->id());

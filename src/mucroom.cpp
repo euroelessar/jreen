@@ -27,10 +27,10 @@ enum MUCRolePrivilege
 	RolePrivelegesCount
 };
 
-char mucPrivelegesByRole[RolePrivelegesCount][4] = {
+static char mucPrivelegesByRole[RolePrivelegesCount][4] = {
 	{ 0, 1, 1 },
 	{ 0, 1, 1 },
-	{ 0, 1, 1 },
+	{ 0, 0, 1 },
 	{ 0, 0, 1 },
 	{ 0, 0, 1 }
 };

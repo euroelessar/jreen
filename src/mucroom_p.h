@@ -127,7 +127,7 @@ class MUCRoomAdminQuery : public StanzaExtension
 {
 	J_EXTENSION(jreen::MUCRoomAdminQuery, "")
 	public:
-		MUCRoomAdminQuery() {}
+	MUCRoomAdminQuery() {}
 	MUCRoomAdminQuery(const QString &nick, MUCRoom::Affiliation a, const QString &reason)
 	{
 		MUCRoomItem item;

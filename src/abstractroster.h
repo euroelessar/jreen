@@ -18,7 +18,7 @@
 #ifndef ABSTRACTROSTER_H
 #define ABSTRACTROSTER_H
 
-#include <qglobal.h>
+#include <QSharedPointer>
 
 #if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
 // Looks like this function was overloaded at this release, if not - tell me // EuroElessar
@@ -201,12 +201,12 @@ public:
 	
 	QString version() const;
 	void fillRoster(const QString &version, const QList<AbstractRosterItem::Ptr> &items);
+	virtual QSharedPointer<AbstractRosterItem> getItem(const JID &jid) const;
 public slots:
 	virtual void load();
 	virtual void synchronize();
 protected:
 	virtual QSharedPointer<AbstractRosterItem> createItem();
-	virtual QSharedPointer<AbstractRosterItem> getItem(const JID &jid) const;
 	//	virtual QSharedPointer<AbstractResource> createResource();
 	virtual void init();
 	virtual void add(const JID &jid, const QString &name, const QStringList &groups = QStringList());
