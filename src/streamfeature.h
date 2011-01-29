@@ -35,8 +35,9 @@ public:
 	{
 		ResendHeader = 1,
 		Authorized = 2,
-		AcitvateNext = 4,
-		Connected = 8
+		ActivateNext = 4,
+		Connected = 8,
+		AuthorizationFailed = 16
 	};
 	Q_DECLARE_FLAGS(CompletedFlags, CompletedFlag)
 

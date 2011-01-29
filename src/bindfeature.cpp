@@ -182,7 +182,7 @@ void BindFeature::onIQResult(const IQ &iq, int context)
 	BindQuery::Ptr query = iq.findExtension<BindQuery>();
 	if (query && iq.subtype() == IQ::Result) {
 		m_info->setJID(query->jid());
-		m_info->completed(StreamInfo::AcitvateNext);
+		m_info->completed(StreamInfo::ActivateNext);
 	}
 }
 }

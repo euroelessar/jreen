@@ -72,7 +72,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			emit track->newIQ(*iq, track->context);
 			delete track;
 		} else {
-			client->handleIQ(*iq);
+			q_ptr->handleIQ(*iq);
 			if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
 				IQ error(IQ::Error, iq->from(), iq->id());
 				error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
@@ -80,63 +80,63 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			}
 		}
 	} else if (type == StanzaPrivate::StanzaMessage) {
-		client->handleMessage(*stanza.staticCast<Message>());
+		q_ptr->handleMessage(*stanza.staticCast<Message>());
 	} else if (type == StanzaPrivate::StanzaPresence) {
 		if (MUCRoomPrivate *room = rooms.value(stanza->from().bare()))
 			room->handlePresence(*stanza.staticCast<Presence>());
 		else
-			client->handlePresence(*stanza.staticCast<Presence>());
+			q_ptr->handlePresence(*stanza.staticCast<Presence>());
 	}/* else if (type == StanzaPrivate::StanzaSubscription) {
 		client->handleSubscription(*stanza.staticCast<Subscription>());
 	}*/
 }
 
-void ClientPrivate::readMore()
+void ClientPrivate::_q_read_more()
 {
 }
 
 void ClientPrivate::init()
 {
-	parser = new Parser(client);
-	stanzas << new IqFactory(client);
-	stanzas << new PresenceFactory(client);
-	stanzas << new MessageFactory(client);
+	parser = new Parser(q_ptr);
+	stanzas << new IqFactory(q_ptr);
+	stanzas << new PresenceFactory(q_ptr);
+	stanzas << new MessageFactory(q_ptr);
 	stream_info = new StreamInfoImpl(this);
-	disco = new Disco(client);
+	disco = new Disco(q_ptr);
 	CapabilitesFactory *capsFactory = new CapabilitesFactory(disco);
 
-	client->registerStanzaExtension(new ErrorFactory);
-	client->registerStanzaExtension(capsFactory);
-	client->registerStanzaExtension(new DataFormFactory);
-	client->registerStanzaExtension(new DiscoInfoFactory);
-	client->registerStanzaExtension(new DiscoItemsFactory);
-	client->registerStanzaExtension(new ChatStateFactory);
-	client->registerStanzaExtension(new DelayedDeliveryFactory);
-	client->registerStanzaExtension(new ReceiptFactory);
-	client->registerStanzaExtension(new SoftwareVersionFactory);
-	client->registerStanzaExtension(new MoodFactory);
-	client->registerStanzaExtension(new TuneFactory);
-	client->registerStanzaExtension(new VCardFactory);
-	client->registerStanzaExtension(new PingFactory);
-	client->registerStanzaExtension(new VCardUpdateFactory);
-	client->registerStanzaExtension(new MUCRoomQueryFactory);
-	client->registerStanzaExtension(new MUCRoomUserQueryFactory);
-	client->registerStanzaExtension(new MUCRoomAdminQueryFactory);
-	client->registerStanzaExtension(new MUCRoomOwnerQueryFactory);
-	client->registerStanzaExtension(new EntityTimeFactory);
-	client->registerStanzaExtension(new BookmarkFactory);
-	client->registerStanzaExtension(new PrivateXmlQueryFactory(client));
-	client->registerStanzaExtension(new PrivacyQueryFactory);
+	q_ptr->registerStanzaExtension(new ErrorFactory);
+	q_ptr->registerStanzaExtension(capsFactory);
+	q_ptr->registerStanzaExtension(new DataFormFactory);
+	q_ptr->registerStanzaExtension(new DiscoInfoFactory);
+	q_ptr->registerStanzaExtension(new DiscoItemsFactory);
+	q_ptr->registerStanzaExtension(new ChatStateFactory);
+	q_ptr->registerStanzaExtension(new DelayedDeliveryFactory);
+	q_ptr->registerStanzaExtension(new ReceiptFactory);
+	q_ptr->registerStanzaExtension(new SoftwareVersionFactory);
+	q_ptr->registerStanzaExtension(new MoodFactory);
+	q_ptr->registerStanzaExtension(new TuneFactory);
+	q_ptr->registerStanzaExtension(new VCardFactory);
+	q_ptr->registerStanzaExtension(new PingFactory);
+	q_ptr->registerStanzaExtension(new VCardUpdateFactory);
+	q_ptr->registerStanzaExtension(new MUCRoomQueryFactory);
+	q_ptr->registerStanzaExtension(new MUCRoomUserQueryFactory);
+	q_ptr->registerStanzaExtension(new MUCRoomAdminQueryFactory);
+	q_ptr->registerStanzaExtension(new MUCRoomOwnerQueryFactory);
+	q_ptr->registerStanzaExtension(new EntityTimeFactory);
+	q_ptr->registerStanzaExtension(new BookmarkFactory);
+	q_ptr->registerStanzaExtension(new PrivateXmlQueryFactory(q_ptr));
+	q_ptr->registerStanzaExtension(new PrivacyQueryFactory);
 //	client->registerStanzaExtension(new PubSub::EventFactory);
 //	client->registerStanzaExtension(new PubSub::PublishFacatory);
 	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
 
-	client->registerStreamFeature(new NonSaslAuth);
-	client->registerStreamFeature(new SASLFeature);
-	client->registerStreamFeature(new TLSFeature);
-	client->registerStreamFeature(new BindFeature);
-	client->registerStreamFeature(new SessionFeature);
-	client->registerStreamFeature(new ZLibCompressionFeature);
+	q_ptr->registerStreamFeature(new NonSaslAuth);
+	q_ptr->registerStreamFeature(new SASLFeature);
+	q_ptr->registerStreamFeature(new TLSFeature);
+	q_ptr->registerStreamFeature(new BindFeature);
+	q_ptr->registerStreamFeature(new SessionFeature);
+	q_ptr->registerStreamFeature(new ZLibCompressionFeature);
 	presence.addExtension(new Capabilities(QString(), QLatin1String("http://jreen.qutim.org/")));
 }
 
@@ -297,8 +297,8 @@ void Client::setConnectionImpl(Connection *conn)
 	d->streamProcessor = qobject_cast<StreamProcessor*>(conn);
 	d->device->setDevice(conn);
 	//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
-	connect(conn, SIGNAL(connected()), d, SLOT(connected()));
-	connect(conn, SIGNAL(disconnected()),d, SLOT(disconnected()));
+	connect(conn, SIGNAL(connected()), this, SLOT(_q_connected()));
+	connect(conn, SIGNAL(disconnected()), this, SLOT(_q_disconnected()));
 }
 
 Connection *Client::connection() const
@@ -385,15 +385,15 @@ void Client::disconnectFromServer(bool force)
 	}
 }
 
-void ClientPrivate::onIqReceived(const IQ &iq, int context)
+void ClientPrivate::_q_iq_received(const IQ &iq, int context)
 {
 	Q_UNUSED(context);
 	QSharedPointer<Disco::Info> info = iq.findExtension<Disco::Info>();
 	if (info) {
 		serverFeatures = info->features();
 		serverIdentities = info->identities();
-		emit client->serverFeaturesReceived(serverFeatures);
-		emit client->serverIdentitiesReceived(serverIdentities);
+		emit q_ptr->serverFeaturesReceived(serverFeatures);
+		emit q_ptr->serverIdentitiesReceived(serverIdentities);
 		qDebug() << serverFeatures;
 	}
 }
@@ -415,13 +415,18 @@ void Client::handleConnect()
 	Q_D(Client);
 	IQ iq(IQ::Get, d->jid.domain());
 	iq.addExtension(new Disco::Info);
-	send(iq, d, SLOT(onIqReceived(jreen::IQ,int)), 0);
+	send(iq, this, SLOT(_q_iq_received(jreen::IQ,int)), 0);
 	emit connected();
 }
 
 void Client::handleDisconnect()
 {
-	emit disconnected();
+	Q_D(Client);
+	DisconnectReason reason = User;
+
+	if(d->conn->socketError() != Connection::UnknownSocketError)
+		reason = InternalServerError;
+	emit disconnected(reason);
 }
 
 void Client::handleAuthorized()
@@ -474,3 +479,5 @@ QString Client::password() const
 }
 
 }
+
+#include "client.moc"

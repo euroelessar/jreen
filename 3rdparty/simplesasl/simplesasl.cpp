@@ -36,29 +36,29 @@ namespace XMPP {
 class SimpleSASLContext : public QCA::SASLContext
 {
 public:
-		class ParamsMutable
-		{
-		public:
-			/**
-			   User is held
-			*/
-			bool user;
+	class ParamsMutable
+	{
+	public:
+		/**
+	  User is held
+   */
+		bool user;
 
-			/**
-			   Authorization ID is held
-			*/
-			bool authzid;
+		/**
+	  Authorization ID is held
+   */
+		bool authzid;
 
-			/**
-			   Password is held
-			*/
-			bool pass;
+		/**
+	  Password is held
+   */
+		bool pass;
 
-			/**
-			   Realm is held
-			*/
-			bool realm;
-		};
+		/**
+	  Realm is held
+   */
+		bool realm;
+	};
 	// core props
 	QString service, host;
 
@@ -227,17 +227,17 @@ public:
 			result_ = Continue;
 		}
 		/*else if (step == 2) {
-			//Commenting this out is Justin's fix for updated QCA.
-			out_buf.resize(0);
-			result_ = Continue;
-			++step;
-		}*/
+   //Commenting this out is Justin's fix for updated QCA.
+   out_buf.resize(0);
+   result_ = Continue;
+   ++step;
+  }*/
 		else {
 			out_buf.resize(0);
 			result_ = Success;
 		}
-ready:
-		QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
+		ready:
+			QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
 	}
 
 	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {

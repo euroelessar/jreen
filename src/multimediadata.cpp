@@ -21,8 +21,9 @@ namespace jreen
 class MultimediaDataPrivate : public QSharedData
 {
 public:
-	MultimediaDataPrivate() {}
+	MultimediaDataPrivate() : QSharedData() {}
 	MultimediaDataPrivate(const MultimediaDataPrivate &other) :
+		QSharedData(other),
 		type(other.type),
 		data(other.data),
 		attributes(other.attributes)

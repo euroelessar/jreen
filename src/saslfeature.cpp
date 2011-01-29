@@ -92,6 +92,8 @@ void SASLFeature::handleEndElement(const QStringRef &name, const QStringRef &uri
 		m_state = AtStart;
 		if (name == QLatin1String("success"))
 			m_info->completed(StreamInfo::Authorized | StreamInfo::ResendHeader);
+		if (name == QLatin1String("failure"))
+			onError();
 	}
 	m_depth--;
 }
@@ -171,6 +173,7 @@ void SASLFeature::onAuthCheck(const QString &user, const QString &authzid)
 
 void SASLFeature::onError()
 {
+	m_info->completed(StreamInfo::AuthorizationFailed);
 	qDebug() << Q_FUNC_INFO << m_sasl->errorCode();
 }
 }

@@ -92,25 +92,25 @@ signals:
 	void newMessage(const jreen::Message &presence);
 };
 
-class ClientPrivate : public QObject
+class ClientPrivate
 {
-	Q_OBJECT
+	Q_DECLARE_PUBLIC(Client)
 public:
 	static ClientPrivate *get(Client *client) { return client->d_func(); }
 	
 	ClientPrivate(const Presence &p, Client *parent)
-		: QObject(parent), presence(p), current_id(0), conn(0)
+		:  q_ptr(parent),presence(p), current_id(0), conn(0)
 	{
+		Q_Q(Client);
 		disco = 0;
 		current_stream_feature = 0;
 		messageSessionManager = 0;
 		roster = 0;
 		authorized = false;
-		client = parent;
 		isConnected = false;
 		device = new BufferedDataStream(&streamHandlers);
 		device->open(QIODevice::ReadWrite);
-		connect(device, SIGNAL(readyRead()), this, SLOT(newData()));
+		q->connect(device, SIGNAL(readyRead()), q, SLOT(_q_new_data()));
 	}
 	void init();
 	void send(const Stanza &stanza)
@@ -146,7 +146,7 @@ public:
 	void handleStanza(const Stanza::Ptr &stanza);
 	QBasicTimer pingTimer;
 	StreamInfo *stream_info;
-	Client *client;
+	Client *q_ptr;
 	JID jid;
 	QString sid;
 	QString server;
@@ -177,18 +177,17 @@ public:
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
 	int depth;
-public slots:
-	void onIqReceived(const jreen::IQ &iq, int context);
-	void newData()
+	void _q_iq_received(const jreen::IQ &iq, int context);
+	void _q_new_data()
 	{
 		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();
 		//		qDebug() << "-" << data.size() << data;
 		parser->appendData(data);
 		//		parser->appendData(data);
-		readMore();
+		_q_read_more();
 	}
-	void readMore();
-	void sendHeader()
+	void _q_read_more();
+	void _q_send_header()
 	{
 		delete writer;
 		foreach (XmlStreamHandler *handler, streamHandlers)
@@ -218,15 +217,15 @@ public slots:
 		writer->writeCharacters(QString());
 	}
 
-	void connected()
+	void _q_connected()
 	{
 		writer = 0;
 		depth = 0;
 		parser->reset();
-		sendHeader();
+		_q_send_header();
 		isConnected = true;
 	}
-	void disconnected()
+	void _q_disconnected()
 	{
 		isConnected = false;
 		foreach (XmlStreamHandler *handler, streamHandlers)
@@ -234,14 +233,18 @@ public slots:
 		authorized = false;
 		current_stream_feature = 0;
 		presence.setSubtype(Presence::Unavailable);
-		client->handleDisconnect();
+		q_ptr->handleDisconnect();
 		foreach (DataStream *dataStream, devices)
 			dataStream->deleteLater();
 		devices.clear();
 		device->setDevice(conn);
 	}
-	inline void emitAuthorized() { client->handleAuthorized(); }
-	inline void emitConnected() { client->handleConnect(); }
+	inline void emitAuthorized() { q_ptr->handleAuthorized(); }
+	inline void emitConnected() { q_ptr->handleConnect(); }
+	inline void emitDisconnected(Client::DisconnectReason reason)
+	{
+		emit q_func()->disconnected(reason);
+	}
 };
 
 class StreamInfoImpl : public StreamInfo
@@ -281,7 +284,7 @@ public:
 	}
 	Client *client()
 	{
-		return d->client;
+		return d->q_ptr;
 	}
 	QXmlStreamWriter *writer()
 	{
@@ -289,17 +292,21 @@ public:
 	}
 	void completed(const CompletedFlags &flags)
 	{
+		if(flags & AuthorizationFailed) {
+			emit d->emitDisconnected(Client::AuthorizationError);
+			return;
+		}
 		if(flags & Authorized)
 			d->emitAuthorized();
 		if (flags & ResendHeader) {
 			d->device->readAll();
-			d->sendHeader();
+			d->_q_send_header();
 			if (d->streamProcessor)
 				d->streamProcessor->restartStream();
 			d->parser->reset();
 			d->current_stream_feature = 0;
 		}
-		if (flags & AcitvateNext)
+		if (flags & ActivateNext)
 			d->parser->activateFeature();
 		if (flags & Connected) {
 			d->emitConnected();

@@ -105,7 +105,7 @@ public slots:
 	void disconnectFromServer(bool force = false);
 signals:
 	void connected();
-	void disconnected();
+	void disconnected(jreen::Client::DisconnectReason);
 	void authorized();
 	void newSubscription(const jreen::Subscription &subscription);
 	void newPresence(const jreen::Presence &presence);
@@ -124,6 +124,12 @@ protected:
 	virtual void handleMessage(const Message &message);
 private:
 	QScopedPointer<ClientPrivate> d_ptr;
+	Q_PRIVATE_SLOT(d_func(), void _q_iq_received(const jreen::IQ &iq, int context))
+	Q_PRIVATE_SLOT(d_func(), void _q_new_data())
+	Q_PRIVATE_SLOT(d_func(), void _q_read_more())
+	Q_PRIVATE_SLOT(d_func(), void _q_send_header())
+	Q_PRIVATE_SLOT(d_func(), void _q_connected())
+	Q_PRIVATE_SLOT(d_func(), void _q_disconnected())
 };
 
 }
