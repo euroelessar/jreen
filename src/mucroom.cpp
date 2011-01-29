@@ -205,7 +205,7 @@ MUCRoom::MUCRoom(Client *client, const JID &jid) :
 	d->session = new MUCMessageSession(this);
 	ClientPrivate::get(d->client)->rooms.insert(d->jid.bare(), d);
 	connect(client, SIGNAL(connected()), this, SLOT(onConnected()));
-	connect(client, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+	connect(client, SIGNAL(disconnected(jreen::Client::DisconnectReason)), this, SLOT(onDisconnected()));
 }
 
 MUCRoom::~MUCRoom()
