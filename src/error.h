@@ -103,7 +103,7 @@ public:
 		* service the request; the associated error type SHOULD be "wait". */
 		ServiceUnavailable,  /**< The server or recipient does not currently provide the requested
 		* service; the associated error type SHOULD be "cancel". */
-		SubscribtionRequired,/**< The requesting entity is not authorized to access the requested
+		SubscriptionRequired,/**< The requesting entity is not authorized to access the requested
 		* service because a subscription is required; the associated error type
 		* SHOULD be "auth". */
 		UndefinedCondition,  /**< The error condition is not one of those defined by the other

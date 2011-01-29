@@ -47,6 +47,7 @@ ZLibDataStream::ZLibDataStream() : d_ptr(new ZLibDataStreamPrivate)
 
 ZLibDataStream::~ZLibDataStream()
 {
+	close();
 }
 
 qint64 ZLibDataStream::bytesAvailable() const
