@@ -73,7 +73,6 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			emit track->newIQ(*iq, track->context);
 			delete track;
 		} else {
-			q_ptr->handleIQ(*iq);
 			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare());
 			if (!ok) {
 				AbstractRosterItem::Ptr item = roster->getItem(iq->from());
@@ -89,6 +88,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 				send(error);
 				return;
 			}
+			q_ptr->handleIQ(*iq);
 			if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
 				IQ error(IQ::Error, iq->from(), iq->id());
 				error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
