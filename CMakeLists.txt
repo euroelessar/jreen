@@ -47,12 +47,24 @@ ENDIF(LIBIDN_FOUND)
 JREEN_WRAP_CPP(MOC_SRC ${HDR})
 
 # This project will generate library
-ADD_LIBRARY(jreen SHARED ${SRC} ${MOC_SRC} ${HDR} )
+
+if(SYMBIAN)
+	set(JREEN_BUILD_TYPE STATIC)
+else()
+	set(JREEN_BUILD_TYPE SHARED)
+endif()
+
+ADD_LIBRARY(jreen ${JREEN_BUILD_TYPE} ${SRC} ${MOC_SRC} ${HDR} )
 
 #compiler flags
 #fixme add macro to clang
 if(CMAKE_COMPILER_IS_GNUCXX)
-	ADD_DEFINITIONS("-Wall -Wextra" ) #add -Werror
+	IF(SYMBIAN)
+		#disable stupid warnings
+		ADD_DEFINITIONS("-w")
+	ELSE()
+		ADD_DEFINITIONS("-Wall -Wextra" ) #add -Werror
+	ENDIF()
 	if(NOT WIN32)
 		ADD_DEFINITIONS("-fvisibility=hidden" )
 	endif(NOT WIN32)
@@ -86,7 +98,7 @@ IF(LIBIDN_FOUND)
 ENDIF(LIBIDN_FOUND)
 
 # Link with QT
-TARGET_LINK_LIBRARIES(jreen ${QT_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${EXTRA_LIBS})
+JREEN_TARGET_LINK_LIBRARIES(jreen ${QT_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${EXTRA_LIBS})
 
 install( TARGETS jreen
 	RUNTIME DESTINATION bin

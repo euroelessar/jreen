@@ -1,4 +1,21 @@
 
+
+if(SYMBIAN)
+	function(jreen_add_executable)
+		symbian_add_executable(${ARGN})
+	endfunction()
+	function(jreen_target_link_libraries)
+		symbian_target_link_libraries(${ARGN})
+	endfunction()
+else(SYMBIAN)
+	function(jreen_add_executable)
+		add_executable(${ARGN})
+	endfunction()
+	function(jreen_target_link_libraries)
+		target_link_libraries(${ARGN})
+	endfunction()
+endif(SYMBIAN)
+
 MACRO (JREEN_WRAP_CPP outfiles )
 	# get include dirs
 	QT4_GET_MOC_FLAGS(moc_flags)

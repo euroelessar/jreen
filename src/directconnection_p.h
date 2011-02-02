@@ -21,6 +21,8 @@
 #include "jreen.h"
 #include "directconnection.h"
 #include "sjdns_p.h"
+#include <QDebug>
+#include <QUrl>
 
 namespace jreen
 {
@@ -40,7 +42,7 @@ public:
 	DirectConnectionPrivate(const QString &hn, int p, DirectConnection *par)
 			: host_name(hn), port(p), dns_lookup_id(-1), parent(par)
 	{
-		do_lookup = p < 0 || QHostAddress(host_name).isNull();
+		do_lookup = p < 0 || !QUrl(host_name).isValid();
 		socket_state = QAbstractSocket::UnconnectedState;
 		socket_error = QAbstractSocket::UnknownSocketError;
 	}

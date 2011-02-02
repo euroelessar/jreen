@@ -54,8 +54,9 @@ bool DirectConnection::open()
 	if(d->do_lookup) {
 		d->doLookup();
 	}
-	else
+	else {
 		d->socket->connectToHost(d->host_name, d->port);
+	}
 	return true;
 }
 
