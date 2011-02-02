@@ -19,12 +19,12 @@
 namespace jreen
 {
 
-TcpConnection::TcpConnection(const QString &host_name, quint16 port)
+TcpConnection::TcpConnection(const QString &host_name, qint16 port)
 		: DirectConnection(new QTcpSocket, host_name, port)
 {
 }
 
-TcpConnection::TcpConnection(const QHostAddress &address, quint16 port)
+TcpConnection::TcpConnection(const QHostAddress &address, qint16 port)
 		: DirectConnection(new QTcpSocket, address, port)
 {
 }

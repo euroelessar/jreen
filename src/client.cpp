@@ -171,7 +171,9 @@ Client::Client(const JID &jid, const QString &password, int port)
 Client::Client()
 	: d_ptr(new ClientPrivate(Presence(Presence::Unavailable,JID()), this))
 {
-	d_func()->init();
+	Q_D(Client);
+	d->server_port = -1;
+	d->init();
 }
 
 Client::~Client()
@@ -377,6 +379,7 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 void Client::connectToServer()
 {
 	Q_D(Client);
+	qDebug() << d->server_port;
 	if(!d->conn)
 		setConnectionImpl(new TcpConnection(d->server, d->server_port));
 

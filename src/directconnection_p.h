@@ -42,6 +42,7 @@ public:
 	DirectConnectionPrivate(const QString &hn, int p, DirectConnection *par)
 			: host_name(hn), port(p), dns_lookup_id(-1), parent(par)
 	{
+		qDebug() << p << host_name;
 		do_lookup = p < 0 || !QUrl(host_name).isValid();
 		socket_state = QAbstractSocket::UnconnectedState;
 		socket_error = QAbstractSocket::UnknownSocketError;

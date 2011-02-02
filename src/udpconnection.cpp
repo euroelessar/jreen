@@ -19,12 +19,12 @@
 namespace jreen
 {
 
-UdpConnection::UdpConnection(const QString &host_name, quint16 port)
+UdpConnection::UdpConnection(const QString &host_name, qint16 port)
 		: DirectConnection(new QUdpSocket, host_name, port)
 {
 }
 
-UdpConnection::UdpConnection(const QHostAddress &address, quint16 port)
+UdpConnection::UdpConnection(const QHostAddress &address, qint16 port)
 		: DirectConnection(new QUdpSocket, address, port)
 {
 }

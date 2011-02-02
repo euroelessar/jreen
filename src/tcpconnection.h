@@ -25,8 +25,8 @@ class JREEN_EXPORT TcpConnection : public DirectConnection
 {
 	Q_OBJECT
 public:
-	TcpConnection(const QString &host_name, quint16 port = -1);
-	TcpConnection(const QHostAddress &address, quint16 port);
+	TcpConnection(const QString &host_name, qint16 port = -1);
+	TcpConnection(const QHostAddress &address, qint16 port);
 };
 
 }

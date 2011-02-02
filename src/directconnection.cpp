@@ -19,7 +19,7 @@
 namespace jreen
 {
 
-DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_name, quint16 port)
+DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_name, qint16 port)
 	: d_ptr(new DirectConnectionPrivate(host_name, port, this))
 {
 	Q_ASSERT(socket);
@@ -27,7 +27,7 @@ DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_
 	d_ptr->connectSocket();
 }
 
-DirectConnection::DirectConnection(QAbstractSocket *socket, const QHostAddress &address, quint16 port)
+DirectConnection::DirectConnection(QAbstractSocket *socket, const QHostAddress &address, qint16 port)
 	: d_ptr(new DirectConnectionPrivate(address.toString(), port, this))
 {
 	Q_ASSERT(socket);

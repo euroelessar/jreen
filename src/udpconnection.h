@@ -25,8 +25,8 @@ class JREEN_EXPORT UdpConnection : public DirectConnection
 {
 	Q_OBJECT
 public:
-	UdpConnection(const QString &host_name, quint16 port = -1);
-	UdpConnection(const QHostAddress &address, quint16 port);
+	UdpConnection(const QString &host_name, qint16 port = -1);
+	UdpConnection(const QHostAddress &address, qint16 port);
 };
 
 }
