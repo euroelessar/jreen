@@ -38,6 +38,7 @@
 #include "receiptfactory.h"
 #include "softwareversionfactory.h"
 #include "moodfactory_p.h"
+#include "activityfactory_p.h"
 #include "vcardfactory_p.h"
 #include "pingfactory_p.h"
 #include "vcardupdatefactory_p.h"
@@ -132,6 +133,7 @@ void ClientPrivate::init()
 	q_ptr->registerStanzaExtension(new SoftwareVersionFactory);
 	q_ptr->registerStanzaExtension(new MoodFactory);
 	q_ptr->registerStanzaExtension(new TuneFactory);
+	//q_ptr->registerStanzaExtension(new ActivityFactory);
 	q_ptr->registerStanzaExtension(new VCardFactory);
 	q_ptr->registerStanzaExtension(new PingFactory);
 	q_ptr->registerStanzaExtension(new VCardUpdateFactory);

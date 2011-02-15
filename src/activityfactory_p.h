@@ -2,6 +2,7 @@
  *  activityfactory_p.h
  *
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
+ *  Copyright (c) 2011 by Prokhin Alexey <alexey.prokhin@yandex.ru>
  *
  ***************************************************************************
  *                                                                         *
@@ -15,6 +16,8 @@
 
 #ifndef ACTIVITYFACTORY_P_H
 #define ACTIVITYFACTORY_P_H
+
+#include "stanzaextension.h"
 #include "activity.h"
 
 namespace jreen {
@@ -31,13 +34,17 @@ public:
 	void handleCharacterData(const QStringRef &text);
 	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 	StanzaExtension::Ptr createExtension();
+	static QLatin1String generalName(Activity::General general);
+	static Activity::General generalByName(const QStringRef &general);
+	static QLatin1String specificName(Activity::Specific specific);
+	static Activity::Specific specificByName(const QStringRef &specific);
 private:
 	void clear();
 	enum State {AtText,AtType};
 	int m_depth;
 	State m_state;
 	Activity::General m_general;
-	int m_specific;
+	Activity::Specific m_specific;
 	QString m_text; //may be need to replace by langmap?
 };
 

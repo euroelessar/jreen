@@ -2,6 +2,7 @@
  *  activityfactory.cpp
  *
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
+ *  Copyright (c) 2011 by Prokhin Alexey <alexey.prokhin@yandex.ru>
  *
  ***************************************************************************
  *                                                                         *
@@ -17,6 +18,7 @@
 #include "activityfactory_p.h"
 #include "jstrings.h"
 #include "util.h"
+
 #define NS_ACTIVITY QLatin1String("http://jabber.org/protocol/activity")
 
 namespace jreen {
@@ -38,16 +40,87 @@ static const char* general_types[]= {
 	"working"
 };
 
-static const char* doing_chores_types[]= {
+static const char* specific_types[]= {
+	"at_the_spa",
+	"brushing_teeth",
 	"buying_groceries",
 	"cleaning",
+	"coding",
+	"commuting",
 	"cooking",
+	"cycling",
+	"dancing",
+	"day_off",
 	"doing_maintenance",
 	"doing_the_dishes",
 	"doing_the_laundry",
+	"driving",
+	"fishing",
+	"gaming",
 	"gardening",
+	"getting_a_haircut",
+	"going_out",
+	"hanging_out",
+	"having_a_beer",
+	"having_a_snack",
+	"having_breakfast",
+	"having_coffee",
+	"having_dinner",
+	"having_lunch",
+	"having_tea",
+	"hiding",
+	"hiking",
+	"in_a_car",
+	"in_a_meeting",
+	"in_real_life",
+	"jogging",
+	"on_a_bus",
+	"on_a_plane",
+	"on_a_train",
+	"on_a_trip",
+	"on_the_phone",
+	"on_vacation",
+	"on_video_phone",
+	"other",
+	"partying",
+	"playing_sports",
+	"praying",
+	"reading",
+	"rehearsing",
+	"running",
 	"running_an_errand",
-	"walking_the_dog"
+	"scheduled_holiday",
+	"shaving",
+	"shopping",
+	"skiing",
+	"sleeping",
+	"smoking",
+	"socializing",
+	"studying",
+	"sunbathing",
+	"swimming",
+	"taking_a_bath",
+	"taking_a_shower",
+	"thinking",
+	"walking",
+	"walking_the_dog",
+	"watching_a_movie",
+	"watching_tv",
+	"working_out",
+	"writing"
+};
+
+struct ActivityLessThen
+{
+	bool operator()(const QStringRef &a, const char *b)
+	{
+		return a.compare(QLatin1String(b)) < 0;
+	}
+
+	bool operator()(const char *a, const QStringRef &b)
+	{
+		return b.compare(QLatin1String(a)) > 0;
+	}
 };
 
 ActivityFactory::ActivityFactory()
@@ -81,15 +154,11 @@ void ActivityFactory::handleStartElement(const QStringRef &name, const QStringRe
 		if(name == QLatin1String("text")) {
 			m_state = AtText;
 		} else {
-			m_general = strToEnum<Activity::General>(name,general_types);
+			m_general = generalByName(name);
 			m_state = AtType;
 		}
 	} if(m_depth == 2) {
-		switch(m_general) {
-		case Activity::DoingChores:
-			m_specific = strToEnum(name,doing_chores_types);
-			break;
-		}
+		m_specific = specificByName(name);
 	}
 }
 
@@ -109,19 +178,28 @@ void ActivityFactory::handleCharacterData(const QStringRef &text)
 void ActivityFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
 {
 	Activity *activity = se_cast<Activity*>(extension);
+	if(activity->general() == Activity::InvalidGeneral)
+		return;
 
 	writer->writeStartElement(QLatin1String("activity"));
 	writer->writeDefaultNamespace(NS_ACTIVITY);
-	writer->writeStartElement(enumToStr(activity->general(),general_types));
-	writer->writeEndElement();
-	writeTextElement(writer,QLatin1String("text"),activity->text());
+	if (activity->general() != Activity::EmptyGeneral) {
+		writer->writeStartElement(enumToStr(activity->general(),general_types));
+		if (activity->specific() > Activity::InvalidSpecific) {
+			writer->writeStartElement(enumToStr(activity->specific(),specific_types));
+			writer->writeEndElement();
+		}
+		writer->writeEndElement();
+		if(!activity->text().isEmpty())
+			writeTextElement(writer,QLatin1String("text"),activity->text());
+	}
 	writer->writeEndElement();
 }
 
 void ActivityFactory::clear()
 {
-	m_general = Activity::Invalid;
-	m_specific = -1;
+	m_general = Activity::InvalidGeneral;
+	m_specific = Activity::InvalidSpecific;
 	m_text.clear();
 }
 
@@ -130,6 +208,36 @@ StanzaExtension::Ptr ActivityFactory::createExtension()
 	Activity *activity = new Activity(m_general,m_specific,m_text);
 	clear();
 	return StanzaExtension::Ptr(activity);
+}
+
+template <typename T>
+static T typeByName(const QStringRef &name, const char* types[], int n)
+{
+	if (name.isEmpty())
+		return static_cast<T>(-2); // Empty
+	ActivityLessThen activityLessThen;
+	const char **res = qBinaryFind(types, types + n, name, activityLessThen);
+	return static_cast<T>((res == types + n) ? -1 : (res - types));
+}
+
+QLatin1String ActivityFactory::generalName(Activity::General general)
+{
+	return QLatin1String(general <= Activity::InvalidGeneral ? 0 : general_types[general]);
+}
+
+inline Activity::General ActivityFactory::generalByName(const QStringRef &general)
+{
+	return typeByName<Activity::General>(general, general_types, sizeof(general_types)/sizeof(char*));
+}
+
+QLatin1String ActivityFactory::ActivityFactory::specificName(Activity::Specific specific)
+{
+	return QLatin1String(specific <= Activity::InvalidGeneral ? 0 : specific_types[specific]);
+}
+
+inline Activity::Specific ActivityFactory::specificByName(const QStringRef &specific)
+{
+	return typeByName<Activity::Specific>(specific, specific_types, sizeof(specific_types)/sizeof(char*));
 }
 
 } // namespace jreen

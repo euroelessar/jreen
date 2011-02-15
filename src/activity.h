@@ -2,6 +2,7 @@
  *  activity.h
  *
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
+ *  Copyright (c) 2011 by Prokhin Alexey <alexey.prokhin@yandex.ru>
  *
  ***************************************************************************
  *                                                                         *
@@ -19,10 +20,13 @@
 
 namespace jreen {
 
+class ActivityPrivate;
+
 //XEP-108
 //http://xmpp.org/extensions/xep-0108.html
 class JREEN_EXPORT Activity : public StanzaExtension
 {
+	Q_DECLARE_PRIVATE(Activity);
 	J_EXTENSION(jreen::Activity,"/message/activity[@xmlns='http://jabber.org/protocol/activity']")
 public:
 	enum General {
@@ -36,32 +40,100 @@ public:
 		Relaxing,
 		Talking,
 		Traveling,
+		Undefined,
 		Working,
-		Invalid
+		InvalidGeneral = -1,
+		EmptyGeneral = -2
 	};
-	enum DoingChores {
+	enum Specific {
+		AtTheSpa,
+		BrushingTeeth,
 		BuyingGroceries,
 		Cleaning,
+		Coding,
+		Commuting,
 		Cooking,
+		Cycling,
+		Dancing,
+		DayOff,
 		DoingMaintenance,
 		DoingTheDishes,
 		DoingTheLaundry,
+		Driving,
+		Fishing,
+		Gaming,
 		Gardening,
+		GettingAHaircut,
+		GoingOut,
+		HangingOut,
+		HavingABeer,
+		HavingASnack,
+		HavingBreakfast,
+		HavingCoffee,
+		HavingDinner,
+		HavingLunch,
+		HavingTea,
+		Hiding,
+		Hiking,
+		InACar,
+		InAMeeting,
+		InRealLife,
+		Jogging,
+		OnABus,
+		OnAPlane,
+		OnATrain,
+		OnATrip,
+		OnThePhone,
+		OnVacation,
+		OnVideoPhone,
+		Other,
+		Partying,
+		PlayingSports,
+		Praying,
+		Reading,
+		Rehearsing,
+		Running,
 		RunningAnErrand,
-		WalkingTheDog
+		ScheduledHoliday,
+		Shaving,
+		Shopping,
+		Skiing,
+		Sleeping,
+		Smoking,
+		Socializing,
+		Studying,
+		Sunbathing,
+		Swimming,
+		TakingABath,
+		TakingAShower,
+		Thinking,
+		Walking,
+		WalkingTheDog,
+		WatchingAMovie,
+		WatchingTv,
+		WorkingOut,
+		Writing,
+
+		InvalidSpecific = -1,
+		EmptySpecific = -2
 	};
-	Activity(General general,int specific = -1,const QString &text = QString())
-		:	m_general(general),m_specific(specific),m_text(text) {}
-	General general() const {return m_general;}
-	int specific() const {return m_specific;}
-	template<typename T>
-	T specific() const {return static_cast<T>(m_specific);}
-	const QString &text() const {return m_text;}
-	void setText(const QString &text) {m_text = text;}
+
+	Activity(General general, Specific specific = InvalidSpecific, const QString &text = QString());
+	Activity(const QString &general, const QString &specific = QString(), const QString &text = QString());
+
+	General general() const;
+	QString generalName() const;
+	static QString generalName(General general);
+
+	Specific specific() const;
+	QString specificName();
+	static QString specificName(Specific specific);
+
+	const QString &text() const;
+	void setText(const QString &text);
+
 private:
-	General m_general;
-	int m_specific;
-	QString m_text;
+	QScopedPointer<ActivityPrivate> d_ptr;
 };
 
 } // namespace jreen

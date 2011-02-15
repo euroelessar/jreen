@@ -2,6 +2,7 @@
  *  activity.cpp
  *
  *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
+ *  Copyright (c) 2011 by Prokhin Alexey <alexey.prokhin@yandex.ru>
  *
  ***************************************************************************
  *                                                                         *
@@ -14,7 +15,72 @@
 *****************************************************************************/
 
 #include "activity.h"
+#include "activityfactory_p.h"
 
 namespace jreen {
+
+class ActivityPrivate
+{
+public:
+	Activity::General general;
+	Activity::Specific specific;
+	QString text;
+};
+
+Activity::Activity::Activity(General general, Specific specific, const QString &text)
+{
+	Q_D(Activity);
+	d->general = general;
+	d->specific = specific;
+	d->text = text;
+}
+
+Activity::Activity(const QString &general, const QString &specific, const QString &text)
+{
+	Q_D(Activity);
+	d->general = ActivityFactory::generalByName(QStringRef(&general));
+	d->specific = ActivityFactory::specificByName(QStringRef(&specific));
+	d->text = text;
+}
+
+Activity::General Activity::general() const
+{
+	return d_func()->general;
+}
+
+QString Activity::generalName() const
+{
+	return ActivityFactory::generalName(d_func()->general);
+}
+
+QString Activity::generalName(General general)
+{
+	return ActivityFactory::generalName(general);
+}
+
+Activity::Specific Activity::specific() const
+{
+	return d_func()->specific;
+}
+
+QString Activity::specificName()
+{
+	return ActivityFactory::specificName(d_func()->specific);
+}
+
+QString Activity::specificName(Specific specific)
+{
+	return ActivityFactory::specificName(specific);
+}
+
+const QString &Activity::text() const
+{
+	return d_func()->text;
+}
+
+void Activity::setText(const QString &text)
+{
+	d_func()->text = text;
+}
 
 } // namespace jreen
