@@ -133,7 +133,7 @@ void ClientPrivate::init()
 	q_ptr->registerStanzaExtension(new SoftwareVersionFactory);
 	q_ptr->registerStanzaExtension(new MoodFactory);
 	q_ptr->registerStanzaExtension(new TuneFactory);
-	//q_ptr->registerStanzaExtension(new ActivityFactory);
+	//q_ptr->registerStanzaExtension(new ActivityFactory); Sokol, try to add activitypep converter
 	q_ptr->registerStanzaExtension(new VCardFactory);
 	q_ptr->registerStanzaExtension(new PingFactory);
 	q_ptr->registerStanzaExtension(new VCardUpdateFactory);

@@ -21,28 +21,28 @@
 
 namespace jreen
 {
-	namespace PubSub
-	{
-		class EventPrivate;
-		class JREEN_EXPORT Event : public StanzaExtension
-		{
-			Q_DECLARE_PRIVATE(Event)
-			J_EXTENSION(jreen::PubSub::Event, "")
-		public:
-			Event(const QString &node = QString());
-			Event(const StanzaExtension::Ptr &item);
-			Event(const QList<StanzaExtension::Ptr> &items);
-			~Event();
-			
-			void setNode(const QString &node);
-			QString node() const;
-			void addItem(StanzaExtension *item);
-			void addItem(const StanzaExtension::Ptr &item);
-			QList<StanzaExtension::Ptr> items() const;
-		private:
-			QScopedPointer<EventPrivate> d_ptr;
-		};		
-	}
+namespace PubSub
+{
+class EventPrivate;
+class JREEN_EXPORT Event : public StanzaExtension
+{
+	Q_DECLARE_PRIVATE(Event)
+	J_EXTENSION(jreen::PubSub::Event, "")
+	public:
+		Event(const QString &node = QString());
+	Event(const StanzaExtension::Ptr &item);
+	Event(const QList<StanzaExtension::Ptr> &items);
+	~Event();
+
+	void setNode(const QString &node);
+	QString node() const;
+	void addItem(StanzaExtension *item);
+	void addItem(const StanzaExtension::Ptr &item);
+	QList<StanzaExtension::Ptr> items() const;
+private:
+	QScopedPointer<EventPrivate> d_ptr;
+};
+}
 }
 
 #endif // PUBSUBEVENT_H

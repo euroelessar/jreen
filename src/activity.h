@@ -20,10 +20,10 @@
 
 namespace jreen {
 
-class ActivityPrivate;
-
 //XEP-108
 //http://xmpp.org/extensions/xep-0108.html
+
+class ActivityPrivate;
 class JREEN_EXPORT Activity : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Activity);
@@ -120,6 +120,7 @@ public:
 
 	Activity(General general, Specific specific = InvalidSpecific, const QString &text = QString());
 	Activity(const QString &general, const QString &specific = QString(), const QString &text = QString());
+	virtual ~Activity();
 
 	General general() const;
 	QString generalName() const;
@@ -131,7 +132,6 @@ public:
 
 	const QString &text() const;
 	void setText(const QString &text);
-
 private:
 	QScopedPointer<ActivityPrivate> d_ptr;
 };

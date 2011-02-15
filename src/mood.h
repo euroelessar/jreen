@@ -19,115 +19,115 @@
 
 namespace jreen
 {
-	class MoodPrivate;
-	class JREEN_EXPORT Mood : public StanzaExtension
-	{
-		Q_DECLARE_PRIVATE(Mood);
-		J_EXTENSION(jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
+class MoodPrivate;
+class JREEN_EXPORT Mood : public StanzaExtension
+{
+	Q_DECLARE_PRIVATE(Mood);
+	J_EXTENSION(jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
 	public:
 		enum Type {
-			Afraid = 0,
-			Amazed,
-			Amorous,
-			Angry,
-			Annoyed,
-			Anxious,
-			Aroused,
-			Ashamed,
-			Bored,
-			Brave,
-			Calm,
-			Cautious,
-			Cold,
-			Confident,
-			Confused,
-			Contemplative,
-			Contented,
-			Cranky,
-			Crazy,
-			Creative,
-			Curious,
-			Dejected,
-			Depressed,
-			Disappointed,
-			Disgusted,
-			Dismayed,
-			Distracted,
-			Embarrassed,
-			Envious,
-			Excited,
-			Flirtatious,
-			Frustrated,
-			Grateful,
-			Grieving,
-			Grumpy,
-			Guilty,
-			Happy,
-			Hopeful,
-			Hot,
-			Humbled,
-			Humiliated,
-			Hungry,
-			Hurt,
-			Impressed,
-			In_awe,
-			In_love,
-			Indignant,
-			Interested,
-			Intoxicated,
-			Invincible,
-			Jealous,
-			Lonely,
-			Lost,
-			Lucky,
-			Mean,
-			Moody,
-			Nervous,
-			Neutral,
-			Offended,
-			Outraged,
-			Playful,
-			Proud,
-			Relaxed,
-			Relieved,
-			Remorseful,
-			Restless,
-			Sad,
-			Sarcastic,
-			Satisfied,
-			Serious,
-			Shocked,
-			Shy,
-			Sick,
-			Sleepy,
-			Spontaneous,
-			Stressed,
-			Strong,
-			Surprised,
-			Thankful,
-			Thirsty,
-			Tired,
-			Undefined,
-			Weak,
-			Worried,
-			Invalid = -1,
-			Empty = -2
-		};
-		
-		Mood(Type type = Invalid, const QString &text = QString());
-		Mood(const QString &type, const QString &text);
-		~Mood();
-		
-		Type type() const;
-		QString typeName() const;
-		void setType(const QString &type);
-		void setType(Type type);
-		
-		QString text() const;
-		void setText(const QString &text);
-	private:
-		QScopedPointer<MoodPrivate> d_ptr;
+		Afraid = 0,
+				Amazed,
+				Amorous,
+				Angry,
+				Annoyed,
+				Anxious,
+				Aroused,
+				Ashamed,
+				Bored,
+				Brave,
+				Calm,
+				Cautious,
+				Cold,
+				Confident,
+				Confused,
+				Contemplative,
+				Contented,
+				Cranky,
+				Crazy,
+				Creative,
+				Curious,
+				Dejected,
+				Depressed,
+				Disappointed,
+				Disgusted,
+				Dismayed,
+				Distracted,
+				Embarrassed,
+				Envious,
+				Excited,
+				Flirtatious,
+				Frustrated,
+				Grateful,
+				Grieving,
+				Grumpy,
+				Guilty,
+				Happy,
+				Hopeful,
+				Hot,
+				Humbled,
+				Humiliated,
+				Hungry,
+				Hurt,
+				Impressed,
+				In_awe,
+				In_love,
+				Indignant,
+				Interested,
+				Intoxicated,
+				Invincible,
+				Jealous,
+				Lonely,
+				Lost,
+				Lucky,
+				Mean,
+				Moody,
+				Nervous,
+				Neutral,
+				Offended,
+				Outraged,
+				Playful,
+				Proud,
+				Relaxed,
+				Relieved,
+				Remorseful,
+				Restless,
+				Sad,
+				Sarcastic,
+				Satisfied,
+				Serious,
+				Shocked,
+				Shy,
+				Sick,
+				Sleepy,
+				Spontaneous,
+				Stressed,
+				Strong,
+				Surprised,
+				Thankful,
+				Thirsty,
+				Tired,
+				Undefined,
+				Weak,
+				Worried,
+				Invalid = -1,
+				Empty = -2
 	};
+
+	Mood(Type type = Invalid, const QString &text = QString());
+	Mood(const QString &type, const QString &text);
+	~Mood();
+
+	Type type() const;
+	QString typeName() const;
+	void setType(const QString &type);
+	void setType(Type type);
+
+	QString text() const;
+	void setText(const QString &text);
+private:
+	QScopedPointer<MoodPrivate> d_ptr;
+};
 } // namespace jreen
 
 #endif // MOOD_H

@@ -21,61 +21,61 @@
 
 namespace jreen
 {
-	class JID;
-	class Message;
-	
-	namespace PubSub
+class JID;
+class Message;
+
+namespace PubSub
+{
+class PublishOptionsPrivate;
+class PublishOptions
+{
+public:
+	enum AccessModel
 	{
-		class PublishOptionsPrivate;
-		class PublishOptions
-		{
-		public:
-			enum AccessModel
-			{
-				AuthorizeAccess,
-				OpenAccess,
-				PresenceAccess,
-				RosterAccess,
-				WhitelistAccess
-			};
-			
-			PublishOptions();
-			PublishOptions(const PublishOptions &o);
-			PublishOptions &operator =(const PublishOptions &o);
-			~PublishOptions();
-			
-			AccessModel accessModel() const;
-			void setAccessModel(AccessModel model);
-			bool isPersistent() const;
-			void setPersistent(bool persistent);
-		private:
-			QExplicitlySharedDataPointer<PublishOptionsPrivate> d_ptr;
-		};
-		
-		class ManagerPrivate;
-		class JREEN_EXPORT Manager : public QObject
-		{
-			Q_OBJECT
-			Q_DECLARE_PRIVATE(Manager)
-		public:
-			Manager(Client *client);
-			virtual ~Manager();
-			
-			void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to);
-			void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
-							  const PublishOptions &options);
-			
-			template <typename T>
-			void addEntityType(T *entity = 0) { addEntityType(entity->staticExtensionType()); }
-			void addEntityType(int type);
-		protected slots:
-			void handleMessage(const jreen::Message &message);
-		signals:
-			void eventReceived(const jreen::PubSub::Event::Ptr &event, const jreen::JID &from);
-		private:
-			QScopedPointer<ManagerPrivate> d_ptr;
-		};
-	}
+		AuthorizeAccess,
+		OpenAccess,
+		PresenceAccess,
+		RosterAccess,
+		WhitelistAccess
+	};
+
+	PublishOptions();
+	PublishOptions(const PublishOptions &o);
+	PublishOptions &operator =(const PublishOptions &o);
+	~PublishOptions();
+
+	AccessModel accessModel() const;
+	void setAccessModel(AccessModel model);
+	bool isPersistent() const;
+	void setPersistent(bool persistent);
+private:
+	QExplicitlySharedDataPointer<PublishOptionsPrivate> d_ptr;
+};
+
+class ManagerPrivate;
+class JREEN_EXPORT Manager : public QObject
+{
+	Q_OBJECT
+	Q_DECLARE_PRIVATE(Manager)
+public:
+	Manager(Client *client);
+	virtual ~Manager();
+
+	void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to);
+	void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
+					  const PublishOptions &options);
+
+	template <typename T>
+	void addEntityType(T *entity = 0) { addEntityType(entity->staticExtensionType()); }
+	void addEntityType(int type);
+protected slots:
+	void handleMessage(const jreen::Message &message);
+signals:
+	void eventReceived(const jreen::PubSub::Event::Ptr &event, const jreen::JID &from);
+private:
+	QScopedPointer<ManagerPrivate> d_ptr;
+};
+}
 }
 
 #endif // PUBSUBMANAGER_H

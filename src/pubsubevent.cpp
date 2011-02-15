@@ -19,60 +19,60 @@
 
 namespace jreen
 {
-	namespace PubSub
-	{
-		class EventPrivate
-		{
-		public:
-			QList<StanzaExtension::Ptr> items;
-			QString node;
-		};
-		
-		Event::Event(const QString &node) : d_ptr(new EventPrivate)
-		{
-			Q_D(Event);
-			d->node = node;
-		}
-		
-		Event::Event(const StanzaExtension::Ptr &item) : d_ptr(new EventPrivate)
-		{
-			Q_D(Event);
-			d->items << item;
-		}
-		
-		Event::Event(const QList<StanzaExtension::Ptr> &items) : d_ptr(new EventPrivate)
-		{
-			Q_D(Event);
-			d->items = items;
-		}
-		
-		Event::~Event()
-		{
-		}
-		
-		void Event::setNode(const QString &node)
-		{
-			d_func()->node = node;
-		}
+namespace PubSub
+{
+class EventPrivate
+{
+public:
+	QList<StanzaExtension::Ptr> items;
+	QString node;
+};
 
-		QString Event::node() const
-		{
-			return d_func()->node;
-		}
-		
-		void Event::addItem(StanzaExtension *item)
-		{
-			d_func()->items << StanzaExtension::Ptr(item);
-		}
+Event::Event(const QString &node) : d_ptr(new EventPrivate)
+{
+	Q_D(Event);
+	d->node = node;
+}
 
-		void Event::addItem(const StanzaExtension::Ptr &item)
-		{
-			d_func()->items << item;
-		}
-		
-		QList<StanzaExtension::Ptr> Event::items() const
-		{
-			return d_func()->items;
-		}
-	}
+Event::Event(const StanzaExtension::Ptr &item) : d_ptr(new EventPrivate)
+{
+	Q_D(Event);
+	d->items << item;
+}
+
+Event::Event(const QList<StanzaExtension::Ptr> &items) : d_ptr(new EventPrivate)
+{
+	Q_D(Event);
+	d->items = items;
+}
+
+Event::~Event()
+{
+}
+
+void Event::setNode(const QString &node)
+{
+	d_func()->node = node;
+}
+
+QString Event::node() const
+{
+	return d_func()->node;
+}
+
+void Event::addItem(StanzaExtension *item)
+{
+	d_func()->items << StanzaExtension::Ptr(item);
+}
+
+void Event::addItem(const StanzaExtension::Ptr &item)
+{
+	d_func()->items << item;
+}
+
+QList<StanzaExtension::Ptr> Event::items() const
+{
+	return d_func()->items;
+}
+}
 }

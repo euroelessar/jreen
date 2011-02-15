@@ -43,6 +43,11 @@ Activity::Activity(const QString &general, const QString &specific, const QStrin
 	d->text = text;
 }
 
+Activity::~Activity()
+{
+
+}
+
 Activity::General Activity::general() const
 {
 	return d_func()->general;

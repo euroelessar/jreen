@@ -185,10 +185,8 @@ void ActivityFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	writer->writeDefaultNamespace(NS_ACTIVITY);
 	if (activity->general() != Activity::EmptyGeneral) {
 		writer->writeStartElement(enumToStr(activity->general(),general_types));
-		if (activity->specific() > Activity::InvalidSpecific) {
-			writer->writeStartElement(enumToStr(activity->specific(),specific_types));
-			writer->writeEndElement();
-		}
+		if (activity->specific() > Activity::InvalidSpecific)
+			writer->writeEmptyElement(enumToStr(activity->specific(),specific_types));
 		writer->writeEndElement();
 		if(!activity->text().isEmpty())
 			writeTextElement(writer,QLatin1String("text"),activity->text());

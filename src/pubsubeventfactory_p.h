@@ -22,31 +22,31 @@
 
 namespace jreen
 {
-	namespace PubSub
-	{
-		class EventFactory : public StanzaExtensionFactory<Event>
-		{
-		public:
-			EventFactory(QList<AbstractStanzaExtensionFactory*> &factories);
-			~EventFactory();
-			QStringList features() const;
-			bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-			void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-			void handleEndElement(const QStringRef &name, const QStringRef &uri);
-			void handleCharacterData(const QStringRef &text);
-			void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-			StanzaExtension::Ptr createExtension();
-		private:
-			AbstractStanzaExtensionFactory *findFactory(const QStringRef &node);
-			AbstractStanzaExtensionFactory *findFactory(int type);
-			
-			enum State { AtNowhere, AtItems, AtItem, AtEntity } m_state;
-			QScopedPointer<Event> m_event;
-			AbstractStanzaExtensionFactory *m_factory;
-			QList<AbstractStanzaExtensionFactory*> &m_factories;
-			int m_depth;
-		};
-	}
+namespace PubSub
+{
+class EventFactory : public StanzaExtensionFactory<Event>
+{
+public:
+	EventFactory(QList<AbstractStanzaExtensionFactory*> &factories);
+	~EventFactory();
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
+	StanzaExtension::Ptr createExtension();
+private:
+	AbstractStanzaExtensionFactory *findFactory(const QStringRef &node);
+	AbstractStanzaExtensionFactory *findFactory(int type);
+
+	enum State { AtNowhere, AtItems, AtItem, AtEntity } m_state;
+	QScopedPointer<Event> m_event;
+	AbstractStanzaExtensionFactory *m_factory;
+	QList<AbstractStanzaExtensionFactory*> &m_factories;
+	int m_depth;
+};
 }
-		
+}
+
 #endif // PUBSUBEVENTFACTORY_H
