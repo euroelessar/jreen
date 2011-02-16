@@ -131,7 +131,6 @@ ActivityFactory::ActivityFactory()
 
 ActivityFactory::~ActivityFactory()
 {
-
 }
 
 QStringList ActivityFactory::features() const
@@ -151,13 +150,16 @@ void ActivityFactory::handleStartElement(const QStringRef &name, const QStringRe
 	Q_UNUSED(attributes);
 	m_depth++;
 	if(m_depth == 1) {
+		m_state = AtNowhere;
+		clear();
+	} else if (m_depth == 2) {
 		if(name == QLatin1String("text")) {
 			m_state = AtText;
 		} else {
 			m_general = generalByName(name);
 			m_state = AtType;
 		}
-	} if(m_depth == 2) {
+	} else if (m_depth == 3 && m_state == AtType) {
 		m_specific = specificByName(name);
 	}
 }
@@ -166,12 +168,14 @@ void ActivityFactory::handleEndElement(const QStringRef &name, const QStringRef 
 {
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
+	if (m_depth == 2)
+		m_state = AtNowhere;
 	m_depth--;
 }
 
 void ActivityFactory::handleCharacterData(const QStringRef &text)
 {
-	if(m_state == AtText)
+	if (m_depth == 2 && m_state == AtText)
 		m_text = text.toString();
 }
 

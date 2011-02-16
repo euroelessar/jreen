@@ -27,7 +27,8 @@ public:
 	QString text;
 };
 
-Activity::Activity::Activity(General general, Specific specific, const QString &text)
+Activity::Activity::Activity(General general, Specific specific, const QString &text) :
+	d_ptr(new ActivityPrivate)
 {
 	Q_D(Activity);
 	d->general = general;
@@ -35,7 +36,8 @@ Activity::Activity::Activity(General general, Specific specific, const QString &
 	d->text = text;
 }
 
-Activity::Activity(const QString &general, const QString &specific, const QString &text)
+Activity::Activity(const QString &general, const QString &specific, const QString &text) :
+	d_ptr(new ActivityPrivate)
 {
 	Q_D(Activity);
 	d->general = ActivityFactory::generalByName(QStringRef(&general));

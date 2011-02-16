@@ -40,7 +40,7 @@ public:
 	static Activity::Specific specificByName(const QStringRef &specific);
 private:
 	void clear();
-	enum State {AtText,AtType};
+	enum State { AtNowhere, AtText, AtType};
 	int m_depth;
 	State m_state;
 	Activity::General m_general;
