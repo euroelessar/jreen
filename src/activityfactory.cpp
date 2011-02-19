@@ -227,17 +227,17 @@ QLatin1String ActivityFactory::generalName(Activity::General general)
 	return QLatin1String(general <= Activity::InvalidGeneral ? 0 : general_types[general]);
 }
 
-inline Activity::General ActivityFactory::generalByName(const QStringRef &general)
+Activity::General ActivityFactory::generalByName(const QStringRef &general)
 {
 	return typeByName<Activity::General>(general, general_types, sizeof(general_types)/sizeof(char*));
 }
 
-QLatin1String ActivityFactory::ActivityFactory::specificName(Activity::Specific specific)
+QLatin1String ActivityFactory::specificName(Activity::Specific specific)
 {
 	return QLatin1String(specific <= Activity::InvalidGeneral ? 0 : specific_types[specific]);
 }
 
-inline Activity::Specific ActivityFactory::specificByName(const QStringRef &specific)
+Activity::Specific ActivityFactory::specificByName(const QStringRef &specific)
 {
 	return typeByName<Activity::Specific>(specific, specific_types, sizeof(specific_types)/sizeof(char*));
 }

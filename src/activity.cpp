@@ -27,7 +27,7 @@ public:
 	QString text;
 };
 
-Activity::Activity::Activity(General general, Specific specific, const QString &text) :
+Activity::Activity(General general, Specific specific, const QString &text) :
 	d_ptr(new ActivityPrivate)
 {
 	Q_D(Activity);
