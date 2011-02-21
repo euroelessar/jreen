@@ -15,6 +15,9 @@
 *****************************************************************************/
 
 #include "directconnection_p.h"
+#include <QSslSocket>
+#include <QSslConfiguration>
+#include <QSsl>
 
 namespace jreen
 {
@@ -53,9 +56,16 @@ bool DirectConnection::open()
 	}
 	if(d->do_lookup) {
 		d->doLookup();
-	}
-	else {
-		d->socket->connectToHost(d->host_name, d->port);
+	} else {
+		if (QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket)) {
+			socket->setPeerVerifyMode(QSslSocket::VerifyNone);
+			QSslConfiguration conf = socket->sslConfiguration();
+			conf.setProtocol(QSsl::TlsV1);
+			socket->setSslConfiguration(conf);
+			socket->connectToHostEncrypted(d->host_name, d->port);
+		} else {
+			d->socket->connectToHost(d->host_name, d->port);
+		}
 	}
 	return true;
 }

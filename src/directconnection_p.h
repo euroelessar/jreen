@@ -16,8 +16,9 @@
 #ifndef DIRECTCONNECTION_P_H
 #define DIRECTCONNECTION_P_H
 
-#include <QAbstractSocket>
+#include <QSslSocket>
 #include <QHostAddress>
+#include <QNetworkProxy>
 #include "jreen.h"
 #include "directconnection.h"
 #include "sjdns_p.h"
@@ -42,14 +43,22 @@ public:
 	DirectConnectionPrivate(const QString &hn, int p, DirectConnection *par)
 			: host_name(hn), port(p), dns_lookup_id(-1), parent(par)
 	{
-		qDebug() << p << host_name;
 		do_lookup = p < 0 || !QUrl(host_name).isValid();
 		socket_state = QAbstractSocket::UnconnectedState;
 		socket_error = QAbstractSocket::UnknownSocketError;
 	}
 	void connectSocket()
 	{
-		connect(socket, SIGNAL(connected()), parent, SIGNAL(connected()));
+//		QNetworkProxy proxy;
+//		proxy.setType(QNetworkProxy::HttpProxy);
+//		proxy.setHostName("proxy.istu.ru");
+//		proxy.setPort(8080);
+//		socket->setProxy(proxy);
+		if (qobject_cast<QSslSocket*>(socket)) {
+			connect(socket, SIGNAL(encrypted()), parent, SIGNAL(connected()));
+		} else {
+			connect(socket, SIGNAL(connected()), parent, SIGNAL(connected()));
+		}
 		connect(socket, SIGNAL(disconnected()), parent, SIGNAL(disconnected()));
 		connect(socket, SIGNAL(readyRead()), parent, SIGNAL(readyRead()));
 		connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));

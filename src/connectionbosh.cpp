@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QBuffer>
 #include <QPointer>
+#include <QNetworkProxy>
 
 namespace jreen
 {
@@ -131,6 +132,11 @@ ConnectionBOSH::ConnectionBOSH(const QString &host, int port) : d_ptr(new Connec
 	while (d->reader.readNext() > QXmlStreamReader::Invalid);
 	d->resultBuffer.seek(0);
 	d->resultXml.clear();
+//	QNetworkProxy proxy;
+//	proxy.setType(QNetworkProxy::HttpProxy);
+//	proxy.setHostName("proxy.istu.ru");
+//	proxy.setPort(8080);
+//	d->manager.setProxy(proxy);
 	connect(&d->manager, SIGNAL(finished(QNetworkReply*)), SLOT(onRequestFinished(QNetworkReply*)));
 }
 
