@@ -22,7 +22,11 @@
 namespace jreen
 {
 
-PrivateXmlQueryFactory::PrivateXmlQueryFactory(Client *client)
+PrivateXmlQueryFactory::PrivateXmlQueryFactory(Client *client) :
+	m_client(ClientPrivate::get(client)),
+	m_depth(0),
+	m_factory(0),
+	m_node(0)
 {
 	m_client = ClientPrivate::get(client);
 	m_factory = 0;
