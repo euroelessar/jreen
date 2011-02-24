@@ -206,8 +206,7 @@ void AbstractRoster::load()
 void AbstractRoster::synchronize()
 {
 	Q_D(AbstractRoster);
-	foreach(const QSharedPointer<AbstractRosterItem> &item, m_changed_items)
-	{
+	foreach(const QSharedPointer<AbstractRosterItem> &item, m_changed_items) {
 		IQ iq(IQ::Set, JID());
 		iq.setFrom(d->client->jid());
 		iq.addExtension(new AbstractRosterQuery(item));

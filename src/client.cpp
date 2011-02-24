@@ -74,7 +74,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			emit track->newIQ(*iq, track->context);
 			delete track;
 		} else {
-			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare());
+			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare()) || iq->from().bare() == jid.bare();
 			if (!ok) {
 				AbstractRosterItem::Ptr item = roster->getItem(iq->from());
 				ok = item
