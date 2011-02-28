@@ -40,6 +40,9 @@ class AbstractRosterPrivate
 public:
 	Client *client;
 	QString version;
+	QSharedPointer<AbstractRosterItem> self;
+	QHash<QString, QSharedPointer<AbstractRosterItem> > items;
+	QSet<QSharedPointer<AbstractRosterItem> > changed_items;
 };
 
 class AbstractRosterQuery : public StanzaExtension

@@ -201,6 +201,8 @@ public:
 	virtual ~AbstractRoster();	
 	
 	QString version() const;
+	AbstractRosterItem::Ptr item(const QString &jid) const;
+	AbstractRosterItem::Ptr selfItem() const;
 	void fillRoster(const QString &version, const QList<AbstractRosterItem::Ptr> &items);
 	virtual QSharedPointer<AbstractRosterItem> getItem(const JID &jid) const;
 public slots:
@@ -227,9 +229,6 @@ protected:
 	virtual void onItemRemoved(const QString &jid);
 	virtual void onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &items);
 	QScopedPointer<AbstractRosterPrivate> d_ptr;
-	QSharedPointer<AbstractRosterItem> m_self;
-	QHash<QString, QSharedPointer<AbstractRosterItem> > m_items;
-	QSet<QSharedPointer<AbstractRosterItem> > m_changed_items;
 	friend class AbstractRosterQuery;
 	friend class AbstractRosterQueryFactory;
 	friend class AbstractRosterItem;
