@@ -284,6 +284,21 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	}
 }
 
+void AbstractRoster::onItemAdded(QSharedPointer<AbstractRosterItem> item)
+{
+	Q_UNUSED(item);
+}
+
+void AbstractRoster::onItemUpdated(QSharedPointer<AbstractRosterItem> item)
+{
+	Q_UNUSED(item);
+}
+
+void AbstractRoster::onItemRemoved(const QString &jid)
+{
+	Q_UNUSED(jid);
+}
+
 void AbstractRoster::handleIQ(const IQ &iq, int context)
 {
 	//Q_D(AbstractRoster);
@@ -429,5 +444,33 @@ void AbstractRosterItem::setChanged()
 //	else
 //		emit rosterPresence(item, presence);
 //}
+
+class SimpleRosterPrivate : public AbstractRosterPrivate
+{
+};
+
+SimpleRoster::SimpleRoster(Client *client, SimpleRosterPrivate *data)
+    : AbstractRoster(client, data ? data : new SimpleRosterPrivate)
+{
+}
+
+SimpleRoster::~SimpleRoster()
+{
+}
+
+void SimpleRoster::onItemAdded(QSharedPointer<AbstractRosterItem> item)
+{
+	emit itemAdded(item);
+}
+
+void SimpleRoster::onItemUpdated(QSharedPointer<AbstractRosterItem> item)
+{
+	emit itemUpdated(item);
+}
+
+void SimpleRoster::onItemRemoved(const QString &jid)
+{
+	emit itemRemoved(jid);
+}
 
 }

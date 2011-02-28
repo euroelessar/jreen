@@ -43,6 +43,7 @@ class IQ;
 class Presence;
 class AbstractRoster;
 class AbstractRosterPrivate;
+class SimpleRosterPrivate;
 class AbstractRosterItem;
 class AbstractRosterItemPrivate;
 class AbstractRosterQuery;
@@ -221,9 +222,9 @@ protected slots:
 	virtual void handleIQ(const jreen::IQ &iq, int context);
 //	virtual void handlePresence(const jreen::Presence &presence);
 protected:
-	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }
-	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item) { Q_UNUSED(item); }
-	virtual void onItemRemoved(const QString &jid) { Q_UNUSED(jid); }
+	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item);
+	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item);
+	virtual void onItemRemoved(const QString &jid);
 	virtual void onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &items);
 	QScopedPointer<AbstractRosterPrivate> d_ptr;
 	QSharedPointer<AbstractRosterItem> m_self;
@@ -232,6 +233,26 @@ protected:
 	friend class AbstractRosterQuery;
 	friend class AbstractRosterQueryFactory;
 	friend class AbstractRosterItem;
+};
+
+class SimpleRoster : public AbstractRoster
+{
+	Q_OBJECT
+	Q_DECLARE_PRIVATE(SimpleRoster)
+public:
+	SimpleRoster(Client *client, SimpleRosterPrivate *data = 0);
+	virtual ~SimpleRoster();	
+	
+	using AbstractRoster::add;
+	using AbstractRoster::remove;
+signals:
+	void itemAdded(const AbstractRosterItem::Ptr &item);
+	void itemUpdated(const AbstractRosterItem::Ptr &item);
+	void itemRemoved(const QString &jid);
+protected:
+	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item);
+	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item);
+	virtual void onItemRemoved(const QString &jid);
 };
 
 }
