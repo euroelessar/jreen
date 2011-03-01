@@ -355,7 +355,7 @@ void MUCRoom::ban(const QString &nick, const QString &reason)
 		if (victim.node().isEmpty() || victim.domain().isEmpty())
 			return;
 	} else {
-		victim = query->item.jid;
+		victim = query->item.jid.bareJID();
 	}
 	setAffiliation(victim, AffiliationOutcast, reason);
 }
