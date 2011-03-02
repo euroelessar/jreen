@@ -26,7 +26,8 @@
 #include "client_p.h"
 #include <QStack>
 
-#define PARSER_DEBUG_SPEED 1
+// #define PARSER_DEBUG_SPEED 1
+#undef PARSER_DEBUG_SPEED
 #define PARSER_SPLIT_STANZAS_EVENTS 1
 
 /*

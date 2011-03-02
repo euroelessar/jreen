@@ -51,6 +51,7 @@ public:
 		RoleInvalid                     /**< Invalid role. */
 	};
 	class ParticipantPrivate;
+	class ItemPrivate;
 	class JREEN_EXPORT Participant
 	{
 		Q_DECLARE_PRIVATE(Participant)
@@ -71,6 +72,22 @@ public:
 		QScopedPointer<ParticipantPrivate> d_ptr;
 		friend class MUCRoomPrivate;
 	};
+	class JREEN_EXPORT Item
+	{
+	public:
+		Item(const JID &jid, const QString &reason);
+		Item(const Item &o);
+		Item &operator =(const Item &o);
+		~Item();
+		
+		JID jid() const;
+		void setJID(const JID &jid);
+		QString reason() const;
+		void setReason(const QString &reason);
+	private:
+		QSharedDataPointer<ItemPrivate> d_ptr;
+	};
+	typedef QList<Item> ItemList;
 
 	MUCRoom(Client *client, const JID &jid);
 	virtual ~MUCRoom();
@@ -111,6 +128,7 @@ public:
 	//	void grantVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleParticipant, reason); }
 	//	void revokeVoice(const QString &nick, const QString &reason = QString()) { setRole(nick, RoleVisitor, reason); }
 	void setRole(const QString &nick, Role role, const QString &reason = QString());
+	void setAffiliation(const JID &jid, Affiliation affiliation, const QString &reason = QString());
 	void setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason = QString());
 
 public slots:
@@ -118,6 +136,9 @@ public slots:
 	//	void getRoomInfo();
 	//	void getRoomItems();
 	void requestRoomConfig();
+	void requestList(jreen::MUCRoom::Affiliation affiliation);
+	// Remember that items is delta. That means that items should contain only changed items
+	void setList(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items);
 	void setRoomConfig(const jreen::DataForm::Ptr &form);
 signals:
 	void presenceReceived(const jreen::Presence &presence, const jreen::MUCRoom::Participant *part);
@@ -132,6 +153,7 @@ signals:
 	void configurationReceived(const jreen::DataForm::Ptr &form);
 	void roomInfoReceived(QSet<QString> features, const QString &name, QSharedPointer<jreen::DataForm> form);
 	void roomItemsReceived(const jreen::Disco::ItemList &items);
+	void listReceived(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items);
 protected slots:
 	void handleIQ(const jreen::IQ &iq, int context);
 	void onConnected();

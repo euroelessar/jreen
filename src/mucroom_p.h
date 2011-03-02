@@ -82,7 +82,7 @@ private:
 class MUCRoomItem
 {
 public:
-	MUCRoomItem() : affiliation(MUCRoom::AffiliationNone), role(MUCRoom::RoleNone) {}
+	MUCRoomItem() : affiliation(MUCRoom::AffiliationInvalid), role(MUCRoom::RoleInvalid) {}
 
 	MUCRoom::Affiliation affiliation;
 	MUCRoom::Role role;
@@ -128,6 +128,20 @@ class MUCRoomAdminQuery : public StanzaExtension
 	J_EXTENSION(jreen::MUCRoomAdminQuery, "")
 	public:
 	MUCRoomAdminQuery() {}
+	MUCRoomAdminQuery(MUCRoom::Affiliation a)
+	{
+		MUCRoomItem item;
+		item.affiliation = a;
+		items << item;
+	}
+	MUCRoomAdminQuery(const JID &jid, MUCRoom::Affiliation a, const QString &reason)
+	{
+		MUCRoomItem item;
+		item.affiliation = a;
+		item.jid = jid;
+		item.reason = reason;
+		items << item;
+	}
 	MUCRoomAdminQuery(const QString &nick, MUCRoom::Affiliation a, const QString &reason)
 	{
 		MUCRoomItem item;

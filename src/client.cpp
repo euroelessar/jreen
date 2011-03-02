@@ -485,7 +485,7 @@ void Client::handleIQ(const IQ &iq)
 
 void Client::handleMessage(const Message &message)
 {
-	qDebug() << "Handle message" << message.from();
+//	qDebug() << "Handle message" << message.from();
 	emit newMessage(message);
 }
 

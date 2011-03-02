@@ -234,7 +234,7 @@ protected:
 	friend class AbstractRosterItem;
 };
 
-class SimpleRoster : public AbstractRoster
+class JREEN_EXPORT SimpleRoster : public AbstractRoster
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(SimpleRoster)

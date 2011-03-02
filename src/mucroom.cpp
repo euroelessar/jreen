@@ -127,6 +127,55 @@ JID MUCRoom::Participant::realJID() const
 	return d_func()->query->item.jid;
 }
 
+class MUCRoom::ItemPrivate : public QSharedData
+{
+public:
+	ItemPrivate() {}
+	ItemPrivate(const ItemPrivate &o) : QSharedData(o), jid(o.jid), reason(o.reason) {}
+	JID jid;
+	QString reason;
+};
+
+MUCRoom::Item::Item(const JID &jid, const QString &reason) : d_ptr(new MUCRoom::ItemPrivate)
+{
+	d_ptr->jid = jid;
+	d_ptr->reason = reason;
+}
+
+MUCRoom::Item::Item(const MUCRoom::Item &o) : d_ptr(o.d_ptr)
+{
+}
+
+MUCRoom::Item &MUCRoom::Item::operator =(const MUCRoom::Item &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+MUCRoom::Item::~Item()
+{
+}
+
+JID MUCRoom::Item::jid() const
+{
+	return d_ptr->jid;
+}
+
+void MUCRoom::Item::setJID(const JID &jid)
+{
+	d_ptr->jid = jid;
+}
+
+QString MUCRoom::Item::reason() const
+{
+	return d_ptr->reason;
+}
+
+void MUCRoom::Item::setReason(const QString &reason)
+{
+	d_ptr->reason = reason;
+}
+
 void MUCRoomPrivate::handlePresence(const Presence &pres)
 {
 	Q_Q(MUCRoom);
@@ -264,7 +313,10 @@ void MUCRoom::join()
 enum MUCRoomRequestContext
 {
 	MUCRoomRequestConfig = 100,
-	MUCRoomSubmitConfig
+	MUCRoomSubmitConfig,
+	MUCRoomRequestList,
+	MUCRoomEndRequestList = MUCRoomRequestList + 20,
+	MUCRoomSetList
 };
 
 void MUCRoom::requestRoomConfig()
@@ -273,6 +325,32 @@ void MUCRoom::requestRoomConfig()
 	IQ iq(IQ::Get, d->jid.bareJID());
 	iq.addExtension(new MUCRoomOwnerQuery);
 	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomRequestConfig);
+}
+
+void MUCRoom::requestList(jreen::MUCRoom::Affiliation affiliation)
+{
+	Q_D(MUCRoom);
+	IQ iq(IQ::Get, d->jid.bareJID());
+	iq.addExtension(new MUCRoomAdminQuery(affiliation));
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomRequestList + affiliation);
+}
+
+void MUCRoom::setList(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items)
+{
+	Q_D(MUCRoom);
+	IQ iq(IQ::Set, d->jid.bareJID());
+	MUCRoomAdminQuery *query = new MUCRoomAdminQuery;
+	if (items.isEmpty())
+		return;
+	foreach (const Item &item, items) {
+		MUCRoomItem tmp;
+		tmp.affiliation = affiliation;
+		tmp.jid = item.jid();
+		tmp.reason = item.reason();
+		query->items << tmp;
+	}
+	iq.addExtension(query);
+	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomSetList);
 }
 
 void MUCRoom::setRoomConfig(const jreen::DataForm::Ptr &form)
@@ -368,6 +446,14 @@ void MUCRoom::setRole(const QString &nick, Role role, const QString &reason)
 	d->client->send(iq);
 }
 
+void MUCRoom::setAffiliation(const JID &jid, Affiliation affiliation, const QString &reason)
+{
+	Q_D(MUCRoom);
+	IQ iq(IQ::Set, d->jid.bareJID());
+	iq.addExtension(new MUCRoomAdminQuery(jid, affiliation, reason));
+	d->client->send(iq);
+}
+
 void MUCRoom::setAffiliation(const QString &nick, Affiliation affiliation, const QString &reason)
 {
 	Q_D(MUCRoom);
@@ -436,6 +522,18 @@ void MUCRoom::handleIQ(const jreen::IQ &iq, int context)
 		if (!query)
 			return;
 		emit configurationReceived(query->form);
+	} else if (context >= MUCRoomRequestList && context < MUCRoomEndRequestList) {
+		ItemList items;
+		MUCRoomAdminQuery::Ptr query = iq.findExtension<MUCRoomAdminQuery>();
+		if (!query)
+			return;
+		foreach (const MUCRoomItem &item, query->items) {
+			if (!item.jid.isValid())
+				continue;
+			items << Item(item.jid, item.reason);
+		}
+		Affiliation affiliation = static_cast<Affiliation>(context - MUCRoomRequestList);
+		emit listReceived(affiliation, items);
 	}
 }
 
