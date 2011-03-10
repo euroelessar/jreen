@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QUrl>
 
-namespace jreen
+namespace Jreen
 {
 
 class DirectConnectionPrivate : public QObject

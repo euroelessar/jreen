@@ -18,14 +18,14 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class CapabilitiesPrivate;
 class JREEN_EXPORT Capabilities : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Capabilities)
-	J_EXTENSION(jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
+	J_EXTENSION(Jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
 public:
 	Capabilities(const QString &ver, const QString &node = QString());
 	~Capabilities();
@@ -39,6 +39,6 @@ private:
 
 }
 
-J_DECLARE_EXTENSION(jreen::Capabilities)
+J_DECLARE_EXTENSION(Jreen::Capabilities)
 
 #endif // CAPABILITIES_H

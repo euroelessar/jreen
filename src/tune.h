@@ -19,12 +19,12 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 	class TunePrivate;
 	class JREEN_EXPORT Tune : public StanzaExtension
 	{
-		J_EXTENSION(jreen::Tune, "")
+		J_EXTENSION(Jreen::Tune, "")
 		Q_DECLARE_PRIVATE(Tune)
 	public:
 		Tune();

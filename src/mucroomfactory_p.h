@@ -20,7 +20,7 @@
 #include "mucroom_p.h"
 #include "dataformfactory_p.h"
 
-namespace jreen
+namespace Jreen
 {
 class MUCRoomQueryFactory : public StanzaExtensionFactory<MUCRoomQuery>
 {

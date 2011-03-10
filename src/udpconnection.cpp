@@ -16,7 +16,7 @@
 #include "udpconnection.h"
 #include <QUdpSocket>
 
-namespace jreen
+namespace Jreen
 {
 
 UdpConnection::UdpConnection(const QString &host_name, qint16 port)

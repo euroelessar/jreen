@@ -20,7 +20,7 @@
 #include "jstrings.h"
 #define NS_BOOKMARKS QLatin1String("storage:bookmarks")
 
-namespace jreen {
+namespace Jreen {
 
 static const char *autojoin_types[] = {
 	"false",
@@ -124,5 +124,5 @@ StanzaExtension::Ptr BookmarkFactory::createExtension()
 }
 
 
-} // namespace jreen
+} // namespace Jreen
 

@@ -40,7 +40,7 @@
 #include "stanza_p.h"
 #include "streamprocessor.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class ClientPrivate;
@@ -53,11 +53,11 @@ class IQTrack : public QObject
 public:
 	inline IQTrack(QObject *handler, const char *member, int ctx) : context(ctx)
 	{
-		connect(this, SIGNAL(newIQ(jreen::IQ,int)), handler, member);
+		connect(this, SIGNAL(newIQ(Jreen::IQ,int)), handler, member);
 	}
 	int context;
 signals:
-	void newIQ(const jreen::IQ &iq, int context);
+	void newIQ(const Jreen::IQ &iq, int context);
 };
 
 class PresenceTrack : public QObject
@@ -67,13 +67,13 @@ class PresenceTrack : public QObject
 public:
 	PresenceTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newPresence(jreen::Presence)), handler, member);
+		connect(this, SIGNAL(newPresence(Jreen::Presence)), handler, member);
 	}
 	virtual ~PresenceTrack()
 	{
 	}
 signals:
-	void newPresence(const jreen::Presence &presence);
+	void newPresence(const Jreen::Presence &presence);
 };
 
 class MessageTrack : public QObject
@@ -83,13 +83,13 @@ class MessageTrack : public QObject
 public:
 	MessageTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newMessage(jreen::Message)), handler, member);
+		connect(this, SIGNAL(newMessage(Jreen::Message)), handler, member);
 	}
 	virtual ~MessageTrack()
 	{
 	}
 signals:
-	void newMessage(const jreen::Message &presence);
+	void newMessage(const Jreen::Message &presence);
 };
 
 class ClientPrivate
@@ -170,14 +170,14 @@ public:
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
 	QSet<QString> serverFeatures;
-	jreen::Disco::IdentityList serverIdentities;
+	Jreen::Disco::IdentityList serverIdentities;
 	QMap<QString, MUCRoomPrivate*> rooms;
 	StanzaExtensionFactoryMap factories;
 	QMultiMap<QString, AbstractStanzaExtensionFactory*> factoriesByUri;
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
 	int depth;
-	void _q_iq_received(const jreen::IQ &iq, int context);
+	void _q_iq_received(const Jreen::IQ &iq, int context);
 	void _q_new_data()
 	{
 		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();

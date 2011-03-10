@@ -20,7 +20,7 @@
 #include <QUrl>
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 
 SASLFeature::SASLFeature() : StreamFeature(SASL)

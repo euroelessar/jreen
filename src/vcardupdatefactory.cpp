@@ -18,7 +18,7 @@
 #include <QStringList>
 #define NS_VCARDUPDATE QLatin1String("vcard-temp:x:update")
 
-namespace jreen
+namespace Jreen
 {
 
 VCardUpdateFactory::VCardUpdateFactory()
@@ -92,4 +92,4 @@ StanzaExtension::Ptr VCardUpdateFactory::createExtension()
 	return StanzaExtension::Ptr(update);
 }
 
-} // namespace jreen
+} // namespace Jreen

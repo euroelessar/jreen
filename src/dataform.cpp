@@ -18,7 +18,7 @@
 #include "jstrings.h"
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 
 DataFormField::DataFormField(Type type, const QString &var, const QString &label) : d_ptr(new DataFormFieldPrivate)

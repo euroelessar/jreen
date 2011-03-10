@@ -1,7 +1,7 @@
 #include "stanzaextension.h"
 #include <QHash>
 
-namespace jreen
+namespace Jreen
 {
 typedef QHash<QByteArray, int> ByteArrayHash;
 Q_GLOBAL_STATIC(ByteArrayHash, seClassHash)

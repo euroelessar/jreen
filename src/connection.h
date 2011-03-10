@@ -22,7 +22,7 @@
 class QNetworkProxy;
 class QAuthenticator;
 
-namespace jreen
+namespace Jreen
 {
 
 // Why there is no Qt 5 today?..

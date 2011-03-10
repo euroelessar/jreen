@@ -17,7 +17,7 @@
 #define VCARDUPDATEFACTORY_P_H
 #include "vcardupdate.h"
 
-namespace jreen {
+namespace Jreen {
 
 class VCardUpdateFactory : public StanzaExtensionFactory<VCardUpdate>
 {
@@ -38,6 +38,6 @@ private:
 	bool m_isPhoto;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // VCARDUPDATEFACTORY_P_H

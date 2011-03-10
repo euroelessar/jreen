@@ -21,7 +21,7 @@
 
 #define NS_PRIVACY QLatin1String("jabber:iq:privacy")
 
-namespace jreen
+namespace Jreen
 {
 
 PrivacyQueryFactory::PrivacyQueryFactory()
@@ -185,4 +185,4 @@ StanzaExtension::Ptr PrivacyQueryFactory::createExtension()
 	return StanzaExtension::Ptr(m_query.take());
 }
 
-} // namespace jreen
+} // namespace Jreen

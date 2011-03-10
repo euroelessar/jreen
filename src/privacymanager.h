@@ -19,7 +19,7 @@
 
 #include "jid.h"
 
-namespace jreen
+namespace Jreen
 {
 class Client;
 class IQ;
@@ -103,16 +103,16 @@ public:
 public slots:
 	void request();
 	void requestList(const QString &name);
-	void setList(const QString &name, const QList<jreen::PrivacyItem> &list);
+	void setList(const QString &name, const QList<Jreen::PrivacyItem> &list);
 	void removeList(const QString &name);
 private slots:
-	void handleIQ(const jreen::IQ &iq);
-	void handleIQ(const jreen::IQ &iq, int context);
+	void handleIQ(const Jreen::IQ &iq);
+	void handleIQ(const Jreen::IQ &iq, int context);
 signals:
 	void activeListChanged(const QString &name);
 	void defaultListChanged(const QString &name);
 	void listsReceived();
-	void listReceived(const QString &name, const QList<jreen::PrivacyItem> &list);
+	void listReceived(const QString &name, const QList<Jreen::PrivacyItem> &list);
 	void listChanged(const QString &name);
 private:
 	QScopedPointer<PrivacyManagerPrivate> d_ptr;

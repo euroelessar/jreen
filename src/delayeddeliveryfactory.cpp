@@ -7,7 +7,7 @@
 #define NS_DELAY "urn:xmpp:delay"
 #define NS_DELAY_DEPRECATED "jabber:x:delay"
 
-namespace jreen {
+namespace Jreen {
 
 class DelayedDeliveryFactoryPrivate
 {
@@ -77,4 +77,4 @@ StanzaExtension::Ptr DelayedDeliveryFactory::createExtension()
 	return StanzaExtension::Ptr(new DelayedDelivery(d->from,d->dateTime,d->reason));
 }
 
-} // namespace jreen
+} // namespace Jreen

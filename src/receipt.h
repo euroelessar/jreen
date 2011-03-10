@@ -19,12 +19,12 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class JREEN_EXPORT Receipt : public StanzaExtension
 {
-	J_EXTENSION(jreen::Receipt,
+	J_EXTENSION(Jreen::Receipt,
 		   "/message/request[@xmlns='urn:xmpp:receipts']"
 		   "|/message/received[@xmlns='urn:xmpp:receipts']")
 public:
@@ -45,6 +45,6 @@ private:
 
 }
 
-J_DECLARE_EXTENSION(jreen::Receipt)
+J_DECLARE_EXTENSION(Jreen::Receipt)
 
 #endif // RECEIPT_H

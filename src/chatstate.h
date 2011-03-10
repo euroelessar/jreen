@@ -16,13 +16,13 @@
 #define CHATSTATE_H
 #include "stanzaextension.h"
 
-namespace jreen {
+namespace Jreen {
 
 //XEP-0085 Chat State Notification
 //http://xmpp.org/extensions/xep-0085.html
 class ChatState : public StanzaExtension
 {
-	J_EXTENSION(jreen::ChatState,
+	J_EXTENSION(Jreen::ChatState,
 				"/message/active[@xmlns='http://jabber.org/protocol/chatstates']"
 )
 public:
@@ -41,7 +41,7 @@ private:
 	State m_state;
 };
 
-} // namespace jreen
-Q_ENUMS(jreen::ChatState::State)
+} // namespace Jreen
+Q_ENUMS(Jreen::ChatState::State)
 
 #endif // CHATSTATE_H

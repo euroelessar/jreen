@@ -21,7 +21,7 @@
 #include <QDebug>
 #define NS_DATAFORM QLatin1String("jabber:x:data")
 
-namespace jreen {
+namespace Jreen {
 
 using namespace Util;
 
@@ -358,4 +358,4 @@ StanzaExtension::Ptr DataFormFactory::createExtension()
 	return StanzaExtension::Ptr(form);
 }
 
-} // namespace jreen
+} // namespace Jreen

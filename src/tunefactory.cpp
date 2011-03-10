@@ -23,7 +23,7 @@
 
 #define NS_TUNE QLatin1String("http://jabber.org/protocol/tune")
 
-namespace jreen
+namespace Jreen
 {
 	static const char *tune_types[] = {
 		"artist",
@@ -127,4 +127,4 @@ namespace jreen
 		tune->setUri(QUrl::fromUserInput(m_data[TuneUri]));
 		return StanzaExtension::Ptr(tune);
 	}
-} // namespace jreen
+} // namespace Jreen

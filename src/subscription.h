@@ -18,7 +18,7 @@
 
 #include "stanza.h"
 
-namespace jreen
+namespace Jreen
 {
 
 //struct SubscriptionPrivate;
@@ -38,7 +38,7 @@ namespace jreen
 //	Subscription(const QDomElement &node);
 //	Subscription(Type type, const JID& to, const QString &status = QString(), const QString &xmllang = QString());
 //	inline Subscription &operator =(const Subscription &stanza)
-//		{ return *static_cast<Subscription *>(&jreen::Stanza::operator =(stanza)); }
+//		{ return *static_cast<Subscription *>(&Jreen::Stanza::operator =(stanza)); }
 //	Type subtype() const;
 //	const QString &status(const QString &lang = QString()) const;
 //	void writeXml(QXmlStreamWriter *writer) const;

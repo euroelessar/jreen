@@ -21,7 +21,7 @@
 
 #define NS_ACTIVITY QLatin1String("http://jabber.org/protocol/activity")
 
-namespace jreen {
+namespace Jreen {
 
 using namespace Util;
 
@@ -242,4 +242,4 @@ Activity::Specific ActivityFactory::specificByName(const QStringRef &specific)
 	return typeByName<Activity::Specific>(specific, specific_types, sizeof(specific_types)/sizeof(char*));
 }
 
-} // namespace jreen
+} // namespace Jreen

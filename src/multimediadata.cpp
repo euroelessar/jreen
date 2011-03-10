@@ -15,7 +15,7 @@
 
 #include "multimediadata.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class MultimediaDataPrivate : public QSharedData
@@ -76,4 +76,4 @@ void MultimediaData::setAttributes(const QVariantMap &attributes)
 	d_ptr->attributes = attributes;
 }
 
-} // namespace jreen
+} // namespace Jreen

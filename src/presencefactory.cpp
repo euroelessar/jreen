@@ -20,7 +20,7 @@
 #include "presencefactory_p.h"
 #include "presence_p.h"
 
-namespace jreen
+namespace Jreen
 {
 
 PresenceFactory::PresenceFactory(Client *client) : StanzaFactory(client)

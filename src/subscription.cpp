@@ -17,7 +17,7 @@
 #include "stanza_p.h"
 #include "langmap.h"
 
-namespace jreen
+namespace Jreen
 {
 
 //J_STRING(presence)

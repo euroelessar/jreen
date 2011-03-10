@@ -16,7 +16,7 @@
 
 #include "streamprocessor.h"
 
-namespace jreen
+namespace Jreen
 {
 StreamProcessor::StreamProcessor()
 {

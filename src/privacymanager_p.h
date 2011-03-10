@@ -23,7 +23,7 @@
 #include <QSet>
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 class PrivacyItemPrivate : public QSharedData
 {
@@ -58,7 +58,7 @@ public:
 
 class PrivacyQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::PrivacyQuery, "")
+	J_EXTENSION(Jreen::PrivacyQuery, "")
 public:
 	class List
 	{

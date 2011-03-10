@@ -18,7 +18,7 @@
 
 #include "jreen.h"
 
-namespace jreen {
+namespace Jreen {
 //enums
 template<typename T, int N>
 Q_INLINE_TEMPLATE int strToEnum(const T &str, const char *(&strings)[N])

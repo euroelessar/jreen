@@ -15,7 +15,7 @@
 
 #include "sjdns_p.h"
 
-namespace jreen
+namespace Jreen
 {
 
 SJDns &SJDns::instance()

@@ -16,7 +16,7 @@
 #define RECEIPTFACTORY_H
 #include "receipt.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ReceiptFactoryPrivate;
 class ReceiptFactory : public StanzaExtensionFactory<Receipt>
@@ -36,6 +36,6 @@ private:
 	QScopedPointer<ReceiptFactoryPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // RECEIPTFACTORY_H

@@ -19,7 +19,7 @@
 #include <QXmlStreamWriter>
 #define NS_PRIVATE_XML QLatin1String("jabber:iq:private")
 
-namespace jreen
+namespace Jreen
 {
 
 PrivateXmlQueryFactory::PrivateXmlQueryFactory(Client *client) :
@@ -127,7 +127,7 @@ void PrivateXml::request(const QString &name, const QString &xmlns, QObject *han
 	IQ iq(IQ::Get, JID(), id);
 	iq.addExtension(new PrivateXmlQuery(name, xmlns));
 	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), Request);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), Request);
 }
 
 void PrivateXml::store(const StanzaExtension::Ptr &node, QObject *handler, const char *member)
@@ -137,7 +137,7 @@ void PrivateXml::store(const StanzaExtension::Ptr &node, QObject *handler, const
 	IQ iq(IQ::Set, JID(), id);
 	iq.addExtension(new PrivateXmlQuery(node));
 	d->tracks.insert(id, new PrivateXmlTrack(handler, member));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), Store);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), Store);
 }
 
 void PrivateXml::handleIQ(const IQ &iq, int context)
@@ -160,4 +160,4 @@ void PrivateXml::handleIQ(const IQ &iq, int context)
 	delete track;
 }
 
-} //namespace jreen
+} //namespace Jreen

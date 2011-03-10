@@ -24,7 +24,7 @@
 #define NS_ERROR2 QLatin1String("jabber:client")
 
 
-namespace jreen {
+namespace Jreen {
 
 const char *error_types[] = {"auth","cancel",
 							 "continue","modify",
@@ -108,4 +108,4 @@ ErrorFactory::~ErrorFactory()
 }
 
 
-} // namespace jreen
+} // namespace Jreen

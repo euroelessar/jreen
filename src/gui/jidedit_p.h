@@ -20,7 +20,7 @@
 #include <QLineEdit>
 #include <QValidator>
 
-namespace jreen
+namespace Jreen
 {
 
 class LineEditHelper : public QLineEdit

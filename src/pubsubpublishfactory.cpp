@@ -22,7 +22,7 @@
 
 #define NS_PUBSUB QLatin1String("http://jabber.org/protocol/pubsub")
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {

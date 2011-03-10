@@ -19,7 +19,7 @@
 
 #include "messagesession.h"
 
-namespace jreen
+namespace Jreen
 {
 	class MUCRoom;
 	class MUCRoomPrivate;

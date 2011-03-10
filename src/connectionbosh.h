@@ -22,14 +22,14 @@
 
 class QNetworkReply;
 
-namespace jreen
+namespace Jreen
 {
 class ConnectionBOSHPrivate;
 class JREEN_EXPORT ConnectionBOSH : public Connection, public StreamProcessor
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(ConnectionBOSH)
-	Q_INTERFACES(jreen::StreamProcessor)
+	Q_INTERFACES(Jreen::StreamProcessor)
 public:
 	ConnectionBOSH(const QString &host, int port = 5280);
 	~ConnectionBOSH();

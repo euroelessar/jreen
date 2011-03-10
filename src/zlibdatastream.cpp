@@ -19,7 +19,7 @@
 #include <QBasicTimer>
 #include <QTimerEvent>
 
-namespace jreen
+namespace Jreen
 {
 class ZLibDataStreamPrivate
 {

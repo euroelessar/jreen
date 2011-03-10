@@ -17,7 +17,7 @@
 #define BOOKMARKFACTORY_H
 #include "bookmark.h"
 
-namespace jreen {
+namespace Jreen {
 
 class BookmarkFactory : public StanzaExtensionFactory<Bookmark>
 {
@@ -39,6 +39,6 @@ private:
 	Bookmark::Conference m_conference;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // BOOKMARKFACTORY_H

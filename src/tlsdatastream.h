@@ -20,7 +20,7 @@
 #include "datastream.h"
 #include <QtCrypto>
 
-namespace jreen
+namespace Jreen
 {
 	class TLSDataStream : public DataStream
 	{

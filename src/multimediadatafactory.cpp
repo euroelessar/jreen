@@ -19,7 +19,7 @@
 #include <QXmlStreamWriter>
 #include <QStringList>
 
-namespace jreen {
+namespace Jreen {
 
 MultimediaDataFactory::MultimediaDataFactory()
 {
@@ -100,4 +100,4 @@ MultimediaData MultimediaDataFactory::create()
 	return MultimediaData(m_type,m_data,m_attributes);
 }
 
-} // namespace jreen
+} // namespace Jreen

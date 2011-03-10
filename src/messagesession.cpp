@@ -18,7 +18,7 @@
 #include "util.h"
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 
 static int message_filter_count = 0;
@@ -147,7 +147,7 @@ MessageSessionManager::MessageSessionManager(Client *client) :
 	d->client = client;
 	d->sessionHandlers.resize(Message::Invalid);
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	connect(client, SIGNAL(newMessage(jreen::Message)), this, SLOT(handleMessage(jreen::Message)));
+	connect(client, SIGNAL(newMessage(Jreen::Message)), this, SLOT(handleMessage(Jreen::Message)));
 	ClientPrivate::get(d->client)->messageSessionManager = this;
 }
 

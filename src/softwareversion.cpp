@@ -1,6 +1,6 @@
 #include "softwareversion.h"
 
-namespace jreen
+namespace Jreen
 {
 
 SoftwareVersion::SoftwareVersion(const QString &name, const QString &version, const QString &os)
@@ -10,5 +10,5 @@ SoftwareVersion::SoftwareVersion(const QString &name, const QString &version, co
 	m_os = os;
 }
 
-} //namespace jreen
+} //namespace Jreen
 

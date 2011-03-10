@@ -21,13 +21,13 @@
 
 //implementation of XEP 0054
 //http://xmpp.org/extensions/xep-0054.html
-namespace jreen {
+namespace Jreen {
 
 class VCardPrivate;
 
 class JREEN_EXPORT VCard : public StanzaExtension
 {
-	J_EXTENSION(jreen::VCard,
+	J_EXTENSION(Jreen::VCard,
 		   "/iq/vcard[@xmlns='vcard-temp']")
 	Q_DECLARE_PRIVATE(VCard)
 public:
@@ -315,8 +315,8 @@ private:
 	QScopedPointer<VCardPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(jreen::VCard::Telephone::Types)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::VCard::Telephone::Types)
 
 #endif // VCARD_H

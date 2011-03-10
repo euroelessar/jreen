@@ -20,7 +20,7 @@
 #include <QXmlStreamReader>
 #include <QEvent>
 
-namespace jreen
+namespace Jreen
 {
 class Client;
 class ParserPrivate;

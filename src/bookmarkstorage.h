@@ -21,7 +21,7 @@
 #include "privatexml.h"
 #include "error.h"
 
-namespace jreen
+namespace Jreen
 {
 class PrivateXml;
 namespace PubSub { class Manager; }
@@ -41,9 +41,9 @@ public:
 	void requestBookmarks();
 	void storeBookmarks(const Bookmark::Ptr &bookmarks);
 signals:
-	void bookmarksReceived(const jreen::Bookmark::Ptr &bookrmark);
+	void bookmarksReceived(const Jreen::Bookmark::Ptr &bookrmark);
 private slots:
-	void onResultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
+	void onResultReady(const Jreen::StanzaExtension::Ptr &,Jreen::PrivateXml::Result,const Jreen::Error::Ptr &);
 private:
 	QScopedPointer<BookmarkStoragePrivate> d_ptr;
 };

@@ -23,11 +23,11 @@
 
 #define NS_SESSION QLatin1String("urn:ietf:params:xml:ns:xmpp-session")
 
-namespace jreen
+namespace Jreen
 {
 class SessionQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::SessionQuery, "")
+	J_EXTENSION(Jreen::SessionQuery, "")
 	public:
 		SessionQuery() {}
 };
@@ -134,7 +134,7 @@ bool SessionFeature::activate()
 {
 	IQ::Ptr iq(new IQ(IQ::Set, JID()));
 	iq->addExtension(new SessionQuery());
-	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(jreen::IQ,int)), 0);
+	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(Jreen::IQ,int)), 0);
 	return true;
 }
 

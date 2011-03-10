@@ -23,11 +23,11 @@
 
 #define NS_BIND QLatin1String("urn:ietf:params:xml:ns:xmpp-bind")
 
-namespace jreen
+namespace Jreen
 {
 class BindQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::BindQuery, "")
+	J_EXTENSION(Jreen::BindQuery, "")
 	public:
 		BindQuery(const JID &jid, const QString &resource, bool bind = true) 
 	  : m_jid(jid), m_resource(resource), m_bind(bind) {}
@@ -172,7 +172,7 @@ bool BindFeature::activate()
 {
 	IQ::Ptr iq(new IQ(IQ::Set, JID()));
 	iq->addExtension(new BindQuery(JID(), m_info->jid().resource()));
-	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(jreen::IQ,int)), 0);
+	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(Jreen::IQ,int)), 0);
 	return true;
 }
 

@@ -17,7 +17,7 @@
 #include "presence_p.h"
 #include "capabilities.h"
 
-namespace jreen
+namespace Jreen
 {
 
 Presence::Presence(Type type, const JID& to,

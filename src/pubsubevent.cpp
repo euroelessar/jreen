@@ -17,7 +17,7 @@
 #include "pubsubevent.h"
 #include "pubsubmanager_p.h"
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {

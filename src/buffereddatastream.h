@@ -19,7 +19,7 @@
 
 #include "datastream.h"
 
-namespace jreen
+namespace Jreen
 {
 	class XmlStreamHandler;
 	class BufferedDataStreamPrivate;

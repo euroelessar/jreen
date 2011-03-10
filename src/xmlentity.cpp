@@ -17,7 +17,7 @@
 #include "xmlentity.h"
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 	XmlEntity::XmlEntity()
 	{

@@ -18,7 +18,7 @@
 #include "zlibdatastream.h"
 #include <QXmlStreamWriter>
 
-namespace jreen
+namespace Jreen
 {
 ZLibCompressionFeature::ZLibCompressionFeature() : StreamFeature(CompressionLayer)
 {

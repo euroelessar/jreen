@@ -16,7 +16,7 @@
 #include "imagemessage.h"
 #include "jstrings.h"
 
-namespace jreen
+namespace Jreen
 {
 
 J_STRING(img)

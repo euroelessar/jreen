@@ -17,7 +17,7 @@
 #define MULTIMEDIADATAFACTORY_P_H
 #include "multimediadata.h"
 
-namespace jreen {
+namespace Jreen {
 
 class MultimediaDataFactory : public XmlStreamParser
 {
@@ -39,6 +39,6 @@ private:
 	MultimediaData::Type m_type;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // MULTIMEDIADATAFACTORY_H

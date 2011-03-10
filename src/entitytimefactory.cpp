@@ -21,7 +21,7 @@
 
 #define NS_TIME QLatin1String("urn:xmpp:time")
 
-namespace jreen
+namespace Jreen
 {
 	EntityTimeFactory::EntityTimeFactory()
 	{

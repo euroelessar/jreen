@@ -17,7 +17,7 @@
 #include "tlsdatastream.h"
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 TLSDataStream::TLSDataStream(QCA::TLS *tls) : m_tls(tls)
 {

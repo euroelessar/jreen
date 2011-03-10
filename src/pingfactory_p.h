@@ -17,7 +17,7 @@
 #define PINGFACTORY_P_H
 #include "ping.h"
 
-namespace jreen {
+namespace Jreen {
 
 //overkill
 class PingFactory : public StanzaExtensionFactory<Ping>
@@ -34,6 +34,6 @@ public:
 	StanzaExtension::Ptr createExtension();
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // PINGFACTORY_P_H

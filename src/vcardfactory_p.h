@@ -19,7 +19,7 @@
 #include "stanzaextension.h"
 #include <QPair>
 
-namespace jreen {
+namespace Jreen {
 class VCardFactoryPrivate;
 
 class AbstractStructureParser : public XmlStreamParser
@@ -112,6 +112,6 @@ private:
 	};
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // VCARDFACTORY_P_H

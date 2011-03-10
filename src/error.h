@@ -19,13 +19,13 @@
 #include "stanzaextension.h"
 #include "langmap.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class ErrorPrivate;
 class JREEN_EXPORT Error : public StanzaExtension
 {
-	J_EXTENSION(jreen::Error,"/*/error")
+	J_EXTENSION(Jreen::Error,"/*/error")
 	Q_DECLARE_PRIVATE(Error)
 public:
 	enum Type

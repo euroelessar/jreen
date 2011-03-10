@@ -15,7 +15,7 @@
 
 #include "imagemessagefactory_p.h"
 
-namespace jreen {
+namespace Jreen {
 
 ImageMessageFactory::ImageMessageFactory();
 ImageMessageFactory::~ImageMessageFactory();
@@ -27,4 +27,4 @@ void ImageMessageFactory::handleCharacterData(const QStringRef &text);
 void ImageMessageFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
 StanzaExtension::Ptr ImageMessageFactory::createExtension();
 
-} // namespace jreen
+} // namespace Jreen

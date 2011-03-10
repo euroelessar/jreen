@@ -21,7 +21,7 @@
 #include "jstrings.h"
 #define NS_VCARD QLatin1String("vcard-temp")
 
-namespace jreen {
+namespace Jreen {
 	
 AbstractStructureParser::AbstractStructureParser(const QLatin1String &name) : m_depth(0), m_name(name)
 {
@@ -491,4 +491,4 @@ VCardFactory::~VCardFactory()
 
 }
 
-} // namespace jreen
+} // namespace Jreen

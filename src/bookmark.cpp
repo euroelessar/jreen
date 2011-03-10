@@ -15,7 +15,7 @@
 
 #include "bookmark.h"
 
-namespace jreen {
+namespace Jreen {
 class Bookmark::ConferencePrivate : public QSharedData
 {
 public:
@@ -156,4 +156,4 @@ void Bookmark::setConferences(const QList<Conference> &conferences)
 {
 	d_func()->conferences = conferences;
 }
-} // namespace jreen
+} // namespace Jreen

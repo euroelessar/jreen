@@ -22,7 +22,7 @@
 class QMenu;
 class QResizeEvent;
 
-namespace jreen
+namespace Jreen
 {
 
 class JidEditPrivate;

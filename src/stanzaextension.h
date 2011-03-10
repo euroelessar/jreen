@@ -25,7 +25,7 @@ class QXmlStreamWriter;
 class QXmlStreamAttributes;
 template <typename T, typename X> class QMultiMap;
 
-namespace jreen
+namespace Jreen
 {
 
 class Client;

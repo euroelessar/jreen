@@ -17,7 +17,7 @@
 #include "jstrings.h"
 #include <QXmlStreamWriter>
 
-namespace jreen
+namespace Jreen
 {
 
 LangMapData LangMapData::shared_null = { Q_BASIC_ATOMIC_INITIALIZER(1), QString(), LangMapData::Base() };

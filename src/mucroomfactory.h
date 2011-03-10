@@ -17,7 +17,7 @@
 #ifndef MUCROOMFACTORY_H
 #define MUCROOMFACTORY_H
 
-namespace jreen
+namespace Jreen
 {
 }
 

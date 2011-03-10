@@ -23,7 +23,7 @@
 #include "presence.h"
 #include "message.h"
 
-namespace jreen
+namespace Jreen
 {
 // xep-0045
 class MUCRoomPrivate;
@@ -136,26 +136,26 @@ public slots:
 	//	void getRoomInfo();
 	//	void getRoomItems();
 	void requestRoomConfig();
-	void requestList(jreen::MUCRoom::Affiliation affiliation);
+	void requestList(Jreen::MUCRoom::Affiliation affiliation);
 	// Remember that items is delta. That means that items should contain only changed items
-	void setList(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items);
-	void setRoomConfig(const jreen::DataForm::Ptr &form);
+	void setList(Jreen::MUCRoom::Affiliation affiliation, const Jreen::MUCRoom::ItemList &items);
+	void setRoomConfig(const Jreen::DataForm::Ptr &form);
 signals:
-	void presenceReceived(const jreen::Presence &presence, const jreen::MUCRoom::Participant *part);
-	void messageReceived(const jreen::Message &message, bool priv);
-	void serviceMessageReceived(const jreen::Message &message);
+	void presenceReceived(const Jreen::Presence &presence, const Jreen::MUCRoom::Participant *part);
+	void messageReceived(const Jreen::Message &message, bool priv);
+	void serviceMessageReceived(const Jreen::Message &message);
 	void subjectChanged(const QString &subject, const QString &actor);
 	void created();
 	void joined();
 	void leaved();
-	void inviteDeclined(const jreen::JID &jid, const QString &reason);
-	void error(const jreen::Error::Ptr &error);
-	void configurationReceived(const jreen::DataForm::Ptr &form);
-	void roomInfoReceived(QSet<QString> features, const QString &name, QSharedPointer<jreen::DataForm> form);
-	void roomItemsReceived(const jreen::Disco::ItemList &items);
-	void listReceived(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items);
+	void inviteDeclined(const Jreen::JID &jid, const QString &reason);
+	void error(const Jreen::Error::Ptr &error);
+	void configurationReceived(const Jreen::DataForm::Ptr &form);
+	void roomInfoReceived(QSet<QString> features, const QString &name, QSharedPointer<Jreen::DataForm> form);
+	void roomItemsReceived(const Jreen::Disco::ItemList &items);
+	void listReceived(Jreen::MUCRoom::Affiliation affiliation, const Jreen::MUCRoom::ItemList &items);
 protected slots:
-	void handleIQ(const jreen::IQ &iq, int context);
+	void handleIQ(const Jreen::IQ &iq, int context);
 	void onConnected();
 	void onDisconnected();
 protected:

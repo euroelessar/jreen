@@ -35,7 +35,7 @@ inline uint qHash(const QSharedPointer<T> &key) { return qHash(key.data()); }
 #include <QHash>
 #include <QSet>
 
-namespace jreen
+namespace Jreen
 {
 
 class Client;
@@ -220,9 +220,9 @@ signals:
 	//	void rosterPresence(QSharedPointer<AbstractRosterItem> item, const Presence &presence);
 	//	void nonRosterPresence(const Presence &presence);
 protected slots:
-	virtual void handleIQ(const jreen::IQ &iq);
-	virtual void handleIQ(const jreen::IQ &iq, int context);
-//	virtual void handlePresence(const jreen::Presence &presence);
+	virtual void handleIQ(const Jreen::IQ &iq);
+	virtual void handleIQ(const Jreen::IQ &iq, int context);
+//	virtual void handlePresence(const Jreen::Presence &presence);
 protected:
 	virtual void onItemAdded(QSharedPointer<AbstractRosterItem> item);
 	virtual void onItemUpdated(QSharedPointer<AbstractRosterItem> item);

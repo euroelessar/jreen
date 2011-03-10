@@ -19,7 +19,7 @@
 
 #include "stanza.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class MessagePrivate;
@@ -45,7 +45,7 @@ public:
 			const QString &thread = QString(), const QString &xmllang = QString());
 	Message(MessagePrivate &p);
 	inline Message &operator =(const Message &stanza)
-	{ return *static_cast<Message *>(&jreen::Stanza::operator =(stanza)); }
+	{ return *static_cast<Message *>(&Jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	const QString &body(const QString &lang = QString()) const;
 	void setBody(const QString &text, const QString &lang = QString());

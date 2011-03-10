@@ -16,7 +16,7 @@
 #include "tcpconnection.h"
 #include <QTcpSocket>
 
-namespace jreen
+namespace Jreen
 {
 
 TcpConnection::TcpConnection(const QString &host_name, qint16 port)

@@ -17,7 +17,7 @@
 #include "jid.h"
 #include <QCryptographicHash>
 
-namespace jreen
+namespace Jreen
 {
 
 //enum TokenType

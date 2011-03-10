@@ -24,7 +24,7 @@
 #define NS_MUCADMIN QLatin1String("http://jabber.org/protocol/muc#admin")
 #define NS_MUCOWNER QLatin1String("http://jabber.org/protocol/muc#owner")
 
-namespace jreen
+namespace Jreen
 {
 MUCRoomQueryFactory::MUCRoomQueryFactory()
 {

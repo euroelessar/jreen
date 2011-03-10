@@ -17,7 +17,7 @@
 #define DATAFORMFACTORY_P_H
 #include "dataform_p.h"
 
-namespace jreen {
+namespace Jreen {
 
 class DataFormFactoryPrivate;
 class DataFormFactory : public StanzaExtensionFactory<DataForm>
@@ -37,6 +37,6 @@ private:
 	QScopedPointer<DataFormFactoryPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // DATAFORMFACTORY_P_H

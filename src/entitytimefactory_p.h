@@ -19,7 +19,7 @@
 
 #include "entitytime.h"
 
-namespace jreen
+namespace Jreen
 {
 	class EntityTimeFactory : public StanzaExtensionFactory<EntityTime>
 	{

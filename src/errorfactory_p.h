@@ -18,7 +18,7 @@
 #include "error.h"
 #include "stanzaextension.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ErrorFactory : public StanzaExtensionFactory<Error>
 {
@@ -40,6 +40,6 @@ private:
 	Error::Condition m_condition;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // ERRORFACTORY_P_H

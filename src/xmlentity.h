@@ -20,7 +20,7 @@
 #include "jreen.h"
 #include <QSharedPointer>
 
-namespace jreen
+namespace Jreen
 {
 	class JREEN_EXPORT XmlEntity
 	{

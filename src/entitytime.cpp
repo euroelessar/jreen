@@ -16,7 +16,7 @@
 
 #include "entitytime.h"
 
-namespace jreen
+namespace Jreen
 {
 	class EntityTimePrivate
 	{

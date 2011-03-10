@@ -15,6 +15,6 @@
 
 #include "ping.h"
 
-namespace jreen {
+namespace Jreen {
 
-} // namespace jreen
+} // namespace Jreen

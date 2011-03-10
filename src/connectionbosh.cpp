@@ -26,7 +26,7 @@
 #include <QPointer>
 #include <QNetworkProxy>
 
-namespace jreen
+namespace Jreen
 {
 class ConnectionBOSHPrivate
 {

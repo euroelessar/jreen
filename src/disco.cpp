@@ -24,7 +24,7 @@
 #define NS_DISCO_INFO QLatin1String("http://jabber.org/protocol/disco#info")
 #define NS_DISCO_ITEMS QLatin1String("http://jabber.org/protocol/disco#items")
 
-namespace jreen
+namespace Jreen
 {
 
 DiscoInfoFactory::DiscoInfoFactory()
@@ -197,7 +197,7 @@ Disco::Disco(Client *client) : d_ptr(new DiscoPrivate)
 {
 	Q_D(Disco);
 	d->client = client;
-	connect(d->client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
+	connect(d->client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
 }
 
 Disco::~Disco()
@@ -238,7 +238,7 @@ QSet<QString> &Disco::features()
 	return d->features;
 }
 
-void Disco::handleIQ(const jreen::IQ &iq)
+void Disco::handleIQ(const Jreen::IQ &iq)
 {
 	Q_D(Disco);
 	const Info *info = iq.findExtension<Info>().data();

@@ -19,7 +19,7 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {
@@ -27,7 +27,7 @@ class EventPrivate;
 class JREEN_EXPORT Event : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Event)
-	J_EXTENSION(jreen::PubSub::Event, "")
+	J_EXTENSION(Jreen::PubSub::Event, "")
 	public:
 		Event(const QString &node = QString());
 	Event(const StanzaExtension::Ptr &item);

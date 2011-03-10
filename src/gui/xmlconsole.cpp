@@ -16,7 +16,7 @@
 #include "xmlconsole.h"
 #include "ui_xmlconsole.h"
 
-namespace jreen
+namespace Jreen
 {
 
 XmlConsole::XmlConsole(QWidget *parent) :

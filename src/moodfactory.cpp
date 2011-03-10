@@ -107,7 +107,7 @@ static const char *mood_types[] = {
 	"worried"
 };
 
-namespace jreen {
+namespace Jreen {
 
 MoodFactory::MoodFactory()
 {
@@ -202,4 +202,4 @@ Mood::Type MoodFactory::typeByName(const QStringRef &name)
 	return static_cast<Mood::Type>((res == mood_types + n) ? -1 : (res - mood_types));
 }
 
-} // namespace jreen
+} // namespace Jreen

@@ -20,7 +20,7 @@
 #include <QSharedData>
 #include <QMetaType>
 
-namespace jreen
+namespace Jreen
 {
 
 class JIDData;
@@ -76,8 +76,8 @@ private:
 
 }
 
-inline uint qHash(const jreen::JID &jid) { return qHash(jid.full()); }
+inline uint qHash(const Jreen::JID &jid) { return qHash(jid.full()); }
 
-Q_DECLARE_METATYPE(jreen::JID)
+Q_DECLARE_METATYPE(Jreen::JID)
 
 #endif // JID_H

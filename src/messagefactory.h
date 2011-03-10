@@ -16,7 +16,7 @@
 #ifndef MESSAGEFACTORY_H
 #define MESSAGEFACTORY_H
 
-namespace jreen {
+namespace Jreen {
 
 class MessageFactory
 {
@@ -24,6 +24,6 @@ public:
     MessageFactory();
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // MESSAGEFACTORY_H

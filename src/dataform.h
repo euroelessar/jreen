@@ -23,7 +23,7 @@
 #include <QHash>
 #include <QVariant>
 
-namespace jreen
+namespace Jreen
 {
 
 // XEP-0004
@@ -307,7 +307,7 @@ typedef QList<QSharedPointer<DataFormReported> > DataFormReportedList;
 class DataFormPrivate;
 class JREEN_EXPORT DataForm : public StanzaExtension, public DataFormFieldContainer
 {
-	J_EXTENSION(jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
+	J_EXTENSION(Jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
 	Q_DECLARE_PRIVATE(DataForm)
 public:
 	enum Type

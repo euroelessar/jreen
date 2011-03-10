@@ -18,7 +18,7 @@
 #include "stanzaextension.h"
 #include "jid.h"
 
-namespace jreen {
+namespace Jreen {
 
 //XEP-0048
 //http://xmpp.org/extensions/xep-0048.html
@@ -32,7 +32,7 @@ class BookmarkPrivate;
 class JREEN_EXPORT Bookmark : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Bookmark)
-	J_EXTENSION(jreen::Bookmark,"") //dummy
+	J_EXTENSION(Jreen::Bookmark,"") //dummy
 public:
 	class ConferencePrivate;
 	class JREEN_EXPORT Conference
@@ -96,6 +96,6 @@ private:
 	QScopedPointer<BookmarkPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // BOOKMARK_H

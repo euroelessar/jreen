@@ -18,7 +18,7 @@
 #include "mucroom_p.h"
 #include "client.h"
 
-namespace jreen
+namespace Jreen
 {
 	MUCMessageSession::MUCMessageSession(MUCRoom *room) :
 			MessageSession(MUCRoomPrivate::get(room)->client->messageSessionManager(), room->id())

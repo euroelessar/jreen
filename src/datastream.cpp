@@ -15,7 +15,7 @@
 
 #include "datastream.h"
 
-namespace jreen
+namespace Jreen
 {
 	
 	DataStream::DataStream() : m_device(0)

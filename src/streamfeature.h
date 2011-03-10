@@ -22,7 +22,7 @@
 class QXmlStreamWriter;
 class QXmlStreamAttributes;
 
-namespace jreen
+namespace Jreen
 {
 
 class DataStream;
@@ -85,7 +85,7 @@ private:
 
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(jreen::StreamInfo::CompletedFlags)
-Q_DECLARE_INTERFACE(jreen::StreamFeature,"org.qutim.JReen.StreamFeature");
+Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::StreamInfo::CompletedFlags)
+Q_DECLARE_INTERFACE(Jreen::StreamFeature,"org.qutim.JReen.StreamFeature");
 
 #endif // STREAMFEATURE_H

@@ -17,13 +17,13 @@
 #define VCARDUPDATE_H
 #include "stanzaextension.h"
 
-namespace jreen {
+namespace Jreen {
 
 //XEP-0153: vCard-Based Avatars
 //http://xmpp.org/extensions/xep-0153.html
 class JREEN_EXPORT VCardUpdate : public StanzaExtension
 {
-	J_EXTENSION(jreen::VCardUpdate,
+	J_EXTENSION(Jreen::VCardUpdate,
 				"/presence/vcard[@xmlns='vcard-temp:x:update']")
 public:
 	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash), m_hasPhotoInfo(true) {}
@@ -36,6 +36,6 @@ private:
 	bool m_hasPhotoInfo;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // VCARDUPDATE_H

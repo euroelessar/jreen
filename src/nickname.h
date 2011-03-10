@@ -18,12 +18,12 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class Nickname : public StanzaExtension
 {
-	J_EXTENSION(jreen::Nickname,
+	J_EXTENSION(Jreen::Nickname,
 		   "/presence/nick[@xmlns='http://jabber.org/protocol/nick']"
 		   "|/message/nick[@xmlns='http://jabber.org/protocol/nick']")
 public:

@@ -22,7 +22,7 @@
 
 class QXmlStreamWriter;
 
-namespace jreen
+namespace Jreen
 {
 
 class StanzaPrivate;

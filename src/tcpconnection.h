@@ -18,7 +18,7 @@
 
 #include "directconnection.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class JREEN_EXPORT TcpConnection : public DirectConnection

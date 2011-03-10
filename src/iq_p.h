@@ -20,7 +20,7 @@
 #include "iq.h"
 #include "stanza_p.h"
 
-namespace jreen
+namespace Jreen
 {
 class IQPrivate : public StanzaPrivate
 {

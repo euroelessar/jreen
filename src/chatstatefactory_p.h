@@ -18,7 +18,7 @@
 #include "stanzaextension.h"
 #include "chatstate.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ChatStateFactory : public StanzaExtensionFactory<ChatState>
 {
@@ -36,6 +36,6 @@ private:
 	ChatState::State m_state;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // CHATSTATEFACTORY_P_H

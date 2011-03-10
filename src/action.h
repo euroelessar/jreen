@@ -21,7 +21,7 @@
 #include <QVariant>
 #include "jreen.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class JREEN_EXPORT Action : public QObject

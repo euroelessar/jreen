@@ -20,7 +20,7 @@
 #include "pubsubmanager_p.h"
 #include "dataformfactory_p.h"
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {

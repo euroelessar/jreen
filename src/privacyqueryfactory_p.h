@@ -19,7 +19,7 @@
 
 #include "privacymanager_p.h"
 
-namespace jreen
+namespace Jreen
 {
 class PrivacyQueryFactory : public StanzaExtensionFactory<PrivacyQuery>
 {
@@ -41,6 +41,6 @@ private:
 	QList<PrivacyItem> m_items;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // PRIVACYQUERYFACTORY_P_H

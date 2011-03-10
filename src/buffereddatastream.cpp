@@ -20,7 +20,7 @@
 #include <QTimerEvent>
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 class BufferedDataStreamPrivate
 {

@@ -18,7 +18,7 @@
 #include <QVariantMap>
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 // XEP-0221
@@ -45,5 +45,5 @@ private:
 	friend class MultimediaDataPrivate;
 };
 
-} // namespace jreen
+} // namespace Jreen
 #endif // MULTIMEDIADATA_H

@@ -20,7 +20,7 @@
 #include "pubsubmanager.h"
 #include "dataform.h"
 
-namespace jreen
+namespace Jreen
 {
 	namespace PubSub
 	{
@@ -33,7 +33,7 @@ namespace jreen
 		
 		class Publish : public StanzaExtension
 		{
-			J_EXTENSION(jreen::PubSub::Publish, "")
+			J_EXTENSION(Jreen::PubSub::Publish, "")
 		public:
 			Publish() {}
 			Publish(const QList<StanzaExtension::Ptr> &i, const DataForm::Ptr &f) : items(i), form(f) {}

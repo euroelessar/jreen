@@ -19,7 +19,7 @@
 
 #include "stanza.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class PresencePrivate;
@@ -58,7 +58,7 @@ public:
 			 int priority = 0);
 	Presence(PresencePrivate &p);
 	inline Presence &operator =(const Presence &stanza)
-	{ return *static_cast<Presence *>(&jreen::Stanza::operator =(stanza)); }
+	{ return *static_cast<Presence *>(&Jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	void setSubtype(Type subtype);
 	const Capabilities *capabilities() const;

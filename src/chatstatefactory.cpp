@@ -21,7 +21,7 @@
 
 #define NS_CHATSTATE QLatin1String("http://jabber.org/protocol/chatstates")
 
-namespace jreen {
+namespace Jreen {
 
 const char *state_strings[] = {"active",
 							   "inactive",
@@ -82,4 +82,4 @@ StanzaExtension::Ptr ChatStateFactory::createExtension()
 	return StanzaExtension::Ptr(new ChatState(m_state));
 }
 
-} // namespace jreen
+} // namespace Jreen

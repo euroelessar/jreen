@@ -19,7 +19,7 @@
 
 #include "pubsubevent.h"
 
-namespace jreen
+namespace Jreen
 {
 class JID;
 class Message;
@@ -69,9 +69,9 @@ public:
 	void addEntityType(T *entity = 0) { addEntityType(entity->staticExtensionType()); }
 	void addEntityType(int type);
 protected slots:
-	void handleMessage(const jreen::Message &message);
+	void handleMessage(const Jreen::Message &message);
 signals:
-	void eventReceived(const jreen::PubSub::Event::Ptr &event, const jreen::JID &from);
+	void eventReceived(const Jreen::PubSub::Event::Ptr &event, const Jreen::JID &from);
 private:
 	QScopedPointer<ManagerPrivate> d_ptr;
 };

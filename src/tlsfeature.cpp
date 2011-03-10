@@ -23,7 +23,7 @@
 
 #define NS_TLS QLatin1String("urn:ietf:params:xml:ns:xmpp-tls")
 
-namespace jreen
+namespace Jreen
 {
 
 TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
@@ -53,7 +53,7 @@ void TLSFeature::setStreamInfo(StreamInfo *info)
 	if(m_client)
 		m_client->disconnect(this);
 	StreamFeature::setStreamInfo(info);
-	connect(m_client,SIGNAL(disconnected(jreen::Client::DisconnectReason)),SLOT(onDisconnected()));
+	connect(m_client,SIGNAL(disconnected(Jreen::Client::DisconnectReason)),SLOT(onDisconnected()));
 }
 
 void TLSFeature::reset()
@@ -178,6 +178,6 @@ void TLSFeature::onDisconnected()
 	qDebug() << Q_FUNC_INFO;
 }
 
-} //namespace jreen
+} //namespace Jreen
 
 

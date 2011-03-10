@@ -19,7 +19,7 @@
 #include <QIODevice>
 #include "jreen.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class JREEN_EXPORT DataStream : public QIODevice

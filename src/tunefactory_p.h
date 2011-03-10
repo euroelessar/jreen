@@ -20,7 +20,7 @@
 #include "tune.h"
 #include <QVector>
 
-namespace jreen
+namespace Jreen
 {
 	class TuneFactory : public StanzaExtensionFactory<Tune>
 	{

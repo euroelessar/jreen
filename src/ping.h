@@ -18,17 +18,17 @@
 #include "stanzaextension.h"
 #include "jid.h"
 
-namespace jreen {
+namespace Jreen {
 
 //XEP-0199
 //http://xmpp.org/extensions/xep-0199.html
 class JREEN_EXPORT Ping : public StanzaExtension
 {
-	J_EXTENSION(jreen::Ping,"/iq/ping[@xmlns='urn:xmpp:ping']")
+	J_EXTENSION(Jreen::Ping,"/iq/ping[@xmlns='urn:xmpp:ping']")
 public:
 	Ping() {}
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // PING_H

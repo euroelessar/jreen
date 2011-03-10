@@ -25,7 +25,7 @@
 class QXmlStreamWriter;
 #include "jreen.h"
 
-namespace jreen
+namespace Jreen
 {
 
 struct JREEN_EXPORT LangMapData

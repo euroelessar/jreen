@@ -17,7 +17,7 @@
 #include "activity.h"
 #include "activityfactory_p.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ActivityPrivate
 {
@@ -90,4 +90,4 @@ void Activity::setText(const QString &text)
 	d_func()->text = text;
 }
 
-} // namespace jreen
+} // namespace Jreen

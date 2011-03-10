@@ -17,13 +17,13 @@
 #define MOOD_H
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 class MoodPrivate;
 class JREEN_EXPORT Mood : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Mood);
-	J_EXTENSION(jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
+	J_EXTENSION(Jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
 	public:
 		enum Type {
 		Afraid = 0,
@@ -128,6 +128,6 @@ class JREEN_EXPORT Mood : public StanzaExtension
 private:
 	QScopedPointer<MoodPrivate> d_ptr;
 };
-} // namespace jreen
+} // namespace Jreen
 
 #endif // MOOD_H

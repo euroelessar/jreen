@@ -23,7 +23,7 @@
 #include <QDebug>
 #include "util.h"
 
-namespace jreen
+namespace Jreen
 {
 
 static const char *subscription_types[] = {"from",
@@ -175,8 +175,8 @@ AbstractRoster::AbstractRoster(Client *client, AbstractRosterPrivate *data) : QO
 	p->jid = client->jid().bare();
 	p->subscription = AbstractRosterItem::Both;
 	ClientPrivate::get(client)->roster = this;
-	connect(client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
-	//	 connect(client, SIGNAL(newPresence(jreen::Presence)), this, SLOT(handlePresence(jreen::Presence)));
+	connect(client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
+	//	 connect(client, SIGNAL(newPresence(Jreen::Presence)), this, SLOT(handlePresence(Jreen::Presence)));
 	init();
 }
 
@@ -211,7 +211,7 @@ void AbstractRoster::load()
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	qDebug() << Q_FUNC_INFO << d->version;
 	iq.addExtension(new AbstractRosterQuery(d->version));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), LoadRoster);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), LoadRoster);
 }
 
 void AbstractRoster::synchronize()
@@ -221,7 +221,7 @@ void AbstractRoster::synchronize()
 		IQ iq(IQ::Set, JID());
 		iq.setFrom(d->client->jid());
 		iq.addExtension(new AbstractRosterQuery(item));
-		d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SyncContext);
+		d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), SyncContext);
 	}
 	d->changed_items.clear();
 }
@@ -244,7 +244,7 @@ void AbstractRoster::add(const JID &jid, const QString &name, const QStringList 
 	p->groups = groups;
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), AddRosterItem);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), AddRosterItem);
 }
 
 void AbstractRoster::remove(const JID &jid)
@@ -257,7 +257,7 @@ void AbstractRoster::remove(const JID &jid)
 	item->d_ptr->subscription = AbstractRosterItem::Remove;
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RemoveRosterItem);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), RemoveRosterItem);
 }
 
 QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()

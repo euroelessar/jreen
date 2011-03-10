@@ -15,7 +15,7 @@
 
 #include "action.h"
 
-namespace jreen
+namespace Jreen
 {
 
 Action::Action(QObject *parent) : QObject(parent)

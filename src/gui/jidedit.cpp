@@ -16,7 +16,7 @@
 #include "jidedit_p.h"
 #include <QResizeEvent>
 
-namespace jreen
+namespace Jreen
 {
 
 void JidValidator::fixup(QString &input) const

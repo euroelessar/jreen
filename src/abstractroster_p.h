@@ -19,7 +19,7 @@
 
 #include "abstractroster.h"
 
-namespace jreen
+namespace Jreen
 {
 class AbstractRosterItemPrivate
 {
@@ -47,7 +47,7 @@ public:
 
 class AbstractRosterQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::AbstractRosterQuery,"/iq/query[@xmlns='jabber:iq:roster']");
+	J_EXTENSION(Jreen::AbstractRosterQuery,"/iq/query[@xmlns='jabber:iq:roster']");
 public:
 	AbstractRosterQuery(const QString &ver = QString()) : m_ver(ver) {}
 	AbstractRosterQuery(const QList<AbstractRosterItem::Ptr> &items, const QString &ver) : m_items(items), m_ver(ver) {}

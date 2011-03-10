@@ -18,7 +18,7 @@
 #define ACTIVITY_H
 #include "stanzaextension.h"
 
-namespace jreen {
+namespace Jreen {
 
 //XEP-108
 //http://xmpp.org/extensions/xep-0108.html
@@ -27,7 +27,7 @@ class ActivityPrivate;
 class JREEN_EXPORT Activity : public StanzaExtension
 {
 	Q_DECLARE_PRIVATE(Activity);
-	J_EXTENSION(jreen::Activity,"/message/activity[@xmlns='http://jabber.org/protocol/activity']")
+	J_EXTENSION(Jreen::Activity,"/message/activity[@xmlns='http://jabber.org/protocol/activity']")
 public:
 	enum General {
 		DoingChores = 0,
@@ -136,6 +136,6 @@ private:
 	QScopedPointer<ActivityPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // ACTIVITY_H

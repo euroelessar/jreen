@@ -20,7 +20,7 @@
 #include "stanzaextension.h"
 #include "activity.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ActivityFactory : public StanzaExtensionFactory<Activity>
 {
@@ -48,6 +48,6 @@ private:
 	QString m_text; //may be need to replace by langmap?
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // ACTIVITYFACTORY_P_H

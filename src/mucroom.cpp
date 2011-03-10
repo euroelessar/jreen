@@ -15,7 +15,7 @@
 *****************************************************************************/
 #include "mucroom_p.h"
 
-namespace jreen
+namespace Jreen
 {
 enum MUCRolePrivilege
 {
@@ -254,7 +254,7 @@ MUCRoom::MUCRoom(Client *client, const JID &jid) :
 	d->session = new MUCMessageSession(this);
 	ClientPrivate::get(d->client)->rooms.insert(d->jid.bare(), d);
 	connect(client, SIGNAL(connected()), this, SLOT(onConnected()));
-	connect(client, SIGNAL(disconnected(jreen::Client::DisconnectReason)), this, SLOT(onDisconnected()));
+	connect(client, SIGNAL(disconnected(Jreen::Client::DisconnectReason)), this, SLOT(onDisconnected()));
 }
 
 MUCRoom::~MUCRoom()
@@ -324,18 +324,18 @@ void MUCRoom::requestRoomConfig()
 	Q_D(MUCRoom);
 	IQ iq(IQ::Get, d->jid.bareJID());
 	iq.addExtension(new MUCRoomOwnerQuery);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomRequestConfig);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), MUCRoomRequestConfig);
 }
 
-void MUCRoom::requestList(jreen::MUCRoom::Affiliation affiliation)
+void MUCRoom::requestList(Jreen::MUCRoom::Affiliation affiliation)
 {
 	Q_D(MUCRoom);
 	IQ iq(IQ::Get, d->jid.bareJID());
 	iq.addExtension(new MUCRoomAdminQuery(affiliation));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomRequestList + affiliation);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), MUCRoomRequestList + affiliation);
 }
 
-void MUCRoom::setList(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCRoom::ItemList &items)
+void MUCRoom::setList(Jreen::MUCRoom::Affiliation affiliation, const Jreen::MUCRoom::ItemList &items)
 {
 	Q_D(MUCRoom);
 	IQ iq(IQ::Set, d->jid.bareJID());
@@ -350,15 +350,15 @@ void MUCRoom::setList(jreen::MUCRoom::Affiliation affiliation, const jreen::MUCR
 		query->items << tmp;
 	}
 	iq.addExtension(query);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomSetList);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), MUCRoomSetList);
 }
 
-void MUCRoom::setRoomConfig(const jreen::DataForm::Ptr &form)
+void MUCRoom::setRoomConfig(const Jreen::DataForm::Ptr &form)
 {
 	Q_D(MUCRoom);
 	IQ iq(IQ::Set, d->jid.bareJID());
 	iq.addExtension(new MUCRoomOwnerQuery(form));
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), MUCRoomSubmitConfig);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), MUCRoomSubmitConfig);
 }
 
 void MUCRoom::leave(const QString &message)
@@ -511,7 +511,7 @@ bool MUCRoom::canBan(const QString &nick)
 	return query->item.affiliation <= MUCRoom::AffiliationMember;
 }
 
-void MUCRoom::handleIQ(const jreen::IQ &iq, int context)
+void MUCRoom::handleIQ(const Jreen::IQ &iq, int context)
 {
 	if (Error::Ptr e = iq.findExtension<Error>()) {
 		emit error(e);

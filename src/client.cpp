@@ -52,7 +52,7 @@
 #include "bookmarkfactory.h"
 #include "privacyqueryfactory_p.h"
 
-namespace jreen
+namespace Jreen
 {
 enum State
 {
@@ -155,7 +155,7 @@ void ClientPrivate::init()
 	q_ptr->registerStreamFeature(new BindFeature);
 	q_ptr->registerStreamFeature(new SessionFeature);
 	q_ptr->registerStreamFeature(new ZLibCompressionFeature);
-	presence.addExtension(new Capabilities(QString(), QLatin1String("http://jreen.qutim.org/")));
+	presence.addExtension(new Capabilities(QString(), QLatin1String("http://Jreen.qutim.org/")));
 }
 
 Client::Client(const JID &jid, const QString &password, int port)
@@ -242,7 +242,7 @@ int Client::port() const
 
 const QString Client::getID()
 {
-	return QLatin1Literal("jreen:") % QString::number(qHash(this), 16) % QLatin1Char(':') % QString::number(d_func()->current_id++);
+	return QLatin1Literal("Jreen:") % QString::number(qHash(this), 16) % QLatin1Char(':') % QString::number(d_func()->current_id++);
 }
 
 Presence &Client::presence()
@@ -436,7 +436,7 @@ void Client::handleConnect()
 	Q_D(Client);
 	IQ iq(IQ::Get, d->jid.domain());
 	iq.addExtension(new Disco::Info);
-	send(iq, this, SLOT(_q_iq_received(jreen::IQ,int)), 0);
+	send(iq, this, SLOT(_q_iq_received(Jreen::IQ,int)), 0);
 	emit connected();
 }
 

@@ -17,7 +17,7 @@
 #include <QXmlStreamWriter>
 #include "capabilities.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class CapabilitiesPrivate

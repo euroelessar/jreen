@@ -21,7 +21,7 @@
 #include "error.h"
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 PrivacyItem::PrivacyItem() : d_ptr(new PrivacyItemPrivate)
 {
@@ -156,7 +156,7 @@ PrivacyManager::PrivacyManager(Client *client) : QObject(client), d_ptr(new Priv
 	Q_D(PrivacyManager);
 	d->client = client;
 	d->validServer = true;
-	connect(d->client, SIGNAL(newIQ(jreen::IQ)), this, SLOT(handleIQ(jreen::IQ)));
+	connect(d->client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
 }
 
 PrivacyManager::~PrivacyManager()
@@ -180,7 +180,7 @@ void PrivacyManager::request()
 	}
 	IQ iq(IQ::Get, JID(), d->client->getID());
 	iq.addExtension(new PrivacyQuery);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RequestAll);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), RequestAll);
 	d->lastListName.clear();
 	d->lastList.clear();
 	d->listRequests.clear();
@@ -213,7 +213,7 @@ void PrivacyManager::setActiveList(const QString &name)
 	query->activeList = name;
 	iq.addExtension(query);
 	d->activeListSetter.insert(iq.id(), name);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetActiveList);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), SetActiveList);
 }
 
 void PrivacyManager::setDefaultList(const QString &name)
@@ -226,17 +226,17 @@ void PrivacyManager::setDefaultList(const QString &name)
 	query->defaultList = name;
 	iq.addExtension(query);
 	d->defaultListSetter.insert(iq.id(), name);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetDefaultList);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), SetDefaultList);
 }
 
-void PrivacyManager::setList(const QString &name, const QList<jreen::PrivacyItem> &list)
+void PrivacyManager::setList(const QString &name, const QList<Jreen::PrivacyItem> &list)
 {
 	Q_D(PrivacyManager);
 	if (!d->validServer)
 		return;
 	IQ iq(IQ::Set, JID(), d->client->getID());
 	PrivacyQuery *query = new PrivacyQuery;
-	QList<jreen::PrivacyItem> fixedList = list;
+	QList<Jreen::PrivacyItem> fixedList = list;
 	qint64 lastOrder = -1;
 	for (int i = 0; i < fixedList.size(); i++) {
 		if (fixedList.at(i).order() == lastOrder)
@@ -245,12 +245,12 @@ void PrivacyManager::setList(const QString &name, const QList<jreen::PrivacyItem
 	}
 	query->lists << PrivacyQuery::List(name, list);
 	iq.addExtension(query);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), SetDefaultList);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), SetDefaultList);
 }
 
 void PrivacyManager::removeList(const QString &name)
 {
-	setList(name, QList<jreen::PrivacyItem>());
+	setList(name, QList<Jreen::PrivacyItem>());
 }
 
 QStringList PrivacyManager::lists() const
@@ -265,7 +265,7 @@ void PrivacyManager::requestList(const QString &name)
 		emit listReceived(name, d->lastList);
 		return;
 	} else if (!d->lists.contains(name) || !d->validServer) {
-		emit listReceived(name, QList<jreen::PrivacyItem>());
+		emit listReceived(name, QList<Jreen::PrivacyItem>());
 		return;
 	} else if (d->listRequests.contains(name)) {
 		return;
@@ -275,10 +275,10 @@ void PrivacyManager::requestList(const QString &name)
 	PrivacyQuery *query = new PrivacyQuery;
 	query->lists << PrivacyQuery::List(name);
 	iq.addExtension(query);
-	d->client->send(iq, this, SLOT(handleIQ(jreen::IQ,int)), RequestList);
+	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), RequestList);
 }
 
-void PrivacyManager::handleIQ(const jreen::IQ &iq)
+void PrivacyManager::handleIQ(const Jreen::IQ &iq)
 {
 	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
 	if (query && iq.subtype() == IQ::Set) {
@@ -299,7 +299,7 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq)
 	}
 }
 
-void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
+void PrivacyManager::handleIQ(const Jreen::IQ &iq, int context)
 {
 	Q_D(PrivacyManager);
 	if (const Error *error = iq.error()) {
@@ -322,7 +322,7 @@ void PrivacyManager::handleIQ(const jreen::IQ &iq, int context)
 	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
 	if (context == RequestList) {
 		if (!query) {
-			emit listReceived(QString(), QList<jreen::PrivacyItem>());
+			emit listReceived(QString(), QList<Jreen::PrivacyItem>());
 			return;
 		}
 		const PrivacyQuery::List &list = query->lists.at(0);

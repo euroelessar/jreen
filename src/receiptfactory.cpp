@@ -21,7 +21,7 @@
 
 #define NS_RECEIPT QLatin1String("urn:xmpp:receipts")
 
-namespace jreen {
+namespace Jreen {
 
 static const char *receipt_strings[] = {"request","received"};
 
@@ -87,4 +87,4 @@ StanzaExtension::Ptr ReceiptFactory::createExtension()
 	return StanzaExtension::Ptr(new Receipt(d->type,d->id));
 }
 
-} // namespace jreen
+} // namespace Jreen

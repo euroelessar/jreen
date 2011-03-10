@@ -18,7 +18,7 @@
 #include <QAtomicInt>
 #include <QStringBuilder>
 
-namespace jreen
+namespace Jreen
 {
 
 class JIDData : public QSharedData

@@ -20,12 +20,12 @@
 #include "stanzaextension.h"
 #include <QDateTime>
 
-namespace jreen
+namespace Jreen
 {
 	class EntityTimePrivate;
 	class EntityTime : public StanzaExtension
 	{
-		J_EXTENSION(jreen::EntityTime, "")
+		J_EXTENSION(Jreen::EntityTime, "")
 		Q_DECLARE_PRIVATE(EntityTime)
 	public:
 		EntityTime(int tzo, const QDateTime &dateTime);

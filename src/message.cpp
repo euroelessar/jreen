@@ -20,7 +20,7 @@
 #include "util.h"
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 
 Message::Message(Type type, const JID& to, const QString &body, const QString &subject, const QString &thread, const QString &xmllang)

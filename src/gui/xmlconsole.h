@@ -23,7 +23,7 @@ namespace Ui {
     class XmlConsole;
 }
 
-namespace jreen
+namespace Jreen
 {
 
 class XmlConsole : public QWidget {

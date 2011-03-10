@@ -21,7 +21,7 @@
 #include "langmap.h"
 #include <QXmlStreamAttributes>
 
-namespace jreen
+namespace Jreen
 {
 
 class StanzaFactory : public XmlStreamFactory<Stanza>

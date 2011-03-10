@@ -15,6 +15,6 @@
 
 #include "vcardupdate.h"
 
-namespace jreen {
+namespace Jreen {
 
-} // namespace jreen
+} // namespace Jreen

@@ -24,7 +24,7 @@
 #include "stanzaextension.h"
 #include "iq.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class IQ;
@@ -50,7 +50,7 @@ public:
 
 	class Info : public StanzaExtension
 	{
-		J_EXTENSION(jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
+		J_EXTENSION(Jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
 	public:
 		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
 		  : m_node(node), m_identities(identities), m_features(features), m_form(form) {}
@@ -78,7 +78,7 @@ public:
 
 	class Items : public StanzaExtension
 	{
-		J_EXTENSION(jreen::Disco::Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
+		J_EXTENSION(Jreen::Disco::Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
 		public:
 			inline Items(const QString &node = QString(), const ItemList &items = ItemList())
 		  : m_items(items), m_node(node) {}
@@ -104,16 +104,16 @@ public:
 
 public slots:
 private slots:
-	void handleIQ(const jreen::IQ &iq);
+	void handleIQ(const Jreen::IQ &iq);
 protected:
 	QScopedPointer<DiscoPrivate> d_ptr;
 };
 
 }
 
-Q_DECLARE_METATYPE(jreen::Disco::Identity)
-Q_DECLARE_METATYPE(jreen::Disco::IdentityList)
-Q_DECLARE_METATYPE(jreen::Disco::Item)
-Q_DECLARE_METATYPE(jreen::Disco::ItemList)
+Q_DECLARE_METATYPE(Jreen::Disco::Identity)
+Q_DECLARE_METATYPE(Jreen::Disco::IdentityList)
+Q_DECLARE_METATYPE(Jreen::Disco::Item)
+Q_DECLARE_METATYPE(Jreen::Disco::ItemList)
 
 #endif // DISCO_H

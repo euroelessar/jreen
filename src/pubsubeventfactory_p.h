@@ -20,7 +20,7 @@
 #include "pubsubevent.h"
 #include <QMap>
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {

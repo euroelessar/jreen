@@ -20,7 +20,7 @@
 #include "client.h"
 #include "jstrings.h"
 
-namespace jreen
+namespace Jreen
 {
 
 bool NonSaslAuth::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)

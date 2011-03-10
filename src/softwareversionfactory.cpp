@@ -7,7 +7,7 @@
 
 #define NS_SOFTWAREVERSION QLatin1String("jabber:iq:version")
 
-namespace jreen {
+namespace Jreen {
 
 using namespace Util;
 
@@ -104,4 +104,4 @@ StanzaExtension::Ptr SoftwareVersionFactory::createExtension()
 	return StanzaExtension::Ptr(new SoftwareVersion(d->name,d->version,d->os));
 }
 
-} // namespace jreen
+} // namespace Jreen

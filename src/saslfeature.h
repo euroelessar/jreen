@@ -21,7 +21,7 @@
 #include <QStringList>
 #include <QtCrypto>
 
-namespace jreen
+namespace Jreen
 {
 	class SASLFeature : public QObject, public StreamFeature
 	{

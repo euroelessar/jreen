@@ -20,7 +20,7 @@
 #include <QDateTime>
 #include <QXmlStreamWriter>
 
-namespace jreen
+namespace Jreen
 {
 
 class JID;

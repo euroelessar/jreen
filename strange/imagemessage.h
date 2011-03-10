@@ -18,12 +18,12 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class ImageMessage : public StanzaExtension
 {
-	J_EXTENSION(jreen::ImageMessage,"/message/img[@xmlns='qutim:img']")
+	J_EXTENSION(Jreen::ImageMessage,"/message/img[@xmlns='qutim:img']")
 public:
 	ImageMessage(const QDomElement &node = QDomElement());
 	ImageMessage(const QByteArray &data);

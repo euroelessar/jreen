@@ -23,7 +23,7 @@
 #include "presence.h"
 #include "disco.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class ClientPrivate;
@@ -52,7 +52,7 @@ class JREEN_EXPORT Client : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
-	Q_PROPERTY(jreen::Disco::IdentityList serverIdentities READ serverIdentities NOTIFY serverIdentitiesReceived)
+	Q_PROPERTY(Jreen::Disco::IdentityList serverIdentities READ serverIdentities NOTIFY serverIdentitiesReceived)
 	Q_DECLARE_PRIVATE(Client)
 public:
 
@@ -100,19 +100,19 @@ public:
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:
 	void setPresence();
-	void setPresence(jreen::Presence::Type type, const QString &text = QString(), int priority = -129);
+	void setPresence(Jreen::Presence::Type type, const QString &text = QString(), int priority = -129);
 	void connectToServer();
 	void disconnectFromServer(bool force = false);
 signals:
 	void connected();
-	void disconnected(jreen::Client::DisconnectReason);
+	void disconnected(Jreen::Client::DisconnectReason);
 	void authorized();
-	void newSubscription(const jreen::Subscription &subscription);
-	void newPresence(const jreen::Presence &presence);
-	void newIQ(const jreen::IQ &iq);
-	void newMessage(const jreen::Message &message);
+	void newSubscription(const Jreen::Subscription &subscription);
+	void newPresence(const Jreen::Presence &presence);
+	void newIQ(const Jreen::IQ &iq);
+	void newMessage(const Jreen::Message &message);
 	void serverFeaturesReceived(const QSet<QString> &features);
-	void serverIdentitiesReceived(const jreen::Disco::IdentityList &identities) const;
+	void serverIdentitiesReceived(const Jreen::Disco::IdentityList &identities) const;
 protected:
 	virtual void timerEvent(QTimerEvent *);
 	virtual void handleConnect();
@@ -124,7 +124,7 @@ protected:
 	virtual void handleMessage(const Message &message);
 private:
 	QScopedPointer<ClientPrivate> d_ptr;
-	Q_PRIVATE_SLOT(d_func(), void _q_iq_received(const jreen::IQ &iq, int context))
+	Q_PRIVATE_SLOT(d_func(), void _q_iq_received(const Jreen::IQ &iq, int context))
 	Q_PRIVATE_SLOT(d_func(), void _q_new_data())
 	Q_PRIVATE_SLOT(d_func(), void _q_read_more())
 	Q_PRIVATE_SLOT(d_func(), void _q_send_header())

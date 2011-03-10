@@ -75,7 +75,7 @@ private:
 class QXmlStreamAttributes;
 class QXmlStreamWriter;
 
-namespace jreen
+namespace Jreen
 {
 	class JREEN_EXPORT XmlStreamParser
 	{

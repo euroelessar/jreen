@@ -18,7 +18,7 @@
 
 #include "jreen.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class JREEN_EXPORT Prep

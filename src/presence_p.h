@@ -22,7 +22,7 @@
 #include "presence.h"
 #include "langmap.h"
 
-namespace jreen
+namespace Jreen
 {
 class PresencePrivate : public StanzaPrivate
 {

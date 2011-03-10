@@ -16,7 +16,7 @@
 #include "nickname.h"
 #include "jstrings.h"
 
-namespace jreen
+namespace Jreen
 {
 
 Nickname::Nickname(const QString &nick) : m_nick(nick)

@@ -19,7 +19,7 @@
 #include "stanzaextension.h"
 #include "capabilities.h"
 
-namespace jreen {
+namespace Jreen {
 
 class Disco;
 class CapabilitesFactory : public StanzaExtensionFactory<Capabilities>
@@ -41,6 +41,6 @@ private:
 	QString m_node;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // CAPABILITIESFACTORY_P_H

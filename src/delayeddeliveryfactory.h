@@ -2,7 +2,7 @@
 #define DELAYEDDELIVERYFACTORY_H
 #include "delayeddelivery.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class DelayedDeliveryFactoryPrivate;

@@ -3,7 +3,7 @@
 #include "stanza_p.h"
 #include "langmap.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class MessagePrivate : public StanzaPrivate
@@ -16,6 +16,6 @@ public:
 	QString thread;
 };
 
-} //namespace jreen
+} //namespace Jreen
 
 #endif // MESSAGE_P_H

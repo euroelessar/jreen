@@ -21,7 +21,7 @@
 #include <QStringBuilder>
 #define NS_CAPS QLatin1String("http://jabber.org/protocol/caps")
 
-namespace jreen {
+namespace Jreen {
 
 
 QString CapabilitesFactory::hashValue(Disco *disco)
@@ -122,4 +122,4 @@ StanzaExtension::Ptr CapabilitesFactory::createExtension()
 }
 
 
-} // namespace jreen
+} // namespace Jreen

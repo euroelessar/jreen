@@ -20,7 +20,7 @@
 #include "streamfeature.h"
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 class IQ;
 
@@ -39,7 +39,7 @@ public:
 	bool isActivatable();
 	bool activate();
 public slots:
-	void onIQResult(const jreen::IQ &iq, int context);
+	void onIQResult(const Jreen::IQ &iq, int context);
 private:
 	int m_depth;
 	bool m_hasFeature;

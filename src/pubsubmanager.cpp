@@ -19,7 +19,7 @@
 #include "pubsubpublishfactory_p.h"
 #include "client_p.h"
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {
@@ -79,8 +79,8 @@ Manager::Manager(Client *client) : QObject(client), d_ptr(new ManagerPrivate)
 	d->client = client;
 	d->client->registerStanzaExtension(new EventFactory(d->factories));
 	d->client->registerStanzaExtension(new PublishFactory(d->factories));
-	connect(d->client, SIGNAL(newMessage(jreen::Message)),
-			this, SLOT(handleMessage(jreen::Message)));
+	connect(d->client, SIGNAL(newMessage(Jreen::Message)),
+			this, SLOT(handleMessage(Jreen::Message)));
 }
 
 Manager::~Manager()
@@ -129,7 +129,7 @@ void Manager::addEntityType(int type)
 	qDebug("%s %d %s", Q_FUNC_INFO, d->factories.size(), qPrintable(node));
 }
 
-void Manager::handleMessage(const jreen::Message &message)
+void Manager::handleMessage(const Jreen::Message &message)
 {
 	if (Event::Ptr event = message.findExtension<Event>())
 		emit eventReceived(event, message.from());

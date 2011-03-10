@@ -20,7 +20,7 @@
 #include <jdns/qjdns.h>
 #include "action.h"
 
-namespace jreen
+namespace Jreen
 {
 
 //class JAction;

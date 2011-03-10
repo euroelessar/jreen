@@ -20,7 +20,7 @@
 #include "jid.h"
 #include <QDateTime>
 
-namespace jreen
+namespace Jreen
 {
 
 //XEP 0203
@@ -28,7 +28,7 @@ namespace jreen
 
 class JREEN_EXPORT DelayedDelivery : public StanzaExtension
 {
-	J_EXTENSION(jreen::DelayedDelivery,
+	J_EXTENSION(Jreen::DelayedDelivery,
 				"/presence/delay[@xmlns='jabber:x:delay']"
 				"|/message/delay[@xmlns='jabber:x:delay']"
 				"|/presence/x[@xmlns='jabber:x:delay']"
@@ -49,6 +49,6 @@ private:
 
 }
 
-J_DECLARE_EXTENSION(jreen::DelayedDelivery)
+J_DECLARE_EXTENSION(Jreen::DelayedDelivery)
 
 #endif // DELAYEDDELIVERY_H

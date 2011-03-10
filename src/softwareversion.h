@@ -18,7 +18,7 @@
 
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 /*
@@ -28,7 +28,7 @@ namespace jreen
 
 class JREEN_EXPORT SoftwareVersion : public StanzaExtension
 {
-	J_EXTENSION(jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
+	J_EXTENSION(Jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
 public:
 	SoftwareVersion() {}
 	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());

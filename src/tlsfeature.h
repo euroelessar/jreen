@@ -20,7 +20,7 @@
 #include "streamfeature.h"
 #include <QtCrypto>
 
-namespace jreen
+namespace Jreen
 {
 class TLSFeature : public QObject, public StreamFeature
 {

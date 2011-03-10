@@ -20,7 +20,7 @@
 #include "jreen.h"
 #include <QObject>
 
-namespace jreen
+namespace Jreen
 {
 class StreamInfo;
 class JID;
@@ -38,6 +38,6 @@ public:
 };
 }
 
-Q_DECLARE_INTERFACE(jreen::StreamProcessor, "org.qutim.jreen.StreamProcessor")
+Q_DECLARE_INTERFACE(Jreen::StreamProcessor, "org.qutim.Jreen.StreamProcessor")
 
 #endif // STREAMPROCESSOR_H

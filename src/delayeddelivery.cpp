@@ -18,7 +18,7 @@
 #include "jstrings.h"
 #include <QXmlStreamWriter>
 
-namespace jreen
+namespace Jreen
 {
 
 }

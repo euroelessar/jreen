@@ -26,7 +26,7 @@
 Q_GLOBAL_STATIC_WITH_ARGS(QEvent::Type, parserHookEventId,
 						  (static_cast<QEvent::Type>(QEvent::registerEventType())))
 
-namespace jreen
+namespace Jreen
 {
 Parser::Parser(Client *client) : d_ptr(new ParserPrivate)
 {

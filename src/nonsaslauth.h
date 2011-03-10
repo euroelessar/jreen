@@ -19,7 +19,7 @@
 #include "streamfeature.h"
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class IQ;
@@ -51,7 +51,7 @@ public slots:
 private:
 	class Query : public StanzaExtension
 	{
-		J_EXTENSION(jreen::NonSaslAuth::Query,"/iq/query[@xmlns='jabber:iq:auth']")
+		J_EXTENSION(Jreen::NonSaslAuth::Query,"/iq/query[@xmlns='jabber:iq:auth']")
 	public:
 		Query();
 		Query *instance(const JID &jid, const QString &password, const QString &sid) const;
@@ -66,19 +66,19 @@ private:
 
 }
 //template <>                                                         
-//struct QMetaTypeId< jreen::NonSaslAuth::Query* >                                          
+//struct QMetaTypeId< Jreen::NonSaslAuth::Query* >                                          
 //{                                                                   
 //	enum { Defined = 1 };                                           
 //	static int qt_metatype_id()                                     
 //		{                                                           
 //			static QBasicAtomicInt metatype_id = Q_BASIC_ATOMIC_INITIALIZER(0); 
 //			if (!metatype_id)                                       
-//				metatype_id = qRegisterMetaType< jreen::NonSaslAuth::Query* >("jreen::NonSaslAuth::Query*",      
-//						   reinterpret_cast< jreen::NonSaslAuth::Query* *>(quintptr(-1))); 
+//				metatype_id = qRegisterMetaType< Jreen::NonSaslAuth::Query* >("Jreen::NonSaslAuth::Query*",      
+//						   reinterpret_cast< Jreen::NonSaslAuth::Query* *>(quintptr(-1))); 
 //			return metatype_id;                                     
 //		}                                                           
 //};                                                                  
-//Q_DECLARE_METATYPE(jreen::NonSaslAuth::Query*)
-//J_DECLARE_EXTENSION(jreen::NonSaslAuth::Query)
+//Q_DECLARE_METATYPE(Jreen::NonSaslAuth::Query*)
+//J_DECLARE_EXTENSION(Jreen::NonSaslAuth::Query)
 
 #endif // NONSASLAUTH_H

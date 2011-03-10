@@ -18,7 +18,7 @@
 #include "error.h"
 #include <QTextStream>
 
-namespace jreen
+namespace Jreen
 {
 
 Stanza::Stanza(const Stanza &stanza)

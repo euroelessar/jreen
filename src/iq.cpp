@@ -17,7 +17,7 @@
 #include "stanza_p.h"
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 
 IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)

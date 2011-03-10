@@ -18,7 +18,7 @@
 #include "jstrings.h"
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 
 Receipt::Receipt(Type type,const QString &id) : m_type(type),m_id(id)

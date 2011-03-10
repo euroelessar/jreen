@@ -22,7 +22,7 @@
 class QAbstractSocket;
 class QHostAddress;
 
-namespace jreen
+namespace Jreen
 {
 
 class DirectConnectionPrivate;

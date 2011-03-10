@@ -19,7 +19,7 @@
 #include "mood.h"
 #include "langmap.h"
 
-namespace jreen {
+namespace Jreen {
 
 class MoodFactory : public StanzaExtensionFactory<Mood>
 {
@@ -42,6 +42,6 @@ private:
 	QString m_text; //may be need to replace by langmap?
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // MOODFACTORY_P_H

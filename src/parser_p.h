@@ -36,7 +36,7 @@
  * without any notification.
  */
 
-namespace jreen
+namespace Jreen
 {
 class ParserPrivate
 {

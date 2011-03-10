@@ -18,7 +18,7 @@
 #include "message.h"
 #include "jstrings.h"
 
-namespace jreen {
+namespace Jreen {
 
 static const char *message_types[] = {
 		"chat",
@@ -128,4 +128,4 @@ void MessageFactory::handleCharacterData(const QStringRef &name)
 	}
 }
 
-} // namespace jreen
+} // namespace Jreen

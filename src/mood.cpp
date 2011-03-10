@@ -16,7 +16,7 @@
 #include "mood.h"
 #include "moodfactory_p.h"
 
-namespace jreen
+namespace Jreen
 {
 class MoodPrivate
 {
@@ -73,4 +73,4 @@ void Mood::setText(const QString &text)
 {
 	d_func()->text = text;
 }
-} // namespace jreen
+} // namespace Jreen

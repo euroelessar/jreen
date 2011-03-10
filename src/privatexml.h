@@ -19,7 +19,7 @@
 #include <QObject>
 #include "stanzaextension.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class IQ;
@@ -43,11 +43,11 @@ public:
 	};
 	PrivateXml(Client *client);
 	~PrivateXml();
-	// SLOT(newResult(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr))
+	// SLOT(newResult(Jreen::StanzaExtension::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr))
 	void request(const QString &name, const QString &xmlns, QObject *handler, const char *member);
 	void store(const StanzaExtension::Ptr &node, QObject *handler, const char *member);
 private slots:
-	void handleIQ(const jreen::IQ &iq, int context);
+	void handleIQ(const Jreen::IQ &iq, int context);
 private:
 	QScopedPointer<PrivateXmlPrivate> d_ptr;
 };

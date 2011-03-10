@@ -23,7 +23,7 @@
 #include "error.h"
 #include <QHash>
 
-namespace jreen
+namespace Jreen
 {
 
 class PrivateXmlTrack : public QObject
@@ -32,11 +32,11 @@ class PrivateXmlTrack : public QObject
 	friend class PrivateXml;
 	inline PrivateXmlTrack(QObject *handler, const char *member)
 	{
-		connect(this, SIGNAL(resultReady(jreen::StanzaExtension::Ptr,jreen::PrivateXml::Result,jreen::Error::Ptr)),
+		connect(this, SIGNAL(resultReady(Jreen::StanzaExtension::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr)),
 				handler, member);
 	}
 signals:
-	void resultReady(const jreen::StanzaExtension::Ptr &,jreen::PrivateXml::Result,const jreen::Error::Ptr &);
+	void resultReady(const Jreen::StanzaExtension::Ptr &,Jreen::PrivateXml::Result,const Jreen::Error::Ptr &);
 };
 
 class PrivateXmlPrivate
@@ -48,7 +48,7 @@ public:
 
 class PrivateXmlQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::PrivateXmlQuery,"/iq/query[@xmlns='jabber:iq:private']");
+	J_EXTENSION(Jreen::PrivateXmlQuery,"/iq/query[@xmlns='jabber:iq:private']");
 public:
 	enum Type {
 		Get,

@@ -20,7 +20,7 @@
 #include "dataform.h"
 #include <QVariant>
 
-namespace jreen
+namespace Jreen
 {
 	class DataFormFieldPrivate : public QSharedData
 	{

@@ -17,7 +17,7 @@
 #include "tune.h"
 #include <QUrl>
 
-namespace jreen
+namespace Jreen
 {
 	class TunePrivate
 	{

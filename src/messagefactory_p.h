@@ -19,7 +19,7 @@
 #include "stanzafactory.h"
 #include "message.h"
 
-namespace jreen
+namespace Jreen
 {
 class MessageFactory : public StanzaFactory
 {
@@ -43,6 +43,6 @@ private:
 	QStringRef m_thread;
 };
 
-} // namespace  jreen
+} // namespace  Jreen
 
 #endif // MESSAGEFACTORY_P_H

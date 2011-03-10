@@ -21,7 +21,7 @@
 #include "jid.h"
 #include <QUrl>
 
-namespace jreen
+namespace Jreen
 {
 class VCard::NamePrivate : public QSharedData
 {

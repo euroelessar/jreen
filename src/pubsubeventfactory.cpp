@@ -21,7 +21,7 @@
 
 #define NS_EVENT QLatin1String("http://jabber.org/protocol/pubsub#event")
 
-namespace jreen
+namespace Jreen
 {
 namespace PubSub
 {

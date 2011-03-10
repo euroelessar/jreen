@@ -17,7 +17,7 @@
 #include "stanzafactory.h"
 #include "nickname.h"
 
-namespace jreen {
+namespace Jreen {
 
 class NicknameFactoryPrivate;
 class NicknameFactory : public StanzaExtensionFactory<Nickname>
@@ -37,6 +37,6 @@ private:
 	QScopedPointer<NicknameFactoryPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // NICKNAMEFACTORY_H

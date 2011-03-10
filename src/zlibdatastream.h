@@ -19,7 +19,7 @@
 
 #include "datastream.h"
 
-namespace jreen
+namespace Jreen
 {
 	class ZLibDataStreamPrivate;
 	class ZLibDataStream : public DataStream

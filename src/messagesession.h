@@ -22,7 +22,7 @@
 #include <QVector>
 #include <QMap>
 
-namespace jreen
+namespace Jreen
 {
 
 class MessageSession;
@@ -31,9 +31,9 @@ class Client;
 
 #define J_MESSAGE_FILTER \
 	public: \
-		static const jreen::MessageFilterMeta &meta() \
+		static const Jreen::MessageFilterMeta &meta() \
 		{ \
-			static jreen::MessageFilterMeta staticFilterMeta; \
+			static Jreen::MessageFilterMeta staticFilterMeta; \
 			return staticFilterMeta; \
 		} \
 		virtual int filterType() const { return meta().type; } \
@@ -81,8 +81,8 @@ public:
 	void sendMessage(const Message &message);
 	virtual void handleMessage(const Message &message);
 signals:
-	void newMessage(const jreen::Message &message);
-	void jidChanged(const jreen::JID &from, const jreen::JID &to);
+	void newMessage(const Jreen::Message &message);
+	void jidChanged(const Jreen::JID &from, const Jreen::JID &to);
 protected:
 	virtual void send(const Message &message);
 	void filter(Message &message);
@@ -118,10 +118,10 @@ public:
 	void removeMessageSessionHandler(MessageSessionHandler *handler);
 	MessageSession *session(const JID &jid, Message::Type type, bool create = true);
 public slots:
-	virtual void handleMessage(const jreen::Message &message);
+	virtual void handleMessage(const Jreen::Message &message);
 signals:
-	void newMessage(const jreen::Message &message);
-	void sessionCreated(jreen::MessageSession *session);
+	void newMessage(const Jreen::Message &message);
+	void sessionCreated(Jreen::MessageSession *session);
 private:
 	QScopedPointer<MessageSessionManagerPrivate> d_ptr;
 	friend class MessageSession;

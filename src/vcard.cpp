@@ -15,7 +15,7 @@
 
 #include "vcard_p.h"
 
-namespace jreen {
+namespace Jreen {
 
 VCard::Name::Name() : d_ptr(new VCard::NamePrivate)
 {
@@ -377,4 +377,4 @@ const QString& VCard::desc() const
 	return d_func()->description;
 }
 
-} // namespace jreen
+} // namespace Jreen

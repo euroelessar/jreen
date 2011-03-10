@@ -21,7 +21,7 @@
 #include "mucmessagesession_p.h"
 #include "client_p.h"
 
-namespace jreen
+namespace Jreen
 {
 class MUCRoomUserQuery;
 
@@ -62,7 +62,7 @@ public:
 
 class MUCRoomQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::MUCRoomQuery, "")
+	J_EXTENSION(Jreen::MUCRoomQuery, "")
 	public:
 		MUCRoomQuery(const QString &password)
 	  : m_password(password), m_maxChars(-1), m_maxStanzas(-1), m_seconds(-1) {}
@@ -94,7 +94,7 @@ public:
 
 class MUCRoomUserQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::MUCRoomUserQuery, "")
+	J_EXTENSION(Jreen::MUCRoomUserQuery, "")
 	public:
 		MUCRoomUserQuery() : flags(0)
 	{
@@ -125,7 +125,7 @@ class MUCRoomUserQuery : public StanzaExtension
 
 class MUCRoomAdminQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::MUCRoomAdminQuery, "")
+	J_EXTENSION(Jreen::MUCRoomAdminQuery, "")
 	public:
 	MUCRoomAdminQuery() {}
 	MUCRoomAdminQuery(MUCRoom::Affiliation a)
@@ -163,7 +163,7 @@ class MUCRoomAdminQuery : public StanzaExtension
 
 class MUCRoomOwnerQuery : public StanzaExtension
 {
-	J_EXTENSION(jreen::MUCRoomOwnerQuery, "")
+	J_EXTENSION(Jreen::MUCRoomOwnerQuery, "")
 	public:
 		MUCRoomOwnerQuery() {}
 	MUCRoomOwnerQuery(const DataForm::Ptr &f) : form(f) {}

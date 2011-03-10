@@ -20,7 +20,7 @@
 #include "streamfeature.h"
 #include <QStringList>
 
-namespace jreen
+namespace Jreen
 {
 	class ZLibCompressionFeature : public StreamFeature
 	{

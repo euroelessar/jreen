@@ -19,7 +19,7 @@
 #include <QSslConfiguration>
 #include <QSsl>
 
-namespace jreen
+namespace Jreen
 {
 
 DirectConnection::DirectConnection(QAbstractSocket *socket, const QString &host_name, qint16 port)

@@ -2,7 +2,7 @@
 #define SOFTWAREVERSIONFACTORY_H
 #include "softwareversion.h"
 
-namespace jreen {
+namespace Jreen {
 
 class SoftwareVersionFactoryPrivate;
 class SoftwareVersionFactory : public StanzaExtensionFactory<SoftwareVersion>
@@ -22,6 +22,6 @@ private:
 	QScopedPointer<SoftwareVersionFactoryPrivate> d_ptr;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // SOFTWAREVERSIONFACTORY_H

@@ -17,7 +17,7 @@
 
 #define NS_NICKNAME QLatin1String("http://jabber.org/protocol/nick")
 
-namespace jreen {
+namespace Jreen {
 
 class NicknameFactoryPrivate
 {
@@ -79,4 +79,4 @@ NicknameFactory::~NicknameFactory()
 
 }
 
-} // namespace jreen
+} // namespace Jreen

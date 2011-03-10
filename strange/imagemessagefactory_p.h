@@ -19,7 +19,7 @@
 #include "stanzaextension.h"
 #include "imagemessage.h"
 
-namespace jreen {
+namespace Jreen {
 
 class ImageMessageFactory : public StanzaExtensionFactory<ImageMessage>
 {
@@ -37,6 +37,6 @@ private:
 	QByteArray m_data;
 };
 
-} // namespace jreen
+} // namespace Jreen
 
 #endif // IMAGEMESSAGEFACTORY_P_H

@@ -18,7 +18,7 @@
 #include <QXmlStreamWriter>
 #define NS_PING QLatin1String("urn:xmpp:ping")
 
-namespace jreen {
+namespace Jreen {
 
 PingFactory::PingFactory()
 {
@@ -74,4 +74,4 @@ StanzaExtension::Ptr PingFactory::createExtension()
 	return StanzaExtension::Ptr(new Ping());
 }
 
-} // namespace jreen
+} // namespace Jreen

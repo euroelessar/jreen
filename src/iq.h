@@ -18,7 +18,7 @@
 
 #include "stanza.h"
 
-namespace jreen
+namespace Jreen
 {
 
 class IQPrivate;

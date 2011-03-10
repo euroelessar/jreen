@@ -18,7 +18,7 @@
 #include "iq_p.h"
 #include <QDebug>
 
-namespace jreen
+namespace Jreen
 {
 IqFactory::IqFactory(Client *client) : StanzaFactory(client)
 {

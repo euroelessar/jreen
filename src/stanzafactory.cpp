@@ -17,7 +17,7 @@
 #include "stanzafactory.h"
 #include "client_p.h"
 
-namespace jreen
+namespace Jreen
 {
 StanzaFactory::StanzaFactory(Client *client) : m_client(client)
 {
