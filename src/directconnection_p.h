@@ -91,7 +91,10 @@ public slots:
 		else {
 			foreach(const QJDns::Record &qrecord, response->answerRecords)	{
 				Record record;
-				record.host = QString::fromUtf8(qrecord.name);
+				record.host = QUrl::fromAce(qrecord.name);
+				// may be it's a reason of connection problems of some users
+				if (record.host.endsWith(QLatin1Char('.')))
+					record.host.chop(1);
 				record.port = qrecord.port;
 				record.weight = qrecord.weight;
 				record.priority = qrecord.priority;
