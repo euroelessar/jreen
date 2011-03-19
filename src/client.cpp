@@ -401,8 +401,12 @@ void Client::disconnectFromServer(bool force)
 	if(d->conn && d->conn->isOpen()) {
 		setPresence(Presence::Unavailable);
 		d->writer->writeEndElement();
-		if(force)
+		if(force) {
+			blockSignals(true);
 			d->conn->close();
+			blockSignals(false);
+			emit disconnected(User);
+		}
 	}
 }
 
