@@ -22,6 +22,7 @@
 
 # include <QtGlobal>
 # include <QtCore/QString>
+# include <QtXml/QXmlStreamWriter> //needed on OS X (10.5) for QXmlStreamWriter typedef
 
 # ifndef J_BUILD_STATIC
 #  ifdef J_BUILD_LIBRARY
@@ -73,7 +74,6 @@ private:
 
 			
 class QXmlStreamAttributes;
-class QXmlStreamWriter;
 
 namespace Jreen
 {
