@@ -73,6 +73,10 @@ public:
 	Client();
 	virtual ~Client();
 	void setPingInterval(int interval);
+	/*! send keep alive packet(whitespace) every \param interval msecs.
+	  * Spike for a stupid NATs
+	  */
+	void setKeepAliveInterval(int interval);
 	const JID &jid();
 	void setJID(const JID &jid);
 	void setPassword(const QString &password);
