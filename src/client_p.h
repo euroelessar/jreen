@@ -145,7 +145,6 @@ public:
 
 	void handleStanza(const Stanza::Ptr &stanza);
 	QBasicTimer pingTimer;
-	QBasicTimer keepAliveTimer;
 	StreamInfo *stream_info;
 	Client *q_ptr;
 	JID jid;

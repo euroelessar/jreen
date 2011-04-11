@@ -361,15 +361,6 @@ void Client::setPingInterval(int interval)
 		d->pingTimer.start(interval, this);
 }
 
-void Client::setKeepAliveInterval(int interval)
-{
-	Q_D(Client);
-	if (d->keepAliveTimer.isActive())
-		d->keepAliveTimer.stop();
-	if (interval > 0 && isConnected())
-		d->keepAliveTimer.start(interval, this);
-}
-
 void Client::setPresence()
 {
 	send(d_func()->presence);
@@ -439,10 +430,9 @@ void Client::timerEvent(QTimerEvent *timerEvent)
 		IQ iq(IQ::Get, d->jid.bareJID());
 		iq.addExtension(new Ping());
 		d->send(iq);
-	} else if (timerEvent->timerId() == d->keepAliveTimer.timerId()) {
-		d->conn->write(" ");
-	} else
+	} else {
 		return QObject::timerEvent(timerEvent);
+	}
 }
 
 void Client::handleConnect()
