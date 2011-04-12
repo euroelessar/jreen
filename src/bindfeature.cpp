@@ -43,7 +43,7 @@ private:
 class BindQueryFactory : public StanzaExtensionFactory<BindQuery>
 {
 public:
-	BindQueryFactory() : m_bind(true), m_depth(0) {}
+	BindQueryFactory() : m_bind(true), m_depth(0), m_state(AtStart) {}
 	QStringList features() const { return QStringList(); }
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);

@@ -31,6 +31,7 @@ public:
 	DataFormOptionParser()
 	{
 		m_depth = 0;
+		m_atValue = 0;
 		clear();
 	}
 	virtual ~DataFormOptionParser()

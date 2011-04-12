@@ -44,6 +44,10 @@ const char *error_conditions[] = {"bad-request","conflict",
 								  "unexpected-request", "unknown-sender"};
 
 ErrorFactory::ErrorFactory()
+	: m_state(AtCondition)
+	, m_depth(0)
+	, m_type(Error::UndefinedType)
+	, m_condition(Error::Undefined)
 {
 }
 
