@@ -404,6 +404,7 @@ void Client::disconnectFromServer(bool force)
 		if(force) {
 			blockSignals(true);
 			d->conn->close();
+			d->_q_disconnected();
 			blockSignals(false);
 			emit disconnected(User);
 		}

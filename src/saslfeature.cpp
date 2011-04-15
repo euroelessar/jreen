@@ -46,7 +46,8 @@ void SASLFeature::init()
 			this, SLOT(onNeedParams(QCA::SASL::Params)));
 	connect(m_sasl.data(), SIGNAL(authCheck(QString,QString)),
 			this, SLOT(onAuthCheck(QString,QString)));
-	connect(m_sasl.data(), SIGNAL(error()), this, SLOT(onError()));
+	// Don't listen it for sure
+//	connect(m_sasl.data(), SIGNAL(error()), this, SLOT(onError()));
 }
 
 void SASLFeature::reset()
