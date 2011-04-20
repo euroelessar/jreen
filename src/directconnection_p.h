@@ -24,6 +24,7 @@
 #include "sjdns_p.h"
 #include <QDebug>
 #include <QUrl>
+#include <qxmppsrvinfo/QXmppSrvInfo.h>
 
 namespace Jreen
 {
@@ -66,8 +67,12 @@ public:
 	}
 	void doLookup()
 	{
+		qDebug() << "doLookup";
 		stateChanged(QAbstractSocket::HostLookupState);
-		SJDns::instance().doLookup(host_name, this, SLOT(lookupResultsReady()));
+		QXmppSrvInfo::lookupService(QLatin1String("_xmpp-client._tcp.") + host_name,
+									this, SLOT(lookupResultsReady(QXmppSrvInfo)));
+
+		//SJDns::instance().doLookup(host_name, this, SLOT(lookupResultsReady()));
 	}
 	QAbstractSocket *socket;
 	QString host_name;
@@ -98,6 +103,32 @@ public slots:
 				record.port = qrecord.port;
 				record.weight = qrecord.weight;
 				record.priority = qrecord.priority;
+				dns_records << record;
+			}
+		}
+		Record &record = dns_records[0];
+		qDebug() << "use:" << record.host << record.port;
+		socket->connectToHost(record.host, record.port);
+	}
+	void lookupResultsReady(const QXmppSrvInfo &info)
+	{
+		qDebug() << "lookup result ready";
+		dns_records.clear();
+		if (info.error()) {
+			Record record;
+			record.host = host_name;
+			dns_records << record;
+		}
+		else {
+			foreach(const QXmppSrvRecord &qrecord, info.records())	{
+				Record record;
+				record.host = qrecord.target();
+				// may be it's a reason of connection problems of some users
+				if (record.host.endsWith(QLatin1Char('.')))
+					record.host.chop(1);
+				record.port = qrecord.port();
+				record.weight = qrecord.weight();
+				record.priority = qrecord.priority();
 				dns_records << record;
 			}
 		}
