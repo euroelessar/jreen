@@ -463,6 +463,8 @@ class SimpleRosterPrivate : public AbstractRosterPrivate
 SimpleRoster::SimpleRoster(Client *client, SimpleRosterPrivate *data)
     : AbstractRoster(client, data ? data : new SimpleRosterPrivate)
 {
+	connect(client, SIGNAL(newPresence(Jreen::Presence)),
+	        SLOT(onPresenceReceived(Jreen::Presence)));
 }
 
 SimpleRoster::~SimpleRoster()
