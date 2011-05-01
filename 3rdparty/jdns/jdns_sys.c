@@ -681,27 +681,31 @@ static jdns_dnsparams_t *dnsparams_get_unixfiles()
 
 #if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ >= 3)))
 # define JDNS_MODERN_RES_API
-#elif defined(JDNS_OS_SYMBIAN)
-# define JDN_NO_RES_API
 #endif
 
-#ifdef JDN_NO_RES_API
-static int my_res_init()
-{
-	return -1;
-}
-#elif !defined(JDNS_MODERN_RES_API)
+#if !defined(JDNS_MODERN_RES_API)
 typedef int (*res_init_func)();
+static res_init_func local_res_init;
+
 static int my_res_init()
 {
-#ifdef JDNS_OS_MAC
-	res_init_func mac_res_init;
-
-	// look up res_init in the system library (qt does this, not sure why)
-	mac_res_init = (res_init_func)dlsym(RTLD_NEXT, "res_init");
-	if(!mac_res_init)
+#if defined(JDNS_OS_MAC) || defined(JDNS_OS_SYMBIAN)
+	if (local_res_init)
+		return local_res_init();
+#if defined(JDNS_OS_MAC)
+	void *hnd = RTLD_NEXT;
+#elif defined(JDNS_OS_SYMBIAN)
+	void *hnd = dlopen("resolv", 0);
+	if (!hnd)
 		return -1;
-	return mac_res_init();
+#endif
+
+	local_res_init = (res_init_func)dlsym(hnd, "__res_init");
+	if(!local_res_init)
+		local_res_init = (res_init_func)dlsym(hnd, "res_init");
+	if(!local_res_init)
+		return -1;
+	return local_res_init();
 #else
 	res_close();
 	return res_init();
@@ -733,11 +737,12 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 #endif
 
 	params = jdns_dnsparams_new();
-#ifndef JDN_NO_RES_API
+
 	// error initializing?
 	if(n == -1)
 		return params;
-#ifndef JDNS_OS_SYMBIAN //S60 doesn't support ipv6
+	// S60 doesn't support ipv6
+#ifndef JDNS_OS_SYMBIAN
 	// nameservers - ipv6
 	for(n = 0; n < MAXNS && n < RESVAR._u._ext.nscount; ++n)
 	{
@@ -805,7 +810,6 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 	}
 #endif
 
-#endif // JDN_NO_RES_API
 	return params;
 }
 
