@@ -21,8 +21,8 @@ namespace Jreen
 {
 TLSDataStream::TLSDataStream(QCA::TLS *tls) : m_tls(tls)
 {
-	connect(m_tls, SIGNAL(readyRead()), SLOT(onReadyRead()));
-	connect(m_tls, SIGNAL(readyReadOutgoing()), SLOT(onReadyReadOutgoing()));
+	connect(m_tls.data(), SIGNAL(readyRead()), SLOT(onReadyRead()));
+	connect(m_tls.data(), SIGNAL(readyReadOutgoing()), SLOT(onReadyReadOutgoing()));
 	m_offset = 0;
 }
 
@@ -47,12 +47,14 @@ void TLSDataStream::close()
 
 void TLSDataStream::incomingDataReady()
 {
-	m_tls->writeIncoming(device()->readAll());
+	if (m_tls)
+		m_tls.data()->writeIncoming(device()->readAll());
 }
 
 qint64 TLSDataStream::writeData(const char *data, qint64 len)
 {
-	m_tls->write(QByteArray(data, len));
+	if (m_tls)
+		m_tls.data()->write(QByteArray(data, len));
 	return len;
 }
 
@@ -72,12 +74,16 @@ qint64 TLSDataStream::readData(char *data, qint64 maxlen)
 
 void TLSDataStream::onReadyRead()
 {
-	m_buffer.append(m_tls->read());
+	if (!m_tls)
+		return;
+	m_buffer.append(m_tls.data()->read());
 	emit readyRead();
 }
 
 void TLSDataStream::onReadyReadOutgoing()
 {
-	device()->write(m_tls->readOutgoing());
+	if (!m_tls)
+		return;
+	device()->write(m_tls.data()->readOutgoing());
 }
 }

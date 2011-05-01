@@ -40,7 +40,7 @@ namespace Jreen
 		void onReadyRead();
 		void onReadyReadOutgoing();
 	private:
-		QCA::TLS *m_tls;
+		QWeakPointer<QCA::TLS> m_tls;
 		QByteArray m_buffer;
 		int m_offset;
 	};
