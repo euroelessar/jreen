@@ -95,7 +95,7 @@ public:
 	QString id() const;
 	QString service() const;
 
-	//	inline void setPassword(const QString &password) { m_password = password; }
+	void setPassword(const QString &password);
 	//	inline const QString &name() const { return m_jid.node(); }
 	//	inline const QString &service() const { return m_jid.domain(); }
 	//	inline const QString &nick() const { return m_jid.resource(); }

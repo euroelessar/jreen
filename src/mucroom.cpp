@@ -275,6 +275,11 @@ QString MUCRoom::service() const
 	return d_func()->jid.domain();
 }
 
+void MUCRoom::setPassword(const QString &password)
+{
+	d_func()->password = password;
+}
+
 bool MUCRoom::isJoined() const
 {
 	return d_func()->isJoined;
@@ -292,7 +297,6 @@ void MUCRoom::join(Presence::Type type, const QString &message, int priority)
 		d->startedJoining = true;
 	}
 	Presence pres(type, d->jid, message, priority);
-	qDebug() << Q_FUNC_INFO << type << d->jid;
 	MUCRoomQuery *query = new MUCRoomQuery(d->password);
 	query->setMaxChars(d->maxChars);
 	query->setMaxStanzas(d->maxStanzas);
