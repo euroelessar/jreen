@@ -279,7 +279,7 @@ void Client::send(const Stanza &stanza)
 void Client::send(const Presence &pres)
 {
 	Q_D(Client);
-	qDebug() << Q_FUNC_INFO << d->jid << d->conn;
+	qDebug() << Q_FUNC_INFO << d->jid << d->conn << pres.priority();
 	qDebug() << d->conn->isOpen();
 	if(!d->conn || !d->conn->isOpen())
 		return;
@@ -373,8 +373,7 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 		return;
 	d->presence.setSubtype(type);
 	d->presence.addStatus(text);
-	if(priority > -129 && priority < 128)
-		d->presence.setPriority(priority);
+	d->presence.setPriority(priority);
 	setPresence();
 }
 

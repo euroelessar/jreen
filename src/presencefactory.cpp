@@ -106,6 +106,7 @@ void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 
 	if(!type.isEmpty())
 		writer->writeAttribute(QLatin1String("type"), type);
+	writer->writeTextElement(QLatin1String("priority"), QString::number(presence->priority()));
 	writeStanzaExtensions(stanza, writer);
 	writeLangMap(QLatin1String("status"),presence->status(), writer);
 	if(!show.isEmpty())

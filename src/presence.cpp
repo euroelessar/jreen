@@ -89,7 +89,7 @@ int Presence::priority() const
 void Presence::setPriority(int priority)
 {
 	Q_D(Presence);
-	d->priority = priority;
+	d->priority = qBound(-128, priority, 127);
 }
 
 }
