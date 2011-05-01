@@ -63,6 +63,7 @@ public:
 		ClosingState
 	};
 	virtual ~Connection() {}
+
 	virtual SocketState socketState() const = 0;
 	virtual SocketError socketError() const = 0;
 	virtual bool open() = 0;
@@ -74,9 +75,6 @@ signals:
 	void disconnected();
 	void stateChanged(SocketState);
 	void error(SocketError);
-#ifndef QT_NO_NETWORKPROXY
-	void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
-#endif
 
 protected:
 	virtual qint64 readData(char *data, qint64 maxlen) = 0;

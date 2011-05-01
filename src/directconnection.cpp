@@ -78,6 +78,26 @@ void DirectConnection::close()
 	QIODevice::close();
 }
 
+void DirectConnection::setHost(const QHostAddress &host)
+{
+	d_func()->host_name = host.toString();
+}
+
+void DirectConnection::setHost(const QString &host)
+{
+	d_func()->host_name = host;
+}
+
+void DirectConnection::setPort(int port)
+{
+	d_func()->port = port;
+}
+
+void DirectConnection::setProxy(const QNetworkProxy &proxy)
+{
+	d_func()->socket->setProxy(proxy);
+}
+
 qint64 DirectConnection::bytesAvailable() const
 {
 	return d_func()->socket->bytesAvailable() + QIODevice::bytesAvailable();

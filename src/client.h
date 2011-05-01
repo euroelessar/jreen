@@ -94,7 +94,7 @@ public:
 	void send(const Stanza &stanza);
 	void send(const Presence &pres);
 	void send(const IQ &iq, QObject *handler, const char *member, int context);
-	void setConnectionImpl(Connection *conn);
+	void setConnection(Connection *conn);
 	Connection *connection() const;
 	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);

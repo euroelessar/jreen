@@ -309,7 +309,7 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 	d->send(iq);
 }
 
-void Client::setConnectionImpl(Connection *conn)
+void Client::setConnection(Connection *conn)
 {
 	Q_D(Client);
 	delete d->conn;
@@ -382,7 +382,7 @@ void Client::connectToServer()
 	Q_D(Client);
 	qDebug() << d->server_port;
 	if(!d->conn)
-		setConnectionImpl(new TcpConnection(d->server, d->server_port));
+		setConnection(new TcpConnection(d->server, d->server_port));
 
 	if(!d->conn->isOpen()) {
 		if (d->streamProcessor) {

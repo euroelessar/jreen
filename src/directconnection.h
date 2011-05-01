@@ -34,11 +34,19 @@ class JREEN_EXPORT DirectConnection : public Connection
 
 public:
 	~DirectConnection();
+
 	bool open();
 	void close();
+	void setHost(const QHostAddress &host);
+	void setHost(const QString &host);
+	void setPort(int port);
+	void setProxy(const QNetworkProxy &proxy);
 	qint64 bytesAvailable() const;
 	SocketState socketState() const;
 	SocketError socketError() const;
+
+signals:
+	void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
 
 protected:
 	DirectConnection(QAbstractSocket *socket, const QString &host_name, qint16 port = -1);
