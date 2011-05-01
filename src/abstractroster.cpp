@@ -26,12 +26,13 @@
 namespace Jreen
 {
 
-static const char *subscription_types[] = {"from",
-										   "to",
-										   "both",
-										   "remove",
-										   "none"
-										  };
+static const char *subscription_types[] = {
+    "from",
+    "to",
+    "both",
+    "remove",
+    "none"
+};
 
 using namespace Util;
 
@@ -65,8 +66,9 @@ void AbstractRosterQueryFactory::handleStartElement(const QStringRef &name, cons
 		m_state = AtItem;
 		m_jid = JID(attributes.value(QLatin1String("jid")).toString()).bare();
 		m_name = attributes.value(QLatin1String("name")).toString();
+		m_ask = attributes.value(QLatin1String("ask")).toString();
 		QStringRef s10n = attributes.value(QLatin1String("subscription"));
-		m_subscription = strToEnum<AbstractRosterItem::SubscriptionType>(s10n,subscription_types);
+		m_subscription = strToEnum<RosterItem::SubscriptionType>(s10n,subscription_types);
 		m_groups.clear();
 	} else if (m_depth == 3 && m_state == AtItem && name == QLatin1String("group")) {
 		m_state = AtGroup;
@@ -81,8 +83,8 @@ void AbstractRosterQueryFactory::handleEndElement(const QStringRef &name, const 
 		m_state = AtStart;
 	} else if (m_depth == 2) {
 		m_state = AtQuery;
-		AbstractRosterItem::Ptr item = m_roster->createItem();
-		AbstractRosterItemPrivate *p = AbstractRosterItemPrivate::get(item.data());
+		RosterItem::Ptr item = m_roster->createItem();
+		RosterItemPrivate *p = RosterItemPrivate::get(item.data());
 		p->jid = m_jid;
 		p->name = m_name;
 		p->groups = m_groups;
@@ -109,11 +111,12 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
 	if (query->items().isEmpty())
 		writer->writeAttribute(QLatin1String("ver"), query->ver());
-	foreach (const AbstractRosterItem::Ptr &item, query->items()) {
+	foreach (const RosterItem::Ptr &item, query->items()) {
 		writer->writeStartElement(QLatin1String("item"));
 		writeAttribute(writer,QLatin1String("name"), item->name());
 		writer->writeAttribute(QLatin1String("jid"), item->jid());
-		writeAttribute(writer,QLatin1String("subscription"),enumToStr(item->subscriptionType(),subscription_types));
+		writer->writeAttribute(QLatin1String("ask"), item->ask());
+		writeAttribute(writer,QLatin1String("subscription"),enumToStr(item->subscription(),subscription_types));
 		foreach (const QString &group, item->groups())
 			writer->writeTextElement(QLatin1String("group"), group);
 		writer->writeEndElement();
@@ -131,11 +134,11 @@ static const QStringList roster_subscriptions = QStringList()
 << QLatin1String("from") << QLatin1String("to")
 << QLatin1String("both") << QLatin1String("remove");
 
-AbstractRosterItem::AbstractRosterItem(const QString &jid, const QString &name,
+RosterItem::RosterItem(const QString &jid, const QString &name,
 									   const QStringList &groups, SubscriptionType s10n)
-	: d_ptr(new AbstractRosterItemPrivate)
+	: d_ptr(new RosterItemPrivate)
 {
-	Q_D(AbstractRosterItem);
+	Q_D(RosterItem);
 	d->roster = 0;
 	d->jid = jid;
 	d->name = name;
@@ -143,23 +146,23 @@ AbstractRosterItem::AbstractRosterItem(const QString &jid, const QString &name,
 	d->subscription = s10n;
 }
 
-AbstractRosterItem::AbstractRosterItem(AbstractRoster *roster, AbstractRosterItemPrivate *data)
-	: d_ptr(data ? data : new AbstractRosterItemPrivate())
+RosterItem::RosterItem(AbstractRoster *roster, RosterItemPrivate *data)
+	: d_ptr(data ? data : new RosterItemPrivate())
 {
-	Q_D(AbstractRosterItem);
+	Q_D(RosterItem);
 	d->roster = roster;
 	d->groups.clear();
 	d->subscription = Invalid;
 }
 
-AbstractRosterItem::~AbstractRosterItem()
+RosterItem::~RosterItem()
 {
 }
 
-void AbstractRosterItem::setData(const QSharedPointer<AbstractRosterItem> &item)
+void RosterItem::setData(const QSharedPointer<RosterItem> &item)
 {
-	Q_D(AbstractRosterItem);
-	const AbstractRosterItemPrivate *p = item->d_ptr.data();
+	Q_D(RosterItem);
+	const RosterItemPrivate *p = item->d_ptr.data();
 	d->ask = p->ask;
 	d->groups = p->groups;
 	d->subscription = p->subscription;
@@ -171,9 +174,9 @@ AbstractRoster::AbstractRoster(Client *client, AbstractRosterPrivate *data) : QO
 	Q_D(AbstractRoster);
 	d->client = client;
 	d->self = createItem();
-	AbstractRosterItemPrivate *p = d->self->d_ptr.data();
+	RosterItemPrivate *p = d->self->d_ptr.data();
 	p->jid = client->jid().bare();
-	p->subscription = AbstractRosterItem::Both;
+	p->subscription = RosterItem::Both;
 	ClientPrivate::get(client)->roster = this;
 	connect(client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
 	//	 connect(client, SIGNAL(newPresence(Jreen::Presence)), this, SLOT(handlePresence(Jreen::Presence)));
@@ -189,17 +192,17 @@ QString AbstractRoster::version() const
 	return d_func()->version;
 }
 
-AbstractRosterItem::Ptr AbstractRoster::item(const QString &jid) const
+RosterItem::Ptr AbstractRoster::item(const JID &jid) const
 {
-	return d_func()->items.value(jid);
+	return d_func()->items.value(jid.bare());
 }
 
-AbstractRosterItem::Ptr AbstractRoster::selfItem() const
+RosterItem::Ptr AbstractRoster::selfItem() const
 {
 	return d_func()->self;
 }
 
-void AbstractRoster::fillRoster(const QString &version, const QList<AbstractRosterItem::Ptr> &items)
+void AbstractRoster::fillRoster(const QString &version, const QList<RosterItem::Ptr> &items)
 {
 	d_func()->version = version;
 	onLoaded(items);
@@ -217,7 +220,7 @@ void AbstractRoster::load()
 void AbstractRoster::synchronize()
 {
 	Q_D(AbstractRoster);
-	foreach(const QSharedPointer<AbstractRosterItem> &item, d->changed_items) {
+	foreach(const QSharedPointer<RosterItem> &item, d->changed_items) {
 		IQ iq(IQ::Set, JID());
 		iq.setFrom(d->client->jid());
 		iq.addExtension(new AbstractRosterQuery(item));
@@ -237,8 +240,8 @@ void AbstractRoster::add(const JID &jid, const QString &name, const QStringList 
 	if(!jid.isValid())
 		return;
 	Q_D(AbstractRoster);
-	QSharedPointer<AbstractRosterItem> item(createItem());
-	AbstractRosterItemPrivate *p = item->d_ptr.data();
+	QSharedPointer<RosterItem> item(createItem());
+	RosterItemPrivate *p = item->d_ptr.data();
 	p->jid = jid;
 	p->name = name;
 	p->groups = groups;
@@ -252,17 +255,17 @@ void AbstractRoster::remove(const JID &jid)
 	if(!jid.isValid())
 		return;
 	Q_D(AbstractRoster);
-	QSharedPointer<AbstractRosterItem> item(createItem());
+	QSharedPointer<RosterItem> item(createItem());
 	item->d_ptr->jid = jid;
-	item->d_ptr->subscription = AbstractRosterItem::Remove;
+	item->d_ptr->subscription = RosterItem::Remove;
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(new AbstractRosterQuery(item));
 	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), RemoveRosterItem);
 }
 
-QSharedPointer<AbstractRosterItem> AbstractRoster::createItem()
+QSharedPointer<RosterItem> AbstractRoster::createItem()
 {
-	return QSharedPointer<AbstractRosterItem>(new AbstractRosterItem(this));
+	return QSharedPointer<RosterItem>(new RosterItem(this));
 }
 
 //QSharedPointer<AbstractResource> AbstractRoster::createResource()
@@ -278,13 +281,13 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	Q_D(AbstractRoster);
 	d->version = roster->ver();
 	iq.accept();
-	foreach (const AbstractRosterItem::Ptr &item, roster->items()) {
+	foreach (const RosterItem::Ptr &item, roster->items()) {
 		qDebug() << "handle item" << item->jid();
-		if(item->subscriptionType() == AbstractRosterItem::Remove) {
+		if(item->subscription() == RosterItem::Remove) {
 			onItemRemoved(item->jid());
 			d->items.remove(item->jid());
 		} else {
-			QHash<QString, AbstractRosterItem::Ptr>::iterator item_iter = d->items.find(item->jid());
+			QHash<QString, RosterItem::Ptr>::iterator item_iter = d->items.find(item->jid());
 			if (item_iter == d->items.end()) {
 				d->items.insert(item->jid(), item);
 				onItemAdded(item);
@@ -296,12 +299,12 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	}
 }
 
-void AbstractRoster::onItemAdded(QSharedPointer<AbstractRosterItem> item)
+void AbstractRoster::onItemAdded(QSharedPointer<RosterItem> item)
 {
 	Q_UNUSED(item);
 }
 
-void AbstractRoster::onItemUpdated(QSharedPointer<AbstractRosterItem> item)
+void AbstractRoster::onItemUpdated(QSharedPointer<RosterItem> item)
 {
 	Q_UNUSED(item);
 }
@@ -344,19 +347,19 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 	}
 }
 
-void AbstractRoster::onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &items)
+void AbstractRoster::onLoaded(const QList<QSharedPointer<RosterItem> > &items)
 {
 	Q_D(AbstractRoster);
 	QSet<QString> jidsForRemove;
-	QHashIterator<QString, AbstractRosterItem::Ptr> it(d->items);
+	QHashIterator<QString, RosterItem::Ptr> it(d->items);
 	while (it.hasNext()) {
 		it.next();
 		jidsForRemove.insert(it.key());
 	}
 	for (int i = 0; !jidsForRemove.isEmpty() && i < items.size(); i++)
 		jidsForRemove.remove(items.at(i)->jid());
-	foreach (const AbstractRosterItem::Ptr &item, items) {
-		QHash<QString, AbstractRosterItem::Ptr>::iterator item_iter = d->items.find(item->jid());
+	foreach (const RosterItem::Ptr &item, items) {
+		QHash<QString, RosterItem::Ptr>::iterator item_iter = d->items.find(item->jid());
 		if (item_iter == d->items.end()) {
 			d->items.insert(item->jid(), item);
 			item->d_func()->roster = this;
@@ -374,49 +377,44 @@ void AbstractRoster::onLoaded(const QList<QSharedPointer<AbstractRosterItem> > &
 	emit loaded();
 }
 
-QSharedPointer<AbstractRosterItem> AbstractRoster::getItem(const JID &jid) const
-{
-	return d_func()->items.value(jid.bare());
-}
-
-const QString &AbstractRosterItem::jid() const
+QString RosterItem::jid() const
 {
 	return d_ptr->jid;
 }
 
-const QString &AbstractRosterItem::name() const
+QString RosterItem::name() const
 {
 	return d_ptr->name;
 }
 
-const QStringList &AbstractRosterItem::groups() const
+QStringList RosterItem::groups() const
 {
 	return d_ptr->groups;
 }
 
-AbstractRosterItem::SubscriptionType AbstractRosterItem::subscriptionType() const
+RosterItem::SubscriptionType RosterItem::subscription() const
 {
 	return d_ptr->subscription;
 }
 
-const QString &AbstractRosterItem::ask() const
+QString RosterItem::ask() const
 {
 	return d_ptr->ask;
 }
 
-void AbstractRosterItem::setGroups(const QStringList &groups)
+void RosterItem::setGroups(const QStringList &groups)
 {
 	setChanged(); d_ptr->groups = groups;
 }
 
-void AbstractRosterItem::setName(const QString &name)
+void RosterItem::setName(const QString &name)
 {
 	setChanged(); d_ptr->name = name;
 }
 
-void AbstractRosterItem::setChanged()
+void RosterItem::setChanged()
 {
-	Q_D(AbstractRosterItem);
+	Q_D(RosterItem);
 	d->roster->d_func()->changed_items << d->roster->d_func()->items.value(d->jid);
 }
 
@@ -471,12 +469,46 @@ SimpleRoster::~SimpleRoster()
 {
 }
 
-void SimpleRoster::onItemAdded(QSharedPointer<AbstractRosterItem> item)
+void SimpleRoster::subscribe(const JID &jid, const QString &msg, const QString &name, const QStringList &groups)
+{
+	add(jid, name, groups);
+	Presence pres(Presence::Subscribe, jid.bareJID(), msg);
+	d_func()->client->send(pres);
+}
+
+void SimpleRoster::subscribe(const JID &jid, const QString &msg)
+{
+	Presence pres(Presence::Subscribe, jid.bareJID(), msg);
+	d_func()->client->send(pres);
+}
+
+void SimpleRoster::unsubscribe(const JID &jid, const QString &msg)
+{
+	Presence pres(Presence::Unsubscribe, jid.bareJID(), msg);
+	d_func()->client->send(pres);
+}
+
+void SimpleRoster::allowSubscription(const JID &jid, bool ok)
+{
+	Presence pres(ok ? Presence::Subscribed : Presence::Unsubscribed, jid.bareJID());
+	d_func()->client->send(pres);
+}
+
+void SimpleRoster::onPresenceReceived(const Jreen::Presence &presence)
+{
+	RosterItem::Ptr item = AbstractRoster::item(presence.from());
+	if (presence.isSubscription())
+		emit subscriptionReceived(item, presence);
+	else
+		emit presenceReceived(item, presence);
+}
+
+void SimpleRoster::onItemAdded(QSharedPointer<RosterItem> item)
 {
 	emit itemAdded(item);
 }
 
-void SimpleRoster::onItemUpdated(QSharedPointer<AbstractRosterItem> item)
+void SimpleRoster::onItemUpdated(QSharedPointer<RosterItem> item)
 {
 	emit itemUpdated(item);
 }

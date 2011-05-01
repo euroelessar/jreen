@@ -21,18 +21,18 @@
 
 namespace Jreen
 {
-class AbstractRosterItemPrivate
+class RosterItemPrivate
 {
 public:
-	inline AbstractRosterItemPrivate() : subscription(AbstractRosterItem::Remove) {}
+	inline RosterItemPrivate() : subscription(RosterItem::Remove) {}
 	AbstractRoster *roster;
 	QString jid;
 	QString name;
 	QStringList groups;
-	AbstractRosterItem::SubscriptionType subscription;
+	RosterItem::SubscriptionType subscription;
 	QString ask;
 
-	static AbstractRosterItemPrivate *get(AbstractRosterItem *item) { return item->d_func(); }
+	static RosterItemPrivate *get(RosterItem *item) { return item->d_func(); }
 };
 
 class AbstractRosterPrivate
@@ -40,9 +40,9 @@ class AbstractRosterPrivate
 public:
 	Client *client;
 	QString version;
-	QSharedPointer<AbstractRosterItem> self;
-	QHash<QString, QSharedPointer<AbstractRosterItem> > items;
-	QSet<QSharedPointer<AbstractRosterItem> > changed_items;
+	QSharedPointer<RosterItem> self;
+	QHash<QString, QSharedPointer<RosterItem> > items;
+	QSet<QSharedPointer<RosterItem> > changed_items;
 };
 
 class AbstractRosterQuery : public StanzaExtension
@@ -50,12 +50,12 @@ class AbstractRosterQuery : public StanzaExtension
 	J_EXTENSION(Jreen::AbstractRosterQuery,"/iq/query[@xmlns='jabber:iq:roster']");
 public:
 	AbstractRosterQuery(const QString &ver = QString()) : m_ver(ver) {}
-	AbstractRosterQuery(const QList<AbstractRosterItem::Ptr> &items, const QString &ver) : m_items(items), m_ver(ver) {}
-	AbstractRosterQuery(const QSharedPointer<AbstractRosterItem> &item) { m_items << item; }
-	QList<QSharedPointer<AbstractRosterItem> > items() const { return m_items; }
+	AbstractRosterQuery(const QList<RosterItem::Ptr> &items, const QString &ver) : m_items(items), m_ver(ver) {}
+	AbstractRosterQuery(const QSharedPointer<RosterItem> &item) { m_items << item; }
+	QList<QSharedPointer<RosterItem> > items() const { return m_items; }
 	QString ver() const { return m_ver; }
 protected:
-	QList<QSharedPointer<AbstractRosterItem> > m_items;
+	QList<QSharedPointer<RosterItem> > m_items;
 	QString m_ver;
 };
 
@@ -78,9 +78,10 @@ private:
 	QStringList m_groups;
 	QString m_name;
 	QString m_jid;
-	AbstractRosterItem::SubscriptionType m_subscription;
+	QString m_ask;
+	RosterItem::SubscriptionType m_subscription;
 	QString m_ver;
-	QList<AbstractRosterItem::Ptr> m_items;
+	QList<RosterItem::Ptr> m_items;
 };
 }
 

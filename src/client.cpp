@@ -76,10 +76,10 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 		} else {
 			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare()) || iq->from().bare() == jid.bare();
 			if (!ok) {
-				AbstractRosterItem::Ptr item = roster->getItem(iq->from());
+				RosterItem::Ptr item = roster->item(iq->from());
 				ok = item
-						&& item->subscriptionType() != AbstractRosterItem::None
-						&& item->subscriptionType() != AbstractRosterItem::To;
+						&& item->subscription() != RosterItem::None
+						&& item->subscription() != RosterItem::To;
 			}
 			if (!ok) {
 				IQ error(IQ::Error, iq->from(), iq->id());

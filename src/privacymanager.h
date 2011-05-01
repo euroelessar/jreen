@@ -23,7 +23,7 @@ namespace Jreen
 {
 class Client;
 class IQ;
-class AbstractRosterItem;
+class RosterItem;
 class PrivacyManagerPrivate;
 class PrivacyItemPrivate;
 
@@ -80,7 +80,7 @@ public:
 	uint order() const;
 	void setOrder(uint order);
 	
-	bool check(const AbstractRosterItem *item) const;
+	bool check(const RosterItem *item) const;
 	bool check(const JID &jid) const;
 private:
 	QSharedDataPointer<PrivacyItemPrivate> d_ptr;

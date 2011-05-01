@@ -111,7 +111,7 @@ void PrivacyItem::setOrder(uint order)
 	d_ptr->order = order;
 }
 
-bool PrivacyItem::check(const AbstractRosterItem *item) const
+bool PrivacyItem::check(const RosterItem *item) const
 {
 	const PrivacyItemPrivate *d = d_ptr.data();
 	if (d->type == ByJID)
@@ -119,7 +119,7 @@ bool PrivacyItem::check(const AbstractRosterItem *item) const
 	if (d->type == ByGroup)
 		return item->groups().contains(d->data.toString());
 	if (d->type == BySubscription) {
-		SubscriptionType itemType = static_cast<SubscriptionType>(item->subscriptionType());
+		SubscriptionType itemType = static_cast<SubscriptionType>(item->subscription());
 		SubscriptionType type = static_cast<SubscriptionType>(d->data.toInt());
 		if (itemType == Invalid)
 			itemType = None;

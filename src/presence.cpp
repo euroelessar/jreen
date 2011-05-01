@@ -56,6 +56,15 @@ Presence::Type Presence::subtype() const
 	return d->subtype;
 }
 
+bool Presence::isSubscription() const
+{
+	Q_D(const Presence);
+	return d->subtype == Subscribe
+	        || d->subtype == Unsubscribe
+	        || d->subtype == Subscribed
+	        || d->subtype == Unsubscribed;
+}
+
 const Capabilities *Presence::capabilities() const
 {
 	return findExtension<Capabilities>().data();

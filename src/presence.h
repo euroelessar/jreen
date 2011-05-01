@@ -61,6 +61,7 @@ public:
 	{ return *static_cast<Presence *>(&Jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
 	void setSubtype(Type subtype);
+	bool isSubscription() const;
 	const Capabilities *capabilities() const;
 	const QString &status(const QString &lang = QString()) const;
 	void addStatus(const QString &status, const QString &lang = QString());
