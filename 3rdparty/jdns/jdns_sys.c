@@ -685,7 +685,26 @@ static jdns_dnsparams_t *dnsparams_get_unixfiles()
 
 #if !defined(JDNS_MODERN_RES_API)
 typedef int (*res_init_func)();
-static res_init_func local_res_init;
+typedef struct __res_state *res_state_ptr;
+
+static res_init_func local_res_init = 0;
+static res_state_ptr local_res = 0;
+static void *local_resolv_handle = 0;
+
+static void jdns_resolve_library()
+{
+	if (local_resolv_handle)
+		return;
+#if defined(JDNS_OS_MAC)
+	local_resolv_handle = RTLD_NEXT;
+#else
+	local_resolv_handle = dlopen("resolv", 0);
+#endif
+	local_res_init = (res_init_func)dlsym(local_resolv_handle, "__res_init");
+	if(!local_res_init)
+		local_res_init = (res_init_func)dlsym(local_resolv_handle, "res_init");
+	local_res = (res_state_ptr)dlsym(local_resolv_handle, "_res");
+}
 
 static int my_res_init()
 {
@@ -732,8 +751,11 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 	n = res_ninit(&res);
 #define RESVAR res
 #else
-	n = my_res_init();
-#define RESVAR _res
+	if (local_res_init)
+		n = local_res_init();
+	else
+		n = -1;
+#define RESVAR (*local_res)
 #endif
 
 	params = jdns_dnsparams_new();
