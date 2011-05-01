@@ -175,6 +175,6 @@ void SASLFeature::onAuthCheck(const QString &user, const QString &authzid)
 void SASLFeature::onError()
 {
 	m_info->completed(StreamInfo::AuthorizationFailed);
-	qDebug() << Q_FUNC_INFO << m_sasl->errorCode();
+	qDebug() << Q_FUNC_INFO << (m_sasl ? m_sasl->errorCode() : -1);
 }
 }
