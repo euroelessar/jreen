@@ -679,15 +679,15 @@ static jdns_dnsparams_t *dnsparams_get_unixfiles()
 	return params;
 }
 
-#if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ >= 3)))
-# define JDNS_MODERN_RES_API
-#endif
-
-#if !defined(JDNS_MODERN_RES_API)
-typedef int (*res_init_func)();
 typedef struct __res_state *res_state_ptr;
 
+typedef int (*res_init_func)();
+typedef int (*res_ninit_func)(res_state_ptr);
+typedef int (*res_nclose_func)(res_state_ptr);
+
 static res_init_func local_res_init = 0;
+static res_ninit_func local_res_ninit = 0;
+static res_nclose_func local_res_nclose = 0;
 static res_state_ptr local_res = 0;
 static void *local_resolv_handle = 0;
 
@@ -700,37 +700,27 @@ static void jdns_resolve_library()
 #else
 	local_resolv_handle = dlopen("resolv", 0);
 #endif
-	local_res_init = (res_init_func)dlsym(local_resolv_handle, "__res_init");
-	if(!local_res_init)
-		local_res_init = (res_init_func)dlsym(local_resolv_handle, "res_init");
-	local_res = (res_state_ptr)dlsym(local_resolv_handle, "_res");
-}
 
-static int my_res_init()
-{
-#if defined(JDNS_OS_MAC) || defined(JDNS_OS_SYMBIAN)
-	if (local_res_init)
-		return local_res_init();
-#if defined(JDNS_OS_MAC)
-	void *hnd = RTLD_NEXT;
-#elif defined(JDNS_OS_SYMBIAN)
-	void *hnd = dlopen("resolv", 0);
-	if (!hnd)
-		return -1;
-#endif
+	local_res_init = (res_init_func) dlsym(local_resolv_handle, "__res_init");
+	if(!local_res_init)
+		local_res_init = (res_init_func) dlsym(local_resolv_handle, "res_init");
 
-	local_res_init = (res_init_func)dlsym(hnd, "__res_init");
-	if(!local_res_init)
-		local_res_init = (res_init_func)dlsym(hnd, "res_init");
-	if(!local_res_init)
-		return -1;
-	return local_res_init();
-#else
-	res_close();
-	return res_init();
-#endif
+	local_res_ninit = (res_ninit_func) dlsym(local_resolv_handle, "__res_ninit");
+	if (!local_res_ninit)
+		local_res_ninit = (res_ninit_func) dlsym(local_resolv_handle, "res_ninit");
+
+	if (local_res_ninit)
+	{
+		local_res_nclose = (res_nclose_func) dlsym(local_resolv_handle, "__res_nclose");
+		if (!local_res_nclose)
+			local_res_nclose = (res_nclose_func) dlsym(local_resolv_handle, "res_nclose");
+		if (!local_res_nclose)
+			local_res_ninit = 0;
+	} 
+
+	if (!local_res_ninit)
+		local_res = (res_state_ptr) dlsym(local_resolv_handle, "_res");
 }
-#endif
 
 // on some platforms, __res_state_ext exists as a struct but it is not
 //   a define, so the #ifdef doesn't work.  as a workaround, we'll explicitly
@@ -744,19 +734,21 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 {
 	int n;
 	jdns_dnsparams_t *params;
-
-#ifdef JDNS_MODERN_RES_API
-	struct __res_state res;
-	memset(&res, 0, sizeof(struct __res_state));
-	n = res_ninit(&res);
-#define RESVAR res
-#else
-	if (local_res_init)
+	res_state_ptr state;
+	if (local_res_ninit)
+	{
+		state = (res_state_ptr) malloc(sizeof(*state));
+		n = local_res_ninit(state);
+	}
+	else if (local_res_init)
+	{
+		state = local_res;
 		n = local_res_init();
+	}
 	else
+	{
 		n = -1;
-#define RESVAR (*local_res)
-#endif
+	}
 
 	params = jdns_dnsparams_new();
 
@@ -766,15 +758,15 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 	// S60 doesn't support ipv6
 #ifndef JDNS_OS_SYMBIAN
 	// nameservers - ipv6
-	for(n = 0; n < MAXNS && n < RESVAR._u._ext.nscount; ++n)
+	for(n = 0; n < MAXNS && n < state->_u._ext.nscount; ++n)
 	{
 		jdns_address_t *addr;
 		struct sockaddr_in6 *sa6;
 
 #ifdef USE_EXTEXT
-		sa6 = ((struct sockaddr_in6 *)RESVAR._u._ext.ext) + n;
+		sa6 = ((struct sockaddr_in6 *)state->_u._ext.ext) + n;
 #else
-		sa6 = RESVAR._u._ext.nsaddrs[n];
+		sa6 = state->_u._ext.nsaddrs[n];
 #endif
 
 		if(sa6 == NULL)
@@ -787,21 +779,21 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 #endif
 
 	// nameservers - ipv4
-	for(n = 0; n < MAXNS && n < RESVAR.nscount; ++n)
+	for(n = 0; n < MAXNS && n < state->nscount; ++n)
 	{
 		jdns_address_t *addr = jdns_address_new();
-		jdns_address_set_ipv4(addr, ntohl(RESVAR.nsaddr_list[n].sin_addr.s_addr));
+		jdns_address_set_ipv4(addr, ntohl(state->nsaddr_list[n].sin_addr.s_addr));
 		jdns_dnsparams_append_nameserver(params, addr, JDNS_UNICAST_PORT);
 		jdns_address_delete(addr);
 	}
 
 	// domain name
-	if(strlen(RESVAR.defdname) > 0)
+	if(strlen(state->defdname) > 0)
 	{
 		jdns_string_t *str;
 		jdns_string_t *p;
 		str = jdns_string_new();
-		jdns_string_set_cstr(str, RESVAR.defdname);
+		jdns_string_set_cstr(str, state->defdname);
 		p = string_tolower(str);
 		jdns_string_delete(str);
 		str = p;
@@ -811,14 +803,14 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 
 	// search list
 #ifdef MAXDFLSRCH
-	for(n = 0; n < MAXDFLSRCH && RESVAR.dnsrch[n]; ++n)
+	for(n = 0; n < MAXDFLSRCH && state->dnsrch[n]; ++n)
 	{
-		if(strlen(RESVAR.dnsrch[n]) > 0)
+		if(strlen(state->dnsrch[n]) > 0)
 		{
 			jdns_string_t *str;
 			jdns_string_t *p;
 			str = jdns_string_new();
-			jdns_string_set_cstr(str, RESVAR.dnsrch[n]);
+			jdns_string_set_cstr(str, state->dnsrch[n]);
 			p = string_tolower(str);
 			jdns_string_delete(str);
 			str = p;
@@ -832,6 +824,11 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 	}
 #endif
 
+	if (local_res_ninit)
+	{
+		local_res_nclose(state);
+		free(state);
+	}
 	return params;
 }
 
