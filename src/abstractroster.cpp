@@ -85,6 +85,7 @@ void AbstractRosterQueryFactory::handleEndElement(const QStringRef &name, const 
 		m_state = AtQuery;
 		RosterItem::Ptr item = m_roster->createItem();
 		RosterItemPrivate *p = RosterItemPrivate::get(item.data());
+		p->ask = m_ask;
 		p->jid = m_jid;
 		p->name = m_name;
 		p->groups = m_groups;

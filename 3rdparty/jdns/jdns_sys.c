@@ -732,6 +732,7 @@ static void jdns_resolve_library()
 
 static jdns_dnsparams_t *dnsparams_get_unixsys()
 {
+	jdns_resolve_library();
 	int n;
 	jdns_dnsparams_t *params;
 	res_state_ptr state;
