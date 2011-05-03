@@ -684,42 +684,42 @@ typedef struct __res_state *res_state_ptr;
 typedef int (*res_init_func)();
 typedef int (*res_ninit_func)(res_state_ptr);
 typedef int (*res_nclose_func)(res_state_ptr);
+typedef void *(*jdns_library_resolve_func)(const char *, const char *);
 
+jdns_library_resolve_func jdns_library_resolve = 0;
 static res_init_func local_res_init = 0;
 static res_ninit_func local_res_ninit = 0;
 static res_nclose_func local_res_nclose = 0;
 static res_state_ptr local_res = 0;
-static void *local_resolv_handle = 0;
+static int local_inited = 0;
 
 static void jdns_resolve_library()
 {
-	if (local_resolv_handle)
+	if (local_inited)
 		return;
-#if defined(JDNS_OS_MAC)
-	local_resolv_handle = RTLD_NEXT;
-#else
-	local_resolv_handle = dlopen("resolv", 0);
-#endif
+	local_inited = 1;
+	if (!jdns_library_resolve)
+		return;
 
-	local_res_init = (res_init_func) dlsym(local_resolv_handle, "__res_init");
+	local_res_init = (res_init_func) jdns_library_resolve("resolv", "__res_init");
 	if(!local_res_init)
-		local_res_init = (res_init_func) dlsym(local_resolv_handle, "res_init");
+		local_res_init = (res_init_func) jdns_library_resolve("resolv", "res_init");
 
-	local_res_ninit = (res_ninit_func) dlsym(local_resolv_handle, "__res_ninit");
+	local_res_ninit = (res_ninit_func) jdns_library_resolve("resolv", "__res_ninit");
 	if (!local_res_ninit)
-		local_res_ninit = (res_ninit_func) dlsym(local_resolv_handle, "res_ninit");
+		local_res_ninit = (res_ninit_func) jdns_library_resolve("resolv", "res_ninit");
 
 	if (local_res_ninit)
 	{
-		local_res_nclose = (res_nclose_func) dlsym(local_resolv_handle, "__res_nclose");
+		local_res_nclose = (res_nclose_func) jdns_library_resolve("resolv", "__res_nclose");
 		if (!local_res_nclose)
-			local_res_nclose = (res_nclose_func) dlsym(local_resolv_handle, "res_nclose");
+			local_res_nclose = (res_nclose_func) jdns_library_resolve("resolv", "res_nclose");
 		if (!local_res_nclose)
 			local_res_ninit = 0;
 	} 
 
 	if (!local_res_ninit)
-		local_res = (res_state_ptr) dlsym(local_resolv_handle, "_res");
+		local_res = (res_state_ptr) jdns_library_resolve("resolv", "_res");
 }
 
 // on some platforms, __res_state_ext exists as a struct but it is not

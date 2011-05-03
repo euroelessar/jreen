@@ -22,6 +22,7 @@
  */
 
 #include "qjdns_p.h"
+#include <QLibrary>
 
 // for fprintf
 #include <stdio.h>
@@ -180,8 +181,18 @@ QStringList QJDns::debugLines()
 	return tmp;
 }
 
+
+typedef void *(*jdns_library_resolve_func)(const char *, const char *);
+extern jdns_library_resolve_func jdns_library_resolve;
+
+void *qjdns_library_resolve(const char *lib, const char *symbol)
+{
+	return QLibrary::resolve(QString::fromLocal8Bit(lib), symbol);
+}
+
 QJDns::SystemInfo QJDns::systemInfo()
 {
+	jdns_library_resolve = qjdns_library_resolve;
 	SystemInfo out;
 	jdns_dnsparams_t *params = jdns_system_dnsparams();
 	for(int n = 0; n < params->nameservers->count; ++n)

@@ -32,6 +32,13 @@ SJDns &SJDns::instance()
 		connect(sjdns->qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
 
 		QJDns::SystemInfo info = QJDns::systemInfo();
+		if (info.nameServers.isEmpty()) {
+			QJDns::NameServer server;
+			server.address = QLatin1String("8.8.8.8");
+			info.nameServers << server;
+			server.address = QLatin1String("77.88.39.152");
+			info.nameServers << server;
+		}
 		sjdns->qjdns->setNameServers(info.nameServers);
 	}
 	return *sjdns;
