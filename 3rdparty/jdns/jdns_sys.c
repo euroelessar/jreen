@@ -356,6 +356,11 @@ static int dnsparams_have_domain(const jdns_dnsparams_t *a, const jdns_string_t 
 	return 0;
 }
 
+
+typedef void *(*jdns_library_resolve_func)(const char *, const char *);
+
+jdns_library_resolve_func jdns_library_resolve = 0;
+
 #ifdef JDNS_OS_WIN
 
 // from Microsoft IPTypes.h
@@ -684,9 +689,7 @@ typedef struct __res_state *res_state_ptr;
 typedef int (*res_init_func)();
 typedef int (*res_ninit_func)(res_state_ptr);
 typedef int (*res_nclose_func)(res_state_ptr);
-typedef void *(*jdns_library_resolve_func)(const char *, const char *);
 
-jdns_library_resolve_func jdns_library_resolve = 0;
 static res_init_func local_res_init = 0;
 static res_ninit_func local_res_ninit = 0;
 static res_nclose_func local_res_nclose = 0;
