@@ -18,6 +18,7 @@
 
 //#include <QAction>
 #include <jdns/qjdns.h>
+#include <QUrl>
 #include "action.h"
 
 namespace Jreen
@@ -37,7 +38,7 @@ public:
 	static SJDns &instance();
 	void doLookup(const QString &host, QObject *receiver, const char *member)
 	{
-		int id = qjdns->queryStart(QString("_xmpp-client._tcp." + host).toUtf8(), QJDns::Srv);
+		int id = qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
 		Action *action = new Action(this);
 		action->setData(host);
 		connect(action, SIGNAL(triggered()), receiver, member);
