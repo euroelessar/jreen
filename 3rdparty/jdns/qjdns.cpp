@@ -183,7 +183,7 @@ QStringList QJDns::debugLines()
 
 
 typedef void *(*jdns_library_resolve_func)(const char *, const char *);
-extern jdns_library_resolve_func jdns_library_resolve;
+extern "C" jdns_library_resolve_func jdns_library_resolve;
 
 void *qjdns_library_resolve(const char *lib, const char *symbol)
 {
