@@ -33,22 +33,24 @@ FIND_PACKAGE(LibIDN)
 
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config
-FIND_PACKAGE(PkgConfig)
-pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
-find_path(ZLIB_INCLUDE_DIR
-  NAMES zlib.h
-  PATHS ${ZLIB_PKGCONF_INCLUDE_DIRS}
-)
-find_library(ZLIB_LIBRARIES
-  NAMES z
-  PATHS ${ZLIB_PKGCONF_LIBRARY_DIRS}
-)
-if(NOT ZLIB_INCLUDE_DIR)
-  message(SEND_ERROR "Could not find zlib includes.")
-endif(NOT ZLIB_INCLUDE_DIR)
-if(NOT ZLIB_LIBRARIES)
-  message(SEND_ERROR "Could not find zlib library.")
-endif(NOT ZLIB_LIBRARIES)
+if(LINUX)
+	FIND_PACKAGE(PkgConfig)
+	pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
+	find_path(ZLIB_INCLUDE_DIR
+	  NAMES zlib.h
+	  PATHS ${ZLIB_PKGCONF_INCLUDE_DIRS}
+	)
+	find_library(ZLIB_LIBRARIES
+	  NAMES z
+	  PATHS ${ZLIB_PKGCONF_LIBRARY_DIRS}
+	)
+	if(NOT ZLIB_INCLUDE_DIR)
+	  message(SEND_ERROR "Could not find zlib includes.")
+	endif(NOT ZLIB_INCLUDE_DIR)
+	if(NOT ZLIB_LIBRARIES)
+	  message(SEND_ERROR "Could not find zlib library.")
+	endif(NOT ZLIB_LIBRARIES)
+endif()
 
 #add_subdirectory(3rdparty)
 
