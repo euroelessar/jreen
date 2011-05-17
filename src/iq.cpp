@@ -19,6 +19,11 @@
 
 namespace Jreen
 {
+ConnectionIQ::ConnectionIQ(Type type, const JID& to, const QString& id)
+    : IQ(type, to, id)
+{
+	d_func()->connection = true;
+}
 
 IQ::IQ(Type type, const JID& to, const QString& id) : Stanza(*new IQPrivate)
 {

@@ -99,7 +99,7 @@ public:
 	static ClientPrivate *get(Client *client) { return client->d_func(); }
 	
 	ClientPrivate(const Presence &p, Client *parent)
-		:  q_ptr(parent),presence(p), current_id(0), conn(0)
+		:  pingInterval(-1), q_ptr(parent), presence(p), current_id(0), conn(0)
 	{
 		Q_Q(Client);
 		disco = 0;
@@ -145,6 +145,7 @@ public:
 
 	void handleStanza(const Stanza::Ptr &stanza);
 	QBasicTimer pingTimer;
+	int pingInterval;
 	StreamInfo *stream_info;
 	Client *q_ptr;
 	JID jid;
@@ -227,6 +228,7 @@ public:
 	}
 	void _q_disconnected()
 	{
+		pingTimer.stop();
 		isConnected = false;
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamEnd();

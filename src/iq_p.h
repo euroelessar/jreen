@@ -25,9 +25,21 @@ namespace Jreen
 class IQPrivate : public StanzaPrivate
 {
 public:
-	IQPrivate() : StanzaPrivate(StanzaIq), accepted(false) {}
+	IQPrivate() : StanzaPrivate(StanzaIq), accepted(false), connection(false) {}
 	IQ::Type subtype;
 	mutable bool accepted;
+	bool connection;
+};
+
+class ConnectionIQPrivate : public IQPrivate
+{
+};
+
+class ConnectionIQ : public IQ
+{
+	Q_DECLARE_PRIVATE(ConnectionIQ)
+public:
+	ConnectionIQ(Type type, const JID& to, const QString& id = QString());
 };
 }
 

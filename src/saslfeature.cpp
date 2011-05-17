@@ -161,8 +161,8 @@ void SASLFeature::onNeedParams(const QCA::SASL::Params &params)
 		m_sasl->setUsername(m_info->jid().node());
 	if (params.canSendRealm())
 		m_sasl->setRealm(m_info->jid().domain());
-	if (params.canSendAuthzid())
-		m_sasl->setAuthzid(m_info->jid().bare());
+//	if (params.canSendAuthzid())
+//		m_sasl->setAuthzid(m_info->jid().bare());
 	m_sasl->continueAfterParams();
 }
 

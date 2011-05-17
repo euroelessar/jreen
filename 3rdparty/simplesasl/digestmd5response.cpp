@@ -8,6 +8,7 @@
 #include <QByteArray>
 #include <QtCrypto>
 #include <QtDebug>
+#include <cstdio>
 
 #include "digestmd5proplist.h"
 
@@ -26,12 +27,9 @@ DIGESTMD5Response::DIGESTMD5Response(const QByteArray& challenge, const QString&
 	//qDebug() << (QString("simplesasl.cpp: IN: %1").arg(QString(in.toString())));
 
 	// make a cnonce
-	QByteArray a;
-	a.resize(32);
-	for(int n = 0; n < (int)a.size(); ++n) {
-		a[n] = char(qrand() % 255);
-	}
-	QByteArray cnonce = QByteArray::fromBase64(a);
+	QByteArray cnonce(32, Qt::Uninitialized);
+	for (int i = 0; i < cnonce.size(); i += sizeof(qint32))
+		sprintf(cnonce.data() + i, "%08x", qrand());
 
 	// make other variables
 	if (realm.isEmpty()) {

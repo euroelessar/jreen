@@ -61,31 +61,25 @@ public:
 typedef QMap<int, AbstractStanzaExtensionFactory*> StanzaExtensionFactoryMap;
 
 template <typename Extension>
-class JREEN_EXPORT StanzaExtensionFactory : public AbstractStanzaExtensionFactory
+class StanzaExtensionFactory : public AbstractStanzaExtensionFactory
 {
 	Q_DISABLE_COPY(StanzaExtensionFactory)
 public:
-	StanzaExtensionFactory() {}
-	virtual ~StanzaExtensionFactory() {}
+	StanzaExtensionFactory();
+	virtual ~StanzaExtensionFactory();
 	
-	virtual int extensionType() const { return Extension::staticExtensionType(); }
+	virtual int extensionType() const;
 };
 
 template <typename Extension>
-class JREEN_EXPORT SimpleStanzaExtensionFactory : public StanzaExtensionFactory<Extension>
+class SimpleStanzaExtensionFactory : public StanzaExtensionFactory<Extension>
 {
 	Q_DISABLE_COPY(SimpleStanzaExtensionFactory)
 public:
-	SimpleStanzaExtensionFactory(const QString &name, const QString &uri, Client *client)
-		: SimpleStanzaExtensionFactory(client), m_elementName(name), m_elementUri(uri) {}
-
-	virtual ~SimpleStanzaExtensionFactory() {}
+	SimpleStanzaExtensionFactory(const QString &name, const QString &uri, Client *client);
+	virtual ~SimpleStanzaExtensionFactory();
 	
-	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
-	{
-		Q_UNUSED(attributes);
-		return name == m_elementName && uri == m_elementUri;
-	}
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 private:
 	QString m_elementName;
 	QString m_elementUri;
@@ -98,6 +92,41 @@ private:
 //		return static_cast<T>(se);
 //	return 0;
 //}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE StanzaExtensionFactory<Extension>::StanzaExtensionFactory()
+{
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE StanzaExtensionFactory<Extension>::~StanzaExtensionFactory()
+{
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE int StanzaExtensionFactory<Extension>::extensionType() const
+{
+	return Extension::staticExtensionType();
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE SimpleStanzaExtensionFactory<Extension>::SimpleStanzaExtensionFactory(const QString &name,
+                                                                                        const QString &uri, Client *client)
+	: SimpleStanzaExtensionFactory(client), m_elementName(name), m_elementUri(uri)
+{
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE SimpleStanzaExtensionFactory<Extension>::~SimpleStanzaExtensionFactory()
+{
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE bool SimpleStanzaExtensionFactory<Extension>::canParse(const QStringRef &name, const QStringRef &uri,
+                                                                         const QXmlStreamAttributes &)
+{
+	return name == m_elementName && uri == m_elementUri;
+}
 
 template <typename T>
 Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)

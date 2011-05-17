@@ -16,7 +16,7 @@
 
 #include "sessionfeature_p.h"
 #include "client.h"
-#include "iq.h"
+#include "iq_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
 #include <QDebug>

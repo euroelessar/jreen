@@ -355,9 +355,10 @@ void Client::registerStreamFeature(StreamFeature *stream_feature)
 void Client::setPingInterval(int interval)
 {
 	Q_D(Client);
-	if (d->pingTimer.isActive())
+	d->pingInterval = interval;
+	if (interval <= 0)
 		d->pingTimer.stop();
-	if (interval > 0 && isConnected())
+	else if (isConnected())
 		d->pingTimer.start(interval, this);
 }
 
@@ -438,6 +439,8 @@ void Client::timerEvent(QTimerEvent *timerEvent)
 void Client::handleConnect()
 {
 	Q_D(Client);
+	if (d->pingInterval > 0)
+		d->pingTimer.start(d->pingInterval, this);
 	IQ iq(IQ::Get, d->jid.domain());
 	iq.addExtension(new Disco::Info);
 	send(iq, this, SLOT(_q_iq_received(Jreen::IQ,int)), 0);
