@@ -50,6 +50,8 @@ if(LINUX)
 	if(NOT ZLIB_LIBRARIES)
 	  message(SEND_ERROR "Could not find zlib library.")
 	endif(NOT ZLIB_LIBRARIES)
+else()
+	find_package(ZLIB REQUIRED)
 endif()
 
 #add_subdirectory(3rdparty)
