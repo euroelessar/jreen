@@ -87,7 +87,7 @@ void Message::setID(const QString &id)
 
 const DelayedDelivery *Message::when() const
 {
-	return findExtension<DelayedDelivery>().data();
+	return payload<DelayedDelivery>().data();
 }
 
 }

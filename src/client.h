@@ -96,7 +96,7 @@ public:
 	void send(const IQ &iq, QObject *handler, const char *member, int context);
 	void setConnection(Connection *conn);
 	Connection *connection() const;
-	void registerStanzaExtension(AbstractStanzaExtensionFactory *factory);
+	void registerStanzaExtension(AbstractPayloadFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:
 	void setPresence();

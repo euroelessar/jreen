@@ -26,9 +26,9 @@ namespace Jreen
  * http://xmpp.org/extensions/xep-0092.html
  */
 
-class JREEN_EXPORT SoftwareVersion : public StanzaExtension
+class JREEN_EXPORT SoftwareVersion : public Payload
 {
-	J_EXTENSION(Jreen::SoftwareVersion,"/iq/query[@xmlns='jabber:iq:version']")
+	J_PAYLOAD(Jreen::SoftwareVersion)
 public:
 	SoftwareVersion() {}
 	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());

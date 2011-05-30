@@ -60,9 +60,9 @@ public:
 	QString subject;
 };
 
-class MUCRoomQuery : public StanzaExtension
+class MUCRoomQuery : public Payload
 {
-	J_EXTENSION(Jreen::MUCRoomQuery, "")
+	J_PAYLOAD(Jreen::MUCRoomQuery)
 	public:
 		MUCRoomQuery(const QString &password)
 	  : m_password(password), m_maxChars(-1), m_maxStanzas(-1), m_seconds(-1) {}
@@ -92,9 +92,9 @@ public:
 	QString nick;
 };
 
-class MUCRoomUserQuery : public StanzaExtension
+class MUCRoomUserQuery : public Payload
 {
-	J_EXTENSION(Jreen::MUCRoomUserQuery, "")
+	J_PAYLOAD(Jreen::MUCRoomUserQuery)
 	public:
 		MUCRoomUserQuery() : flags(0)
 	{
@@ -123,9 +123,9 @@ class MUCRoomUserQuery : public StanzaExtension
 	QString status;
 };
 
-class MUCRoomAdminQuery : public StanzaExtension
+class MUCRoomAdminQuery : public Payload
 {
-	J_EXTENSION(Jreen::MUCRoomAdminQuery, "")
+	J_PAYLOAD(Jreen::MUCRoomAdminQuery)
 	public:
 	MUCRoomAdminQuery() {}
 	MUCRoomAdminQuery(MUCRoom::Affiliation a)
@@ -161,9 +161,9 @@ class MUCRoomAdminQuery : public StanzaExtension
 	QList<MUCRoomItem> items;
 };
 
-class MUCRoomOwnerQuery : public StanzaExtension
+class MUCRoomOwnerQuery : public Payload
 {
-	J_EXTENSION(Jreen::MUCRoomOwnerQuery, "")
+	J_PAYLOAD(Jreen::MUCRoomOwnerQuery)
 	public:
 		MUCRoomOwnerQuery() {}
 	MUCRoomOwnerQuery(const DataForm::Ptr &f) : form(f) {}

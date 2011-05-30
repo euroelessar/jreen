@@ -24,21 +24,21 @@ namespace Jreen
 namespace PubSub
 {
 class EventPrivate;
-class JREEN_EXPORT Event : public StanzaExtension
+class JREEN_EXPORT Event : public Payload
 {
 	Q_DECLARE_PRIVATE(Event)
-	J_EXTENSION(Jreen::PubSub::Event, "")
+	J_PAYLOAD(Jreen::PubSub::Event)
 	public:
 		Event(const QString &node = QString());
-	Event(const StanzaExtension::Ptr &item);
-	Event(const QList<StanzaExtension::Ptr> &items);
+	Event(const Payload::Ptr &item);
+	Event(const QList<Payload::Ptr> &items);
 	~Event();
 
 	void setNode(const QString &node);
 	QString node() const;
-	void addItem(StanzaExtension *item);
-	void addItem(const StanzaExtension::Ptr &item);
-	QList<StanzaExtension::Ptr> items() const;
+	void addItem(Payload *item);
+	void addItem(const Payload::Ptr &item);
+	QList<Payload::Ptr> items() const;
 private:
 	QScopedPointer<EventPrivate> d_ptr;
 };

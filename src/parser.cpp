@@ -120,7 +120,7 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 				d->parsers.append(feature);
 		}
 	} else if (d->state == ReadStanza && d->depth == 2) {
-		foreach (AbstractStanzaExtensionFactory *factory, d->client->factories) {
+		foreach (AbstractPayloadFactory *factory, d->client->factories) {
 			if (factory->canParse(name, uri, attributes))
 				d->parsers.append(factory);
 		}
@@ -146,8 +146,8 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		XmlStreamParser *parser = d->parsers.at(i);
 		parser->handleEndElement(name, uri);
 		if (d->depth == 2 && d->state == ReadStanza && i > d->parsersCount.at(1)) {
-			StanzaExtension::Ptr se;
-			se = static_cast<AbstractStanzaExtensionFactory*>(parser)->createExtension();
+			Payload::Ptr se;
+			se = static_cast<AbstractPayloadFactory*>(parser)->createPayload();
 			d->extensions.append(se);
 		}
 	}
@@ -164,7 +164,7 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		} else if (d->state == ReadStanza) {
 			StanzaFactory *factory = static_cast<StanzaFactory*>(d->parsers.top());
 			Stanza::Ptr stanza = factory->createStanza();
-			foreach (const StanzaExtension::Ptr &se, d->extensions)
+			foreach (const Payload::Ptr &se, d->extensions)
 				stanza->addExtension(se);
 #ifdef PARSER_DEBUG_SPEED
 			d->parsingTime += counter.elapsed();

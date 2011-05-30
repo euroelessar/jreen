@@ -338,7 +338,7 @@ void DataFormFactory::handleCharacterData(const QStringRef &text)
 	}
 }
 
-void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void DataFormFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Q_D(DataFormFactory);
 	DataForm *form = se_cast<DataForm*>(extension);
@@ -350,13 +350,13 @@ void DataFormFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr DataFormFactory::createExtension()
+Payload::Ptr DataFormFactory::createPayload()
 {
 	Q_D(DataFormFactory);
 	DataForm *form = new DataForm(d->formType,d->title);
 	form->setFields(d->fields);
 	d->clear();
-	return StanzaExtension::Ptr(form);
+	return Payload::Ptr(form);
 }
 
 } // namespace Jreen

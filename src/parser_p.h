@@ -45,7 +45,7 @@ public:
 	Parser::State state;
 	QStack<XmlStreamParser*> parsers;
 	QStack<int> parsersCount;
-	QList<StanzaExtension::Ptr> extensions;
+	QList<Payload::Ptr> extensions;
 	int depth;
 	bool atParsing;
 	ClientPrivate *client;

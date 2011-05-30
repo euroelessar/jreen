@@ -83,7 +83,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			}
 			if (!ok) {
 				IQ error(IQ::Error, iq->from(), iq->id());
-				foreach (const StanzaExtension::Ptr &se, iq->extensions())
+				foreach (const Payload::Ptr &se, iq->payloads())
 					error.addExtension(se);
 				error.addExtension(new Error(Error::Cancel, Error::SubscriptionRequired));
 				send(error);
@@ -288,7 +288,7 @@ void Client::send(const Presence &pres)
 		return;
 	}
 	Presence p = pres;
-	foreach (const StanzaExtension::Ptr &se, d->presence.extensions())
+	foreach (const Payload::Ptr &se, d->presence.payloads())
 		p.addExtension(se);
 	d->send(p);
 }
@@ -326,11 +326,11 @@ Connection *Client::connection() const
 	return d_func()->conn;
 }
 
-void Client::registerStanzaExtension(AbstractStanzaExtensionFactory *factory)
+void Client::registerStanzaExtension(AbstractPayloadFactory *factory)
 {
 	Q_D(Client);
-//	delete d->factories.value(factory->extensionType(), 0);
-	d->factories.insert(factory->extensionType(), factory);
+//	delete d->factories.value(factory->payloadType(), 0);
+	d->factories.insert(factory->payloadType(), factory);
 	foreach (const QString &feature, factory->features()) {
 		DiscoPrivate::get(d->disco)->features << feature;
 		d->factoriesByUri.insert(feature, factory);
@@ -414,7 +414,7 @@ void Client::disconnectFromServer(bool force)
 void ClientPrivate::_q_iq_received(const IQ &iq, int context)
 {
 	Q_UNUSED(context);
-	QSharedPointer<Disco::Info> info = iq.findExtension<Disco::Info>();
+	QSharedPointer<Disco::Info> info = iq.payload<Disco::Info>();
 	if (info) {
 		serverFeatures = info->features();
 		serverIdentities = info->identities();
@@ -475,13 +475,13 @@ void Client::handlePresence(const Presence &presence)
 void Client::handleIQ(const IQ &iq)
 {
 	//handle XMPP::ping
-	if(iq.containsExtension<Ping>()) {
+	if(iq.containsPayload<Ping>()) {
 		iq.accept();
 		IQ pong(IQ::Result,iq.from(),iq.id());
 		pong.setFrom(d_func()->jid);
 		send(pong); //FIXME remove warning
 	}
-	if (iq.containsExtension<EntityTime>()) {
+	if (iq.containsPayload<EntityTime>()) {
 		iq.accept();
 		IQ result(IQ::Result,iq.from(),iq.id());
 		result.addExtension(new EntityTime(QDateTime::currentDateTime()));

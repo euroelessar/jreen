@@ -56,9 +56,9 @@ public:
 	bool validServer;
 };
 
-class PrivacyQuery : public StanzaExtension
+class PrivacyQuery : public Payload
 {
-	J_EXTENSION(Jreen::PrivacyQuery, "")
+	J_PAYLOAD(Jreen::PrivacyQuery)
 public:
 	class List
 	{

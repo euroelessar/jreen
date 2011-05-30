@@ -305,9 +305,9 @@ public:
 typedef QList<QSharedPointer<DataFormReported> > DataFormReportedList;
 
 class DataFormPrivate;
-class JREEN_EXPORT DataForm : public StanzaExtension, public DataFormFieldContainer
+class JREEN_EXPORT DataForm : public Payload, public DataFormFieldContainer
 {
-	J_EXTENSION(Jreen::DataForm,"/message/x[@xmlns='jabber:x:data']")
+	J_PAYLOAD(Jreen::DataForm)
 	Q_DECLARE_PRIVATE(DataForm)
 public:
 	enum Type

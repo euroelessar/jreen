@@ -6,15 +6,15 @@ namespace Jreen
 typedef QHash<QByteArray, int> ByteArrayHash;
 Q_GLOBAL_STATIC(ByteArrayHash, seClassHash)
 
-StanzaExtension::StanzaExtension()
+Payload::Payload()
 {
 }
 
-StanzaExtension::~StanzaExtension()
+Payload::~Payload()
 {
 }
 
-int StanzaExtension::registerExtensionType(const char *type)
+int Payload::registerPayloadType(const char *type)
 {
 	QByteArray t = type;
 	int id = seClassHash()->value(t, seClassHash()->size());
@@ -23,11 +23,11 @@ int StanzaExtension::registerExtensionType(const char *type)
 	return id;
 }
 
-AbstractStanzaExtensionFactory::AbstractStanzaExtensionFactory()
+AbstractPayloadFactory::AbstractPayloadFactory()
 {
 }
 
-AbstractStanzaExtensionFactory::~AbstractStanzaExtensionFactory()
+AbstractPayloadFactory::~AbstractPayloadFactory()
 {
 }
 }

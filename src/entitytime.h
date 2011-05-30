@@ -23,9 +23,9 @@
 namespace Jreen
 {
 	class EntityTimePrivate;
-	class EntityTime : public StanzaExtension
+	class EntityTime : public Payload
 	{
-		J_EXTENSION(Jreen::EntityTime, "")
+		J_PAYLOAD(Jreen::EntityTime)
 		Q_DECLARE_PRIVATE(EntityTime)
 	public:
 		EntityTime(int tzo, const QDateTime &dateTime);

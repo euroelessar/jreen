@@ -280,7 +280,7 @@ void PrivacyManager::requestList(const QString &name)
 
 void PrivacyManager::handleIQ(const Jreen::IQ &iq)
 {
-	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
+	PrivacyQuery::Ptr query = iq.payload<PrivacyQuery>();
 	if (query && iq.subtype() == IQ::Set) {
 		Q_D(PrivacyManager);
 		iq.accept();
@@ -319,7 +319,7 @@ void PrivacyManager::handleIQ(const Jreen::IQ &iq, int context)
 			emit defaultListChanged(name);
 		}
 	}
-	PrivacyQuery::Ptr query = iq.findExtension<PrivacyQuery>();
+	PrivacyQuery::Ptr query = iq.payload<PrivacyQuery>();
 	if (context == RequestList) {
 		if (!query) {
 			emit listReceived(QString(), QList<Jreen::PrivacyItem>());

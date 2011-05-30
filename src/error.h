@@ -23,9 +23,9 @@ namespace Jreen
 {
 
 class ErrorPrivate;
-class JREEN_EXPORT Error : public StanzaExtension
+class JREEN_EXPORT Error : public Payload
 {
-	J_EXTENSION(Jreen::Error,"/*/error")
+	J_PAYLOAD(Jreen::Error)
 	Q_DECLARE_PRIVATE(Error)
 public:
 	enum Type

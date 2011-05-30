@@ -29,10 +29,10 @@ class BookmarkPrivate;
 * Several Jabber clients have already agreed on and implemented a method to provide this service;
 * that informal agreement is documented and expanded upon in this document
 */
-class JREEN_EXPORT Bookmark : public StanzaExtension
+class JREEN_EXPORT Bookmark : public Payload
 {
 	Q_DECLARE_PRIVATE(Bookmark)
-	J_EXTENSION(Jreen::Bookmark,"") //dummy
+	J_PAYLOAD(Jreen::Bookmark) //dummy
 public:
 	class ConferencePrivate;
 	class JREEN_EXPORT Conference

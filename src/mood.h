@@ -20,10 +20,10 @@
 namespace Jreen
 {
 class MoodPrivate;
-class JREEN_EXPORT Mood : public StanzaExtension
+class JREEN_EXPORT Mood : public Payload
 {
 	Q_DECLARE_PRIVATE(Mood);
-	J_EXTENSION(Jreen::Mood,"/message/mood[@xmlns='http://jabber.org/protocol/mood']")
+	J_PAYLOAD(Jreen::Mood)
 	public:
 		enum Type {
 		Afraid = 0,

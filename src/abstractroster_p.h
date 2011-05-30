@@ -45,9 +45,9 @@ public:
 	QSet<QSharedPointer<RosterItem> > changed_items;
 };
 
-class AbstractRosterQuery : public StanzaExtension
+class AbstractRosterQuery : public Payload
 {
-	J_EXTENSION(Jreen::AbstractRosterQuery,"/iq/query[@xmlns='jabber:iq:roster']");
+	J_PAYLOAD(Jreen::AbstractRosterQuery);
 public:
 	AbstractRosterQuery(const QString &ver = QString()) : m_ver(ver) {}
 	AbstractRosterQuery(const QList<RosterItem::Ptr> &items, const QString &ver) : m_items(items), m_ver(ver) {}
@@ -59,7 +59,7 @@ protected:
 	QString m_ver;
 };
 
-class AbstractRosterQueryFactory : public StanzaExtensionFactory<AbstractRosterQuery>
+class AbstractRosterQueryFactory : public PayloadFactory<AbstractRosterQuery>
 {
 public:
 	AbstractRosterQueryFactory(AbstractRoster *roster);
@@ -68,8 +68,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	enum State { AtStart, AtQuery, AtItem, AtGroup };
 	int m_depth;

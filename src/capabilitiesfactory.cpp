@@ -104,7 +104,7 @@ void CapabilitesFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void CapabilitesFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void CapabilitesFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Capabilities *caps = se_cast<Capabilities*>(extension);
 	QString ver = caps->ver().isEmpty() ? hashValue(m_disco) : caps->ver();
@@ -116,9 +116,9 @@ void CapabilitesFactory::serialize(StanzaExtension *extension, QXmlStreamWriter 
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr CapabilitesFactory::createExtension()
+Payload::Ptr CapabilitesFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Capabilities(m_ver, m_node));
+	return Payload::Ptr(new Capabilities(m_ver, m_node));
 }
 
 

@@ -43,7 +43,7 @@ public:
 signals:
 	void bookmarksReceived(const Jreen::Bookmark::Ptr &bookrmark);
 private slots:
-	void onResultReady(const Jreen::StanzaExtension::Ptr &,Jreen::PrivateXml::Result,const Jreen::Error::Ptr &);
+	void onResultReady(const Jreen::Payload::Ptr &,Jreen::PrivateXml::Result,const Jreen::Error::Ptr &);
 private:
 	QScopedPointer<BookmarkStoragePrivate> d_ptr;
 };

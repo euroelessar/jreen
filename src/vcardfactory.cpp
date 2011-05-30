@@ -361,10 +361,10 @@ bool VCardFactory::canParse(const QStringRef& name, const QStringRef& uri, const
 	return name == QLatin1String("vCard") && uri == NS_VCARD;
 }
 
-StanzaExtension::Ptr VCardFactory::createExtension()
+Payload::Ptr VCardFactory::createPayload()
 {
 	Q_D(VCardFactory);
-	return StanzaExtension::Ptr(d->vcard ? new VCard(*d->vcard.take()) : 0); //here is segfault
+	return Payload::Ptr(d->vcard ? new VCard(*d->vcard.take()) : 0); //here is segfault
 }
 
 QStringList VCardFactory::features() const
@@ -454,7 +454,7 @@ inline void serializeHelper(int enumValue, const QString &value, QXmlStreamWrite
 		writer->writeTextElement(enumToStr(enumValue, vcardTypes), value);
 }
 
-void VCardFactory::serialize(StanzaExtension* extension, QXmlStreamWriter* writer)
+void VCardFactory::serialize(Payload* extension, QXmlStreamWriter* writer)
 {
 	Q_D(VCardFactory);
 	VCardPrivate *vcard = VCardPrivate::get(se_cast<VCard*>(extension));

@@ -99,7 +99,7 @@ namespace Jreen
 	inline QString stringFromUriHelper(const QUrl &uri)
 	{ return QLatin1String(uri.toEncoded()); }
 		
-	void TuneFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+	void TuneFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	{
 		Tune *tune = se_cast<Tune*>(extension);
 		writer->writeStartElement(QLatin1String("tune"));
@@ -114,7 +114,7 @@ namespace Jreen
 		writer->writeEndElement();
 	}
 	
-	StanzaExtension::Ptr TuneFactory::createExtension()
+	Payload::Ptr TuneFactory::createPayload()
 	{
 		Tune *tune = new Tune();
 		bool ok = true;
@@ -125,6 +125,6 @@ namespace Jreen
 		tune->setTitle(m_data[TuneTitle]);
 		tune->setTrack(m_data[TuneTrack]);
 		tune->setUri(QUrl::fromUserInput(m_data[TuneUri]));
-		return StanzaExtension::Ptr(tune);
+		return Payload::Ptr(tune);
 	}
 } // namespace Jreen

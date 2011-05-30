@@ -58,7 +58,7 @@ void DelayedDeliveryFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void DelayedDeliveryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void DelayedDeliveryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	DelayedDelivery *delivery = se_cast<DelayedDelivery*>(extension);
 	if (!delivery->dateTime().isValid())
@@ -71,10 +71,10 @@ void DelayedDeliveryFactory::serialize(StanzaExtension *extension, QXmlStreamWri
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr DelayedDeliveryFactory::createExtension()
+Payload::Ptr DelayedDeliveryFactory::createPayload()
 {
 	Q_D(DelayedDeliveryFactory);
-	return StanzaExtension::Ptr(new DelayedDelivery(d->from,d->dateTime,d->reason));
+	return Payload::Ptr(new DelayedDelivery(d->from,d->dateTime,d->reason));
 }
 
 } // namespace Jreen

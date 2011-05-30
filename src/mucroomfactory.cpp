@@ -66,7 +66,7 @@ void MUCRoomQueryFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void MUCRoomQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MUCRoomQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	MUCRoomQuery *query = se_cast<MUCRoomQuery*>(extension);
 	writer->writeStartElement(QLatin1String("x"));
@@ -89,9 +89,9 @@ void MUCRoomQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MUCRoomQueryFactory::createExtension()
+Payload::Ptr MUCRoomQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new MUCRoomQuery(QString()));
+	return Payload::Ptr(new MUCRoomQuery(QString()));
 }
 
 static const char *mucroom_affiliations[] = {
@@ -281,7 +281,7 @@ void MUCRoomUserQueryFactory::handleCharacterData(const QStringRef &text)
 		m_item.handleCharacterData(text);
 }
 
-void MUCRoomUserQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MUCRoomUserQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Q_UNUSED(extension);
 	writer->writeStartElement(QLatin1String("query"));
@@ -289,9 +289,9 @@ void MUCRoomUserQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWr
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MUCRoomUserQueryFactory::createExtension()
+Payload::Ptr MUCRoomUserQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_query.take());
+	return Payload::Ptr(m_query.take());
 }
 
 MUCRoomAdminQueryFactory::MUCRoomAdminQueryFactory()
@@ -349,7 +349,7 @@ void MUCRoomAdminQueryFactory::handleCharacterData(const QStringRef &text)
 		m_item.handleCharacterData(text);
 }
 
-void MUCRoomAdminQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MUCRoomAdminQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	MUCRoomAdminQuery *query = se_cast<MUCRoomAdminQuery*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
@@ -359,9 +359,9 @@ void MUCRoomAdminQueryFactory::serialize(StanzaExtension *extension, QXmlStreamW
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MUCRoomAdminQueryFactory::createExtension()
+Payload::Ptr MUCRoomAdminQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_query.take());
+	return Payload::Ptr(m_query.take());
 }
 
 MUCRoomOwnerQueryFactory::MUCRoomOwnerQueryFactory()
@@ -404,7 +404,7 @@ void MUCRoomOwnerQueryFactory::handleEndElement(const QStringRef &name, const QS
 	if (m_state == AtForm) {
 		m_form.handleEndElement(name, uri);
 		if (m_depth == 2) {
-			m_query->form = m_form.createExtension().staticCast<DataForm>();
+			m_query->form = m_form.createPayload().staticCast<DataForm>();
 			m_state = AtNowhere;
 		}
 	}
@@ -417,7 +417,7 @@ void MUCRoomOwnerQueryFactory::handleCharacterData(const QStringRef &text)
 		m_form.handleCharacterData(text);
 }
 
-void MUCRoomOwnerQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MUCRoomOwnerQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	MUCRoomOwnerQuery *query = se_cast<MUCRoomOwnerQuery*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
@@ -427,8 +427,8 @@ void MUCRoomOwnerQueryFactory::serialize(StanzaExtension *extension, QXmlStreamW
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MUCRoomOwnerQueryFactory::createExtension()
+Payload::Ptr MUCRoomOwnerQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_query.take());
+	return Payload::Ptr(m_query.take());
 }
 }

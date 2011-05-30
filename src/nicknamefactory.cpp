@@ -60,7 +60,7 @@ void NicknameFactory::handleCharacterData(const QStringRef &text)
 	d_func()->nickname = text.toString();
 }
 
-void NicknameFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void NicknameFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Nickname *nick = se_cast<Nickname*>(extension);
 	writer->writeStartElement(QLatin1String("nick"));
@@ -69,9 +69,9 @@ void NicknameFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr NicknameFactory::createExtension()
+Payload::Ptr NicknameFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Nickname(d_func()->nickname));
+	return Payload::Ptr(new Nickname(d_func()->nickname));
 }
 
 NicknameFactory::~NicknameFactory()

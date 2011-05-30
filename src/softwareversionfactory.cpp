@@ -87,7 +87,7 @@ void SoftwareVersionFactory::handleCharacterData(const QStringRef &text)
 	}
 }
 
-void SoftwareVersionFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void SoftwareVersionFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	SoftwareVersion *softwareVersion = se_cast<SoftwareVersion*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
@@ -98,10 +98,10 @@ void SoftwareVersionFactory::serialize(StanzaExtension *extension, QXmlStreamWri
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr SoftwareVersionFactory::createExtension()
+Payload::Ptr SoftwareVersionFactory::createPayload()
 {
 	Q_D(SoftwareVersionFactory);
-	return StanzaExtension::Ptr(new SoftwareVersion(d->name,d->version,d->os));
+	return Payload::Ptr(new SoftwareVersion(d->name,d->version,d->os));
 }
 
 } // namespace Jreen

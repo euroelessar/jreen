@@ -89,7 +89,7 @@ void DiscoInfoFactory::handleCharacterData(const QStringRef &text)
 		m_factory.handleCharacterData(text);
 }
 
-void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void DiscoInfoFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Disco::Info *info = se_cast<Disco::Info*>(extension);
 	if (!info)
@@ -115,12 +115,12 @@ void DiscoInfoFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr DiscoInfoFactory::createExtension()
+Payload::Ptr DiscoInfoFactory::createPayload()
 {
-	StanzaExtension::Ptr dataForm;
+	Payload::Ptr dataForm;
 	if (m_hasDataForm)
-		dataForm = m_factory.createExtension();
-	return StanzaExtension::Ptr(new Disco::Info(m_node, m_identities,
+		dataForm = m_factory.createPayload();
+	return Payload::Ptr(new Disco::Info(m_node, m_identities,
 												m_features, dataForm.staticCast<DataForm>()));
 }
 
@@ -171,7 +171,7 @@ void DiscoItemsFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void DiscoItemsFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void DiscoItemsFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Disco::Items *items = se_cast<Disco::Items*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
@@ -188,9 +188,9 @@ void DiscoItemsFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr DiscoItemsFactory::createExtension()
+Payload::Ptr DiscoItemsFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Disco::Items(m_node,m_items));
+	return Payload::Ptr(new Disco::Items(m_node,m_items));
 }
 
 Disco::Disco(Client *client) : d_ptr(new DiscoPrivate)
@@ -241,7 +241,7 @@ QSet<QString> &Disco::features()
 void Disco::handleIQ(const Jreen::IQ &iq)
 {
 	Q_D(Disco);
-	const Info *info = iq.findExtension<Info>().data();
+	const Info *info = iq.payload<Info>().data();
 	if(info) {
 		if(iq.subtype() == IQ::Get)	{
 			IQ receipt(IQ::Result, iq.from(), iq.id());
@@ -250,7 +250,7 @@ void Disco::handleIQ(const Jreen::IQ &iq)
 			iq.accept();
 		}
 	}
-	const Items *items = iq.findExtension<Items>().data();
+	const Items *items = iq.payload<Items>().data();
 	if(items) {
 		if(iq.subtype() == IQ::Get)	{
 			IQ receipt(IQ::Result, iq.from(), iq.id());
@@ -259,7 +259,7 @@ void Disco::handleIQ(const Jreen::IQ &iq)
 			iq.accept();
 		}
 	}
-	const SoftwareVersion *version = iq.findExtension<SoftwareVersion>().data();
+	const SoftwareVersion *version = iq.payload<SoftwareVersion>().data();
 	if(version)	{
 		if(iq.subtype() == IQ::Get)	{
 			IQ receipt(IQ::Result, iq.from(), iq.id());

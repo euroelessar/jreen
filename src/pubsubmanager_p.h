@@ -28,16 +28,16 @@ namespace Jreen
 		{
 		public:
 			Client *client;
-			QList<AbstractStanzaExtensionFactory *> factories;
+			QList<AbstractPayloadFactory *> factories;
 		};
 		
-		class Publish : public StanzaExtension
+		class Publish : public Payload
 		{
-			J_EXTENSION(Jreen::PubSub::Publish, "")
+			J_PAYLOAD(Jreen::PubSub::Publish)
 		public:
 			Publish() {}
-			Publish(const QList<StanzaExtension::Ptr> &i, const DataForm::Ptr &f) : items(i), form(f) {}
-			QList<StanzaExtension::Ptr> items;
+			Publish(const QList<Payload::Ptr> &i, const DataForm::Ptr &f) : items(i), form(f) {}
+			QList<Payload::Ptr> items;
 			QString node;
 			DataForm::Ptr form;
 		};

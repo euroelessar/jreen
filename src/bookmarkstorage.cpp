@@ -56,7 +56,7 @@ void BookmarkStorage::requestBookmarks()
 	if (!d->privateXml)
 		return;
 	d->privateXml->request(QLatin1String("storage"), QLatin1String("storage:bookmarks"), this,
-						   SLOT(onResultReady(Jreen::StanzaExtension::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr)));
+						   SLOT(onResultReady(Jreen::Payload::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr)));
 }
 
 void BookmarkStorage::storeBookmarks(const Bookmark::Ptr &bookmarks)
@@ -65,10 +65,10 @@ void BookmarkStorage::storeBookmarks(const Bookmark::Ptr &bookmarks)
 	if (!d->privateXml)
 		return;
 	d->privateXml->store(bookmarks, this,
-						 SLOT(onResultReady(Jreen::StanzaExtension::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr)));
+						 SLOT(onResultReady(Jreen::Payload::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr)));
 }
 
-void BookmarkStorage::onResultReady(const StanzaExtension::Ptr &node,
+void BookmarkStorage::onResultReady(const Payload::Ptr &node,
 									PrivateXml::Result result, const Error::Ptr &error)
 {
 	Q_UNUSED(error);

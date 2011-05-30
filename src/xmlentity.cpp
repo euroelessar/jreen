@@ -29,6 +29,6 @@ namespace Jreen
 	
 	int XmlEntity::registerXmlEntityType(const char *type)
 	{
-		return StanzaExtension::registerExtensionType(type);
+		return Payload::registerPayloadType(type);
 	}
 }	

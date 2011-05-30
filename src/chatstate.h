@@ -20,11 +20,9 @@ namespace Jreen {
 
 //XEP-0085 Chat State Notification
 //http://xmpp.org/extensions/xep-0085.html
-class ChatState : public StanzaExtension
+class ChatState : public Payload
 {
-	J_EXTENSION(Jreen::ChatState,
-				"/message/active[@xmlns='http://jabber.org/protocol/chatstates']"
-)
+	J_PAYLOAD(Jreen::ChatState)
 public:
 	enum State
 	{

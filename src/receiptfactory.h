@@ -19,7 +19,7 @@
 namespace Jreen {
 
 class ReceiptFactoryPrivate;
-class ReceiptFactory : public StanzaExtensionFactory<Receipt>
+class ReceiptFactory : public PayloadFactory<Receipt>
 {
 	Q_DECLARE_PRIVATE(ReceiptFactory)
 public:
@@ -30,8 +30,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	QScopedPointer<ReceiptFactoryPrivate> d_ptr;
 };

@@ -71,7 +71,7 @@ void ReceiptFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void ReceiptFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void ReceiptFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Receipt *receipt = se_cast<Receipt*>(extension);
 	writer->writeStartElement(enumToStr(receipt->type(),receipt_strings));
@@ -81,10 +81,10 @@ void ReceiptFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wri
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr ReceiptFactory::createExtension()
+Payload::Ptr ReceiptFactory::createPayload()
 {
 	Q_D(ReceiptFactory);
-	return StanzaExtension::Ptr(new Receipt(d->type,d->id));
+	return Payload::Ptr(new Receipt(d->type,d->id));
 }
 
 } // namespace Jreen

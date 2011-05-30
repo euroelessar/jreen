@@ -22,7 +22,7 @@
 
 namespace Jreen {
 
-class ActivityFactory : public StanzaExtensionFactory<Activity>
+class ActivityFactory : public PayloadFactory<Activity>
 {
 public:
 	ActivityFactory();
@@ -32,8 +32,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 	static QLatin1String generalName(Activity::General general);
 	static Activity::General generalByName(const QStringRef &general);
 	static QLatin1String specificName(Activity::Specific specific);

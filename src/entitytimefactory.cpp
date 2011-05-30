@@ -86,7 +86,7 @@ namespace Jreen
 		Q_UNUSED(text);
 	}
 	
-	void EntityTimeFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+	void EntityTimeFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	{
 		EntityTime *time = se_cast<EntityTime*>(extension);
 		writer->writeStartElement(QLatin1String("time"));
@@ -102,8 +102,8 @@ namespace Jreen
 		writer->writeEndElement();
 	}
 	
-	StanzaExtension::Ptr EntityTimeFactory::createExtension()
+	Payload::Ptr EntityTimeFactory::createPayload()
 	{
-		return StanzaExtension::Ptr(new EntityTime(m_tzo, m_utc));
+		return Payload::Ptr(new EntityTime(m_tzo, m_utc));
 	}
 }

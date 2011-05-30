@@ -22,10 +22,10 @@ namespace Jreen
 {
 
 class CapabilitiesPrivate;
-class JREEN_EXPORT Capabilities : public StanzaExtension
+class JREEN_EXPORT Capabilities : public Payload
 {
 	Q_DECLARE_PRIVATE(Capabilities)
-	J_EXTENSION(Jreen::Capabilities,"/presence/c[@xmlns='http://jabber.org/protocol/caps']")
+	J_PAYLOAD(Jreen::Capabilities)
 public:
 	Capabilities(const QString &ver, const QString &node = QString());
 	~Capabilities();
@@ -38,7 +38,5 @@ private:
 };
 
 }
-
-J_DECLARE_EXTENSION(Jreen::Capabilities)
 
 #endif // CAPABILITIES_H

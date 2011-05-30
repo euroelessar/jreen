@@ -101,7 +101,7 @@ void BookmarkFactory::handleCharacterData(const QStringRef &text)
 	}
 }
 
-void BookmarkFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void BookmarkFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Bookmark *bookmark = se_cast<Bookmark*>(extension);
 	writer->writeStartElement(QLatin1String("storage"));
@@ -118,9 +118,9 @@ void BookmarkFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *wr
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr BookmarkFactory::createExtension()
+Payload::Ptr BookmarkFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_bookmark.take());
+	return Payload::Ptr(m_bookmark.take());
 }
 
 

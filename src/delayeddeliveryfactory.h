@@ -6,7 +6,7 @@ namespace Jreen
 {
 
 class DelayedDeliveryFactoryPrivate;
-class DelayedDeliveryFactory : public StanzaExtensionFactory<DelayedDelivery>
+class DelayedDeliveryFactory : public PayloadFactory<DelayedDelivery>
 {
 	Q_DECLARE_PRIVATE(DelayedDeliveryFactory)
 public:
@@ -17,8 +17,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	QScopedPointer<DelayedDeliveryFactoryPrivate> d_ptr;
 };

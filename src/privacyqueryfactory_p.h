@@ -21,7 +21,7 @@
 
 namespace Jreen
 {
-class PrivacyQueryFactory : public StanzaExtensionFactory<PrivacyQuery>
+class PrivacyQueryFactory : public PayloadFactory<PrivacyQuery>
 {
 public:
 	PrivacyQueryFactory();
@@ -31,8 +31,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	int m_depth;
 	enum State { AtNowhere, AtList, AtItem } m_state;

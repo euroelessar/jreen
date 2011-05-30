@@ -25,10 +25,9 @@ namespace Jreen {
 
 class VCardPrivate;
 
-class JREEN_EXPORT VCard : public StanzaExtension
+class JREEN_EXPORT VCard : public Payload
 {
-	J_EXTENSION(Jreen::VCard,
-		   "/iq/vcard[@xmlns='vcard-temp']")
+	J_PAYLOAD(Jreen::VCard)
 	Q_DECLARE_PRIVATE(VCard)
 public:
 	/**

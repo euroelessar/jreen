@@ -103,7 +103,7 @@ void AbstractRosterQueryFactory::handleCharacterData(const QStringRef &text)
 		m_groups << text.toString();
 }
 
-void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void AbstractRosterQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	AbstractRosterQuery *query = se_cast<AbstractRosterQuery*>(extension);
 	if (!query)
@@ -126,9 +126,9 @@ void AbstractRosterQueryFactory::serialize(StanzaExtension *extension, QXmlStrea
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr AbstractRosterQueryFactory::createExtension()
+Payload::Ptr AbstractRosterQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new AbstractRosterQuery(m_items, m_ver));
+	return Payload::Ptr(new AbstractRosterQuery(m_items, m_ver));
 }
 
 static const QStringList roster_subscriptions = QStringList()
@@ -276,7 +276,7 @@ QSharedPointer<RosterItem> AbstractRoster::createItem()
 
 void AbstractRoster::handleIQ(const IQ &iq)
 {
-	const AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>();
+	const AbstractRosterQuery::Ptr roster = iq.payload<AbstractRosterQuery>();
 	if (!roster)
 		return;
 	Q_D(AbstractRoster);
@@ -323,7 +323,7 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 	case LoadRoster:
 		// By xep-0237 if no newer version of roster
 		// presents there is no query element in stanza
-		if (AbstractRosterQuery::Ptr roster = iq.findExtension<AbstractRosterQuery>()) {
+		if (AbstractRosterQuery::Ptr roster = iq.payload<AbstractRosterQuery>()) {
 			d_func()->version = roster->ver();
 			onLoaded(roster->items());
 		} else {

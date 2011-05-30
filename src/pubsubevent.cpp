@@ -24,7 +24,7 @@ namespace PubSub
 class EventPrivate
 {
 public:
-	QList<StanzaExtension::Ptr> items;
+	QList<Payload::Ptr> items;
 	QString node;
 };
 
@@ -34,13 +34,13 @@ Event::Event(const QString &node) : d_ptr(new EventPrivate)
 	d->node = node;
 }
 
-Event::Event(const StanzaExtension::Ptr &item) : d_ptr(new EventPrivate)
+Event::Event(const Payload::Ptr &item) : d_ptr(new EventPrivate)
 {
 	Q_D(Event);
 	d->items << item;
 }
 
-Event::Event(const QList<StanzaExtension::Ptr> &items) : d_ptr(new EventPrivate)
+Event::Event(const QList<Payload::Ptr> &items) : d_ptr(new EventPrivate)
 {
 	Q_D(Event);
 	d->items = items;
@@ -60,17 +60,17 @@ QString Event::node() const
 	return d_func()->node;
 }
 
-void Event::addItem(StanzaExtension *item)
+void Event::addItem(Payload *item)
 {
-	d_func()->items << StanzaExtension::Ptr(item);
+	d_func()->items << Payload::Ptr(item);
 }
 
-void Event::addItem(const StanzaExtension::Ptr &item)
+void Event::addItem(const Payload::Ptr &item)
 {
 	d_func()->items << item;
 }
 
-QList<StanzaExtension::Ptr> Event::items() const
+QList<Payload::Ptr> Event::items() const
 {
 	return d_func()->items;
 }

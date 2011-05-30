@@ -100,7 +100,7 @@ void NonSaslAuth::handleIq(const IQ &iq, int context)
 	switch(context) {
 	case RequestFields:{
 		iq.accept();
-		const Query *query = iq.findExtension<Query>().data();
+		const Query *query = iq.payload<Query>().data();
 		IQ iq(IQ::Set, m_client->jid().domain());
 		iq.addExtension(query->instance(m_client->jid(), m_info->password(), m_info->streamID()));
 		m_client->send(iq, this, SLOT(handleIq(IQ,int)), ProvideInformation);

@@ -167,7 +167,7 @@ void MoodFactory::handleCharacterData(const QStringRef &text)
 		m_text = text.toString();
 }
 
-void MoodFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void MoodFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Mood *mood = se_cast<Mood*>(extension);
 	if(mood->type() == Mood::Invalid)
@@ -182,9 +182,9 @@ void MoodFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr MoodFactory::createExtension()
+Payload::Ptr MoodFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Mood(m_subtype, m_text));
+	return Payload::Ptr(new Mood(m_subtype, m_text));
 }
 
 QLatin1String MoodFactory::typeName(Mood::Type type)

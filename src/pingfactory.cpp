@@ -61,7 +61,7 @@ void PingFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void PingFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void PingFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Q_UNUSED(extension);
 	writer->writeStartElement(QLatin1String("ping"));
@@ -69,9 +69,9 @@ void PingFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr PingFactory::createExtension()
+Payload::Ptr PingFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Ping());
+	return Payload::Ptr(new Ping());
 }
 
 } // namespace Jreen

@@ -95,14 +95,14 @@ static const char *access_strs[] = {
 	"whitelist"
 };
 
-void Manager::publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to)
+void Manager::publishItems(const QList<Payload::Ptr> &items, const JID &to)
 {
 	IQ iq(IQ::Set, to);
 	iq.addExtension(new Publish(items, DataForm::Ptr()));
 	d_func()->client->send(iq);
 }
 
-void Manager::publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
+void Manager::publishItems(const QList<Payload::Ptr> &items, const JID &to,
 						   const PublishOptions &options)
 {
 	IQ iq(IQ::Set, to);
@@ -119,7 +119,7 @@ void Manager::addEntityType(int type)
 {
 	Q_D(Manager);
 	ClientPrivate *c = ClientPrivate::get(d->client);
-	AbstractStanzaExtensionFactory *factory = c->factories.value(type);
+	AbstractPayloadFactory *factory = c->factories.value(type);
 	Q_ASSERT(factory);
 	d->factories.append(factory);
 	QString node = factory->features().value(0);
@@ -131,7 +131,7 @@ void Manager::addEntityType(int type)
 
 void Manager::handleMessage(const Jreen::Message &message)
 {
-	if (Event::Ptr event = message.findExtension<Event>())
+	if (Event::Ptr event = message.payload<Event>())
 		emit eventReceived(event, message.from());
 }
 }

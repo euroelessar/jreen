@@ -60,7 +60,7 @@ private:
 			return staticExtensionMeta; \
 		} \
 		virtual QString xPath() const { return meta().xpath; } \
-		virtual int extensionType() const { return meta().type; } \
+		virtual int payloadType() const { return meta().type; } \
 		virtual QByteArray extensionName() const { return meta().name; } \
 	private:
 

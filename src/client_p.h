@@ -173,8 +173,8 @@ public:
 	QSet<QString> serverFeatures;
 	Jreen::Disco::IdentityList serverIdentities;
 	QMap<QString, MUCRoomPrivate*> rooms;
-	StanzaExtensionFactoryMap factories;
-	QMultiMap<QString, AbstractStanzaExtensionFactory*> factoriesByUri;
+	PayloadFactoryMap factories;
+	QMultiMap<QString, AbstractPayloadFactory*> factoriesByUri;
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
 	int depth;

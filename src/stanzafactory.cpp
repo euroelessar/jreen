@@ -49,12 +49,12 @@ void StanzaFactory::writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writ
 {
 	//What is the difference between the writer from the p->writer
 	ClientPrivate *p = ClientPrivate::get(m_client);
-	foreach(QSharedPointer<StanzaExtension> extension, stanza->extensions()) {
-		AbstractStanzaExtensionFactory *factory = p->factories.value(extension->extensionType(), 0);
+	foreach(QSharedPointer<Payload> extension, stanza->payloads()) {
+		AbstractPayloadFactory *factory = p->factories.value(extension->payloadType(), 0);
 		if(factory)
 			factory->serialize(extension.data(),writer);
 		else
-			qDebug("Invalid stanza extesion %d", extension->extensionType());
+			qDebug("Invalid stanza extesion %d", extension->payloadType());
 	}
 }
 

@@ -21,7 +21,7 @@
 
 namespace Jreen {
 
-class MoodFactory : public StanzaExtensionFactory<Mood>
+class MoodFactory : public PayloadFactory<Mood>
 {
 public:
 	MoodFactory();
@@ -31,8 +31,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 	
 	static QLatin1String typeName(Mood::Type type);
 	static Mood::Type typeByName(const QStringRef &name);

@@ -179,7 +179,7 @@ void ActivityFactory::handleCharacterData(const QStringRef &text)
 		m_text = text.toString();
 }
 
-void ActivityFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void ActivityFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Activity *activity = se_cast<Activity*>(extension);
 	if(activity->general() == Activity::InvalidGeneral)
@@ -205,11 +205,11 @@ void ActivityFactory::clear()
 	m_text.clear();
 }
 
-StanzaExtension::Ptr ActivityFactory::createExtension()
+Payload::Ptr ActivityFactory::createPayload()
 {
 	Activity *activity = new Activity(m_general,m_specific,m_text);
 	clear();
-	return StanzaExtension::Ptr(activity);
+	return Payload::Ptr(activity);
 }
 
 template <typename T>

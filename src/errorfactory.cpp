@@ -56,9 +56,9 @@ bool ErrorFactory::canParse(const QStringRef& name, const QStringRef& uri, const
 	return name == QLatin1String("error") && (uri == NS_ERROR || uri == NS_ERROR2);
 }
 
-StanzaExtension::Ptr ErrorFactory::createExtension()
+Payload::Ptr ErrorFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new Error(m_type,m_condition));
+	return Payload::Ptr(new Error(m_type,m_condition));
 }
 
 QStringList ErrorFactory::features() const
@@ -94,7 +94,7 @@ void ErrorFactory::handleEndElement(const QStringRef& name, const QStringRef& ur
 	m_depth--;
 }
 
-void ErrorFactory::serialize(StanzaExtension* obj, QXmlStreamWriter* writer)
+void ErrorFactory::serialize(Payload* obj, QXmlStreamWriter* writer)
 {
 	Error *error = se_cast<Error*>(obj);
 	if(error->type() == Error::UndefinedType || error->condition() == Error::Undefined)

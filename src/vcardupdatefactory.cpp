@@ -75,7 +75,7 @@ void VCardUpdateFactory::handleCharacterData(const QStringRef &text)
 		m_hash = text.toString();
 }
 
-void VCardUpdateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void VCardUpdateFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	VCardUpdate *update = se_cast<VCardUpdate*>(extension);
 	writer->writeStartElement(QLatin1String("x"));
@@ -84,12 +84,12 @@ void VCardUpdateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter 
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr VCardUpdateFactory::createExtension()
+Payload::Ptr VCardUpdateFactory::createPayload()
 {
 	VCardUpdate *update = new VCardUpdate;
 	if (m_hasPhoto)
 		update->setPhotoHash(m_hash);
-	return StanzaExtension::Ptr(update);
+	return Payload::Ptr(update);
 }
 
 } // namespace Jreen

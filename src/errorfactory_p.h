@@ -20,18 +20,18 @@
 
 namespace Jreen {
 
-class ErrorFactory : public StanzaExtensionFactory<Error>
+class ErrorFactory : public PayloadFactory<Error>
 {
 public:
     ErrorFactory();
     virtual ~ErrorFactory();
     virtual bool canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);
-    virtual StanzaExtension::Ptr createExtension();
+    virtual Payload::Ptr createPayload();
     virtual QStringList features() const;
     virtual void handleStartElement(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);    
     virtual void handleCharacterData(const QStringRef& text);
     virtual void handleEndElement(const QStringRef& name, const QStringRef& uri);
-    virtual void serialize(StanzaExtension* obj, QXmlStreamWriter* writer);
+    virtual void serialize(Payload* obj, QXmlStreamWriter* writer);
 private:
 	enum State {AtCondition,AtText};
 	State m_state;

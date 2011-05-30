@@ -22,11 +22,9 @@
 namespace Jreen
 {
 
-class JREEN_EXPORT Receipt : public StanzaExtension
+class JREEN_EXPORT Receipt : public Payload
 {
-	J_EXTENSION(Jreen::Receipt,
-		   "/message/request[@xmlns='urn:xmpp:receipts']"
-		   "|/message/received[@xmlns='urn:xmpp:receipts']")
+	J_PAYLOAD(Jreen::Receipt)
 public:
 	enum Type
 	{
@@ -44,7 +42,5 @@ private:
 };
 
 }
-
-J_DECLARE_EXTENSION(Jreen::Receipt)
 
 #endif // RECEIPT_H

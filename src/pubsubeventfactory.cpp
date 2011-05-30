@@ -25,7 +25,7 @@ namespace Jreen
 {
 namespace PubSub
 {
-EventFactory::EventFactory(QList<AbstractStanzaExtensionFactory*> &factories) : m_factories(factories)
+EventFactory::EventFactory(QList<AbstractPayloadFactory*> &factories) : m_factories(factories)
 {
 	m_depth = 0;
 	m_state = AtNowhere;
@@ -75,7 +75,7 @@ void EventFactory::handleEndElement(const QStringRef &name, const QStringRef &ur
 		m_state = AtItems;
 	} else if (m_depth == 4 && m_state == AtEntity) {
 		m_state = AtItem;
-		m_event->addItem(m_factory->createExtension());
+		m_event->addItem(m_factory->createPayload());
 	}
 	m_depth--;
 }
@@ -86,19 +86,19 @@ void EventFactory::handleCharacterData(const QStringRef &text)
 		m_factory->handleCharacterData(text);
 }
 
-void EventFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void EventFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Event *event = se_cast<Event*>(extension);
-	AbstractStanzaExtensionFactory *factory = 0;
+	AbstractPayloadFactory *factory = 0;
 	QString node;
-	const QList<StanzaExtension::Ptr> items = event->items();
+	const QList<Payload::Ptr> items = event->items();
 	if (event->node().isEmpty() && items.isEmpty()) {
 		return;
 	} else if (!event->node().isEmpty()) {
 		node = event->node();
 		factory = findFactory(QStringRef(&node));
 	} else {
-		factory = findFactory(items.at(0)->extensionType());
+		factory = findFactory(items.at(0)->payloadType());
 		node = factory ? factory->features().value(0) : QString();
 	}
 	if (!factory || node.isEmpty()) {
@@ -110,8 +110,8 @@ void EventFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *write
 	writer->writeStartElement(QLatin1String("items"));
 	writer->writeAttribute(QLatin1String("node"), node);
 	for (int i = 0; i < items.size(); i++) {
-		const StanzaExtension::Ptr &entity = items.at(i);
-		if (entity->extensionType() != factory->extensionType())
+		const Payload::Ptr &entity = items.at(i);
+		if (entity->payloadType() != factory->payloadType())
 			continue;
 		writer->writeStartElement(QLatin1String("item"));
 		factory->serialize(entity.data(), writer);
@@ -121,12 +121,12 @@ void EventFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *write
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr EventFactory::createExtension()
+Payload::Ptr EventFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_event.take());
+	return Payload::Ptr(m_event.take());
 }
 
-AbstractStanzaExtensionFactory *EventFactory::findFactory(const QStringRef &node)
+AbstractPayloadFactory *EventFactory::findFactory(const QStringRef &node)
 {
 	for (int i = 0; i < m_factories.size(); i++) {
 		if (m_factories.at(i)->features().value(0) == node)
@@ -135,10 +135,10 @@ AbstractStanzaExtensionFactory *EventFactory::findFactory(const QStringRef &node
 	return 0;
 }
 
-AbstractStanzaExtensionFactory *EventFactory::findFactory(int type)
+AbstractPayloadFactory *EventFactory::findFactory(int type)
 {
 	for (int i = 0; i < m_factories.size(); i++) {
-		if (m_factories.at(i)->extensionType() == type)
+		if (m_factories.at(i)->payloadType() == type)
 			return m_factories.at(i);
 	}
 	return 0;

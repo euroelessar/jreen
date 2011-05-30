@@ -20,7 +20,7 @@
 
 namespace Jreen {
 
-class ChatStateFactory : public StanzaExtensionFactory<ChatState>
+class ChatStateFactory : public PayloadFactory<ChatState>
 {
 public:
 	ChatStateFactory();
@@ -30,8 +30,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	ChatState::State m_state;
 };

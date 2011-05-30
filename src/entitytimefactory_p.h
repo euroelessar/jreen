@@ -21,7 +21,7 @@
 
 namespace Jreen
 {
-	class EntityTimeFactory : public StanzaExtensionFactory<EntityTime>
+	class EntityTimeFactory : public PayloadFactory<EntityTime>
 	{
 	public:
 		EntityTimeFactory();
@@ -31,8 +31,8 @@ namespace Jreen
 		void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 		void handleEndElement(const QStringRef &name, const QStringRef &uri);
 		void handleCharacterData(const QStringRef &text);
-		void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-		StanzaExtension::Ptr createExtension();
+		void serialize(Payload *extension, QXmlStreamWriter *writer);
+		Payload::Ptr createPayload();
 	private:
 		enum State { AtNowhere, AtUtc, AtTzo } m_state;
 		int m_depth;

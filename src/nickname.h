@@ -21,11 +21,9 @@
 namespace Jreen
 {
 
-class Nickname : public StanzaExtension
+class Nickname : public Payload
 {
-	J_EXTENSION(Jreen::Nickname,
-		   "/presence/nick[@xmlns='http://jabber.org/protocol/nick']"
-		   "|/message/nick[@xmlns='http://jabber.org/protocol/nick']")
+	J_PAYLOAD(Jreen::Nickname)
 public:
 	Nickname(const QString &nick);
 	const QString &nick() { return m_nick; }

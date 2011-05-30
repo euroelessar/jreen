@@ -25,9 +25,9 @@
 
 namespace Jreen
 {
-class BindQuery : public StanzaExtension
+class BindQuery : public Payload
 {
-	J_EXTENSION(Jreen::BindQuery, "")
+	J_PAYLOAD(Jreen::BindQuery)
 	public:
 		BindQuery(const JID &jid, const QString &resource, bool bind = true) 
 	  : m_jid(jid), m_resource(resource), m_bind(bind) {}
@@ -40,7 +40,7 @@ private:
 	bool m_bind;
 };
 
-class BindQueryFactory : public StanzaExtensionFactory<BindQuery>
+class BindQueryFactory : public PayloadFactory<BindQuery>
 {
 public:
 	BindQueryFactory() : m_bind(true), m_depth(0), m_state(AtStart) {}
@@ -49,8 +49,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	enum State { AtStart, AtResource, AtJid };
 	bool m_bind;
@@ -103,7 +103,7 @@ void BindQueryFactory::handleCharacterData(const QStringRef &text)
 		m_jid = text.toString();
 }
 
-void BindQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void BindQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	BindQuery *query = se_cast<BindQuery*>(extension);
 	writer->writeStartElement(QLatin1String(query->isBind() ? "bind" : "unbind"));
@@ -115,9 +115,9 @@ void BindQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr BindQueryFactory::createExtension()
+Payload::Ptr BindQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new BindQuery(m_jid, m_resource, m_bind));
+	return Payload::Ptr(new BindQuery(m_jid, m_resource, m_bind));
 }
 
 BindFeature::BindFeature() : StreamFeature(Custom)
@@ -179,7 +179,7 @@ bool BindFeature::activate()
 void BindFeature::onIQResult(const IQ &iq, int context)
 {
 	Q_ASSERT(context == 0);
-	BindQuery::Ptr query = iq.findExtension<BindQuery>();
+	BindQuery::Ptr query = iq.payload<BindQuery>();
 	if (query && iq.subtype() == IQ::Result) {
 		m_info->setJID(query->jid());
 		m_info->completed(StreamInfo::ActivateNext);

@@ -22,9 +22,9 @@ namespace Jreen {
 
 //XEP-0199
 //http://xmpp.org/extensions/xep-0199.html
-class JREEN_EXPORT Ping : public StanzaExtension
+class JREEN_EXPORT Ping : public Payload
 {
-	J_EXTENSION(Jreen::Ping,"/iq/ping[@xmlns='urn:xmpp:ping']")
+	J_PAYLOAD(Jreen::Ping)
 public:
 	Ping() {}
 };

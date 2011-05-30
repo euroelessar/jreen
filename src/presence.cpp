@@ -67,7 +67,7 @@ bool Presence::isSubscription() const
 
 const Capabilities *Presence::capabilities() const
 {
-	return findExtension<Capabilities>().data();
+	return payload<Capabilities>().data();
 }
 
 const QString &Presence::status(const QString &lang) const

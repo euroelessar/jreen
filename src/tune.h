@@ -22,9 +22,9 @@
 namespace Jreen
 {
 	class TunePrivate;
-	class JREEN_EXPORT Tune : public StanzaExtension
+	class JREEN_EXPORT Tune : public Payload
 	{
-		J_EXTENSION(Jreen::Tune, "")
+		J_PAYLOAD(Jreen::Tune)
 		Q_DECLARE_PRIVATE(Tune)
 	public:
 		Tune();

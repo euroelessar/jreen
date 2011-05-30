@@ -32,52 +32,52 @@ class Client;
 
 // TODO: Rename to Payload or XmlEntity, it'd be more appropriate for current ideas
 
-class JREEN_EXPORT StanzaExtension
+class JREEN_EXPORT Payload
 {
-	Q_DISABLE_COPY(StanzaExtension)
+	Q_DISABLE_COPY(Payload)
 public:
-	typedef QSharedPointer<StanzaExtension> Ptr;
-			
-	StanzaExtension();
-	virtual ~StanzaExtension();
+	typedef QSharedPointer<Payload> Ptr;
 	
-	static int registerExtensionType(const char *type);
+	Payload();
+	virtual ~Payload();
 	
-	virtual int extensionType() const = 0;
+	static int registerPayloadType(const char *type);
+	
+	virtual int payloadType() const = 0;
 };
 
-class JREEN_EXPORT AbstractStanzaExtensionFactory : public XmlStreamFactory<StanzaExtension>
+class JREEN_EXPORT AbstractPayloadFactory : public XmlStreamFactory<Payload>
 {
-	Q_DISABLE_COPY(AbstractStanzaExtensionFactory)
+	Q_DISABLE_COPY(AbstractPayloadFactory)
 public:
-	AbstractStanzaExtensionFactory();
-	virtual ~AbstractStanzaExtensionFactory();
+	AbstractPayloadFactory();
+	virtual ~AbstractPayloadFactory();
 	
 	virtual QStringList features() const = 0;
-	virtual int extensionType() const = 0;
-	virtual StanzaExtension::Ptr createExtension() = 0;
+	virtual int payloadType() const = 0;
+	virtual Payload::Ptr createPayload() = 0;
 };
 
-typedef QMap<int, AbstractStanzaExtensionFactory*> StanzaExtensionFactoryMap;
+typedef QMap<int, AbstractPayloadFactory*> PayloadFactoryMap;
 
 template <typename Extension>
-class StanzaExtensionFactory : public AbstractStanzaExtensionFactory
+class PayloadFactory : public AbstractPayloadFactory
 {
-	Q_DISABLE_COPY(StanzaExtensionFactory)
+	Q_DISABLE_COPY(PayloadFactory)
 public:
-	StanzaExtensionFactory();
-	virtual ~StanzaExtensionFactory();
+	PayloadFactory();
+	virtual ~PayloadFactory();
 	
-	virtual int extensionType() const;
+	virtual int payloadType() const;
 };
 
 template <typename Extension>
-class SimpleStanzaExtensionFactory : public StanzaExtensionFactory<Extension>
+class SimplePayloadFactory : public PayloadFactory<Extension>
 {
-	Q_DISABLE_COPY(SimpleStanzaExtensionFactory)
+	Q_DISABLE_COPY(SimplePayloadFactory)
 public:
-	SimpleStanzaExtensionFactory(const QString &name, const QString &uri, Client *client);
-	virtual ~SimpleStanzaExtensionFactory();
+	SimplePayloadFactory(const QString &name, const QString &uri, Client *client);
+	virtual ~SimplePayloadFactory();
 	
 	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 private:
@@ -88,79 +88,76 @@ private:
 //template <typename T>
 //Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)
 //{
-//	if (se && qMetaTypeId<T>() == se->extensionType())
+//	if (se && qMetaTypeId<T>() == se->payloadType())
 //		return static_cast<T>(se);
 //	return 0;
 //}
 
 template <typename Extension>
-Q_INLINE_TEMPLATE StanzaExtensionFactory<Extension>::StanzaExtensionFactory()
+Q_INLINE_TEMPLATE PayloadFactory<Extension>::PayloadFactory()
 {
 }
 
 template <typename Extension>
-Q_INLINE_TEMPLATE StanzaExtensionFactory<Extension>::~StanzaExtensionFactory()
+Q_INLINE_TEMPLATE PayloadFactory<Extension>::~PayloadFactory()
 {
 }
 
 template <typename Extension>
-Q_INLINE_TEMPLATE int StanzaExtensionFactory<Extension>::extensionType() const
+Q_INLINE_TEMPLATE int PayloadFactory<Extension>::payloadType() const
 {
-	return Extension::staticExtensionType();
+	return Extension::staticPayloadType();
 }
 
 template <typename Extension>
-Q_INLINE_TEMPLATE SimpleStanzaExtensionFactory<Extension>::SimpleStanzaExtensionFactory(const QString &name,
-                                                                                        const QString &uri, Client *client)
-	: SimpleStanzaExtensionFactory(client), m_elementName(name), m_elementUri(uri)
-{
-}
-
-template <typename Extension>
-Q_INLINE_TEMPLATE SimpleStanzaExtensionFactory<Extension>::~SimpleStanzaExtensionFactory()
+Q_INLINE_TEMPLATE SimplePayloadFactory<Extension>::SimplePayloadFactory(const QString &name, const QString &uri, Client *client)
+	: SimplePayloadFactory(client), m_elementName(name), m_elementUri(uri)
 {
 }
 
 template <typename Extension>
-Q_INLINE_TEMPLATE bool SimpleStanzaExtensionFactory<Extension>::canParse(const QStringRef &name, const QStringRef &uri,
-                                                                         const QXmlStreamAttributes &)
+Q_INLINE_TEMPLATE SimplePayloadFactory<Extension>::~SimplePayloadFactory()
+{
+}
+
+template <typename Extension>
+Q_INLINE_TEMPLATE bool SimplePayloadFactory<Extension>::canParse(const QStringRef &name, const QStringRef &uri,
+                                                                 const QXmlStreamAttributes &)
 {
 	return name == m_elementName && uri == m_elementUri;
 }
 
 template <typename T>
-Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)
+Q_INLINE_TEMPLATE T se_cast(Payload *se)
 {
-	if (se && reinterpret_cast<T>(0)->staticExtensionType() == se->extensionType())
+	if (se && reinterpret_cast<T>(0)->staticPayloadType() == se->payloadType())
 		return static_cast<T>(se);
 	return 0;
 }
 
-typedef QSharedPointer<StanzaExtension>   StanzaExtensionPointer;
-typedef QMultiMap<int, StanzaExtension::Ptr> StanzaExtensionList;
+typedef QSharedPointer<Payload>   StanzaExtensionPointer;
+typedef QMultiMap<int, Payload::Ptr> StanzaExtensionList;
 
 }
 
-#define J_EXTENSION(Class, XPath) \
+#define J_PAYLOAD(Class) \
 	public:  \
 		typedef QSharedPointer<Class> Ptr; \
-		static int staticExtensionType() \
+		static int staticPayloadType() \
 		{ \
-			static QBasicAtomicInt extension_type = Q_BASIC_ATOMIC_INITIALIZER(0); \
-			if (!extension_type) { \
-				extension_type = StanzaExtension::registerExtensionType( #Class ); \
+			static QBasicAtomicInt payloadType = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			if (!payloadType) { \
+				payloadType = Payload::registerPayloadType( #Class ); \
 				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \
 				Q_UNUSED(useFullNameWithNamespaces); \
 			} \
-			return extension_type; \
+			return payloadType; \
 		} \
-		virtual int extensionType() const \
+		virtual int payloadType() const \
 		{ \
 			Q_UNUSED(static_cast<const ::Class*>(this)); \
-			return staticExtensionType(); \
+			return staticPayloadType(); \
 		} \
 	private:
-
-#define J_DECLARE_EXTENSION(Class)
 
 #endif // STANZAEXTENSION_H

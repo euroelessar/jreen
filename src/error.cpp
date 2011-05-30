@@ -31,7 +31,7 @@ public:
 };
 
 Error::Error(Error::Type type, Error::Condition condition, const Jreen::LangMap& string)
-	: StanzaExtension(), d_ptr(new ErrorPrivate)
+	: Payload(), d_ptr(new ErrorPrivate)
 {
 	Q_D(Error);
 	d->type = type;

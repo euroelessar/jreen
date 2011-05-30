@@ -24,10 +24,10 @@ namespace Jreen {
 //http://xmpp.org/extensions/xep-0108.html
 
 class ActivityPrivate;
-class JREEN_EXPORT Activity : public StanzaExtension
+class JREEN_EXPORT Activity : public Payload
 {
 	Q_DECLARE_PRIVATE(Activity);
-	J_EXTENSION(Jreen::Activity,"/message/activity[@xmlns='http://jabber.org/protocol/activity']")
+	J_PAYLOAD(Jreen::Activity)
 public:
 	enum General {
 		DoingChores = 0,

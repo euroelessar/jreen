@@ -126,7 +126,7 @@ void PrivacyQueryFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void PrivacyQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void PrivacyQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	PrivacyQuery *query = se_cast<PrivacyQuery*>(extension);
 	Q_ASSERT(query);
@@ -180,9 +180,9 @@ void PrivacyQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr PrivacyQueryFactory::createExtension()
+Payload::Ptr PrivacyQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(m_query.take());
+	return Payload::Ptr(m_query.take());
 }
 
 } // namespace Jreen

@@ -69,24 +69,24 @@ const QString &Stanza::id() const
 	return d_ptr->id;
 }
 
-void Stanza::addExtension(StanzaExtension::Ptr se)
+void Stanza::addExtension(Payload::Ptr se)
 {
-	d_ptr->extensions.insert(se->extensionType(), se);
+	d_ptr->extensions.insert(se->payloadType(), se);
 }
 
-const StanzaExtensionList &Stanza::extensions() const
+StanzaExtensionList Stanza::payloads() const
 {
 	return d_ptr->extensions;
 }
 
-void Stanza::removeExtensions()
+void Stanza::removePayloads()
 {
 	d_ptr->extensions.clear();
 }
 
 const Error *Stanza::error() const
 {
-	return findExtension<Error>().data();
+	return payload<Error>().data();
 }
 
 }

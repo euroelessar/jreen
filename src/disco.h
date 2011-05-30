@@ -48,9 +48,9 @@ public:
 	};
 	typedef QList<Identity> IdentityList;
 
-	class Info : public StanzaExtension
+	class Info : public Payload
 	{
-		J_EXTENSION(Jreen::Disco::Info,"/iq/query[@xmlns='http://jabber.org/protocol/disco#info']")
+		J_PAYLOAD(Jreen::Disco::Info)
 	public:
 		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
 		  : m_node(node), m_identities(identities), m_features(features), m_form(form) {}
@@ -76,9 +76,9 @@ public:
 	};
 	typedef QList<Item> ItemList;
 
-	class Items : public StanzaExtension
+	class Items : public Payload
 	{
-		J_EXTENSION(Jreen::Disco::Items,"/iq/query[@xmlns='http://jabber.org/protocol/disco#items']")
+		J_PAYLOAD(Jreen::Disco::Items)
 		public:
 			inline Items(const QString &node = QString(), const ItemList &items = ItemList())
 		  : m_items(items), m_node(node) {}

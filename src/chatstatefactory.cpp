@@ -69,7 +69,7 @@ void ChatStateFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void ChatStateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void ChatStateFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	ChatState *state = se_cast<ChatState*>(extension);
 	writer->writeStartElement(enumToStr(state->state(),state_strings));
@@ -77,9 +77,9 @@ void ChatStateFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *w
 	writer->writeEndElement();
 }
 
-StanzaExtension::Ptr ChatStateFactory::createExtension()
+Payload::Ptr ChatStateFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new ChatState(m_state));
+	return Payload::Ptr(new ChatState(m_state));
 }
 
 } // namespace Jreen

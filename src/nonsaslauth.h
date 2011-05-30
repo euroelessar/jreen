@@ -49,9 +49,9 @@ public:
 public slots:
 	void handleIq(const IQ &iq, int context);
 private:
-	class Query : public StanzaExtension
+	class Query : public Payload
 	{
-		J_EXTENSION(Jreen::NonSaslAuth::Query,"/iq/query[@xmlns='jabber:iq:auth']")
+		J_PAYLOAD(Jreen::NonSaslAuth::Query)
 	public:
 		Query();
 		Query *instance(const JID &jid, const QString &password, const QString &sid) const;
@@ -65,20 +65,5 @@ private:
 };
 
 }
-//template <>                                                         
-//struct QMetaTypeId< Jreen::NonSaslAuth::Query* >                                          
-//{                                                                   
-//	enum { Defined = 1 };                                           
-//	static int qt_metatype_id()                                     
-//		{                                                           
-//			static QBasicAtomicInt metatype_id = Q_BASIC_ATOMIC_INITIALIZER(0); 
-//			if (!metatype_id)                                       
-//				metatype_id = qRegisterMetaType< Jreen::NonSaslAuth::Query* >("Jreen::NonSaslAuth::Query*",      
-//						   reinterpret_cast< Jreen::NonSaslAuth::Query* *>(quintptr(-1))); 
-//			return metatype_id;                                     
-//		}                                                           
-//};                                                                  
-//Q_DECLARE_METATYPE(Jreen::NonSaslAuth::Query*)
-//J_DECLARE_EXTENSION(Jreen::NonSaslAuth::Query)
 
 #endif // NONSASLAUTH_H

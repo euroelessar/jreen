@@ -61,12 +61,12 @@ public:
 	Manager(Client *client);
 	virtual ~Manager();
 
-	void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to);
-	void publishItems(const QList<StanzaExtension::Ptr> &items, const JID &to,
+	void publishItems(const QList<Payload::Ptr> &items, const JID &to);
+	void publishItems(const QList<Payload::Ptr> &items, const JID &to,
 					  const PublishOptions &options);
 
 	template <typename T>
-	void addEntityType(T *entity = 0) { addEntityType(entity->staticExtensionType()); }
+	void addEntityType(T *entity = 0) { addEntityType(entity->staticPayloadType()); }
 	void addEntityType(int type);
 protected slots:
 	void handleMessage(const Jreen::Message &message);

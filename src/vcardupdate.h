@@ -21,10 +21,9 @@ namespace Jreen {
 
 //XEP-0153: vCard-Based Avatars
 //http://xmpp.org/extensions/xep-0153.html
-class JREEN_EXPORT VCardUpdate : public StanzaExtension
+class JREEN_EXPORT VCardUpdate : public Payload
 {
-	J_EXTENSION(Jreen::VCardUpdate,
-				"/presence/vcard[@xmlns='vcard-temp:x:update']")
+	J_PAYLOAD(Jreen::VCardUpdate)
 public:
 	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash), m_hasPhotoInfo(true) {}
 	VCardUpdate() : m_hasPhotoInfo(false) {}

@@ -22,7 +22,7 @@
 
 namespace Jreen
 {
-class MUCRoomQueryFactory : public StanzaExtensionFactory<MUCRoomQuery>
+class MUCRoomQueryFactory : public PayloadFactory<MUCRoomQuery>
 {
 public:
 	MUCRoomQueryFactory();
@@ -32,8 +32,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 };
 
 class MUCRoomItemFactory : public XmlStreamFactory<MUCRoomItem>
@@ -53,7 +53,7 @@ private:
 	QScopedPointer<MUCRoomItem> m_item;
 };
 
-class MUCRoomUserQueryFactory : public StanzaExtensionFactory<MUCRoomUserQuery>
+class MUCRoomUserQueryFactory : public PayloadFactory<MUCRoomUserQuery>
 {
 public:
 	MUCRoomUserQueryFactory();
@@ -63,8 +63,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	MUCRoomItemFactory m_item;
 	QScopedPointer<MUCRoomUserQuery> m_query;
@@ -73,7 +73,7 @@ private:
 	State m_state;
 };
 
-class MUCRoomAdminQueryFactory : public StanzaExtensionFactory<MUCRoomAdminQuery>
+class MUCRoomAdminQueryFactory : public PayloadFactory<MUCRoomAdminQuery>
 {
 public:
 	MUCRoomAdminQueryFactory();
@@ -83,8 +83,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	enum State { AtNowhere, AtItem } m_state;
 	int m_depth;
@@ -92,7 +92,7 @@ private:
 	QScopedPointer<MUCRoomAdminQuery> m_query;
 };
 
-class MUCRoomOwnerQueryFactory : public StanzaExtensionFactory<MUCRoomOwnerQuery>
+class MUCRoomOwnerQueryFactory : public PayloadFactory<MUCRoomOwnerQuery>
 {
 public:
 	MUCRoomOwnerQueryFactory();
@@ -102,8 +102,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	enum State { AtNowhere, AtForm } m_state;
 	int m_depth;

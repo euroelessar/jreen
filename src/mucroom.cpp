@@ -68,7 +68,7 @@ class MUCRoom::ParticipantPrivate
 public:
 	void init(const Presence &pres)
 	{
-		query = pres.findExtension<MUCRoomUserQuery>();
+		query = pres.payload<MUCRoomUserQuery>();
 	}
 
 	MUCRoomUserQuery::Ptr query;
@@ -180,12 +180,12 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 {
 	Q_Q(MUCRoom);
 	qDebug() << "handle presence" << pres.from();
-	if (Error::Ptr e = pres.findExtension<Error>()) {
+	if (Error::Ptr e = pres.payload<Error>()) {
 		emit q->error(e);
 		return;
 	}
 	MUCRoom::Participant part;
-	part.d_func()->query = pres.findExtension<MUCRoomUserQuery>();
+	part.d_func()->query = pres.payload<MUCRoomUserQuery>();
 	if (!part.d_func()->query)
 		return;
 	if (pres.subtype() == Presence::Unavailable) {
@@ -517,18 +517,18 @@ bool MUCRoom::canBan(const QString &nick)
 
 void MUCRoom::handleIQ(const Jreen::IQ &iq, int context)
 {
-	if (Error::Ptr e = iq.findExtension<Error>()) {
+	if (Error::Ptr e = iq.payload<Error>()) {
 		emit error(e);
 		return;
 	}
 	if (context == MUCRoomRequestConfig) {
-		MUCRoomOwnerQuery::Ptr query = iq.findExtension<MUCRoomOwnerQuery>();
+		MUCRoomOwnerQuery::Ptr query = iq.payload<MUCRoomOwnerQuery>();
 		if (!query)
 			return;
 		emit configurationReceived(query->form);
 	} else if (context >= MUCRoomRequestList && context < MUCRoomEndRequestList) {
 		ItemList items;
-		MUCRoomAdminQuery::Ptr query = iq.findExtension<MUCRoomAdminQuery>();
+		MUCRoomAdminQuery::Ptr query = iq.payload<MUCRoomAdminQuery>();
 		if (!query)
 			return;
 		foreach (const MUCRoomItem &item, query->items) {

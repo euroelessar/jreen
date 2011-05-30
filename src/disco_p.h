@@ -35,7 +35,7 @@ public:
 	static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
 };
 
-class DiscoInfoFactory : public StanzaExtensionFactory<Disco::Info>
+class DiscoInfoFactory : public PayloadFactory<Disco::Info>
 {
 public:
 	DiscoInfoFactory();
@@ -44,8 +44,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	enum State { AtStart, AtInfo, AtDataForm };
 	int m_depth;
@@ -57,7 +57,7 @@ private:
 	bool m_hasDataForm;
 };
 
-class DiscoItemsFactory : public StanzaExtensionFactory<Disco::Items>
+class DiscoItemsFactory : public PayloadFactory<Disco::Items>
 {
 public:
 	DiscoItemsFactory();
@@ -67,8 +67,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 	int m_depth;
 	QString m_node;

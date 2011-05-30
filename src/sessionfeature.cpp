@@ -25,14 +25,14 @@
 
 namespace Jreen
 {
-class SessionQuery : public StanzaExtension
+class SessionQuery : public Payload
 {
-	J_EXTENSION(Jreen::SessionQuery, "")
+	J_PAYLOAD(Jreen::SessionQuery)
 	public:
 		SessionQuery() {}
 };
 
-class SessionQueryFactory : public StanzaExtensionFactory<SessionQuery>
+class SessionQueryFactory : public PayloadFactory<SessionQuery>
 {
 public:
 	SessionQueryFactory() {}
@@ -41,8 +41,8 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
 };
 
@@ -70,16 +70,16 @@ void SessionQueryFactory::handleCharacterData(const QStringRef &text)
 	Q_UNUSED(text);
 }
 
-void SessionQueryFactory::serialize(StanzaExtension *extension, QXmlStreamWriter *writer)
+void SessionQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	Q_UNUSED(extension);
 	writer->writeEmptyElement(QLatin1String("session"));
 	writer->writeDefaultNamespace(NS_SESSION);
 }
 
-StanzaExtension::Ptr SessionQueryFactory::createExtension()
+Payload::Ptr SessionQueryFactory::createPayload()
 {
-	return StanzaExtension::Ptr(new SessionQuery());
+	return Payload::Ptr(new SessionQuery());
 }
 
 SessionFeature::SessionFeature() : StreamFeature(Custom)

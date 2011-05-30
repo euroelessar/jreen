@@ -39,19 +39,18 @@ public:
 	const JID &from() const;
 	const JID &to() const;
 	const QString &id() const;
-	void addExtension(StanzaExtension::Ptr se);
-	inline void addExtension(StanzaExtension* se)
-	{ addExtension(StanzaExtension::Ptr(se)); }
-	const StanzaExtensionList &extensions() const;
+	void addExtension(Payload::Ptr se);
+	inline void addExtension(Payload* se)
+	{ addExtension(Payload::Ptr(se)); }
+	StanzaExtensionList payloads() const;
 	template< class T >
-	inline const QSharedPointer<T> findExtension() const
-	{ return qSharedPointerCast<T>(extensions().value(reinterpret_cast<T*>(0)->staticExtensionType())); }
+	inline const QSharedPointer<T> payload() const
+	{ return qSharedPointerCast<T>(payloads().value(reinterpret_cast<T*>(0)->staticPayloadType())); }
 	template< class T >
-	inline bool containsExtension() const
-	{ return extensions().contains(reinterpret_cast<T*>(0)->staticExtensionType()); }
-	void removeExtensions();
+	inline bool containsPayload() const
+	{ return payloads().contains(reinterpret_cast<T*>(0)->staticPayloadType()); }
+	void removePayloads();
 	const Error *error() const;
-	Q_DECL_DEPRECATED virtual void writeXml(QXmlStreamWriter *) const {};
 protected:
 	Stanza(StanzaPrivate &);
 	Stanza &operator =(const Stanza &stanza);

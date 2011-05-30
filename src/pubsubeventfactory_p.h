@@ -24,26 +24,26 @@ namespace Jreen
 {
 namespace PubSub
 {
-class EventFactory : public StanzaExtensionFactory<Event>
+class EventFactory : public PayloadFactory<Event>
 {
 public:
-	EventFactory(QList<AbstractStanzaExtensionFactory*> &factories);
+	EventFactory(QList<AbstractPayloadFactory*> &factories);
 	~EventFactory();
 	QStringList features() const;
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
 private:
-	AbstractStanzaExtensionFactory *findFactory(const QStringRef &node);
-	AbstractStanzaExtensionFactory *findFactory(int type);
+	AbstractPayloadFactory *findFactory(const QStringRef &node);
+	AbstractPayloadFactory *findFactory(int type);
 
 	enum State { AtNowhere, AtItems, AtItem, AtEntity } m_state;
 	QScopedPointer<Event> m_event;
-	AbstractStanzaExtensionFactory *m_factory;
-	QList<AbstractStanzaExtensionFactory*> &m_factories;
+	AbstractPayloadFactory *m_factory;
+	QList<AbstractPayloadFactory*> &m_factories;
 	int m_depth;
 };
 }
