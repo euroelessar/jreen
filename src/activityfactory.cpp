@@ -234,7 +234,7 @@ Activity::General ActivityFactory::generalByName(const QStringRef &general)
 
 QLatin1String ActivityFactory::specificName(Activity::Specific specific)
 {
-	return QLatin1String(specific <= Activity::InvalidGeneral ? 0 : specific_types[specific]);
+	return QLatin1String(specific <= Activity::InvalidSpecific ? 0 : specific_types[specific]);
 }
 
 Activity::Specific ActivityFactory::specificByName(const QStringRef &specific)

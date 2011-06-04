@@ -46,6 +46,8 @@ public:
 	virtual int payloadType() const = 0;
 };
 
+typedef QMultiMap<int, Payload::Ptr> PayloadList;
+
 class JREEN_EXPORT AbstractPayloadFactory : public XmlStreamFactory<Payload>
 {
 	Q_DISABLE_COPY(AbstractPayloadFactory)
@@ -86,7 +88,7 @@ private:
 };
 
 //template <typename T>
-//Q_INLINE_TEMPLATE T se_cast(StanzaExtension *se)
+//Q_INLINE_TEMPLATE T se_cast(Payload *se)
 //{
 //	if (se && qMetaTypeId<T>() == se->payloadType())
 //		return static_cast<T>(se);
@@ -134,10 +136,6 @@ Q_INLINE_TEMPLATE T se_cast(Payload *se)
 		return static_cast<T>(se);
 	return 0;
 }
-
-typedef QSharedPointer<Payload>   StanzaExtensionPointer;
-typedef QMultiMap<int, Payload::Ptr> StanzaExtensionList;
-
 }
 
 #define J_PAYLOAD(Class) \

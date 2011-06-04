@@ -90,7 +90,7 @@ SessionFeature::SessionFeature() : StreamFeature(Custom)
 void SessionFeature::setStreamInfo(StreamInfo *info)
 {
 	StreamFeature::setStreamInfo(info);
-	info->client()->registerStanzaExtension(new SessionQueryFactory);
+	info->client()->registerPayload(new SessionQueryFactory);
 }
 
 void SessionFeature::reset()

@@ -17,6 +17,7 @@
 #define STANZA_H
 
 #include "stanzaextension.h"
+#include "error.h"
 #include "jid.h"
 #include <QMap>
 
@@ -26,7 +27,6 @@ namespace Jreen
 {
 
 class StanzaPrivate;
-class Error;
 
 class JREEN_EXPORT Stanza
 {
@@ -42,7 +42,7 @@ public:
 	void addExtension(Payload::Ptr se);
 	inline void addExtension(Payload* se)
 	{ addExtension(Payload::Ptr(se)); }
-	StanzaExtensionList payloads() const;
+	PayloadList payloads() const;
 	template< class T >
 	inline const QSharedPointer<T> payload() const
 	{ return qSharedPointerCast<T>(payloads().value(reinterpret_cast<T*>(0)->staticPayloadType())); }
@@ -50,7 +50,7 @@ public:
 	inline bool containsPayload() const
 	{ return payloads().contains(reinterpret_cast<T*>(0)->staticPayloadType()); }
 	void removePayloads();
-	const Error *error() const;
+	Error::Ptr error() const;
 protected:
 	Stanza(StanzaPrivate &);
 	Stanza &operator =(const Stanza &stanza);

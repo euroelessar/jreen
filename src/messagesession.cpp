@@ -114,7 +114,7 @@ void MessageSession::handleMessage(const Message &message_orig)
 	}
 	filter(message);
 	if(!message.body().isEmpty())
-		emit newMessage(message);
+		emit messageReceived(message);
 }
 
 void MessageSession::send(const Message &message)
@@ -147,7 +147,8 @@ MessageSessionManager::MessageSessionManager(Client *client) :
 	d->client = client;
 	d->sessionHandlers.resize(Message::Invalid);
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	connect(client, SIGNAL(newMessage(Jreen::Message)), this, SLOT(handleMessage(Jreen::Message)));
+	connect(client, SIGNAL(messageReceived(Jreen::Message)),
+	        this, SLOT(handleMessage(Jreen::Message)));
 	ClientPrivate::get(d->client)->messageSessionManager = this;
 }
 
@@ -245,7 +246,7 @@ void MessageSessionManager::handleMessage(const Message &message)
 	MessageSessionHandler *handler = d->sessionHandlers.value(message.subtype());
 	if(!handler)
 	{
-		emit newMessage(message);
+		emit messageReceived(message);
 		return;
 	}
 	MessageSession *session = new MessageSession(this, message.from(), false, message.thread());

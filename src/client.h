@@ -30,8 +30,8 @@ class ClientPrivate;
 class JID;
 class Message;
 class IQ;
+class IQReply;
 class Connection;
-class Subscription;
 class StreamFeature;
 class Disco;
 class MessageSessionManager;
@@ -93,10 +93,11 @@ public:
 	bool isConnected() const;
 	void send(const Stanza &stanza);
 	void send(const Presence &pres);
-	void send(const IQ &iq, QObject *handler, const char *member, int context);
+	IQReply *send(const IQ &iq);
+	/* Q_DECL_DEPRECATED */ void send(const IQ &iq, QObject *handler, const char *member, int context);
 	void setConnection(Connection *conn);
 	Connection *connection() const;
-	void registerStanzaExtension(AbstractPayloadFactory *factory);
+	void registerPayload(AbstractPayloadFactory *factory);
 	void registerStreamFeature(StreamFeature *stream_feature);
 public slots:
 	void setPresence();
@@ -107,10 +108,9 @@ signals:
 	void connected();
 	void disconnected(Jreen::Client::DisconnectReason);
 	void authorized();
-	void newSubscription(const Jreen::Subscription &subscription);
-	void newPresence(const Jreen::Presence &presence);
-	void newIQ(const Jreen::IQ &iq);
-	void newMessage(const Jreen::Message &message);
+	void presenceReceived(const Jreen::Presence &presence);
+	void iqReceived(const Jreen::IQ &iq);
+	void messageReceived(const Jreen::Message &message);
 	void serverFeaturesReceived(const QSet<QString> &features);
 	void serverIdentitiesReceived(const Jreen::Disco::IdentityList &identities) const;
 protected:
@@ -118,7 +118,6 @@ protected:
 	virtual void handleConnect();
 	virtual void handleDisconnect();
 	virtual void handleAuthorized();
-	virtual void handleSubscription(const Subscription &subscription);
 	virtual void handlePresence(const Presence &presence);
 	virtual void handleIQ(const IQ &iq);
 	virtual void handleMessage(const Message &message);

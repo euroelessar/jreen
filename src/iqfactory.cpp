@@ -65,7 +65,7 @@ void IqFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 		break;
 	}
 	writer->writeAttribute(QLatin1String("type"), type);
-	writeStanzaExtensions(stanza, writer);
+	writePayloads(stanza, writer);
 	writer->writeEndElement();
 }
 

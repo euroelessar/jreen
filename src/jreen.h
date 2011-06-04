@@ -54,9 +54,9 @@ private:
 
 #define J_PURE_EXTENSION(Extension,XPath) \
 	public: \
-		inline static const StanzaExtensionMeta &meta() \
+		inline static const PayloadMeta &meta() \
 		{ \
-			static StanzaExtensionMeta staticExtensionMeta(#Extension , XPath); \
+			static PayloadMeta staticExtensionMeta(#Extension , XPath); \
 			return staticExtensionMeta; \
 		} \
 		virtual QString xPath() const { return meta().xpath; } \

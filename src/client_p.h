@@ -25,6 +25,7 @@
 #include "directconnection.h"
 #include "streamfeature.h"
 #include "iq.h"
+#include "iqreply.h"
 #include "message.h"
 #include "presence.h"
 #include "subscription.h"
@@ -46,18 +47,29 @@ namespace Jreen
 class ClientPrivate;
 class MUCRoomPrivate;
 
-class IQTrack : public QObject
+class IQTrack : public IQReply
 {
 	Q_OBJECT
 	friend class ClientPrivate;
 public:
-	inline IQTrack(QObject *handler, const char *member, int ctx) : context(ctx)
+	inline IQTrack(QObject *handler, const char *member, int ctx, Client *client)
+	    : IQReply(client), context(ctx)
 	{
-		connect(this, SIGNAL(newIQ(Jreen::IQ,int)), handler, member);
+		connect(this, SIGNAL(received(Jreen::IQ)), SLOT(onReceived(Jreen::IQ)));
+		connect(this, SIGNAL(iqReceived(Jreen::IQ,int)), handler, member);
 	}
-	int context;
+	
+public slots:
+	void onReceived(const Jreen::IQ &iq)
+	{
+		emit iqReceived(iq, context);
+	}
+
 signals:
-	void newIQ(const Jreen::IQ &iq, int context);
+	void iqReceived(const Jreen::IQ &iq, int context);
+	
+private:
+	int context;
 };
 
 class PresenceTrack : public QObject
@@ -67,13 +79,13 @@ class PresenceTrack : public QObject
 public:
 	PresenceTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newPresence(Jreen::Presence)), handler, member);
+		connect(this, SIGNAL(presenceReceived(Jreen::Presence)), handler, member);
 	}
 	virtual ~PresenceTrack()
 	{
 	}
 signals:
-	void newPresence(const Jreen::Presence &presence);
+	void presenceReceived(const Jreen::Presence &presence);
 };
 
 class MessageTrack : public QObject
@@ -83,13 +95,13 @@ class MessageTrack : public QObject
 public:
 	MessageTrack(QObject *handler, const char *member) : QObject(handler)
 	{
-		connect(this, SIGNAL(newMessage(Jreen::Message)), handler, member);
+		connect(this, SIGNAL(messageReceived(Jreen::Message)), handler, member);
 	}
 	virtual ~MessageTrack()
 	{
 	}
 signals:
-	void newMessage(const Jreen::Message &presence);
+	void messageReceived(const Jreen::Message &presence);
 };
 
 class ClientPrivate
@@ -166,7 +178,7 @@ public:
 	// And again compression
 	Disco *disco;
 	StreamFeature *current_stream_feature;
-	QHash<QString,IQTrack *> iq_tracks;
+	QHash<QString, IQReply*> iqTracks;
 	QXmlStreamWriter *writer;
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
@@ -178,6 +190,7 @@ public:
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
 	int depth;
+	IQReply *createIQReply() { return new IQReply(q_func()); }
 	void _q_iq_received(const Jreen::IQ &iq, int context);
 	void _q_new_data()
 	{
@@ -240,6 +253,10 @@ public:
 			dataStream->deleteLater();
 		devices.clear();
 		device->setDevice(conn);
+		QHash<QString, IQReply*>::iterator it = iqTracks.begin();
+		for (; it != iqTracks.end(); ++it)
+			it.value()->deleteLater();
+		iqTracks.clear();
 	}
 	inline void emitAuthorized() { q_ptr->handleAuthorized(); }
 	inline void emitConnected() { q_ptr->handleConnect(); }

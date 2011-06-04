@@ -128,7 +128,7 @@ BindFeature::BindFeature() : StreamFeature(Custom)
 void BindFeature::setStreamInfo(StreamInfo *info)
 {
 	StreamFeature::setStreamInfo(info);
-	info->client()->registerStanzaExtension(new BindQueryFactory);
+	info->client()->registerPayload(new BindQueryFactory);
 }
 
 void BindFeature::reset()

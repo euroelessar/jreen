@@ -43,7 +43,7 @@ public:
 	};
 	PrivateXml(Client *client);
 	~PrivateXml();
-	// SLOT(newResult(Jreen::StanzaExtension::Ptr,Jreen::PrivateXml::Result,Jreen::Error::Ptr))
+
 	void request(const QString &name, const QString &xmlns, QObject *handler, const char *member);
 	void store(const Payload::Ptr &node, QObject *handler, const char *member);
 private slots:

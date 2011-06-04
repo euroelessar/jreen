@@ -77,9 +77,9 @@ Manager::Manager(Client *client) : QObject(client), d_ptr(new ManagerPrivate)
 {
 	Q_D(Manager);
 	d->client = client;
-	d->client->registerStanzaExtension(new EventFactory(d->factories));
-	d->client->registerStanzaExtension(new PublishFactory(d->factories));
-	connect(d->client, SIGNAL(newMessage(Jreen::Message)),
+	d->client->registerPayload(new EventFactory(d->factories));
+	d->client->registerPayload(new PublishFactory(d->factories));
+	connect(d->client, SIGNAL(messageReceived(Jreen::Message)),
 			this, SLOT(handleMessage(Jreen::Message)));
 }
 

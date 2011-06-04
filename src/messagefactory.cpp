@@ -76,7 +76,7 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	writeLangMap(QLatin1String("body"),message->body(),writer);
 	if(!message->thread().isEmpty())
 		writer->writeTextElement(QLatin1String("thread"),message->thread());
-	writeStanzaExtensions(stanza, writer);
+	writePayloads(stanza, writer);
 	writer->writeEndElement();
 }
 

@@ -43,7 +43,7 @@ public:
 	const QString &bare() const;
 	const QString &full() const;
 
-	inline JID bareJID() const { return JID(bare()); }
+	JID bareJID() const;
 
 	bool setNode(const QString &node);
 	bool setDomain(const QString &domain);

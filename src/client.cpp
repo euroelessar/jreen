@@ -69,10 +69,10 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	int type = StanzaPrivate::get(*stanza)->type;
 	if (type == StanzaPrivate::StanzaIq) {
 		QSharedPointer<IQ> iq = stanza.staticCast<IQ>();
-		IQTrack *track = iq_tracks.take(stanza->id());
-		if (track) {
-			emit track->newIQ(*iq, track->context);
-			delete track;
+		IQReply *reply = iqTracks.take(stanza->id());
+		if (reply) {
+			emit reply->received(*iq);
+			reply->deleteLater();
 		} else {
 			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare()) || iq->from().bare() == jid.bare();
 			if (!ok) {
@@ -122,32 +122,32 @@ void ClientPrivate::init()
 	disco = new Disco(q_ptr);
 	CapabilitesFactory *capsFactory = new CapabilitesFactory(disco);
 
-	q_ptr->registerStanzaExtension(new ErrorFactory);
-	q_ptr->registerStanzaExtension(capsFactory);
-	q_ptr->registerStanzaExtension(new DataFormFactory);
-	q_ptr->registerStanzaExtension(new DiscoInfoFactory);
-	q_ptr->registerStanzaExtension(new DiscoItemsFactory);
-	q_ptr->registerStanzaExtension(new ChatStateFactory);
-	q_ptr->registerStanzaExtension(new DelayedDeliveryFactory);
-	q_ptr->registerStanzaExtension(new ReceiptFactory);
-	q_ptr->registerStanzaExtension(new SoftwareVersionFactory);
-	q_ptr->registerStanzaExtension(new MoodFactory);
-	q_ptr->registerStanzaExtension(new TuneFactory);
-	//q_ptr->registerStanzaExtension(new ActivityFactory); Sokol, try to add activitypep converter
-	q_ptr->registerStanzaExtension(new VCardFactory);
-	q_ptr->registerStanzaExtension(new PingFactory);
-	q_ptr->registerStanzaExtension(new VCardUpdateFactory);
-	q_ptr->registerStanzaExtension(new MUCRoomQueryFactory);
-	q_ptr->registerStanzaExtension(new MUCRoomUserQueryFactory);
-	q_ptr->registerStanzaExtension(new MUCRoomAdminQueryFactory);
-	q_ptr->registerStanzaExtension(new MUCRoomOwnerQueryFactory);
-	q_ptr->registerStanzaExtension(new EntityTimeFactory);
-	q_ptr->registerStanzaExtension(new BookmarkFactory);
-	q_ptr->registerStanzaExtension(new PrivateXmlQueryFactory(q_ptr));
-	q_ptr->registerStanzaExtension(new PrivacyQueryFactory);
-//	client->registerStanzaExtension(new PubSub::EventFactory);
-//	client->registerStanzaExtension(new PubSub::PublishFacatory);
-	//client->registerStanzaExtension(new PrivateXml::QueryFactory);
+	q_ptr->registerPayload(new ErrorFactory);
+	q_ptr->registerPayload(capsFactory);
+	q_ptr->registerPayload(new DataFormFactory);
+	q_ptr->registerPayload(new DiscoInfoFactory);
+	q_ptr->registerPayload(new DiscoItemsFactory);
+	q_ptr->registerPayload(new ChatStateFactory);
+	q_ptr->registerPayload(new DelayedDeliveryFactory);
+	q_ptr->registerPayload(new ReceiptFactory);
+	q_ptr->registerPayload(new SoftwareVersionFactory);
+	q_ptr->registerPayload(new MoodFactory);
+	q_ptr->registerPayload(new TuneFactory);
+	//q_ptr->registerPayload(new ActivityFactory); Sokol, try to add activitypep converter
+	q_ptr->registerPayload(new VCardFactory);
+	q_ptr->registerPayload(new PingFactory);
+	q_ptr->registerPayload(new VCardUpdateFactory);
+	q_ptr->registerPayload(new MUCRoomQueryFactory);
+	q_ptr->registerPayload(new MUCRoomUserQueryFactory);
+	q_ptr->registerPayload(new MUCRoomAdminQueryFactory);
+	q_ptr->registerPayload(new MUCRoomOwnerQueryFactory);
+	q_ptr->registerPayload(new EntityTimeFactory);
+	q_ptr->registerPayload(new BookmarkFactory);
+	q_ptr->registerPayload(new PrivateXmlQueryFactory(q_ptr));
+	q_ptr->registerPayload(new PrivacyQueryFactory);
+//	client->registerPayload(new PubSub::EventFactory);
+//	client->registerPayload(new PubSub::PublishFacatory);
+	//client->registerPayload(new PrivateXml::QueryFactory);
 
 	q_ptr->registerStreamFeature(new NonSaslAuth);
 	q_ptr->registerStreamFeature(new SASLFeature);
@@ -293,6 +293,26 @@ void Client::send(const Presence &pres)
 	d->send(p);
 }
 
+IQReply *Client::send(const IQ &iq)
+{
+	Q_D(Client);
+	if(!d->conn || !d->conn->isOpen())
+		return 0;
+	if (iq.id().isEmpty()) {
+		const StanzaPrivate *p = StanzaPrivate::get(iq);
+		const_cast<StanzaPrivate*>(p)->id = getID();
+	}
+
+	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
+	d->send(iq);
+	if (iq.subtype() == IQ::Set || iq.subtype() == IQ::Get) {
+		IQReply *reply = d->createIQReply();
+		d->iqTracks.insert(iq.id(), reply);
+		return reply;
+	}
+	return 0;
+}
+
 void Client::send(const IQ &iq, QObject *handler, const char *member, int context)
 {
 	Q_D(Client);
@@ -304,9 +324,11 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 	}
 
 	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
-	QString id = iq.id();
-	d->iq_tracks.insert(id, new IQTrack(handler, member, context));
 	d->send(iq);
+	if (iq.subtype() == IQ::Set || iq.subtype() == IQ::Get) {
+		IQReply *reply = new IQTrack(handler, member, context, this);
+		d->iqTracks.insert(iq.id(), reply);
+	}
 }
 
 void Client::setConnection(Connection *conn)
@@ -326,7 +348,7 @@ Connection *Client::connection() const
 	return d_func()->conn;
 }
 
-void Client::registerStanzaExtension(AbstractPayloadFactory *factory)
+void Client::registerPayload(AbstractPayloadFactory *factory)
 {
 	Q_D(Client);
 //	delete d->factories.value(factory->payloadType(), 0);
@@ -462,14 +484,9 @@ void Client::handleAuthorized()
 	emit authorized();
 }
 
-void Client::handleSubscription(const Subscription &subscription)
-{
-	emit newSubscription(subscription);
-}
-
 void Client::handlePresence(const Presence &presence)
 {
-	emit newPresence(presence);
+	emit presenceReceived(presence);
 }
 
 void Client::handleIQ(const IQ &iq)
@@ -487,13 +504,13 @@ void Client::handleIQ(const IQ &iq)
 		result.addExtension(new EntityTime(QDateTime::currentDateTime()));
 		send(result);
 	}
-	emit newIQ(iq);
+	emit iqReceived(iq);
 }
 
 void Client::handleMessage(const Message &message)
 {
-//	qDebug() << "Handle message" << message.from();
-	emit newMessage(message);
+	qDebug() << "Handle message" << message.from();
+	emit messageReceived(message);
 }
 
 bool Client::isConnected() const

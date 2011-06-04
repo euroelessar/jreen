@@ -81,7 +81,7 @@ public:
 	void sendMessage(const Message &message);
 	virtual void handleMessage(const Message &message);
 signals:
-	void newMessage(const Jreen::Message &message);
+	void messageReceived(const Jreen::Message &message);
 	void jidChanged(const Jreen::JID &from, const Jreen::JID &to);
 protected:
 	virtual void send(const Message &message);
@@ -120,7 +120,7 @@ public:
 public slots:
 	virtual void handleMessage(const Jreen::Message &message);
 signals:
-	void newMessage(const Jreen::Message &message);
+	void messageReceived(const Jreen::Message &message);
 	void sessionCreated(Jreen::MessageSession *session);
 private:
 	QScopedPointer<MessageSessionManagerPrivate> d_ptr;

@@ -48,7 +48,7 @@ public:
 	void addExtensions(QXmlStreamWriter *writer) const
 	{
 		Q_UNUSED(writer);
-		//foreach(const StanzaExtensionPointer &stanzaExtension, extensions)
+		//foreach(const PayloadPointer &stanzaExtension, extensions)
 		//	stanzaExtension->writeXml(writer);
 	}
 	void setAttributes(QXmlStreamWriter *writer) const
@@ -68,7 +68,7 @@ public:
 	JID from;
 	JID to;
 	QString id;
-	StanzaExtensionList extensions;
+	PayloadList extensions;
 };
 
 }

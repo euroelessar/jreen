@@ -156,7 +156,7 @@ PrivacyManager::PrivacyManager(Client *client) : QObject(client), d_ptr(new Priv
 	Q_D(PrivacyManager);
 	d->client = client;
 	d->validServer = true;
-	connect(d->client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
+	connect(d->client, SIGNAL(iqReceived(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
 }
 
 PrivacyManager::~PrivacyManager()
@@ -302,7 +302,7 @@ void PrivacyManager::handleIQ(const Jreen::IQ &iq)
 void PrivacyManager::handleIQ(const Jreen::IQ &iq, int context)
 {
 	Q_D(PrivacyManager);
-	if (const Error *error = iq.error()) {
+	if (Error::Ptr error = iq.error()) {
 		if (error->condition() == Error::ServiceUnavailable)
 			d->validServer = false;
 	}

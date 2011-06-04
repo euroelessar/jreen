@@ -197,7 +197,7 @@ Disco::Disco(Client *client) : d_ptr(new DiscoPrivate)
 {
 	Q_D(Disco);
 	d->client = client;
-	connect(d->client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
+	connect(d->client, SIGNAL(iqReceived(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
 }
 
 Disco::~Disco()

@@ -39,7 +39,8 @@ public:
 
 	inline void setStrings() { setBare(); setFull(); }
 
-	void setBare() {
+	void setBare()
+	{
 		if(!node.isEmpty())
 			this->bare = node + QLatin1Char('@');
 		else
@@ -47,7 +48,8 @@ public:
 		this->bare += domain;
 	}
 
-	void setFull() {
+	void setFull()
+	{
 		this->full = bare;
 		if(!resource.isEmpty())
 			this->full += QLatin1Char('/') + resource;
@@ -65,19 +67,18 @@ JID::JID() : d_ptr(new JIDData)
 {
 }
 
-JID::JID(const JID &jid){
-
-	operator =(jid);
+JID::JID(const JID &jid) : d_ptr(jid.d_ptr)
+{
 }
 
 JID::JID(const QString &jid) : d_ptr(new JIDData)
 {
-	operator =(jid);
+	setJID(jid);
 }
 
 JID::JID(const QLatin1String &jid) : d_ptr(new JIDData)
 {
-	operator =(jid);
+	setJID(jid);
 }
 
 JID::JID(const QString &node, const QString &domain, const QString &resource) :
@@ -153,6 +154,23 @@ const QString &JID::bare() const
 const QString &JID::full() const
 {
 	return d_ptr->full;
+}
+
+JID JID::bareJID() const
+{
+	if (isBare() || isDomain())
+		return *this;
+	JID jid;
+	JIDData *o = jid.d_ptr.data();
+	const JIDData *d = d_ptr.data();
+	o->valid = d->valid;
+	if (o->valid) {
+		o->node = d->node;
+		o->domain = d->domain;
+		o->bare = d->bare;
+		o->full = d->bare;
+	}
+	return jid;
 }
 
 bool JID::setNode(const QString &node)
@@ -242,7 +260,8 @@ JID &JID::operator =(const QString &s)
 
 JID &JID::operator =(const QLatin1String &s)
 {
-	return operator =(QString(s));
+	setJID(s);
+	return *this;
 }
 
 bool JID::isValid() const

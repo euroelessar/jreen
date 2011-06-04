@@ -74,7 +74,7 @@ void Stanza::addExtension(Payload::Ptr se)
 	d_ptr->extensions.insert(se->payloadType(), se);
 }
 
-StanzaExtensionList Stanza::payloads() const
+PayloadList Stanza::payloads() const
 {
 	return d_ptr->extensions;
 }
@@ -84,9 +84,9 @@ void Stanza::removePayloads()
 	d_ptr->extensions.clear();
 }
 
-const Error *Stanza::error() const
+Error::Ptr Stanza::error() const
 {
-	return payload<Error>().data();
+	return payload<Error>();
 }
 
 }

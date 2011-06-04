@@ -179,8 +179,8 @@ AbstractRoster::AbstractRoster(Client *client, AbstractRosterPrivate *data) : QO
 	p->jid = client->jid().bare();
 	p->subscription = RosterItem::Both;
 	ClientPrivate::get(client)->roster = this;
-	connect(client, SIGNAL(newIQ(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
-	//	 connect(client, SIGNAL(newPresence(Jreen::Presence)), this, SLOT(handlePresence(Jreen::Presence)));
+	connect(client, SIGNAL(iqReceived(Jreen::IQ)), this, SLOT(handleIQ(Jreen::IQ)));
+	//	 connect(client, SIGNAL(presenceReceived(Jreen::Presence)), this, SLOT(handlePresence(Jreen::Presence)));
 	init();
 }
 
@@ -233,7 +233,7 @@ void AbstractRoster::synchronize()
 void AbstractRoster::init()
 {
 	Q_D(AbstractRoster);
-	d->client->registerStanzaExtension(new AbstractRosterQueryFactory(this));
+	d->client->registerPayload(new AbstractRosterQueryFactory(this));
 }
 
 void AbstractRoster::add(const JID &jid, const QString &name, const QStringList &groups)
@@ -464,7 +464,7 @@ class SimpleRosterPrivate : public AbstractRosterPrivate
 SimpleRoster::SimpleRoster(Client *client, SimpleRosterPrivate *data)
     : AbstractRoster(client, data ? data : new SimpleRosterPrivate)
 {
-	connect(client, SIGNAL(newPresence(Jreen::Presence)),
+	connect(client, SIGNAL(presenceReceived(Jreen::Presence)),
 	        SLOT(onPresenceReceived(Jreen::Presence)));
 }
 

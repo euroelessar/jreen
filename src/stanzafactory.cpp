@@ -45,7 +45,7 @@ void StanzaFactory::writeAttributes(Stanza *stanza, QXmlStreamWriter *writer)
 	writer->writeAttribute(QLatin1String("xmlns"), QLatin1String("jabber:client"));
 }
 
-void StanzaFactory::writeStanzaExtensions(Stanza *stanza, QXmlStreamWriter *writer)
+void StanzaFactory::writePayloads(Stanza *stanza, QXmlStreamWriter *writer)
 {
 	//What is the difference between the writer from the p->writer
 	ClientPrivate *p = ClientPrivate::get(m_client);
