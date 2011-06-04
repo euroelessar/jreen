@@ -35,7 +35,7 @@ class ClientPrivate;
 class IQ;
 class IQReplyPrivate;
 
-class IQReply : public QObject
+class JREEN_EXPORT IQReply : public QObject
 {
     Q_OBJECT
 	Q_DECLARE_PRIVATE(IQReply)
