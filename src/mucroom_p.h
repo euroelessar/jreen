@@ -95,10 +95,7 @@ public:
 class MUCRoomUserQuery : public Payload
 {
 	J_PAYLOAD(Jreen::MUCRoomUserQuery)
-	public:
-		MUCRoomUserQuery() : flags(0)
-	{
-	}
+public:
 	enum Flag
 	{
 		NonAnonymous         = 0x0001,
@@ -117,10 +114,30 @@ class MUCRoomUserQuery : public Payload
 		MembershipRequired   = 0x2000,
 		RoomSegfaulted       = 0x4000
 	};
+	enum Operation
+	{
+		Invite = 1,
+		Decline = 2
+	};
+	
+	MUCRoomUserQuery() : flags(0), operation(0)
+	{
+	}
+	
+	MUCRoomUserQuery(Operation op, const JID &to, const QString &reason, const QString &thread)
+	    : flags(0), operation(op), thread(thread)
+	{
+		item.jid = to;
+		item.reason = reason;
+	}
+
 	MUCRoomItem item;
 	JID alternate;
-	int flags;
+	int flags : 24;
+	int operation : 8;
 	QString status;
+	QString password;
+	QString thread;
 };
 
 class MUCRoomAdminQuery : public Payload

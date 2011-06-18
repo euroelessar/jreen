@@ -257,7 +257,22 @@ void MUCRoomUserQueryFactory::handleStartElement(const QStringRef &name, const Q
 			QStringRef code = attributes.value(QLatin1String("code"));
 			int codeInt = QString::fromRawData(code.data(), code.size()).toInt();
 			m_query->flags |= userQueryCodeToFlag(codeInt);
+		} else if (name == QLatin1String("invite")) {
+			m_state = AtOperation;
+			m_query->operation = MUCRoomUserQuery::Invite;
+			m_query->item.jid = attributes.value(QLatin1String("from"));
+		} else if (name == QLatin1String("decline")) {
+			m_state = AtOperation;
+			m_query->operation = MUCRoomUserQuery::Decline;
+			m_query->item.jid = attributes.value(QLatin1String("from"));
+		} else if (name == QLatin1String("password")) {
+			m_state = AtPassword;
 		}
+	} else if (m_depth == 3 && m_state == AtOperation) {
+		if (name == QLatin1String("reason"))
+			m_state == AtReason;
+		else if (name == QLatin1String("continue"))
+			m_query->thread = attributes.value(QLatin1String("thread")).toString();
 	}
 	if (m_state == AtItem)
 		m_item.handleStartElement(name, uri, attributes);
@@ -271,6 +286,10 @@ void MUCRoomUserQueryFactory::handleEndElement(const QStringRef &name, const QSt
 			m_item.result(&m_query->item);
 			m_state = AtNowhere;
 		}
+	} else if (m_depth == 2) {
+		m_state = AtNowhere;
+	} else if (m_depth == 3 && m_state == AtReason) {
+		m_state = AtOperation;
 	}
 	m_depth--;
 }
@@ -279,13 +298,32 @@ void MUCRoomUserQueryFactory::handleCharacterData(const QStringRef &text)
 {
 	if (m_state == AtItem)
 		m_item.handleCharacterData(text);
+	else if (m_state == AtReason)
+		m_query->item.reason = text.toString();
+	else if (m_state == AtPassword)
+		m_query->password = text.toString();
 }
 
 void MUCRoomUserQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
-	Q_UNUSED(extension);
+	MUCRoomUserQuery *query = se_cast<MUCRoomUserQuery*>(extension);
 	writer->writeStartElement(QLatin1String("query"));
 	writer->writeDefaultNamespace(NS_MUCUSER);
+	if (query->operation > 0) {
+		if (query->operation == MUCRoomUserQuery::Invite)
+			writer->writeStartElement(QLatin1String("invite"));
+		else if (query->operation == MUCRoomUserQuery::Decline)
+			writer->writeStartElement(QLatin1String("decline"));
+		else
+			Q_ASSERT(!"Unknown operation");
+		writer->writeAttribute(QLatin1String("to"), query->item.jid);
+		writer->writeTextElement(QLatin1String("reason"), query->item.reason);
+		if (!query->thread.isEmpty()) {
+			writer->writeEmptyElement(QLatin1String("continue"));
+			writer->writeAttribute(QLatin1String("thread"), query->thread);
+		}
+		writer->writeEndElement();
+	}
 	writer->writeEndElement();
 }
 

@@ -69,7 +69,7 @@ private:
 	MUCRoomItemFactory m_item;
 	QScopedPointer<MUCRoomUserQuery> m_query;
 	int m_depth;
-	enum State { AtNowhere, AtItem, AtActor, AtReason };
+	enum State { AtNowhere, AtItem, AtActor, AtReason, AtPassword, AtOperation };
 	State m_state;
 };
 

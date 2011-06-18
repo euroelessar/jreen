@@ -428,6 +428,16 @@ void MUCRoom::setPresence(Presence::Type type, const QString &message, int prior
 	d->client->send(pres);
 }
 
+void MUCRoom::invite(const JID &jid, const QString &reason, const QString &thread)
+{
+	Q_D(MUCRoom);
+	if (!d->isJoined || !d->client)
+		return;
+	Message message(Message::Normal, jid);
+	message.addExtension(new MUCRoomUserQuery(MUCRoomUserQuery::Invite, jid, reason, thread));
+	d_func()->client->send(message);
+}
+
 void MUCRoom::kick(const QString &nick, const QString &reason)
 {
 	setRole(nick, RoleNone, reason);
