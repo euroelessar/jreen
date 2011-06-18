@@ -117,7 +117,7 @@ public:
 	void setHistoryMaxStanzas(int maxStanzas);
 	void setHistorySeconds(int seconds);
 	void setHistorySince(const QDateTime &since);
-	//	void setPresence(Presence::Type type, const QString &message = QString(), int priority = 0);
+	void setPresence(Presence::Type type, const QString &message = QString(), int priority = 0);
 	//	void invite(const JID &jid, const QString &reason = QString(), const QString &thread = QString());
 	//	void addHistory(const QString &message, const JID &from, const QDateTime &when);
 	//	void setRequestHistory(int value, HistoryRequest type);

@@ -421,6 +421,13 @@ void MUCRoom::setHistorySince(const QDateTime &since)
 	d_func()->since = since;
 }
 
+void MUCRoom::setPresence(Presence::Type type, const QString &message, int priority)
+{
+	Q_D(MUCRoom);
+	Presence pres(type, d->jid, message, priority);
+	d->client->send(pres);
+}
+
 void MUCRoom::kick(const QString &nick, const QString &reason)
 {
 	setRole(nick, RoleNone, reason);
