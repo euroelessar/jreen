@@ -260,17 +260,17 @@ void MUCRoomUserQueryFactory::handleStartElement(const QStringRef &name, const Q
 		} else if (name == QLatin1String("invite")) {
 			m_state = AtOperation;
 			m_query->operation = MUCRoomUserQuery::Invite;
-			m_query->item.jid = attributes.value(QLatin1String("from"));
+			m_query->item.jid = attributes.value(QLatin1String("from")).toString();
 		} else if (name == QLatin1String("decline")) {
 			m_state = AtOperation;
 			m_query->operation = MUCRoomUserQuery::Decline;
-			m_query->item.jid = attributes.value(QLatin1String("from"));
+			m_query->item.jid = attributes.value(QLatin1String("from")).toString();
 		} else if (name == QLatin1String("password")) {
 			m_state = AtPassword;
 		}
 	} else if (m_depth == 3 && m_state == AtOperation) {
 		if (name == QLatin1String("reason"))
-			m_state == AtReason;
+			m_state = AtReason;
 		else if (name == QLatin1String("continue"))
 			m_query->thread = attributes.value(QLatin1String("thread")).toString();
 	}
