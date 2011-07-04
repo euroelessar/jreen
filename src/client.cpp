@@ -15,6 +15,7 @@
 *****************************************************************************/
 
 #include "client_p.h"
+#include "iq_p.h"
 #include "abstractroster.h"
 #include "disco_p.h"
 #include "stanza_p.h"
@@ -271,7 +272,7 @@ AbstractRoster *Client::roster()
 void Client::send(const Stanza &stanza)
 {
 	Q_D(Client);
-	if(!d->conn || !d->conn->isOpen())
+	if(!d->conn || !d->conn->isOpen() || !d->isConnected)
 		return;
 	d->send(stanza);
 }
@@ -281,7 +282,7 @@ void Client::send(const Presence &pres)
 	Q_D(Client);
 	qDebug() << Q_FUNC_INFO << d->jid << d->conn << pres.priority();
 	qDebug() << d->conn->isOpen();
-	if(!d->conn || !d->conn->isOpen())
+	if(!d->conn || !d->conn->isOpen() || !d->isConnected)
 		return;
 	if (StanzaPrivate::get(pres) == StanzaPrivate::get(d->presence)) {
 		d->send(pres);
@@ -297,6 +298,8 @@ IQReply *Client::send(const IQ &iq)
 {
 	Q_D(Client);
 	if(!d->conn || !d->conn->isOpen())
+		return 0;
+	if (!d->isConnected && !IQPrivate::isConnection(iq))
 		return 0;
 	if (iq.id().isEmpty()) {
 		const StanzaPrivate *p = StanzaPrivate::get(iq);
@@ -317,6 +320,8 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 {
 	Q_D(Client);
 	if(!d->conn || !d->conn->isOpen())
+		return;
+	if (!d->isConnected && !IQPrivate::isConnection(iq))
 		return;
 	if (iq.id().isEmpty()) {
 		const StanzaPrivate *p = StanzaPrivate::get(iq);

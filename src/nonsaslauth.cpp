@@ -16,7 +16,7 @@
 #include <QCryptographicHash>
 #include <QXmlStreamAttributes>
 #include "nonsaslauth.h"
-#include "iq.h"
+#include "iq_p.h"
 #include "client.h"
 #include "jstrings.h"
 
@@ -101,7 +101,7 @@ void NonSaslAuth::handleIq(const IQ &iq, int context)
 	case RequestFields:{
 		iq.accept();
 		const Query *query = iq.payload<Query>().data();
-		IQ iq(IQ::Set, m_client->jid().domain());
+		ConnectionIQ iq(IQ::Set, m_client->jid().domain());
 		iq.addExtension(query->instance(m_client->jid(), m_info->password(), m_info->streamID()));
 		m_client->send(iq, this, SLOT(handleIq(IQ,int)), ProvideInformation);
 		break;}

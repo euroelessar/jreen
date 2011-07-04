@@ -16,7 +16,7 @@
 
 #include "bindfeature.h"
 #include "client.h"
-#include "iq.h"
+#include "iq_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
 #include <QDebug>
@@ -170,7 +170,7 @@ bool BindFeature::isActivatable()
 
 bool BindFeature::activate()
 {
-	IQ::Ptr iq(new IQ(IQ::Set, JID()));
+	IQ::Ptr iq(new ConnectionIQ(IQ::Set, JID()));
 	iq->addExtension(new BindQuery(JID(), m_info->jid().resource()));
 	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(Jreen::IQ,int)), 0);
 	return true;

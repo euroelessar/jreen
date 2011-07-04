@@ -259,7 +259,7 @@ public:
 		iqTracks.clear();
 	}
 	inline void emitAuthorized() { q_ptr->handleAuthorized(); }
-	inline void emitConnected() { q_ptr->handleConnect(); }
+	inline void emitConnected() { isConnected = true; q_ptr->handleConnect(); }
 	inline void emitDisconnected(Client::DisconnectReason reason)
 	{
 		emit q_func()->disconnected(reason);

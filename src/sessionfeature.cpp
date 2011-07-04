@@ -132,7 +132,7 @@ bool SessionFeature::isActivatable()
 
 bool SessionFeature::activate()
 {
-	IQ::Ptr iq(new IQ(IQ::Set, JID()));
+	IQ::Ptr iq(new ConnectionIQ(IQ::Set, JID()));
 	iq->addExtension(new SessionQuery());
 	m_info->client()->send(*iq.data(), this, SLOT(onIQResult(Jreen::IQ,int)), 0);
 	return true;

@@ -29,6 +29,8 @@ public:
 	IQ::Type subtype;
 	mutable bool accepted;
 	bool connection;
+	
+	static bool isConnection(const IQ &iq) { return iq.d_func()->connection; }
 };
 
 class ConnectionIQPrivate : public IQPrivate
