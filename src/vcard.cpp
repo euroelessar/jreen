@@ -246,6 +246,133 @@ VCard::Address &VCard::Address::operator =(const VCard::Address &o)
 	return *this;
 }
 
+bool VCard::Address::testType(VCard::Address::Type t) const
+{
+	return d_ptr->types & t;
+}
+
+QString VCard::Address::postBox() const
+{
+	return d_ptr->pobox;
+}
+
+QString VCard::Address::extendedAddress() const
+{
+	return d_ptr->extendedAddress;
+}
+
+QString VCard::Address::street() const
+{
+	return d_ptr->street;
+}
+
+QString VCard::Address::locality() const
+{
+	return d_ptr->locality;
+}
+
+QString VCard::Address::region() const
+{
+	return d_ptr->region;
+}
+
+QString VCard::Address::postCode() const
+{
+	return d_ptr->pcode;
+}
+
+QString VCard::Address::country() const
+{
+	return d_ptr->country;
+}
+
+void VCard::Address::setType(VCard::Address::Type t, bool value)
+{
+	d_ptr->types ^= ((d_ptr->types & t) == t) == value ? 0 : t;
+}
+
+void VCard::Address::setPostBox(const QString &postBox)
+{
+	d_ptr->pobox = postBox;
+}
+
+void VCard::Address::setExtendedAddress(const QString &extendedAddress)
+{
+	d_ptr->extendedAddress = extendedAddress;
+}
+
+void VCard::Address::setStreet(const QString &street)
+{
+	d_ptr->street = street;
+}
+
+void VCard::Address::setLocality(const QString &locality)
+{
+	d_ptr->locality = locality;
+}
+
+void VCard::Address::setRegion(const QString &region)
+{
+	d_ptr->region = region;
+}
+
+void VCard::Address::setPostCode(const QString &postCode)
+{
+	d_ptr->pcode = postCode;
+}
+
+void VCard::Address::setCountry(const QString &country)
+{
+	d_ptr->country = country;
+}
+
+VCard::Organization::Organization() : d_ptr(new VCard::OrganizationPrivate)
+{
+}
+
+VCard::Organization::Organization(const Organization &o) : d_ptr(o.d_ptr)
+{
+}
+
+VCard::Organization::Organization(OrganizationPrivate &p) : d_ptr(&p)
+{
+}
+
+VCard::Organization::~Organization()
+{
+}
+
+VCard::Organization &VCard::Organization::operator =(const VCard::Organization &o)
+{
+	d_ptr = o.d_ptr;
+	return *this;
+}
+
+QString VCard::Organization::name() const
+{
+	return d_ptr->orgName;
+}
+
+QStringList VCard::Organization::units() const
+{
+	return d_ptr->orgUnits;
+}
+
+void VCard::Organization::setName(const QString &name)
+{
+	d_ptr->orgName = name;
+}
+
+void VCard::Organization::setUnits(const QStringList &units)
+{
+	d_ptr->orgUnits = units;
+}
+
+void VCard::Organization::addUnit(const QString &unit)
+{
+	d_ptr->orgUnits << unit;
+}
+
 VCard::VCard(const QString &formattedName, Classification classification)
 	: d_ptr(new VCardPrivate)
 {
@@ -332,6 +459,11 @@ QDateTime VCard::bday() const
 	return d_func()->bday;
 }
 
+void VCard::setUrl(const QUrl& url)
+{
+	d_func()->url = url;
+}
+
 const QUrl &VCard::url() const
 {
 	return d_func()->url;
@@ -357,15 +489,15 @@ QList<VCard::EMail> VCard::emails() const
 	return d_func()->emails;
 }
 
-//AddressList& VCard::addresses() const
-//{
-//	return d_func()->addresses;
-//}
+QList<VCard::Address> VCard::addresses() const
+{
+	return d_func()->addresses;
+}
 
-//void VCard::addAdress(const Address &adr)
-//{
-//	return d_func()->addresses.append(adr);
-//}
+void VCard::addAdress(const Address &adr)
+{
+	return d_func()->addresses.append(adr);
+}
 
 void VCard::setDesc(const QString& desc)
 {
@@ -375,6 +507,43 @@ void VCard::setDesc(const QString& desc)
 const QString& VCard::desc() const
 {
 	return d_func()->description;
+}
+
+void VCard::setTitle(const QString& title)
+{
+	d_func()->title = title;
+}
+
+QString VCard::title() const
+{
+	return d_func()->title;
+}
+
+void VCard::setRole(const QString& role)
+{
+	d_func()->role = role;
+}
+
+QString VCard::role() const
+{
+	return d_func()->role;
+}
+
+void VCard::setOrganization(const VCard::Organization &org)
+{
+	d_func()->org = org;
+}
+
+void VCard::setOrganization(const QString &orgName, const QStringList &orgUnits)
+{
+	Q_D(VCard);
+	d->org.setName(orgName);
+	d->org.setUnits(orgUnits);
+}
+
+VCard::Organization VCard::organization()
+{
+	return d_func()->org;
 }
 
 } // namespace Jreen
