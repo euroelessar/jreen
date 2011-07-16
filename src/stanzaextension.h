@@ -42,6 +42,7 @@ public:
 	virtual ~Payload();
 	
 	static int registerPayloadType(const char *type);
+	static const char *payloadName(int type);
 	
 	virtual int payloadType() const = 0;
 };

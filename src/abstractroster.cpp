@@ -131,12 +131,8 @@ Payload::Ptr AbstractRosterQueryFactory::createPayload()
 	return Payload::Ptr(new AbstractRosterQuery(m_items, m_ver));
 }
 
-static const QStringList roster_subscriptions = QStringList()
-<< QLatin1String("from") << QLatin1String("to")
-<< QLatin1String("both") << QLatin1String("remove");
-
 RosterItem::RosterItem(const QString &jid, const QString &name,
-									   const QStringList &groups, SubscriptionType s10n)
+                       const QStringList &groups, SubscriptionType s10n)
 	: d_ptr(new RosterItemPrivate)
 {
 	Q_D(RosterItem);

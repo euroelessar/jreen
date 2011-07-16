@@ -30,6 +30,8 @@ namespace Util
 JREEN_EXPORT QDateTime fromStamp(const QString &stamp);
 JREEN_EXPORT QString toStamp(const QDateTime &date_time);
 JREEN_EXPORT QByteArray randomHash();
+JREEN_EXPORT QString randomStringHash(int len);
+
 inline int log2(register uint n)
 {
 	register int pos = 0;

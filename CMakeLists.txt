@@ -31,10 +31,28 @@ FIND_PACKAGE(QCA2 REQUIRED)
 #FIND_PACKAGE(ZLIB REQUIRED)
 FIND_PACKAGE(LibIDN)
 
+FIND_PACKAGE(PkgConfig)
+
+#pkg_search_module(NICE nice)
+#if(NOT NICE_FOUND)
+#	message(STATUS "Could not find nice library.")
+#else(NOT NICE_FOUND)
+#	message(STATUS "Nice library is found.")
+#	include_directories(${NICE_INCLUDE_DIRS})
+#	ADD_DEFINITIONS("-DJREEN_HAVE_NICE=1")
+#endif(NOT NICE_FOUND)
+
+pkg_search_module(SPEEX speex)
+if(NOT SPEEX_FOUND)
+	message(STATUS "Could not find speex library.")
+else(NOT SPEEX_FOUND)
+	message(STATUS "Speex library is found.")
+	include_directories(${SPEEX_INCLUDE_DIRS})
+	ADD_DEFINITIONS("-DJREEN_HAVE_SPEEX=1")
+endif(NOT SPEEX_FOUND)
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config
 if(LINUX)
-	FIND_PACKAGE(PkgConfig)
 	pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
 	find_path(ZLIB_INCLUDE_DIR
 	  NAMES zlib.h
@@ -50,6 +68,8 @@ if(LINUX)
 	if(NOT ZLIB_LIBRARIES)
 	  message(SEND_ERROR "Could not find zlib library.")
 	endif(NOT ZLIB_LIBRARIES)
+
+
 else()
 	find_package(ZLIB REQUIRED)
 endif()
@@ -128,6 +148,12 @@ ENDIF()
 IF(LIBIDN_FOUND)
 	LIST(APPEND EXTRA_LIBS ${LIBIDN_LIBRARIES})
 ENDIF(LIBIDN_FOUND)
+#IF(NICE_FOUND)
+#	LIST(APPEND EXTRA_LIBS ${NICE_LIBRARIES})
+#ENDIF(NICE_FOUND)
+IF(SPEEX_FOUND)
+	LIST(APPEND EXTRA_LIBS ${SPEEX_LIBRARIES})
+ENDIF(SPEEX_FOUND)
 
 # Link with Qt
 #IF(SYMBIAN)

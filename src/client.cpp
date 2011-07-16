@@ -268,6 +268,14 @@ AbstractRoster *Client::roster()
 	return d_func()->roster;
 }
 
+JingleManager *Client::jingleManager()
+{
+	Q_D(Client);
+	if (!d->jingleManager)
+		d->jingleManager.reset(new JingleManager(this));
+	return d->jingleManager.data();
+}
+
 void Client::send(const Stanza &stanza)
 {
 	Q_D(Client);
