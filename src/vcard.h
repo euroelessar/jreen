@@ -76,6 +76,7 @@ public:
 	class AddressPrivate;
 	class TelephonePrivate;
 	class EMailPrivate;
+	class OrganizationPrivate;
 
 	class JREEN_EXPORT Name
 	{
@@ -165,7 +166,7 @@ public:
 			Work      = 0x02,
 			Internet  = 0x04,
 			Preferred = 0x08,
-			X400      = 0x10,
+			X400      = 0x10
 		};
 		EMail();
 		EMail(const EMail &o);
@@ -199,9 +200,43 @@ public:
 		Address(AddressPrivate &p);
 		~Address();
 		Address &operator =(const Address &o);
+		bool testType(Type t) const;
+		QString postBox() const;
+		QString extendedAddress() const;
+		QString street() const;
+		QString locality() const;
+		QString region() const;
+		QString postCode() const;
+		QString country() const;
+		void setType(Type t, bool value);
+		void setPostBox(const QString &postBox);
+		void setExtendedAddress(const QString &extendedAddress);
+		void setStreet(const QString &street);
+		void setLocality(const QString &locality);
+		void setRegion(const QString &region);
+		void setPostCode(const QString &postCode);
+		void setCountry(const QString &country);
 	private:
 		QSharedDataPointer<AddressPrivate> d_ptr;
 		friend class AddressPrivate;
+	};
+
+	class JREEN_EXPORT Organization
+	{
+	public:
+		Organization();
+		Organization(const Organization &o);
+		Organization(OrganizationPrivate &p);
+		~Organization();
+		Organization &operator =(const Organization &o);
+		QString name() const;
+		QStringList units() const;
+		void setName(const QString &name);
+		void setUnits(const QStringList &units);
+		void addUnit(const QString &unit);
+	private:
+		QSharedDataPointer<OrganizationPrivate> d_ptr;
+		friend class OrganizationPrivate;
 	};
 
 	VCard(const QString &formattedName = QString(), Classification classification = ClassNone);
@@ -265,6 +300,11 @@ public:
 	*/
 	Photo photo() const;
 	/**
+	* Set the url.
+	* @param url The url.
+	*/
+	void setUrl(const QUrl& url);
+	/**
 	* Returns the url.
 	* @return The url.
 	*/
@@ -295,11 +335,11 @@ public:
 	* Returns a list of addresses.
 	* @return A list of addresses.
 	*/
-	//AddressList& addresses() const;
-	///**
-	//* Adds an address.
-	//*/
-	//void addAdress(const Address &adr);
+	QList<Address> addresses() const;
+	/**
+	* Adds an address.
+	*/
+	void addAdress(const Address &adr);
 	/**
 	* Sets a "free-form descriptive text".
 	* @param desc The descriptive text.
@@ -310,6 +350,42 @@ public:
 	* @return The descriptive text.
 	*/
 	const QString& desc() const;
+	/**
+	* Sets the person's title.
+	* @param title The title.
+	*/
+	void setTitle(const QString& title);
+	/**
+	* Returns the person's title.
+	* @return The title.
+	*/
+	QString title() const;
+	/**
+	* Sets the person's role.
+	* @param role The role.
+	*/
+	void setRole(const QString& role);
+	/**
+	* Returns the person's role.
+	* @return The role.
+	*/
+	QString role() const;
+	/**
+	* Sets the organization.
+	* @param org The organization.
+	*/
+	void setOrganization(const Organization &org);
+	/**
+	* Sets the organization.
+	* @param orgName The organization's name.
+	* @param orgUnits A list of organizational units.
+	*/
+	void setOrganization(const QString &orgName, const QStringList &orgUnits);
+	/**
+	* Returns the organization.
+	* @return The organization.
+	*/
+	Organization organization();
 private:
 	QScopedPointer<VCardPrivate> d_ptr;
 };

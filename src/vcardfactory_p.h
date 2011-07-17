@@ -30,7 +30,6 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-
 protected:
 	void serialize(void *zero, void *data, QXmlStreamWriter *writer);
 	void addByteArray(const QLatin1String &name, QByteArray *str);
@@ -108,6 +107,8 @@ private:
 		AtPhoto,
 		AtTelephone,
 		AtEMail,
+		AtAddress,
+		AtOrg,
 		LastState
 	};
 };
