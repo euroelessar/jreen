@@ -110,11 +110,24 @@ bool JingleManager::checkSupport(const QSet<QString> &features)
 	return ok;
 }
 
+bool JingleManager::hasSession(const JID &responder)
+{
+	return d_func()->sessionsByJid.contains(responder);
+}
+
 JingleSession *JingleManager::createSession(const JID &responder, const QStringList &contents)
 {
-	JingleSession *session = new JingleSession(responder, contents, d_func()->client);
+	Q_D(JingleManager);
+	if (JingleSession *session = d->sessionsByJid.value(responder))
+		return session;
+	JingleSession *session = new JingleSession(responder, contents, d->client);
 	emit sessionCreated(session);
 	return session;
+}
+
+JingleSession *JingleManager::session(const JID &jid) const
+{
+	return d_func()->sessionsByJid.value(jid);
 }
 
 }

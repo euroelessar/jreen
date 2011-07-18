@@ -23,7 +23,7 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLESPEEXCODEC_P_H
+#if !defined(JINGLESPEEXCODEC_P_H) && defined(JREEN_HAVE_SPEEX)
 #define JINGLESPEEXCODEC_P_H
 
 #include "jingleaudiocontent.h"

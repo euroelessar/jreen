@@ -93,7 +93,7 @@ QByteArray JingleRtpHeader::data() const
 }
 
 JingleAudioDevice::JingleAudioDevice(JingleAudioContentPrivate *content)
-    : m_content(content), m_initialBuffering(true)
+    : m_content(content)
 {
 }
 
@@ -126,22 +126,15 @@ qint64 JingleAudioDevice::bytesAvailable() const
 
 void JingleAudioDevice::appendData(const QByteArray &data)
 {
-	qDebug() << Q_FUNC_INFO << __LINE__;
 	m_outputBuffer.append(data);
-	if (m_initialBuffering && m_outputBuffer.size() < (4 * 320))
-		return;
 	if (m_outputBuffer.size() > (8 * 320))
-		m_outputBuffer.resize(8 * 320);
-	m_initialBuffering = false;
+		m_outputBuffer.remove(0, m_outputBuffer.size() - 8 * 320);
 	emit readyRead();
 }
 
 qint64 JingleAudioDevice::readData(char *data, qint64 maxSize)
 {
 	qMemSet(data, 0, maxSize);
-	if (m_initialBuffering)
-		return maxSize;
-	qDebug() << Q_FUNC_INFO << m_outputBuffer.size() << maxSize;
 	qint64 size = qMin<qint64>(m_outputBuffer.size(), maxSize);
 	qMemCopy(data, m_outputBuffer.data(), size);
 	m_outputBuffer.remove(0, size);
@@ -166,7 +159,10 @@ qint64 JingleAudioDevice::writeData(const char *data, qint64 len)
 
 static inline void init_factories(QList<JingleAudioCodecFactory*> &factories)
 {
+	Q_UNUSED(factories);
+#ifdef JREEN_HAVE_SPEEX
 	factories << new JingleSpeexCodecFactory;
+#endif
 }
 
 Q_GLOBAL_STATIC_WITH_INITIALIZER(QList<JingleAudioCodecFactory*>, factories, init_factories(*x))
@@ -257,27 +253,25 @@ void JingleAudioContentPrivate::send(int payload, const QByteArray &data)
 	header.setPayloadType(payload);
 	QByteArray result = header.data();
 	result += data;
-	qDebug() << Q_FUNC_INFO << payload << result.size();
 	q_func()->send(JingleRTP, result);
 }
 
 void JingleAudioContent::receive(int component, const QByteArray &receivedData)
 {
+	if (component == JingleRTCP) {
+		qDebug() << Q_FUNC_INFO << receivedData.toHex();
+	}
 	if (component != JingleRTP)
 		return;
 	Q_D(JingleAudioContent);
 	const char *data = receivedData.constData();
 	int size = receivedData.size();
 	JingleRtpHeader header(data, size);
-	qDebug() << Q_FUNC_INFO << header.payloadType() << header.sequence() << header.timestamp() << size;
-	qDebug() << receivedData.mid(0, 12).toHex() << header.version();
 	if (!header.isValid())
 		return;
 	JingleAudioCodec *codec = d->codecs.value(header.payloadType());
-	qDebug() << Q_FUNC_INFO << __LINE__;
 	if (!codec)
 		return;
-	qDebug() << Q_FUNC_INFO << __LINE__;
 	QByteArray audio = codec->decodeFrame(data, size);
 	d->device->appendData(audio);
 }

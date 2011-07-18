@@ -43,10 +43,13 @@ public:
 	~JingleManager();
 	
 	bool checkSupport(const QSet<QString> &features);
-	JingleSession *createSession(const JID &responder, const QStringList &contents);
+	bool hasSession(const JID &responder);
+	JingleSession *createSession(const JID &responder, const QStringList &contents = QStringList());
+	JingleSession *session(const JID &jid) const;
 	
 signals:
 	void sessionCreated(Jreen::JingleSession *session);
+	void sessionTerminated(Jreen::JingleSession *session);
 	
 protected:
     JingleManager(Client *client);

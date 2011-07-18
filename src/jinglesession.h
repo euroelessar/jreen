@@ -43,14 +43,23 @@ class JREEN_EXPORT JingleSession : public QObject
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(JingleSession)
 public:
-	bool addContent(const QString &content);
+//	enum State { };
+	
+	~JingleSession();
+
+	bool addContent(const QString &content, const QString &id = QString());
 	void initiate();
+	void terminate();
+	void accept();
+	void decline();
 	bool isIncoming() const;
+	JID jid() const;
 	JingleContent *content(const QString &id) const;
 	QStringList contents() const;
 	
 signals:
 	void contentAdded(Jreen::JingleContent *content);
+	void terminated();
 	
 protected:
     JingleSession(const JID &responder, const QStringList &contents, Client *client);

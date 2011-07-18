@@ -25,6 +25,8 @@
 
 #include "jinglespeexcodec_p.h"
 
+#ifdef JREEN_HAVE_SPEEX
+
 namespace Jreen
 {
 
@@ -122,3 +124,5 @@ JingleAudioCodec *JingleSpeexCodecFactory::createCodec(const JingleAudioPayload 
 }
 
 }
+
+#endif

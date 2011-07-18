@@ -38,86 +38,6 @@ namespace Jreen
 namespace JingleIce
 {
 
-//const char *candidate_types[] = {
-//    "host",
-//    "srflx",
-//    "prflx",
-//    "relay"
-//};
-
-//static QHostAddress jreen_nice_get_address(const NiceAddress &address)
-//{
-//	return QHostAddress(&address.s.addr);
-//}
-
-//static QString convert(const NiceAddress &address)
-//{
-//	return QString("%1:%2").arg(jreen_nice_get_address(address).toString(),
-//	                            QString::number(nice_address_get_port(&address)));
-//}
-
-//void Transport::candidateGatheringDone(NiceAgent *agent, guint streamId, Transport *d)
-//{
-//	GSList *candidates = nice_agent_get_local_candidates(agent, streamId, 1);
-//	qDebug() << "found candidates: " << g_slist_length(candidates);
-	
-//	gchar *ufrag = 0;
-//	gchar *pwd = 0;
-//	nice_agent_get_local_credentials(agent, streamId, &ufrag, &pwd);
-//	TransportInfo::Ptr info = TransportInfo::Ptr::create();
-//	info->pwd = QLatin1String(pwd);
-//	info->ufrag = QLatin1String(ufrag);
-//	g_free(pwd);
-//	g_free(ufrag);
-//	for (; candidates; candidates = g_slist_next(candidates)) {
-//		NiceCandidate *candidate = reinterpret_cast<NiceCandidate*>(candidates->data);
-//		info->candidates << Candidate::Ptr(new Candidate(candidate, d->m_generation,
-//		                                                 Util::randomStringHash(6)));
-		
-//		QDebug debug(QtDebugMsg);
-//		debug << candidate->component_id
-//		      << candidate->priority
-//		      << QLatin1String(candidate->foundation)
-//		      << convert(candidate->addr)
-//		      << convert(candidate->base_addr);
-//		if (candidate->turn) {
-//			_TurnServer *turn = candidate->turn;
-//			debug << "turn" << convert(turn->server);
-//		} else {
-//			debug << "no turn";
-//		}
-//	}
-//	d->setLocalInfo(info);
-//}
-
-//void Transport::componentStateChanged(NiceAgent *agent, guint stream_id, guint component_id,
-//                                      guint state, Transport *d)
-//{
-//	qDebug() << "new state" << state;
-//}
-
-//void Transport::newSelectedPair(NiceAgent *agent, guint streamId, guint componentId,
-//                                gchar *lfoundation, gchar *rfoundation, Transport *d)
-//{
-//	Q_UNUSED(agent);
-//	Q_UNUSED(lfoundation);
-//	Q_ASSERT(streamId == d->m_streamId);
-//	Q_ASSERT(componentId == d->m_componentId);
-//	d->m_componentId = componentId;
-//	qDebug() << rfoundation;
-////	emit d->candidateSelected(uint(atol(rfoundation)));
-//}
-
-//void Transport::dataRecevied(NiceAgent *agent, guint streamId, guint componentId, guint len,
-//                             gchar *buf, gpointer data)
-//{
-//	Q_UNUSED(agent);
-//	Transport *d = reinterpret_cast<Transport*>(data);
-//	Q_ASSERT(streamId == d->m_streamId);
-//	Q_ASSERT(componentId == d->m_componentId);
-//	emit d->received(QByteArray(buf, len));
-//}
-
 static inline int addressPriority(const QHostAddress &address)
 {
 	if (address.protocol() == QAbstractSocket::IPv6Protocol) {
@@ -201,14 +121,7 @@ Transport::~Transport()
 void Transport::send(int component, const QByteArray &data)
 {
 	m_ice->writeDatagram(component, data);
-//	int result = nice_agent_send(m_agent, m_streamId, m_componentId, size, data);
-//	return result >= 0 ? result : -1;
 }
-
-//static inline void parse_address(NiceAddress &address, const QStringRef &value)
-//{
-//	nice_address_set_from_string(&address, value.toString().toLatin1());
-//}
 
 void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool final)
 {
@@ -221,22 +134,6 @@ void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool 
 		m_ice->setPeerPassword(info->pwd);
 	m_ice->addRemoteCandidates(info->candidates);
 	setState(Connecting);
-//	if (!info->ufrag.isEmpty() || !info->pwd.isEmpty()) {
-//		nice_agent_set_remote_credentials(m_agent, m_streamId,
-//										  info->ufrag.toLatin1(),
-//										  info->pwd.toLatin1());
-//	}
-////	if (final) {
-////		Q_ASSERT(info->candidates.size() == 1);
-////		nice_agent_set_selected_remote_candidate(m_agent, m_streamId, m_componentId,
-////		                                         info->candidates.first()->self);
-////	} else {
-//		GSList *list = 0;
-//		foreach (const Candidate::Ptr &candidate, info->candidates)
-//			list = g_slist_append(list, candidate->self);
-//		nice_agent_set_remote_candidates(m_agent, m_streamId, m_componentId, list);
-//		g_slist_free(list);
-////	}
 }
 
 void Transport::onIceStarted()
@@ -270,7 +167,6 @@ void Transport::onIceComponentReady(int component)
 
 void Transport::onIceReadyRead(int component)
 {
-	qDebug() << Q_FUNC_INFO << component;
 	while (m_ice->hasPendingDatagrams(component)) {
 		emit received(component, m_ice->readDatagram(component));
 	}

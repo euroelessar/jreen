@@ -39,6 +39,7 @@ public:
 	QList<AbstractJingleTransportFactory*> transports;
 	QList<AbstractJingleContentFactory*> descriptions;
 	QHash<QString, JingleSession*> sessions;
+	QHash<JID, JingleSession*> sessionsByJid;
 	
 	JingleContent *content(const QString &name, JingleSession *session);
 	void _q_iqReceived(const Jreen::IQ &iq);

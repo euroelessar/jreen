@@ -53,7 +53,6 @@ private:
 	JingleAudioContentPrivate *m_content;
 	QByteArray m_buffer;
 	QByteArray m_outputBuffer;
-	bool m_initialBuffering;
 };
 
 class JingleAudioContentPrivate : public JingleContentPrivate

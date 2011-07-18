@@ -77,19 +77,24 @@ void JingleSessionPrivate::handle(const Jingle::Ptr &jingle)
 			p->setTransport(content->transportObjects[0]);
 			p->transport->setRemoteInfo(transportInfo, true);
 		}
+	} else if (jingle->action == Jingle::SessionTerminate) {
+		emit q_func()->terminated();
 	}
 }
 
 void JingleSessionPrivate::_q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &info)
 {
-	Q_ASSERT(needMore > 0);
 	JingleTransport *transport = qobject_cast<JingleTransport*>(q_func()->sender());
 	for (int i = 0; i < contents.size(); ++i) {
-		int index = contents.at(i).transportObjects.indexOf(transport);
+		JingleSessionContent &content = contents[i];
+		int index = content.transportObjects.indexOf(transport);
 		if (index != -1) {
-			Q_ASSERT(!contents.at(i).transports.at(index));
+			Q_ASSERT(!content.transports.at(index));
 			--needMore;
-			contents[i].transports[index] = info;
+			--content.needMore;
+			content.transports[index] = info;
+			QObject::disconnect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
+			                    q_func(), SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
 		}
 	}
 	if (needMore == 0)
@@ -107,30 +112,11 @@ JingleSession::JingleSession(const JID &responder, const QStringList &contents, 
 	d->sid = Util::randomStringHash(16);
 	JingleManagerPrivate *manager = JingleManagerPrivate::get(client->jingleManager());
 	manager->sessions.insert(d->sid, this);
+	manager->sessionsByJid.insert(responder, this);
 	for (int i = 0; i < contents.size(); ++i) {
-		JingleSessionContent content;
-		content.creator = Jingle::Initiator;
-		content.contentObject = manager->content(contents.at(i), this);
-		if (!content.contentObject) {
-			qWarning("Unknown content %s", qPrintable(contents.at(i)));
-			continue;
+		if (addContent(contents.at(i))) {
+//			const JingleSessionContent &content = d->contents.last();
 		}
-		content.description = content.contentObject->defaultDescription();
-		content.name = Util::randomStringHash(8);
-		foreach (AbstractJingleTransportFactory *factory, manager->transports) {
-			JingleTransport *transport = factory->createObject(content.contentObject);
-			if (transport->localInfo().isNull()) {
-				connect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
-						SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
-				content.transports << JingleTransportInfo::Ptr();
-				d->needMore++;
-			} else {
-				content.transports << transport->localInfo();
-			}
-			content.transportObjects << transport;
-		}
-		d->contents << content;
-		emit contentAdded(content.contentObject);
 	}
 	if (d->needMore == 0 && d->contents.size() > 0)
 		initiate();
@@ -143,7 +129,11 @@ JingleSession::JingleSession(const Payload::Ptr &payload, Client *client)
 	Q_ASSERT(se_cast<Jingle*>(payload.data()));
 	d->client = client;
 	Jingle::Ptr jingle = payload.staticCast<Jingle>();
+	d->other = jingle->initiator;
 	d->sid = jingle->sid;
+	JingleManagerPrivate *manager = JingleManagerPrivate::get(client->jingleManager());
+	manager->sessions.insert(d->sid, this);
+	manager->sessionsByJid.insert(jingle->initiator, this);
 }
 
 void JingleSession::initiate()
@@ -161,9 +151,26 @@ void JingleSession::initiate()
 	Q_UNUSED(reply);
 }
 
+void JingleSession::terminate()
+{
+	Q_D(JingleSession);
+	Jingle::Ptr jingle = Jingle::Ptr::create();
+	jingle->sid = d->sid;
+	jingle->action = Jingle::SessionTerminate;
+	IQ iq(IQ::Set, d->other);
+	iq.addExtension(jingle);
+	IQReply *reply = d->client->send(iq);
+	connect(reply, SIGNAL(received(Jreen::IQ)), SIGNAL(terminated()));
+}
+
 bool JingleSession::isIncoming() const
 {
 	return d_func()->incoming;
+}
+
+JID JingleSession::jid() const
+{
+	return d_func()->other;
 }
 
 JingleContent *JingleSession::content(const QString &id) const
@@ -185,9 +192,51 @@ QStringList JingleSession::contents() const
 	return result;
 }
 
-bool JingleSession::addContent(const QString &content)
+JingleSession::~JingleSession()
 {
-	return false;
+	Q_D(JingleSession);
+	JingleManagerPrivate *manager = JingleManagerPrivate::get(d->client->jingleManager());
+	manager->sessions.remove(d->sid);
+	manager->sessionsByJid.remove(d->other);
+}
+
+bool JingleSession::addContent(const QString &media, const QString &id)
+{
+	Q_D(JingleSession);
+	JingleManagerPrivate *manager = JingleManagerPrivate::get(d->client->jingleManager());
+	JingleSessionContent content;
+	content.creator = Jingle::Initiator;
+	content.contentObject = manager->content(media, this);
+	if (!content.contentObject) {
+		qWarning("Unknown content %s", qPrintable(media));
+		return false;
+	}
+	content.description = content.contentObject->defaultDescription();
+	content.name = id.isEmpty() ? Util::randomStringHash(8) : id;
+	foreach (AbstractJingleTransportFactory *factory, manager->transports) {
+		JingleTransport *transport = factory->createObject(content.contentObject);
+		if (transport->localInfo().isNull()) {
+			connect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
+					SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
+			content.transports << JingleTransportInfo::Ptr();
+			content.needMore++;
+		} else {
+			content.transports << transport->localInfo();
+		}
+		content.transportObjects << transport;
+	}
+	d->contents << content;
+	d->needMore += content.needMore;
+	emit contentAdded(content.contentObject);
+	return true;
+}
+
+void JingleSession::accept()
+{
+}
+
+void JingleSession::decline()
+{
 }
 
 }

@@ -33,7 +33,6 @@ namespace Jreen
 
 void JingleContentPrivate::_q_received(int component, const QByteArray &data)
 {
-	qDebug() << Q_FUNC_INFO << component << data.size();
 	q_func()->receive(component, data);
 }
 

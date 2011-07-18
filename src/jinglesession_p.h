@@ -37,8 +37,11 @@ namespace Jreen
 class JingleSessionContent : public Jingle::Content
 {
 public:
+	JingleSessionContent() : needMore(0) {}
+
 	JingleContent *contentObject;
 	QList<JingleTransport*> transportObjects;
+	int needMore;
 };
 
 class JingleSessionPrivate
