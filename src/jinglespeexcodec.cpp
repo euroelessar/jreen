@@ -114,7 +114,7 @@ QList<JingleAudioPayload> JingleSpeexCodecFactory::supportedPayloads()
 
 bool JingleSpeexCodecFactory::supportsPayload(const JingleAudioPayload &payload)
 {
-	return payload.name() == QLatin1String("speex")
+	return !payload.name().compare(QLatin1String("speex"), Qt::CaseInsensitive)
 	        && payload.clockRate() == 8000;
 }
 

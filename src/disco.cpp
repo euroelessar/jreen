@@ -59,7 +59,7 @@ void DiscoInfoFactory::handleStartElement(const QStringRef &name, const QStringR
 			Disco::Identity identity(attributes.value(QLatin1String("category")).toString(),
 									 attributes.value(QLatin1String("type")).toString(),
 									 attributes.value(QLatin1String("name")).toString(),
-									 attributes.value(QLatin1String("lang")).toString());
+									 attributes.value(QLatin1String("xml:lang")).toString());
 			m_identities.append(identity);
 		} else if (name == QLatin1String("feature")) {
 			m_features.insert(attributes.value(QLatin1String("var")).toString());
@@ -104,7 +104,7 @@ void DiscoInfoFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		writer->writeAttribute(QLatin1String("type"), identity.type);
 		writer->writeAttribute(QLatin1String("name"), identity.name);
 		if (!identity.lang.isEmpty())
-			writer->writeAttribute(QLatin1String("lang"), identity.lang);
+			writer->writeAttribute(QLatin1String("xml:lang"), identity.lang);
 	}
 	foreach (const QString &feature, info->features()) {
 		writer->writeEmptyElement(QLatin1String("feature"));
