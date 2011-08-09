@@ -25,7 +25,7 @@
 
 #include "jinglecontent_p.h"
 #include "jingletransport.h"
-#include "jinglesession.h"
+#include "jinglesession_p.h"
 #include <QDebug>
 
 namespace Jreen
@@ -42,6 +42,34 @@ void JingleContentPrivate::_q_stateChanged(Jreen::JingleTransport::State newStat
 	emit q_func()->stateChanged(state);
 }
 
+void JingleContentPrivate::_q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &)
+{
+	if (needTransports > 0) {
+		needTransports--;
+		if (needTransports == 0) {
+			JingleSessionPrivate *sessionD = JingleSessionPrivate::get(session);
+			sessionD->onTransportsReady(q_func(), transports);
+		}
+	} else {
+		canAccept = 1;
+		transportInfos.clear();
+		transport = qobject_cast<JingleTransport*>(q_func()->sender());
+		Q_ASSERT(transport);
+		transports << transport;
+		accept();
+	}
+}
+
+void JingleContentPrivate::_q_tryStateChanged(Jreen::JingleTransport::State state)
+{
+	if (state == JingleTransport::Failed) {
+		JingleTransport *transport = qobject_cast<JingleTransport*>(q_func()->sender());
+		Q_ASSERT(transport);
+		delete transport;
+		tryNextTransport();
+	}
+}
+
 void JingleContentPrivate::setTransport(JingleTransport *trueTransport)
 {
 	transport = trueTransport;
@@ -50,6 +78,62 @@ void JingleContentPrivate::setTransport(JingleTransport *trueTransport)
 	                 q_func(), SLOT(_q_received(int,QByteArray)));
 	QObject::connect(transport, SIGNAL(stateChanged(Jreen::JingleTransport::State)),
 	                 q_func(), SLOT(_q_stateChanged(Jreen::JingleTransport::State)));
+}
+
+void JingleContentPrivate::initiateTransports()
+{
+	JingleSessionPrivate *sessionD = JingleSessionPrivate::get(session);
+	JingleManagerPrivate *manager = JingleManagerPrivate::get(sessionD->client->jingleManager());
+	foreach (AbstractJingleTransportFactory *factory, manager->transports) {
+		JingleTransport *transport = factory->createObject(q_func());
+		if (transport->localInfo().isNull()) {
+			QObject::connect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
+			                 q_func(), SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
+			needTransports++;
+		}
+		transports << transport;
+	}
+}
+
+void JingleContentPrivate::accept()
+{
+	if (needAccept || !canAccept)
+		return;
+	JingleSessionPrivate *sessionD = JingleSessionPrivate::get(session);
+	sessionD->onTransportsReady(q_func(), transports);
+}
+
+void JingleContentPrivate::decline()
+{
+	IQReply *reply = Jingle::send(session, Jingle::ContentReject, q_func());
+	Q_UNUSED(reply);
+}
+
+void JingleContentPrivate::tryNextTransport()
+{
+	JingleSessionPrivate *sessionD = JingleSessionPrivate::get(session);
+	JingleManagerPrivate *manager = JingleManagerPrivate::get(sessionD->client->jingleManager());
+	JingleTransport *transport = 0;
+	JingleTransportInfo::Ptr info;
+	while (!transport && !transportInfos.isEmpty()) {
+		info = transportInfos.takeFirst();
+		transport = manager->transport(info, q_func());
+	}
+	if (!transport) {
+		q_func()->decline();
+		return;
+	}
+	transport->setRemoteInfo(info, false);
+	QObject::connect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
+	                 q_func(), SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
+	QObject::connect(transport, SIGNAL(stateChanged(Jreen::JingleTransport::State)),
+	                 q_func(), SLOT(_q_stateChanged(Jreen::JingleTransport::State)));
+}
+
+void JingleContentPrivate::initiateTransports(const QList<JingleTransportInfo::Ptr> &transportInfosOther)
+{
+	transportInfos = transportInfosOther;
+	tryNextTransport();
 }
 
 JingleContent::JingleContent(JingleSession *session)
@@ -78,6 +162,28 @@ JingleSession *JingleContent::session() const
 JingleContent::State JingleContent::state() const
 {
 	return d_func()->state;
+}
+
+bool JingleContent::isAcceptable() const
+{
+	return d_func()->needAccept;
+}
+
+void JingleContent::accept()
+{
+	Q_D(JingleContent);
+	d->needAccept = false;
+	d->accept();
+}
+
+void JingleContent::decline()
+{
+	Q_D(JingleContent);
+	if (d->needAccept) {
+		d->needAccept = false;
+		IQReply *reply = Jingle::send(d->session, Jingle::ContentReject, this);
+		Q_UNUSED(reply);
+	}
 }
 
 int JingleContent::componentCount() const

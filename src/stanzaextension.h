@@ -45,6 +45,7 @@ public:
 	static const char *payloadName(int type);
 	
 	virtual int payloadType() const = 0;
+	const char *payloadName() const;
 };
 
 typedef QMultiMap<int, Payload::Ptr> PayloadList;

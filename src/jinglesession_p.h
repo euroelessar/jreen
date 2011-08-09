@@ -37,29 +37,35 @@ namespace Jreen
 class JingleSessionContent : public Jingle::Content
 {
 public:
-	JingleSessionContent() : needMore(0) {}
+	JingleSessionContent() : contentObject(0), initiating(0) {}
+	JingleSessionContent(const Content &o) : Content(o), contentObject(0), initiating(0) {}
+	JingleSessionContent(const JingleSessionContent &o)
+	    : Content(o), contentObject(o.contentObject), initiating(o.initiating) {}
 
 	JingleContent *contentObject;
-	QList<JingleTransport*> transportObjects;
-	int needMore;
+	int initiating : 1;
 };
 
 class JingleSessionPrivate
 {
 public:
 	Q_DECLARE_PUBLIC(JingleSession);
-	JingleSessionPrivate() : needMore(0), incoming(1) {}
+	JingleSessionPrivate() : needMore(0), incoming(1), initiating(1) {}
 	JingleSession *q_ptr;
 	Client *client;
 	JID other;
 	QString sid;
 	QList<JingleSessionContent> contents;
-	int needMore : 31;
+	int needMore : 30;
 	int incoming : 1;
+	int initiating : 1;
 
 	JingleSessionContent *findContent(const QString &name);
+	JingleSessionContent *findContent(JingleContent *content);
 	void handle(const Jingle::Ptr &jingle);
-	void _q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &);
+	void accept(const JingleSessionContent &content);
+	void add(const JingleSessionContent &content);
+	void onTransportsReady(JingleContent *content, const QList<JingleTransport*> &transports);
 	static JingleSessionPrivate *get(JingleSession *q) { return q->d_func(); }
 };
 

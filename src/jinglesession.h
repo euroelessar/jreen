@@ -59,6 +59,7 @@ public:
 	
 signals:
 	void contentAdded(Jreen::JingleContent *content);
+	void contentRemoved(Jreen::JingleContent *content);
 	void terminated();
 	
 protected:
@@ -67,7 +68,6 @@ protected:
 	friend class JingleManager;
 	friend class JingleManagerPrivate;
 	QScopedPointer<JingleSessionPrivate> d_ptr;
-	Q_PRIVATE_SLOT(d_func(), void _q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &))
 };
 
 }

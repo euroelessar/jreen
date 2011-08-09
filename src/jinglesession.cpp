@@ -39,6 +39,15 @@ JingleSessionContent *JingleSessionPrivate::findContent(const QString &name)
 	return 0;
 }
 
+JingleSessionContent *JingleSessionPrivate::findContent(JingleContent *content)
+{
+	for (int i = 0; i < contents.size(); ++i) {
+		if (contents[i].contentObject == content)
+			return &contents[i];
+	}
+	return 0;
+}
+
 void JingleSessionPrivate::handle(const Jingle::Ptr &jingle)
 {
 	qDebug() << Q_FUNC_INFO;
@@ -62,43 +71,84 @@ void JingleSessionPrivate::handle(const Jingle::Ptr &jingle)
 				qCritical("Content %s has no transports", qPrintable(content->name));
 				continue;
 			}
+			JingleContentPrivate *p = JingleContentPrivate::get(content->contentObject);
 			const JingleTransportInfo::Ptr &transportInfo = remoteContent.transports.at(0);
 			for (int i = content->transports.size() - 1; i >= 0; --i) {
 				if (content->transports[i]->payloadType() != transportInfo->payloadType()) {
 					content->transports.removeAt(i);
-					delete content->transportObjects.takeAt(i);
+					delete p->transports.takeAt(i);
 				}
 			}
-			if (!remoteContent.transports.value(0)) {
+			if (p->transports.isEmpty()) {
 				qCritical("Content %s has no needed transport", qPrintable(content->name));
 				continue;
 			}
-			JingleContentPrivate *p = JingleContentPrivate::get(content->contentObject);
-			p->setTransport(content->transportObjects[0]);
+			p->setTransport(p->transports.first());
 			p->transport->setRemoteInfo(transportInfo, true);
 		}
 	} else if (jingle->action == Jingle::SessionTerminate) {
 		emit q_func()->terminated();
+	} else if (jingle->action == Jingle::ContentAdd) {
+		foreach (const Jingle::Content &remoteContent, jingle->contents) {
+			if (!remoteContent.description || remoteContent.transports.isEmpty()) {
+				Jingle::send(q_func(), Jingle::ContentReject, remoteContent);
+				continue;
+			}
+			JingleSessionContent content = remoteContent;
+			content.creator = Jingle::Initiator;
+			JingleManagerPrivate *manager = JingleManagerPrivate::get(client->jingleManager());
+			content.contentObject = manager->content(remoteContent.description, q_func());
+			if (!content.contentObject) {
+				Jingle::send(q_func(), Jingle::ContentReject, remoteContent);
+				continue;
+			}
+			content.description = content.contentObject->handleDescription(remoteContent.description);
+			if (!content.description) {
+				content.description = content.contentObject->defaultDescription();
+				Jingle::send(q_func(), Jingle::ContentReject, content);
+				continue;
+			}
+			JingleContentPrivate *contentD = JingleContentPrivate::get(content.contentObject);
+			contentD->needAccept = 1;
+			contents << content;
+			JingleContentPrivate::get(content.contentObject)->initiateTransports(content.transports);
+			emit q_func()->contentAdded(content.contentObject);
+		}
 	}
 }
 
-void JingleSessionPrivate::_q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &info)
+void JingleSessionPrivate::accept(const JingleSessionContent &content)
 {
-	JingleTransport *transport = qobject_cast<JingleTransport*>(q_func()->sender());
+	IQReply *reply = Jingle::send(q_func(), Jingle::ContentAccept, content);
+	Q_UNUSED(reply);
+}
+
+void JingleSessionPrivate::add(const JingleSessionContent &content)
+{
+	IQReply *reply = Jingle::send(q_func(), Jingle::ContentAdd, content);
+	Q_UNUSED(reply);
+}
+
+void JingleSessionPrivate::onTransportsReady(JingleContent *content, const QList<JingleTransport*> &transports)
+{
 	for (int i = 0; i < contents.size(); ++i) {
-		JingleSessionContent &content = contents[i];
-		int index = content.transportObjects.indexOf(transport);
-		if (index != -1) {
-			Q_ASSERT(!content.transports.at(index));
-			--needMore;
-			--content.needMore;
-			content.transports[index] = info;
-			QObject::disconnect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
-			                    q_func(), SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
+		if (contents.at(i).contentObject != content)
+			continue;
+		JingleSessionContent &sessionContent = contents[i];
+		for (int j = 0; j < transports.size(); ++j)
+			sessionContent.transports << transports[j]->localInfo();
+		if (initiating) {
+			needMore--;
+			if (needMore == 0)
+				q_func()->initiate();
+		} else {
+			JingleContentPrivate *p = JingleContentPrivate::get(content);
+			if (p->canAccept)
+				accept(sessionContent);
+			else
+				add(sessionContent);
 		}
 	}
-	if (needMore == 0)
-		q_func()->initiate();
 }
 
 JingleSession::JingleSession(const JID &responder, const QStringList &contents, Client *client)
@@ -113,11 +163,8 @@ JingleSession::JingleSession(const JID &responder, const QStringList &contents, 
 	JingleManagerPrivate *manager = JingleManagerPrivate::get(client->jingleManager());
 	manager->sessions.insert(d->sid, this);
 	manager->sessionsByJid.insert(responder, this);
-	for (int i = 0; i < contents.size(); ++i) {
-		if (addContent(contents.at(i))) {
-//			const JingleSessionContent &content = d->contents.last();
-		}
-	}
+	for (int i = 0; i < contents.size(); ++i)
+		addContent(contents.at(i));
 	if (d->needMore == 0 && d->contents.size() > 0)
 		initiate();
 }
@@ -128,6 +175,7 @@ JingleSession::JingleSession(const Payload::Ptr &payload, Client *client)
 	Q_D(JingleSession);
 	Q_ASSERT(se_cast<Jingle*>(payload.data()));
 	d->client = client;
+	d->initiating = 0;
 	Jingle::Ptr jingle = payload.staticCast<Jingle>();
 	d->other = jingle->initiator;
 	d->sid = jingle->sid;
@@ -139,27 +187,13 @@ JingleSession::JingleSession(const Payload::Ptr &payload, Client *client)
 void JingleSession::initiate()
 {
 	Q_D(JingleSession);
-	Jingle::Ptr jingle = Jingle::Ptr::create();
-	jingle->initiator = d->client->jid();
-	jingle->action = Jingle::SessionInitiate;
-	jingle->sid = d->sid;
-	for (int i = 0; i < d->contents.size(); ++i)
-		jingle->contents << d->contents.at(i);
-	IQ iq(IQ::Set, d->other);
-	iq.addExtension(jingle);
-	IQReply *reply = d->client->send(iq);
+	IQReply *reply = Jingle::send(this, Jingle::SessionInitiate, d->contents);
 	Q_UNUSED(reply);
 }
 
 void JingleSession::terminate()
 {
-	Q_D(JingleSession);
-	Jingle::Ptr jingle = Jingle::Ptr::create();
-	jingle->sid = d->sid;
-	jingle->action = Jingle::SessionTerminate;
-	IQ iq(IQ::Set, d->other);
-	iq.addExtension(jingle);
-	IQReply *reply = d->client->send(iq);
+	IQReply *reply = Jingle::send(this, Jingle::SessionTerminate);
 	connect(reply, SIGNAL(received(Jreen::IQ)), SIGNAL(terminated()));
 }
 
@@ -213,30 +247,33 @@ bool JingleSession::addContent(const QString &media, const QString &id)
 	}
 	content.description = content.contentObject->defaultDescription();
 	content.name = id.isEmpty() ? Util::randomStringHash(8) : id;
-	foreach (AbstractJingleTransportFactory *factory, manager->transports) {
-		JingleTransport *transport = factory->createObject(content.contentObject);
-		if (transport->localInfo().isNull()) {
-			connect(transport, SIGNAL(localInfoReady(Jreen::JingleTransportInfo::Ptr)),
-					SLOT(_q_localInfoReady(Jreen::JingleTransportInfo::Ptr)));
-			content.transports << JingleTransportInfo::Ptr();
-			content.needMore++;
-		} else {
-			content.transports << transport->localInfo();
-		}
-		content.transportObjects << transport;
-	}
+	JingleContentPrivate *contentD = JingleContentPrivate::get(content.contentObject);
+	contentD->initiateTransports();
 	d->contents << content;
-	d->needMore += content.needMore;
+	if (d->initiating)
+		d->needMore++;
 	emit contentAdded(content.contentObject);
 	return true;
 }
 
 void JingleSession::accept()
 {
+	Q_D(JingleSession);
+	for (int i = 0; i < d->contents.size(); ++i) {
+		JingleContentPrivate *content = JingleContentPrivate::get(d->contents.at(i).contentObject);
+		if (content->needAccept)
+			content->accept();
+	}
 }
 
 void JingleSession::decline()
 {
+	Q_D(JingleSession);
+	for (int i = 0; i < d->contents.size(); ++i) {
+		JingleContentPrivate *content = JingleContentPrivate::get(d->contents.at(i).contentObject);
+		if (content->needAccept)
+			content->decline();
+	}
 }
 
 }

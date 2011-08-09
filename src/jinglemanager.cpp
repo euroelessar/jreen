@@ -41,6 +41,24 @@ JingleContent *JingleManagerPrivate::content(const QString &name, JingleSession 
 	return 0;
 }
 
+JingleContent *JingleManagerPrivate::content(const JingleDescription::Ptr &description, JingleSession *session)
+{
+	for (int i = 0; i < descriptions.size(); ++i) {
+		if (descriptions.at(i)->payloadType() == description->payloadType())
+			return descriptions.at(i)->createObject(session);
+	}
+	return 0;
+}
+
+JingleTransport *JingleManagerPrivate::transport(const JingleTransportInfo::Ptr &info, JingleContent *content)
+{
+	for (int i = 0; i < transports.size(); ++i) {
+		if (transports.at(i)->payloadType() == info->payloadType())
+			return transports.at(i)->createObject(content);
+	}
+	return 0;
+}
+
 void JingleManagerPrivate::_q_iqReceived(const Jreen::IQ &iq)
 {
 	Jingle::Ptr jingle = iq.payload<Jingle>();

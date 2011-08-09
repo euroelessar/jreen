@@ -31,6 +31,11 @@ const char *Payload::payloadName(int type)
 	return seClassVector()->value(type).constData();
 }
 
+const char *Payload::payloadName() const
+{
+	return payloadName(payloadType());
+}
+
 AbstractPayloadFactory::AbstractPayloadFactory()
 {
 }

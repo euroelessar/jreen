@@ -60,6 +60,9 @@ public:
 	virtual JingleDescription::Ptr defaultDescription() = 0;
 	virtual JingleDescription::Ptr handleDescription(const JingleDescription::Ptr &description) = 0;
 	State state() const;
+	bool isAcceptable() const;
+	void accept();
+	void decline();
 	
 signals:
 	void stateChanged(Jreen::JingleContent::State);
@@ -72,6 +75,7 @@ protected:
 	virtual void receive(int component, const QByteArray &data) = 0;
 	Q_PRIVATE_SLOT(d_func(), void _q_received(int, const QByteArray &))
 	Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(Jreen::JingleTransport::State))
+	Q_PRIVATE_SLOT(d_func(), void _q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &))
 	
 	QScopedPointer<JingleContentPrivate> d_ptr;
 };

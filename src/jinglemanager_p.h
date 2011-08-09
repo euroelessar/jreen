@@ -42,6 +42,8 @@ public:
 	QHash<JID, JingleSession*> sessionsByJid;
 	
 	JingleContent *content(const QString &name, JingleSession *session);
+	JingleContent *content(const JingleDescription::Ptr &decription, JingleSession *session);
+	JingleTransport *transport(const JingleTransportInfo::Ptr &info, JingleContent *content);
 	void _q_iqReceived(const Jreen::IQ &iq);
 	static JingleManagerPrivate *get(JingleManager *q) { return q->d_func(); }
 };

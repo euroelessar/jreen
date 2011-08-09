@@ -111,7 +111,7 @@ Transport::Transport(JingleContent *content)
     connect(m_ice, SIGNAL(componentReady(int)), SLOT(onIceComponentReady(int)), Qt::QueuedConnection); // signal is not DOR-SS
 	connect(m_ice, SIGNAL(readyRead(int)), SLOT(onIceReadyRead(int)));
 	
-	m_ice->start(content->session()->isIncoming() ? XMPP::Ice176::Responder : XMPP::Ice176::Initiator);
+	m_ice->start(content->isAcceptable() ? XMPP::Ice176::Responder : XMPP::Ice176::Initiator);
 }
 
 Transport::~Transport()

@@ -24,12 +24,50 @@
 ****************************************************************************/
 
 #include "jingle_p.h"
+#include "jinglesession_p.h"
+#include "iqreply.h"
 
 namespace Jreen
 {
 
 Jingle::Jingle() : action(Jingle::SessionInitiate)
 {
+}
+
+Jingle::Ptr Jingle::create(JingleSession *session, Action action)
+{
+	Jingle::Ptr jingle = Jingle::Ptr::create();
+	JingleSessionPrivate *d = JingleSessionPrivate::get(session);
+	jingle->initiator = d->client->jid();
+//	jingle->responder = d->other;
+	if (d->incoming)
+		qSwap(jingle->initiator, jingle->responder);
+	jingle->action = action;
+	jingle->sid = d->sid;
+	return jingle;
+}
+
+IQReply *Jingle::send(JingleSession *session, Action action, const QList<Content> &contents)
+{
+	JingleSessionPrivate *d = JingleSessionPrivate::get(session);
+	Jingle::Ptr jingle = create(session, action);
+	jingle->contents = contents;
+	IQ iq(IQ::Set, d->other);
+	iq.addExtension(jingle);
+	return d->client->send(iq);
+}
+
+IQReply *Jingle::send(JingleSession *session, Action action, const Content &content)
+{
+	return send(session, action, QList<Content>() << content);
+}
+
+IQReply *Jingle::send(JingleSession *session, Action action, JingleContent *contentObject)
+{
+	JingleSessionPrivate *d = JingleSessionPrivate::get(session);
+	JingleSessionContent *content = d->findContent(contentObject);
+	Q_ASSERT(content);
+	return send(session, action, *content);
 }
 
 }

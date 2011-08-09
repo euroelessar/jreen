@@ -36,17 +36,30 @@ class JingleContentPrivate
 	Q_DECLARE_PUBLIC(JingleContent)
 public:
 	JingleContentPrivate(JingleContent *q)
-	    : q_ptr(q), transport(0), componentCount(1), state(JingleContent::Gathering) {}
+	    : q_ptr(q), transport(0), componentCount(1), needTransports(0),
+	      needAccept(0), canAccept(0), state(JingleContent::Gathering) {}
 	
 	JingleContent *q_ptr;
 	JingleSession *session;
 	JingleTransport *transport;
-	int componentCount;
+	int componentCount : 14;
+	int needTransports : 14;
+	int needAccept : 1;
+	int canAccept : 1;
 	JingleContent::State state;
+	QList<JingleTransport*> transports;
+	QList<JingleTransportInfo::Ptr> transportInfos;
 	
 	void _q_received(int component, const QByteArray &data);
 	virtual void _q_stateChanged(Jreen::JingleTransport::State);
+	void _q_localInfoReady(const Jreen::JingleTransportInfo::Ptr &);
+	void _q_tryStateChanged(Jreen::JingleTransport::State state);
 	void setTransport(JingleTransport *trueTransport);
+	void initiateTransports();
+	void tryNextTransport();
+	void initiateTransports(const QList<JingleTransportInfo::Ptr> &transportInfos);
+	void accept();
+	void decline();
 	static JingleContentPrivate *get(JingleContent *q) { return q->d_func(); }
 };
 

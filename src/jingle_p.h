@@ -34,6 +34,8 @@
 namespace Jreen
 {
 
+class IQReply;
+
 class Jingle : public Payload
 {
 	J_PAYLOAD(Jreen::Jingle)
@@ -77,6 +79,20 @@ public:
 	};
 	
     Jingle();
+	
+	static Jingle::Ptr create(JingleSession *session, Action action);
+	static IQReply *send(JingleSession *session, Action action, const QList<Content> &contents = QList<Content>());
+	template <typename T>
+	static IQReply *send(JingleSession *session, Action action, const QList<T> &list)
+	{
+		QList<Content> contents;
+		for (int i = 0; i < list.size(); ++i)
+			contents << list[i];
+		return send(session, action, contents);
+	}
+	
+	static IQReply *send(JingleSession *session, Action action, const Content &content);
+	static IQReply *send(JingleSession *session, Action action, JingleContent *content);
 	
 	JID initiator;
 	JID responder;
