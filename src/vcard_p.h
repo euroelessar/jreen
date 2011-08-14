@@ -20,6 +20,7 @@
 #include "vcard.h"
 #include "jid.h"
 #include <QUrl>
+#include <QStringList>
 
 namespace Jreen
 {
@@ -57,7 +58,7 @@ public:
 class VCard::TelephonePrivate : public QSharedData
 {
 public:
-	TelephonePrivate() {}
+	TelephonePrivate() : types(0)  {}
 	TelephonePrivate(TelephonePrivate &o) : QSharedData(o), types(o.types), number(o.number) {}
 
 	int types;
@@ -69,7 +70,7 @@ public:
 class VCard::EMailPrivate : public QSharedData
 {
 public:
-	EMailPrivate() {}
+	EMailPrivate() : types(0) {}
 	EMailPrivate(EMailPrivate &o) : QSharedData(o), types(o.types), userId(o.userId) {}
 
 	int types;
@@ -81,7 +82,7 @@ public:
 class VCard::AddressPrivate : public QSharedData
 {
 public:
-	AddressPrivate() {}
+	AddressPrivate() : types(0) {}
 	AddressPrivate(AddressPrivate &o) :
 		QSharedData(o), types(o.types), pobox(o.pobox),
 		extendedAddress(o.extendedAddress), street(o.street),
@@ -98,6 +99,13 @@ public:
 	QString country;
 
 	static const VCard::AddressPrivate *get(const VCard::Address *o) { return o->d_ptr.data(); }
+};
+
+class VCard::OrganizationPrivate : public QSharedData
+{
+public:
+	QString orgName;
+	QStringList orgUnits;
 };
 
 class VCardPrivate
@@ -121,8 +129,10 @@ public:
 	VCard::Classification classification;
 	VCard::Name name;
 	VCard::Photo photo;
+	VCard::Organization org;
 	QList<VCard::Telephone> telephones;
 	QList<VCard::EMail> emails;
+	QList<VCard::Address> addresses;
 
 	static VCardPrivate *get(VCard *v) { return v->d_func(); }
 };
