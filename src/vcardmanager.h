@@ -27,6 +27,7 @@
 #define VCARDMANAGER_H
 
 #include "vcard.h"
+#include "vcardupdate.h"
 #include "error.h"
 
 namespace Jreen
@@ -52,9 +53,11 @@ public:
 	
 signals:
 	void vCardFetched(const Jreen::VCard::Ptr &vcard, const Jreen::JID &jid);
-	void photoHashDetected(const JID &jid, const QString &hash);
+	void vCardUpdateDetected(const Jreen::JID &jid, const Jreen::VCardUpdate::Ptr &update);
 	
 private:
+	void notifyReplyDeath(const JID &jid);
+	friend class VCardReply;
 	Q_PRIVATE_SLOT(d_func(), void _q_received(const Jreen::Presence &))
 	QScopedPointer<VCardManagerPrivate> d_ptr;
 };
@@ -76,7 +79,7 @@ signals:
 	void finished();
 
 private:
-	VCardReply(const JID &jid, IQReply *reply);
+	VCardReply(const JID &jid, VCardManager *manager, IQReply *reply);
 	friend class VCardManager;
 	Q_PRIVATE_SLOT(d_func(), void _q_received(const Jreen::IQ &))
 	QScopedPointer<VCardReplyPrivate> d_ptr;

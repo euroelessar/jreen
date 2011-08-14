@@ -17,22 +17,29 @@
 #define VCARDUPDATE_H
 #include "stanzaextension.h"
 
-namespace Jreen {
+namespace Jreen
+{
+
+class VCardUpdatePrivate;
 
 //XEP-0153: vCard-Based Avatars
 //http://xmpp.org/extensions/xep-0153.html
 class JREEN_EXPORT VCardUpdate : public Payload
 {
 	J_PAYLOAD(Jreen::VCardUpdate)
+	Q_DECLARE_PRIVATE(VCardUpdate)
 public:
-	VCardUpdate(const QString &photoHash) : m_photoHash(photoHash), m_hasPhotoInfo(true) {}
-	VCardUpdate() : m_hasPhotoInfo(false) {}
-	const QString &photoHash() const { return m_photoHash;}
-	void setPhotoHash(const QString &photoHash) { m_photoHash = photoHash; m_hasPhotoInfo = !photoHash.isNull(); }
-	bool hasPhotoInfo() const { return m_hasPhotoInfo; }
+	VCardUpdate(const QString &photoHash);
+	VCardUpdate();
+	~VCardUpdate();
+
+	QString photoHash() const;
+	void setPhotoHash(const QString &photoHash);
+	void clear();
+	bool hasPhotoInfo() const;
+
 private:
-	QString m_photoHash;
-	bool m_hasPhotoInfo;
+	QScopedPointer<VCardUpdatePrivate> d_ptr;
 };
 
 } // namespace Jreen

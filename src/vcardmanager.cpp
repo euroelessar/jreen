@@ -40,13 +40,13 @@ public:
 	
 	VCardManager *q_ptr;
 	Client *client;
+	QHash<JID, VCardReply*> hash;
 };
 
 void VCardManagerPrivate::_q_received(const Jreen::Presence &presence)
 {
-	VCardUpdate::Ptr update = presence.payload<VCardUpdate>();
-	if (update && update->hasPhotoInfo())
-		emit q_ptr->photoHashDetected(presence.from(), update->photoHash());
+	if (VCardUpdate::Ptr update = presence.payload<VCardUpdate>())
+		emit q_ptr->vCardUpdateDetected(presence.from(), update);
 }
 
 VCardManager::VCardManager(Client *client)
@@ -66,11 +66,16 @@ VCardManager::~VCardManager()
 
 VCardReply *VCardManager::fetch(const JID &jid)
 {
-	IQ iq(IQ::Get, jid);
-	iq.addExtension(new VCard);
-	VCardReply *reply = new VCardReply(jid, d_func()->client->send(iq));
-	connect(reply, SIGNAL(vCardFetched(Jreen::VCard::Ptr,Jreen::JID)),
-	        this, SIGNAL(vCardFetched(Jreen::VCard::Ptr,Jreen::JID)));
+	Q_D(VCardManager);
+	VCardReply *reply = d->hash.value(jid);
+	if (!reply) {
+		IQ iq(IQ::Get, jid);
+		iq.addExtension(new VCard);
+		reply = new VCardReply(jid, this, d_func()->client->send(iq));
+		connect(reply, SIGNAL(vCardFetched(Jreen::VCard::Ptr,Jreen::JID)),
+				this, SIGNAL(vCardFetched(Jreen::VCard::Ptr,Jreen::JID)));
+		d->hash.insert(jid, reply);
+	}
 	return reply;
 }
 
@@ -79,7 +84,12 @@ VCardReply *VCardManager::store(const Jreen::VCard::Ptr &vcard)
 	Q_D(VCardManager);
 	IQ iq(IQ::Set, JID());
 	iq.addExtension(vcard);
-	return new VCardReply(d->client->jid().bareJID(), d->client->send(iq));
+	return new VCardReply(d->client->jid().bareJID(), NULL, d->client->send(iq));
+}
+
+void VCardManager::notifyReplyDeath(const JID &jid)
+{
+	d_func()->hash.remove(jid);
 }
 
 class VCardReplyPrivate
@@ -90,6 +100,7 @@ public:
 	void _q_received(const Jreen::IQ &iq);
 	
 	VCardReply *q_ptr;
+	QWeakPointer<VCardManager> manager;
 	JID jid;
 	VCard::Ptr vcard;
 	Error::Ptr error;
@@ -107,15 +118,20 @@ void VCardReplyPrivate::_q_received(const Jreen::IQ &iq)
 	emit q_ptr->finished();
 }
 
-VCardReply::VCardReply(const JID &jid, IQReply *reply)
+VCardReply::VCardReply(const JID &jid, VCardManager *manager, IQReply *reply)
     : QObject(reply), d_ptr(new VCardReplyPrivate(this))
 {
-	d_func()->jid = jid;
+	Q_D(VCardReply);
+	d->manager = manager;
+	d->jid = jid;
 	connect(reply, SIGNAL(received(Jreen::IQ)), SLOT(_q_received(Jreen::IQ)));
 }
 
 VCardReply::~VCardReply()
 {
+	Q_D(VCardReply);
+	if (d->manager)
+		d->manager.data()->notifyReplyDeath(d->jid);
 }
 
 JID VCardReply::jid() const
