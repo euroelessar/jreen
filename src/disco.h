@@ -146,7 +146,7 @@ protected:
 	QScopedPointer<DiscoPrivate> d_ptr;
 };
 
-class DiscoReply : public QObject
+class JREEN_EXPORT DiscoReply : public QObject
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(DiscoReply)

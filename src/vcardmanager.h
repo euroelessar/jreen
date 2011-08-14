@@ -39,7 +39,7 @@ class VCardReply;
 class VCardReplyPrivate;
 class VCardManagerPrivate;
 
-class VCardManager : public QObject
+class JREEN_EXPORT VCardManager : public QObject
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(VCardManager)
@@ -59,7 +59,7 @@ private:
 	QScopedPointer<VCardManagerPrivate> d_ptr;
 };
 
-class VCardReply : public QObject
+class JREEN_EXPORT VCardReply : public QObject
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(VCardReply)
