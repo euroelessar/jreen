@@ -318,7 +318,7 @@ public:
 		Result,  // The form-processing entity is returning data (e.g., search results) to the form-submitting entity, or the data is a generic data set.
 		Invalid
 	};
-	DataForm(Type type,const QString &title = QString());
+	DataForm(Type type = Submit, const QString &title = QString());
 	virtual ~DataForm();
 	
 	Type type() const;

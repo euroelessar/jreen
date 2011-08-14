@@ -147,10 +147,12 @@ public:
 	//		XmlNotWellFormed,
 	//		Undefined
 	//	};
-	Error(Type type, Condition condition,const LangMap &langMap = LangMap());
+	Error(Type type, Condition condition, const LangMap &langMap = LangMap());
+	~Error();
+
 	Type type() const;
 	Condition condition() const;
-	~Error();
+	QString conditionText() const;
 private:
 	QScopedPointer<ErrorPrivate> d_ptr;
 };

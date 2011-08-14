@@ -109,6 +109,7 @@ signals:
 	void disconnected(Jreen::Client::DisconnectReason);
 	void authorized();
 	void presenceReceived(const Jreen::Presence &presence);
+	void mucPresenceReceived(const Jreen::Presence &presence);
 	void iqReceived(const Jreen::IQ &iq);
 	void messageReceived(const Jreen::Message &message);
 	void serverFeaturesReceived(const QSet<QString> &features);

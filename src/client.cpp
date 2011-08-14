@@ -100,10 +100,12 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	} else if (type == StanzaPrivate::StanzaMessage) {
 		q_ptr->handleMessage(*stanza.staticCast<Message>());
 	} else if (type == StanzaPrivate::StanzaPresence) {
-		if (MUCRoomPrivate *room = rooms.value(stanza->from().bare()))
+		if (MUCRoomPrivate *room = rooms.value(stanza->from().bare())) {
+			emit q_ptr->mucPresenceReceived(*stanza.staticCast<Presence>());
 			room->handlePresence(*stanza.staticCast<Presence>());
-		else
+		} else {
 			q_ptr->handlePresence(*stanza.staticCast<Presence>());
+		}
 	}/* else if (type == StanzaPrivate::StanzaSubscription) {
 		client->handleSubscription(*stanza.staticCast<Subscription>());
 	}*/

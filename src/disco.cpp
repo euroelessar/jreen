@@ -15,6 +15,7 @@
 
 #include "disco_p.h"
 #include "iq.h"
+#include "iqreply.h"
 #include "jstrings.h"
 #include "dataform.h"
 #include "softwareversion.h"
@@ -152,9 +153,9 @@ void DiscoItemsFactory::handleStartElement(const QStringRef &name,
 		m_node = attributes.value("node").toString();
 	} else if(m_depth == 2) {
 		Disco::Item item;
-		item.jid = attributes.value("jid").toString();
-		item.name = attributes.value("name").toString();
-		item.node = attributes.value("node").toString();
+		item.setJid(attributes.value("jid").toString());
+		item.setName(attributes.value("name").toString());
+		item.setNode(attributes.value("node").toString());
 		m_items.append(item);
 	}
 }
@@ -178,19 +179,173 @@ void DiscoItemsFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	writer->writeDefaultNamespace(NS_DISCO_ITEMS);
 	if (!items->node().isEmpty())
 		writer->writeAttribute(QLatin1String("node"), items->node());
-	foreach(const Disco::Item &item,items->items()) {
+	foreach(const Disco::Item &item, items->items()) {
 		writer->writeEmptyElement(QLatin1String("item"));
-		writer->writeAttribute(QLatin1String("jid"),item.jid);
-		if (!item.node.isEmpty())
-			writer->writeAttribute(QLatin1String("node"),item.node);
-		writer->writeAttribute(QLatin1String("name"),item.name);
+		writer->writeAttribute(QLatin1String("jid"), item.jid());
+		if (!item.node().isEmpty())
+			writer->writeAttribute(QLatin1String("node"), item.node());
+		writer->writeAttribute(QLatin1String("name"), item.name());
 	}
 	writer->writeEndElement();
 }
 
 Payload::Ptr DiscoItemsFactory::createPayload()
 {
-	return Payload::Ptr(new Disco::Items(m_node,m_items));
+	return Payload::Ptr(new Disco::Items(m_node, m_items));
+}
+
+enum { ActionsNotInitialized = 0x1000 };
+
+class Disco::ItemData : public QSharedData
+{
+public:
+	inline ItemData() : actions(baseAction()) {}
+	inline ItemData(const ItemData &o)
+	    : QSharedData(o), jid(o.jid), node(o.node), name(o.name),
+	      features(o.features), identities(o.identities), actions(baseAction()) {}
+	inline static Disco::Item::Action baseAction() { return static_cast<Disco::Item::Action>(ActionsNotInitialized); }
+	inline void clearActions() { actions = baseAction(); }
+
+	JID jid;
+	QString node;
+	QString name;
+	QSet<QString> features;
+	Disco::IdentityList identities;
+	mutable Disco::Item::Actions actions;
+};
+
+Disco::Item::Item() : d(new Disco::ItemData)
+{
+}
+
+Disco::Item::Item(const JID &jid, const QString &node, const QString &name)
+    : d(new Disco::ItemData)
+{
+	d->jid = jid;
+	d->node = node;
+	d->name = name;
+}
+
+Disco::Item::Item(const Disco::Item &item) : d(item.d)
+{
+}
+
+Disco::Item &Disco::Item::operator =(const Disco::Item &item)
+{
+	d = item.d;
+	return *this;
+}
+
+Disco::Item::~Item()
+{
+}
+
+JID Disco::Item::jid() const
+{
+	return d->jid;
+}
+
+void Disco::Item::setJid(const JID &jid)
+{
+	d->jid = jid;
+}
+
+QString Disco::Item::node() const
+{
+	return d->node;
+}
+
+void Disco::Item::setNode(const QString &node)
+{
+	d->node = node;
+}
+
+QString Disco::Item::name() const
+{
+	return d->name;
+}
+
+void Disco::Item::setName(const QString &name)
+{
+	d->name = name;
+}
+
+Disco::IdentityList Disco::Item::identities() const
+{
+	return d->identities;
+}
+
+bool Disco::Item::hasIdentity(const QString &category, const QString &type) const
+{
+	Q_ASSERT(!category.isEmpty() || !type.isEmpty());
+	foreach (const Disco::Identity &identity, d->identities) {
+		if ((category.isEmpty() || identity.category == category)
+		        && (type.isEmpty() || identity.type == type)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Disco::Item::addIdentity(const Disco::Identity &identity)
+{
+	d->identities << identity;
+	d->clearActions();
+}
+
+void Disco::Item::setIdentities(const Disco::IdentityList &identities)
+{
+	d->identities = identities;
+	d->clearActions();
+}
+
+QSet<QString> Disco::Item::features() const
+{
+	return d->features;
+}
+
+void Disco::Item::setFeatures(const QSet<QString> &features)
+{
+	d->features = features;
+	d->clearActions();
+}
+
+Disco::Item::Actions Disco::Item::actions() const
+{
+	if (d->actions & ActionsNotInitialized) {
+		// Some kind of magic for client support
+		d->actions = Disco::Item::Actions();
+		bool isIRC = hasIdentity(QLatin1String("conference"), QLatin1String("irc"));
+		d->actions |= ActionAdd;
+		if (d->features.contains(QLatin1String("http://jabber.org/protocol/muc"))
+			&& (!d->jid.node().isEmpty() || isIRC)) {
+			d->actions |= ActionJoin;
+		}
+		if (d->features.contains(QLatin1String("http://jabber.org/protocol/bytestreams")))
+			d->actions |= ActionProxy;
+		if(d->features.contains("http://jabber.org/protocol/muc#register")
+				|| d->features.contains(QLatin1String("jabber:iq:register"))) {
+			d->actions |= ActionRegister;
+		}
+		if (d->features.contains(QLatin1String("jabber:iq:search")))
+			d->actions |= ActionSearch;
+		if (d->features.contains(QLatin1String("vcard-temp")))
+			d->actions |= ActionVCard;
+		if (d->features.contains(NS_DISCO_ITEMS)
+				|| (d->features.contains(QLatin1String("http://jabber.org/protocol/muc")) && !isIRC)
+				|| (d->features.isEmpty() && d->identities.isEmpty())) {
+			d->actions |= ActionExpand;
+		}
+		if (hasIdentity(QLatin1String("automation"))) {
+			if (hasIdentity(QString(), QLatin1String("command-list")))
+				d->actions |= ActionExpand;
+			d->actions |= ActionExecute;
+		} else if (d->features.contains(QLatin1String("http://jabber.org/protocol/commands"))) {
+			d->actions |= ActionExpand;
+			d->actions |= ActionExecute;
+		}
+	}
+	return d->actions;
 }
 
 Disco::Disco(Client *client) : d_ptr(new DiscoPrivate)
@@ -216,6 +371,20 @@ Disco::IdentityList &Disco::identities()
 	return d->identities;
 }
 
+DiscoReply *Disco::requestInfo(const Disco::Item &item)
+{
+	IQ info(IQ::Get, item.jid());
+	info.addExtension(new Info(item.node()));
+	return new DiscoReply(item, d_func()->client->send(info));
+}
+
+DiscoReply *Disco::requestItems(const Disco::Item &item)
+{
+	IQ info(IQ::Get, item.jid());
+	info.addExtension(new Items(item.node()));
+	return new DiscoReply(item, d_func()->client->send(info));
+}
+
 void Disco::addIdentity(const Identity &identity)
 {
 	d_func()->identities.append(identity);
@@ -234,39 +403,26 @@ void Disco::addFeature(const QString &feature)
 
 QSet<QString> &Disco::features()
 {
-	Q_D(Disco);
-	return d->features;
+	return d_func()->features;
 }
 
-void Disco::handleIQ(const Jreen::IQ &iq)
+void DiscoPrivate::_q_received(const Jreen::IQ &iq)
 {
-	Q_D(Disco);
-	const Info *info = iq.payload<Info>().data();
-	if(info) {
-		if(iq.subtype() == IQ::Get)	{
-			IQ receipt(IQ::Result, iq.from(), iq.id());
-			receipt.addExtension(new Info(info->node(), d->identities, d->features, d->form));
-			d->client->send(receipt);
-			iq.accept();
-		}
-	}
-	const Items *items = iq.payload<Items>().data();
-	if(items) {
-		if(iq.subtype() == IQ::Get)	{
-			IQ receipt(IQ::Result, iq.from(), iq.id());
-			receipt.addExtension(new Items(items->node()));
-			d->client->send(receipt);
-			iq.accept();
-		}
-	}
-	const SoftwareVersion *version = iq.payload<SoftwareVersion>().data();
-	if(version)	{
-		if(iq.subtype() == IQ::Get)	{
-			IQ receipt(IQ::Result, iq.from(), iq.id());
-			receipt.addExtension(new SoftwareVersion(d->software_name, d->software_version, d->os));
-			d->client->send(receipt);
-			iq.accept();
-		}
+	if(iq.subtype() != IQ::Get)
+		return;
+	QList<Payload*> payloads;
+	if(const Disco::Info::Ptr info = iq.payload<Disco::Info>())
+		payloads << new Disco::Info(info->node(), identities, features, form);
+	if(const Disco::Items::Ptr items = iq.payload<Disco::Items>())
+		payloads << new Disco::Items(items->node());
+	if(iq.payload<SoftwareVersion>())
+		payloads << new SoftwareVersion(software_name, software_version, os);
+	if (!payloads.isEmpty()) {
+		iq.accept();
+		IQ receipt(IQ::Result, iq.from(), iq.id());
+		foreach (Payload *payload, payloads)
+			receipt.addExtension(payload);
+		client->send(receipt);
 	}
 }
 
@@ -276,7 +432,7 @@ void Disco::setSoftwareVersion(const QString &name, const QString &version, cons
 	d->software_name = name;
 	d->software_version = version;
 	d->os = os;
-	QSharedPointer<DataForm> form(new DataForm(DataForm::Submit,QString()));
+	DataForm::Ptr form = DataForm::Ptr::create();
 	form->appendField(DataFormFieldHidden(QLatin1String("FORM_TYPE"), QLatin1String("urn:xmpp:dataforms:softwareinfo")));
 	form->appendField(DataFormFieldNone(QLatin1String("ip_version"), QStringList() << QLatin1String("ipv4") << QLatin1String("ipv6")));
 	form->appendField(DataFormFieldNone(QLatin1String("os"), QStringList(os)));
@@ -297,4 +453,71 @@ void Disco::setForm(DataForm *form)
 	d->form = QSharedPointer<DataForm>(form);
 }
 
+class DiscoReplyPrivate
+{
+	Q_DECLARE_PUBLIC(DiscoReply)
+public:
+	DiscoReplyPrivate(DiscoReply *q) : q_ptr(q) {}
+	void _q_received(const Jreen::IQ &iq);
+
+	DiscoReply *q_ptr;
+	Disco::Item item;
+	Disco::ItemList subitems;
+	Jreen::Error::Ptr error;
+};
+
+void DiscoReplyPrivate::_q_received(const Jreen::IQ &iq)
+{
+	if (iq.error()) {
+		error = iq.error();
+		emit q_ptr->error(error);
+	} else if (Jreen::Disco::Info::Ptr info = iq.payload<Jreen::Disco::Info>()) {
+		item.setJid(iq.from().full());
+		item.setNode(info->node());
+		item.setFeatures(info->features());
+		item.setIdentities(info->identities());
+		emit q_ptr->infoReceived(item);
+	} else if (Jreen::Disco::Items::Ptr items = iq.payload<Jreen::Disco::Items>()) {
+		subitems = items->items();
+		emit q_ptr->itemsReceived(subitems);
+	}
+	emit q_ptr->finished();
 }
+
+DiscoReply::DiscoReply(const Disco::Item &item, Jreen::IQReply *reply)
+    : QObject(reply), d_ptr(new DiscoReplyPrivate(this))
+{
+	d_func()->item = item;
+	connect(reply, SIGNAL(received(Jreen::IQ)), SLOT(_q_received(Jreen::IQ)));
+}
+
+DiscoReply::~DiscoReply()
+{
+}
+
+Disco::Item DiscoReply::item() const
+{
+	return d_func()->item;
+}
+
+Disco::ItemList DiscoReply::subitems() const
+{
+	return d_func()->subitems;
+}
+
+QString DiscoReply::errorText() const
+{
+	Q_D(const DiscoReply);
+	if (!d->error)
+		return QString();
+	return d->error->conditionText();
+}
+
+Jreen::Error::Ptr DiscoReply::error() const
+{
+	return d_func()->error;
+}
+
+}
+
+#include "disco.moc"

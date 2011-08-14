@@ -28,8 +28,12 @@ namespace Jreen
 {
 
 class IQ;
+class IQReply;
 class Client;
 class DiscoPrivate;
+class DiscoReply;
+class DiscoReplyPrivate;
+
 class JREEN_EXPORT Disco : public QObject
 {
 	Q_DISABLE_COPY(Disco)
@@ -57,22 +61,53 @@ public:
 		inline const QString &node() const { return m_node; }
 		inline const IdentityList &identities() const { return m_identities; }
 		inline const QSet<QString> &features() const { return m_features; }
-		inline const QSharedPointer<DataForm> form() const { return m_form; }
+		inline const DataForm::Ptr form() const { return m_form; }
 	private:
 		QString m_node;
 		IdentityList m_identities;
 		QSet<QString> m_features;
-		QSharedPointer<DataForm> m_form;
+		DataForm::Ptr m_form;
 	};
 
-	struct Item
+	class ItemData;
+	class Item
 	{
-		inline Item() {}
-		inline Item(const JID &jid, const QString &node, const QString &name)
-			: jid(jid), node(node), name(name) {}
-		JID jid;
-		QString node;
-		QString name;
+	public:
+		enum Action
+		{
+			ActionExecute   = 0x01,
+			ActionRegister  = 0x02,
+			ActionJoin      = 0x04,
+			ActionSearch    = 0x08,
+			ActionAdd       = 0x10,
+			ActionVCard     = 0x20,
+			ActionProxy     = 0x40,
+			ActionExpand    = 0x80
+		};
+		typedef QFlags<Action> Actions;
+		
+		Item();
+		Item(const JID &jid, const QString &node, const QString &name);
+		Item(const Item &item);
+		Item &operator =(const Item &item);
+		~Item();
+
+		JID jid() const;
+		void setJid(const JID &jid);
+		QString node() const;
+		void setNode(const QString &node);
+		QString name() const;
+		void setName(const QString &name);
+		IdentityList identities() const;
+		bool hasIdentity(const QString &category, const QString &type = QString()) const;
+		void addIdentity(const Identity &identity);
+		void setIdentities(const IdentityList &identities);
+		QSet<QString> features() const;
+		void setFeatures(const QSet<QString> &features);
+		Actions actions() const;
+
+	private:
+		QSharedDataPointer<ItemData> d;
 	};
 	typedef QList<Item> ItemList;
 
@@ -92,6 +127,10 @@ public:
 
 	Disco(Client *client);
 	virtual ~Disco();
+	
+	DiscoReply *requestInfo(const Item &item);
+	DiscoReply *requestItems(const Item &item);
+	
 	void addIdentity(const Identity &identity);
 	const IdentityList &identities() const;
 	IdentityList &identities();
@@ -102,11 +141,34 @@ public:
 	const DataForm *form() const;
 	void setForm(DataForm *form);
 
-public slots:
-private slots:
-	void handleIQ(const Jreen::IQ &iq);
 protected:
+	Q_PRIVATE_SLOT(d_func(), void _q_received(const Jreen::IQ &))
 	QScopedPointer<DiscoPrivate> d_ptr;
+};
+
+class DiscoReply : public QObject
+{
+	Q_OBJECT
+	Q_DECLARE_PRIVATE(DiscoReply)
+public:
+	virtual ~DiscoReply();
+	
+	Disco::Item item() const;
+	Disco::ItemList subitems() const;
+	QString errorText() const;
+	Jreen::Error::Ptr error() const;
+	
+signals:
+	void finished();
+	void error(const Jreen::Error::Ptr &error);
+	void infoReceived(const Jreen::Disco::Item &item);
+	void itemsReceived(const Jreen::Disco::ItemList &items);
+	
+private:
+	DiscoReply(const Disco::Item &item, Jreen::IQReply *reply);
+	Q_PRIVATE_SLOT(d_func(), void _q_received(const Jreen::IQ &))
+	friend class Disco;
+	QScopedPointer<DiscoReplyPrivate> d_ptr;
 };
 
 }
@@ -115,5 +177,6 @@ Q_DECLARE_METATYPE(Jreen::Disco::Identity)
 Q_DECLARE_METATYPE(Jreen::Disco::IdentityList)
 Q_DECLARE_METATYPE(Jreen::Disco::Item)
 Q_DECLARE_METATYPE(Jreen::Disco::ItemList)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::Disco::Item::Actions)
 
 #endif // DISCO_H

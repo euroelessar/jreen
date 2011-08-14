@@ -32,6 +32,8 @@ public:
 	QString os;
 	QString software_name;
 	QString software_version;
+	
+	void _q_received(const Jreen::IQ &iq);
 	static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
 };
 
