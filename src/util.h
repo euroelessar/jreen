@@ -28,6 +28,7 @@ class JID;
 namespace Util
 {
 JREEN_EXPORT QDateTime fromStamp(const QString &stamp);
+JREEN_EXPORT QString toStamp(const QDate &date);
 JREEN_EXPORT QString toStamp(const QDateTime &date_time);
 JREEN_EXPORT QByteArray randomHash();
 inline int log2(register uint n)

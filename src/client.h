@@ -67,7 +67,7 @@ public:
 		InternalServerError,
 		SystemShutdown,
 		Conflict,
-		Unknown,
+		Unknown
 	};
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();

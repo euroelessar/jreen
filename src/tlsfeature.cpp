@@ -53,7 +53,8 @@ void TLSFeature::setStreamInfo(StreamInfo *info)
 	if(m_client)
 		m_client->disconnect(this);
 	StreamFeature::setStreamInfo(info);
-	connect(m_client,SIGNAL(disconnected(Jreen::Client::DisconnectReason)),SLOT(onDisconnected()));
+	connect(m_client, SIGNAL(disconnected(Jreen::Client::DisconnectReason)),
+	        SLOT(onDisconnected()));
 }
 
 void TLSFeature::reset()

@@ -99,6 +99,11 @@ QDateTime Util::fromStamp(const QString &stamp)
 	return date_time.toLocalTime();
 }
 
+QString Util::toStamp(const QDate &date)
+{
+	return date.toString(DATE_STAMP_STR);
+}
+
 QString Util::toStamp(const QDateTime &date_time)
 {
 	return date_time.toUTC().toString(FULLZ_STAMP_STR);

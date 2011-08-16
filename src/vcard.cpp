@@ -454,7 +454,22 @@ void VCard::setBday(const QDateTime& bday)
 	d_func()->bday = bday;
 }
 
+void VCard::setBirthday(const QDateTime &bday)
+{
+	d_func()->bday = bday;
+}
+
+void VCard::setBirthday(const QDate &bday)
+{
+	d_func()->bday = QDateTime(bday, QTime(), Qt::UTC);
+}
+
 QDateTime VCard::bday() const
+{
+	return d_func()->bday;
+}
+
+QDateTime VCard::birthday() const
 {
 	return d_func()->bday;
 }

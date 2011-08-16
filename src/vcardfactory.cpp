@@ -167,7 +167,7 @@ static const char* vcardNameTypes[] = {
 class VCardNameParser : public StructurePrivateParser<VCard::NamePrivate, VCard::Name>
 {
 public:
-	VCardNameParser() : StructurePrivateParser<VCard::NamePrivate, VCard::Name>(QLatin1String("NAME"))
+	VCardNameParser() : StructurePrivateParser<VCard::NamePrivate, VCard::Name>(QLatin1String("N"))
 	{
 		QString *strings[] = {
 			&m_data.family, &m_data.given, &m_data.middle,
@@ -445,6 +445,7 @@ void VCardFactory::handleStartElement(const QStringRef& name, const QStringRef& 
 	d->depth++;
 	if (d->depth == 1) {
 		d->vcard.reset(new VCardPrivate);
+		d->state = AtRoot;
 	} else if (d->depth == 2) {
 		if (d->nameParser.canParse(name, uri, attributes)) {
 			d->currentParser = &d->nameParser;
@@ -466,11 +467,15 @@ void VCardFactory::handleStartElement(const QStringRef& name, const QStringRef& 
 			d->state = AtOrg;
 		} else {
 			int index = strToEnum(name, vcardTypes);
-			d->state = static_cast<State>(LastState + index);
-			d->currentString = &d->tmpString;
-			d->tmpString.clear();
-			if (index > -1)
+			if (index == -1) {
+				d->state = AtNowhere;
+				d->currentString = NULL;
+			} else {
+				d->state = static_cast<State>(LastState + index);
+				d->currentString = &d->tmpString;
+				d->tmpString.clear();
 				vCardStringHelper(d->currentString, d->vcard.data(), index);
+			}
 		}
 	}
 	if (d->currentParser)
@@ -506,8 +511,9 @@ void VCardFactory::handleEndElement(const QStringRef& name, const QStringRef& ur
 			d->vcard->addresses << d->addressParser.create();
 		else if (d->state == AtOrg)
 			d->vcard->org = d->orgParser.create();
+		d->state = AtRoot;
 		d->currentParser = 0;
-	} else if (d->depth == 2 && d->currentString) {
+	} else if (d->depth == 2 && d->state != AtNowhere && d->currentString) {
 		if (d->currentString == &d->tmpString) {
 			int index = d->state - LastState;
 			if (index == FormattedName)
@@ -519,7 +525,10 @@ void VCardFactory::handleEndElement(const QStringRef& name, const QStringRef& ur
 			else if (index == JabberID)
 				d->vcard->jabberId = d->tmpString;
 		}
+		d->state = AtRoot;
 		d->currentString = 0;
+	} else if (d->depth == 2) {
+		d->state = AtRoot;
 	}
 	d->depth--;
 }
@@ -540,16 +549,22 @@ void VCardFactory::serialize(Payload* extension, QXmlStreamWriter* writer)
 	QString tmp;
 	for (int i = 0; i < LastVCardType; i++) {
 		QString *current = &tmp;
-		if (i == FormattedName)
+		if (i == FormattedName) {
 			tmp = vcard->formattedName;
-		else if (i == Birthday)
-			tmp = Util::toStamp(vcard->bday);
-		else if (i == Url)
+		} else if (i == Birthday) {
+			if (!vcard->bday.isValid())
+				continue;
+			else if (vcard->bday.time().isNull())
+				tmp = Util::toStamp(vcard->bday.date());
+			else
+				tmp = Util::toStamp(vcard->bday);
+		} else if (i == Url) {
 			tmp = QString::fromUtf8(vcard->url.toEncoded());
-		else if (i == JabberID)
+		} else if (i == JabberID) {
 			tmp = vcard->jabberId;
-		else
+		} else {
 			vCardStringHelper(current, vcard, i);
+		}
 		if (!current->isEmpty())
 			serializeHelper(i, *current, writer);
 	}

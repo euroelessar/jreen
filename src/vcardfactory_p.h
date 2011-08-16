@@ -103,12 +103,14 @@ public:
 private:
 	QScopedPointer<VCardFactoryPrivate> d_ptr;
 	enum State {
+		AtRoot,
 		AtName,
 		AtPhoto,
 		AtTelephone,
 		AtEMail,
 		AtAddress,
 		AtOrg,
+		AtNowhere,
 		LastState
 	};
 };

@@ -276,12 +276,15 @@ public:
 	* Sets the birthday.
 	* @param bday The birthday
 	*/
-	void setBday(const QDateTime& bday);
+	Q_DECL_DEPRECATED void setBday(const QDateTime &bday);
+	void setBirthday(const QDateTime &bday);
+	void setBirthday(const QDate &bday);
 	/**
 	* Returns the birthday.
 	* @return The birthday.
 	*/
-	QDateTime bday() const;
+	Q_DECL_DEPRECATED QDateTime bday() const;
+	QDateTime birthday() const;
 	/**
 	* Sets a URI to a photo.
 	* @param extval The URI to the photo.

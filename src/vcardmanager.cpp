@@ -111,8 +111,7 @@ void VCardReplyPrivate::_q_received(const Jreen::IQ &iq)
 	if (iq.error()) {
 		error = iq.error();
 		emit q_ptr->error(error);
-	} else {
-		vcard = iq.payload<Jreen::VCard>();
+	} else if (vcard = iq.payload<Jreen::VCard>()) {
 		emit q_ptr->vCardFetched(vcard, jid);
 	}
 	emit q_ptr->finished();
