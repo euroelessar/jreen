@@ -17,7 +17,7 @@
 #define QJDNS_P_H
 
 //#include <QAction>
-#include <jdns/qjdns.h>
+#include "../3rdparty/jdns/qjdns.h"
 #include <QUrl>
 #include "action.h"
 

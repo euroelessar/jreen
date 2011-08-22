@@ -16,7 +16,7 @@
 
 #include "saslfeature.h"
 #include "client_p.h"
-#include <simplesasl/simplesasl.h>
+#include "../3rdparty/simplesasl/simplesasl.h"
 #include <QUrl>
 #include <QDebug>
 
