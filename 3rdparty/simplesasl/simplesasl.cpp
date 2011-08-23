@@ -164,9 +164,13 @@ public:
 		tryAgain();
 	}
 
+#define READY() \
+	QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection); \
+	return
+
 	virtual void tryAgain() {
 		// All exits of the method must emit the ready signal
-		// so all exits go through a goto ready; 
+		// so all exits go through a READY();
 		if(step == 0) {
 			out_mech = mechanism_;
 			
@@ -176,7 +180,7 @@ public:
 				if(need.user || need.pass) {
 					qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 					result_ = Error;
-					goto ready;
+					READY();
 				}
 				if(!have.user)
 					need.user = true;
@@ -184,7 +188,7 @@ public:
 					need.pass = true;
 				if(need.user || need.pass) {
 					result_ = Params;
-					goto ready;
+					READY();
 				}
 				out_buf = PLAINMessage(authz, user, pass.toByteArray()).getValue();
 			}
@@ -201,7 +205,7 @@ public:
 			if(need.user || need.authzid || need.pass || need.realm) {
 				qWarning("simplesasl.cpp: Did not receive necessary auth parameters");
 				result_ = Error;
-				goto ready;
+				READY();
 			}
 
 			// see if some params are needed
@@ -213,14 +217,14 @@ public:
 				need.pass = true;
 			if(need.user || need.authzid || need.pass) {
 				result_ = Params;
-				goto ready;
+				READY();
 			}
 
 			DIGESTMD5Response response(in_buf, service, host, realm, user, authz, pass.toByteArray());
 			if (!response.isValid()) {
 				authCondition_ = QCA::SASL::BadProtocol;
 				result_ = Error;
-				goto ready;
+				READY();
 			}
 			out_buf = response.getValue();
 			++step;
@@ -236,9 +240,10 @@ public:
 			out_buf.resize(0);
 			result_ = Success;
 		}
-		ready:
-			QMetaObject::invokeMethod(this, "resultsReady", Qt::QueuedConnection);
+		READY();
 	}
+
+#undef READY
 
 	virtual void update(const QByteArray &from_net, const QByteArray &from_app) {
 		result_to_app_ = from_net;
