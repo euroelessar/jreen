@@ -140,6 +140,16 @@ JREEN_TARGET_LINK_LIBRARIES(jreen
 	${EXTRA_LIBS}
 )
 
+# Install package config file
+if(NOT WIN32)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/libjreen.pc.cmake
+		${CMAKE_CURRENT_BINARY_DIR}/libjreen.pc
+	)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libjreen.pc
+	DESTINATION lib${LIB_SUFFIX}/pkgconfig
+)
+endif(NOT WIN32)
+
 install( TARGETS jreen
 	RUNTIME DESTINATION bin
 		COMPONENT jreen
