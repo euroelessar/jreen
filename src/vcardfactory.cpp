@@ -77,15 +77,18 @@ void AbstractStructureParser::handleEndElement(const QStringRef &name, const QSt
 	Q_UNUSED(uri);
 	m_depth--;
 	m_currentString = 0;
+	m_currentArray = 0;
 }
 
 void AbstractStructureParser::handleCharacterData(const QStringRef &text)
 {
 	if (m_currentString) {
 		*m_currentString = text.toString();
+		m_currentString = 0;
 	} else if (m_currentArray) {
 		const QString str = QString::fromRawData(text.unicode(), text.size());
 		*m_currentArray = QByteArray::fromBase64(str.toLatin1());
+		m_currentArray = 0;
 	}
 }
 

@@ -65,11 +65,12 @@ void DiscoInfoFactory::handleStartElement(const QStringRef &name, const QStringR
 		} else if (name == QLatin1String("feature")) {
 			m_features.insert(attributes.value(QLatin1String("var")).toString());
 		} else if (m_factory.canParse(name, uri, attributes)) {
-			m_factory.handleStartElement(name, uri, attributes);
 			m_hasDataForm = true;
 			m_state = AtDataForm;
 		}
 	}
+	if (m_state == AtDataForm)
+		m_factory.handleStartElement(name, uri, attributes);
 }
 
 void DiscoInfoFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
@@ -121,8 +122,8 @@ Payload::Ptr DiscoInfoFactory::createPayload()
 	Payload::Ptr dataForm;
 	if (m_hasDataForm)
 		dataForm = m_factory.createPayload();
-	return Payload::Ptr(new Disco::Info(m_node, m_identities,
-												m_features, dataForm.staticCast<DataForm>()));
+	return Payload::Ptr(new Disco::Info(m_node, m_identities, m_features,
+	                                    dataForm.staticCast<DataForm>()));
 }
 
 DiscoItemsFactory::DiscoItemsFactory()
@@ -211,6 +212,7 @@ public:
 	QString name;
 	QSet<QString> features;
 	Disco::IdentityList identities;
+	DataForm::Ptr form;
 	mutable Disco::Item::Actions actions;
 };
 
@@ -308,6 +310,16 @@ void Disco::Item::setFeatures(const QSet<QString> &features)
 {
 	d->features = features;
 	d->clearActions();
+}
+
+DataForm::Ptr Disco::Item::form() const
+{
+	return d->form;
+}
+
+void Disco::Item::setForm(const DataForm::Ptr &form)
+{
+	d->form = form;
 }
 
 Disco::Item::Actions Disco::Item::actions() const
@@ -476,6 +488,7 @@ void DiscoReplyPrivate::_q_received(const Jreen::IQ &iq)
 		item.setNode(info->node());
 		item.setFeatures(info->features());
 		item.setIdentities(info->identities());
+		item.setForm(info->form());
 		emit q_ptr->infoReceived(item);
 	} else if (Jreen::Disco::Items::Ptr items = iq.payload<Jreen::Disco::Items>()) {
 		subitems = items->items();

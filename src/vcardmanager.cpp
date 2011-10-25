@@ -45,6 +45,8 @@ public:
 
 void VCardManagerPrivate::_q_received(const Jreen::Presence &presence)
 {
+	if (presence.error())
+		return;
 	if (VCardUpdate::Ptr update = presence.payload<VCardUpdate>())
 		emit q_ptr->vCardUpdateDetected(presence.from(), update);
 }

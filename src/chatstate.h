@@ -32,7 +32,7 @@ public:
 		Composing,     // User is composing a message.
 		Paused         // User had been composing but now has stopped.
 	};
-	ChatState(State state) : m_state(state) {};
+	ChatState(State state) : m_state(state) {}
 	ChatState() {}
 	inline State state() const { return m_state; }
 private:

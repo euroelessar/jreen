@@ -104,6 +104,8 @@ public:
 		void setIdentities(const IdentityList &identities);
 		QSet<QString> features() const;
 		void setFeatures(const QSet<QString> &features);
+		DataForm::Ptr form() const;
+		void setForm(const DataForm::Ptr &form);
 		Actions actions() const;
 
 	private:

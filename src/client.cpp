@@ -101,8 +101,8 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 		q_ptr->handleMessage(*stanza.staticCast<Message>());
 	} else if (type == StanzaPrivate::StanzaPresence) {
 		if (MUCRoomPrivate *room = rooms.value(stanza->from().bare())) {
-			emit q_ptr->mucPresenceReceived(*stanza.staticCast<Presence>());
 			room->handlePresence(*stanza.staticCast<Presence>());
+			emit q_ptr->mucPresenceReceived(*stanza.staticCast<Presence>());
 		} else {
 			q_ptr->handlePresence(*stanza.staticCast<Presence>());
 		}

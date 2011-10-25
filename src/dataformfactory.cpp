@@ -141,13 +141,15 @@ public:
 			m_var = attributes.value(QLatin1String("var")).toString();
 			m_label = attributes.value(QLatin1String("label")).toString();
 		} else if (m_depth == 2) {
-			if(name == QLatin1String("value"))
+			if(name == QLatin1String("value")) {
 				m_state = AtValue;
-			else if(m_optionParser.canParse(name,uri,attributes)) {
+			} else if(m_optionParser.canParse(name,uri,attributes)) {
 				m_state = AtOption;
 			} else if(name == QLatin1String("required")) {
 				m_state = AtRequied;
 				m_required = true;
+			} else {
+				m_state = AtNowhere;
 			}
 		}
 		if(m_state == AtOption)
@@ -162,7 +164,7 @@ public:
 				m_options.append(m_optionParser.create());
 			}
 		}
-		if (m_depth == 2)
+		if (m_depth <= 2)
 			m_state = AtNowhere;
 		m_depth--;
 	}
@@ -226,6 +228,7 @@ private:
 		m_var.clear();
 		m_values.clear();
 		m_required = false;
+		m_state = AtNowhere;
 	}
 	State m_state;
 	int m_depth;
@@ -239,7 +242,7 @@ private:
 	MultimediaDataFactory m_multimediaDataFactory;
 };
 
-enum DataFormState { AtTitle, AtInstruction, AtField };
+enum DataFormState { AtNowhere, AtTitle, AtInstruction, AtField };
 
 //static const char* dataform_states[] = {
 //	"title",
@@ -301,14 +304,16 @@ void DataFormFactory::handleStartElement(const QStringRef &name, const QStringRe
 	Q_D(DataFormFactory);
 	d->depth++;
 	if(d->depth == 1) {
-		d->formType = strToEnum<DataForm::Type>(attributes.value(QLatin1String("type")),dataform_types);
+		d->formType = strToEnum<DataForm::Type>(attributes.value(QLatin1String("type")), dataform_types);
 	} else if(d->depth == 2) {
-		if(d->fieldParser.canParse(name,uri,attributes))
+		if(d->fieldParser.canParse(name, uri, attributes))
 			d->state = AtField;
 		else if(name == QLatin1String("title"))
 			d->state = AtTitle;
 		else if(name == QLatin1String("instruction"))
 			d->state = AtInstruction;
+		else
+			d->state = AtNowhere;
 	}
 	if(d->state == AtField)
 		d->fieldParser.handleStartElement(name,uri,attributes);
@@ -318,9 +323,11 @@ void DataFormFactory::handleEndElement(const QStringRef &name, const QStringRef 
 {
 	Q_D(DataFormFactory);
 	if(d->state == AtField) {
-		d->fieldParser.handleEndElement(name,uri);
-		if(d->depth == 2)
+		d->fieldParser.handleEndElement(name, uri);
+		if(d->depth == 2) {
 			d->fields.append(d->fieldParser.create());
+			d->state = AtNowhere;
+		}
 	}
 	d->depth--;
 }
@@ -335,6 +342,8 @@ void DataFormFactory::handleCharacterData(const QStringRef &text)
 		d->instruction = text.toString();
 	case AtField:
 		d->fieldParser.handleCharacterData(text);
+	default:
+		break;
 	}
 }
 
