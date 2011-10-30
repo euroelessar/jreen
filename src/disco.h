@@ -52,7 +52,7 @@ public:
 	};
 	typedef QList<Identity> IdentityList;
 
-	class Info : public Payload
+	class JREEN_EXPORT Info : public Payload
 	{
 		J_PAYLOAD(Jreen::Disco::Info)
 	public:
@@ -70,7 +70,7 @@ public:
 	};
 
 	class ItemData;
-	class Item
+	class JREEN_EXPORT Item
 	{
 	public:
 		enum Action
@@ -113,7 +113,7 @@ public:
 	};
 	typedef QList<Item> ItemList;
 
-	class Items : public Payload
+	class JREEN_EXPORT Items : public Payload
 	{
 		J_PAYLOAD(Jreen::Disco::Items)
 		public:
