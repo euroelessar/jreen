@@ -40,7 +40,11 @@ public:
 	const JID &to() const;
 	const QString &id() const;
 	void addExtension(Payload::Ptr se);
+	inline void addPayload(Payload::Ptr se)
+	{ addExtension(se); }
 	inline void addExtension(Payload* se)
+	{ addExtension(Payload::Ptr(se)); }
+	inline void addPayload(Payload* se)
 	{ addExtension(Payload::Ptr(se)); }
 	PayloadList payloads() const;
 	template< class T >

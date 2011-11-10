@@ -14,11 +14,36 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef MUCROOMFACTORY_H
-#define MUCROOMFACTORY_H
+#ifndef BINDFEATURE_H
+#define BINDFEATURE_H
+
+#include "streamfeature_p.h"
+#include "stanzaextension.h"
 
 namespace Jreen
 {
+class IQ;
+
+class BindFeature : public QObject, public StreamFeature
+{
+	Q_OBJECT
+public:
+	BindFeature();
+	int priority() { return 10; }
+	void setStreamInfo(StreamInfo *info);
+	void reset();
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	bool isActivatable();
+	bool activate();
+public slots:
+	void onIQResult(const Jreen::IQ &iq, int context);
+private:
+	int m_depth;
+	bool m_hasFeature;
+};
 }
 
-#endif // MUCROOMFACTORY_H
+#endif // BINDFEATURE_H

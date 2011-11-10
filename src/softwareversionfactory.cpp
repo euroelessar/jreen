@@ -1,4 +1,4 @@
-#include "softwareversionfactory.h"
+#include "softwareversionfactory_p.h"
 #include "jstrings.h"
 #include <QStringList>
 #include <QXmlStreamWriter>

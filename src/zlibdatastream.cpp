@@ -14,7 +14,7 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "zlibdatastream.h"
+#include "zlibdatastream_p.h"
 #include <zlib.h>
 #include <QBasicTimer>
 #include <QTimerEvent>

@@ -14,36 +14,52 @@
  ***************************************************************************
  ****************************************************************************/
 
-#ifndef BINDFEATURE_H
-#define BINDFEATURE_H
+#ifndef TLSFEATURE_H
+#define TLSFEATURE_H
 
-#include "streamfeature.h"
-#include "stanzaextension.h"
+#include "streamfeature_p.h"
+#include <QtCrypto>
 
 namespace Jreen
 {
-class IQ;
-
-class BindFeature : public QObject, public StreamFeature
+class TLSFeature : public QObject, public StreamFeature
 {
 	Q_OBJECT
 public:
-	BindFeature();
+	enum State {
+		AtStart,
+		AtFeature,
+		AtChallenge,
+		AtSuccess
+	};
+    TLSFeature();
 	int priority() { return 10; }
-	void setStreamInfo(StreamInfo *info);
+//		void setStreamInfo(StreamInfo *info);
 	void reset();
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
+	virtual void setStreamInfo(StreamInfo *info);
 	bool isActivatable();
 	bool activate();
-public slots:
-	void onIQResult(const Jreen::IQ &iq, int context);
+private slots:
+	void onHandshaken();
+	void onClosed();
+	void onError();
+	void onDisconnected();
 private:
-	int m_depth;
-	bool m_hasFeature;
+	void init();
+	
+	struct ScopedPointerEventDeleter
+	{
+		static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
+	};
+	QScopedPointer<QCA::TLS, ScopedPointerEventDeleter> m_tls;
+	bool m_hasTls;
+	bool m_required;
+	bool m_available;
 };
 }
 
-#endif // BINDFEATURE_H
+#endif // TLSFEATURE_H

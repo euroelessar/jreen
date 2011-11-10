@@ -17,7 +17,7 @@
 #ifndef SASLFEATURE_H
 #define SASLFEATURE_H
 
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 #include <QStringList>
 #include <QtCrypto>
 

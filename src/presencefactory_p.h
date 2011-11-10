@@ -17,7 +17,7 @@
 #ifndef PRESENCEFACTORY_P_H
 #define PRESENCEFACTORY_P_H
 
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "presence.h"
 #include "langmap.h"
 

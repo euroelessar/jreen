@@ -19,10 +19,10 @@
 
 #include "jreen.h"
 #include "parser.h"
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 #include "stanzaextension.h"
 #include "stanza.h"
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "client_p.h"
 #include <QStack>
 

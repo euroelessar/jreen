@@ -17,4 +17,26 @@
 
 namespace Jreen {
 
-} // namespace Jreen
+class ChatStatePrivate
+{
+public:
+	ChatState::State state;
+};
+
+ChatState::ChatState(Jreen::ChatState::State state)
+    : d_ptr(new ChatStatePrivate)
+{
+	d_func()->state = state;
+}
+
+ChatState::~ChatState()
+{
+}
+
+ChatState::State ChatState::state() const
+{
+	return d_func()->state;
+}
+
+}
+ // namespace Jreen

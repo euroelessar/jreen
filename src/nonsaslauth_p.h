@@ -1,7 +1,7 @@
 /****************************************************************************
- *  imagemessagefactory_p.h
+ *  nonsaslauth.h
  *
- *  Copyright (c) 2010 by Sidorov Aleksey <sauron@citadelspb.com>
+ *  Copyright (c) 2009 by Nigmatullin Ruslan <euroelessar@gmail.com>
  *
  ***************************************************************************
  *                                                                         *
@@ -13,30 +13,57 @@
  ***************************************************************************
 *****************************************************************************/
 
-#ifndef IMAGEMESSAGEFACTORY_P_H
-#define IMAGEMESSAGEFACTORY_P_H
+#ifndef NONSASLAUTH_H
+#define NONSASLAUTH_H
 
+#include "streamfeature_p.h"
 #include "stanzaextension.h"
-#include "imagemessage.h"
 
-namespace Jreen {
-
-class ImageMessageFactory : public StanzaExtensionFactory<ImageMessage>
+namespace Jreen
 {
+
+class IQ;
+
+class JREEN_EXPORT NonSaslAuth : public QObject, public StreamFeature
+{
+	J_FEATURE("/stream:features/auth[@xmlns='http://jabber.org/features/iq-auth']")
+	Q_OBJECT
 public:
-	ImageMessageFactory();
-	virtual ~ImageMessageFactory();
-	QStringList features() const;
+	enum Step
+	{
+		RequestFields,
+		ProvideInformation,
+		WaitingForResults,
+		Completed
+	};
+	NonSaslAuth();
+	int priority() { return 10; }
+	void setStreamInfo(StreamInfo *info);
+	void reset();
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &text);
-	void serialize(StanzaExtension *extension, QXmlStreamWriter *writer);
-	StanzaExtension::Ptr createExtension();
+	bool isActivatable();
+	bool activate();
+public slots:
+	void handleIq(const IQ &iq, int context);
 private:
-	QByteArray m_data;
+	class Query : public Payload
+	{
+		J_PAYLOAD(Jreen::NonSaslAuth::Query)
+	public:
+		Query();
+		Query *instance(const JID &jid, const QString &password, const QString &sid) const;
+	private:
+		QString m_username;
+		QString m_password;
+		QString m_resource;
+		bool m_is_digest;
+	};
+	Step m_current_step;
 };
 
-} // namespace Jreen
+}
 
-#endif // IMAGEMESSAGEFACTORY_P_H
+#endif // NONSASLAUTH_H

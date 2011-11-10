@@ -17,7 +17,7 @@
 #ifndef IQFACTORY_P_H
 #define IQFACTORY_P_H
 
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "iq.h"
 
 namespace Jreen

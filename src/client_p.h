@@ -23,7 +23,7 @@
 #include "jid.h"
 #include "parser.h"
 #include "directconnection.h"
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 #include "iq.h"
 #include "iqreply.h"
 #include "message.h"
@@ -33,7 +33,7 @@
 #include "jstrings.h"
 #include "disco.h"
 #include "error.h"
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "buffereddatastream.h"
 #include <QTimer>
 #include <QTextCodec>

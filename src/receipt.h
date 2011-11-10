@@ -22,8 +22,10 @@
 namespace Jreen
 {
 
+class ReceiptPrivate;
 class JREEN_EXPORT Receipt : public Payload
 {
+	Q_DECLARE_PRIVATE(Receipt)
 	J_PAYLOAD(Jreen::Receipt)
 public:
 	enum Type
@@ -32,13 +34,14 @@ public:
 		Received	= 1,
 		Invalid		= -1
 	};
+
 	Receipt(Type type,const QString &id = QString());
-	inline Type type() { return m_type; }
-	inline QString id() {return m_id;}
-	virtual ~Receipt() {}
+	~Receipt();
+
+	Type type() const;
+	QString id() const;
 private:
-	Type m_type;
-	QString m_id;
+	QScopedPointer<ReceiptPrivate> d_ptr;
 };
 
 }

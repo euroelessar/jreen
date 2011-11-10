@@ -23,24 +23,24 @@
 namespace Jreen
 {
 
+class DelayedDeliveryPrivate;
+
 //XEP 0203
 //http://xmpp.org/extensions/xep-0203.html
 
 class JREEN_EXPORT DelayedDelivery : public Payload
 {
+	Q_DECLARE_PRIVATE(DelayedDelivery)
 	J_PAYLOAD(Jreen::DelayedDelivery)
 public:
-	DelayedDelivery(const JID &from, const QDateTime &date_time, const QString &reason = QString())
-	  : m_from(from), m_date_time(date_time), m_reason(reason) {};
-	DelayedDelivery() {}
-	inline const JID &from() const { return m_from; }
-	inline const QString &reason() const { return m_reason; }
-	inline const QDateTime &dateTime() const { return m_date_time; }
-	virtual ~DelayedDelivery() {};
+	DelayedDelivery(const JID &from, const QDateTime &dateTime, const QString &reason = QString());
+	virtual ~DelayedDelivery();
+
+	JID from() const;
+	QString reason() const;
+	QDateTime dateTime() const;
 private:
-	JID m_from;
-	QDateTime m_date_time;
-	QString m_reason;
+	QScopedPointer<DelayedDeliveryPrivate> d_ptr;
 };
 
 }

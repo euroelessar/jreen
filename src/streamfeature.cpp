@@ -13,7 +13,7 @@
  ***************************************************************************
 *****************************************************************************/
 
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 
 /*
  * This file is needed only for force compiltation

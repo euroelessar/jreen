@@ -1,4 +1,4 @@
-#include "delayeddeliveryfactory.h"
+#include "delayeddeliveryfactory_p.h"
 #include <QStringList>
 #include <QXmlStreamReader>
 #include "util.h"

@@ -14,7 +14,7 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "bindfeature.h"
+#include "bindfeature_p.h"
 #include "client.h"
 #include "iq_p.h"
 #include <QXmlStreamWriter>

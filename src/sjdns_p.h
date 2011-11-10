@@ -19,7 +19,7 @@
 //#include <QAction>
 #include "../3rdparty/jdns/qjdns.h"
 #include <QUrl>
-#include "action.h"
+#include "action_p.h"
 
 namespace Jreen
 {

@@ -36,7 +36,6 @@ Message::Message(Type type, const JID& to, const QString &body, const QString &s
 
 Message::Message(MessagePrivate &p) : Stanza(p)
 {
-
 }
 
 Message::Type Message::subtype() const
@@ -45,7 +44,7 @@ Message::Type Message::subtype() const
 	return d->subtype;
 }
 
-const QString &Message::body(const QString &lang) const
+QString Message::body(const QString &lang) const
 {
 	Q_D(const Message);
 	return d->body.value(lang);
@@ -56,7 +55,7 @@ void Message::setBody(const QString &text, const QString &lang)
 	d_func()->body.insert(lang, text);
 }
 
-const QString &Message::subject(const QString &lang) const
+QString Message::subject(const QString &lang) const
 {
 	Q_D(const Message);
 	return d->subject.value(lang);
@@ -67,7 +66,7 @@ void Message::setSubject(const QString &text, const QString &lang)
 	d_func()->subject.insert(lang, text);
 }
 
-const QString &Message::thread() const
+QString Message::thread() const
 {
 	Q_D(const Message);
 	return d->thread;
@@ -85,9 +84,9 @@ void Message::setID(const QString &id)
 	d->id = id;
 }
 
-const DelayedDelivery *Message::when() const
+DelayedDelivery::Ptr Message::when() const
 {
-	return payload<DelayedDelivery>().data();
+	return payload<DelayedDelivery>();
 }
 
 }

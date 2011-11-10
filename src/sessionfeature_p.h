@@ -17,7 +17,7 @@
 #ifndef SESSIONFEATURE_P_H
 #define SESSIONFEATURE_P_H
 
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 
 namespace Jreen
 {

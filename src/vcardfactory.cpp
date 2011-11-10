@@ -44,6 +44,10 @@ void AbstractStructureParser::handleStartElement(const QStringRef &name, const Q
 	if (m_depth == 1) {
 		for (int i = 0; i < m_strings.size(); i++)
 			m_strings.at(i).second->clear();
+		for (int i = 0; i < m_byteArrays.size(); i++)
+			m_byteArrays.at(i).second->clear();
+		for (int i = 0; i < m_flags.size(); i++)
+			*m_flags.at(i).value = 0;
 	} else if (m_depth == 2){
 		for (int i = 0; i < m_strings.size(); i++) {
 			const QPair<QLatin1String, QString*> &p = m_strings.at(i);

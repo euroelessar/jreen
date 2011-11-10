@@ -22,7 +22,7 @@ namespace Jreen
 class MoodPrivate;
 class JREEN_EXPORT Mood : public Payload
 {
-	Q_DECLARE_PRIVATE(Mood);
+	Q_DECLARE_PRIVATE(Mood)
 	J_PAYLOAD(Jreen::Mood)
 	public:
 		enum Type {

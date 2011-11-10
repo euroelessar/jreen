@@ -16,7 +16,7 @@
 #ifndef MESSAGEFACTORY_P_H
 #define MESSAGEFACTORY_P_H
 
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "message.h"
 
 namespace Jreen

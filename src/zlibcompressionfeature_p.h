@@ -17,7 +17,7 @@
 #ifndef ZLIBCOMPRESSIONFEATURE_H
 #define ZLIBCOMPRESSIONFEATURE_H
 
-#include "streamfeature.h"
+#include "streamfeature_p.h"
 #include <QStringList>
 
 namespace Jreen

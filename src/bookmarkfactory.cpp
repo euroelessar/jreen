@@ -13,7 +13,7 @@
  ***************************************************************************
 *****************************************************************************/
 
-#include "bookmarkfactory.h"
+#include "bookmarkfactory_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
 #include "util.h"

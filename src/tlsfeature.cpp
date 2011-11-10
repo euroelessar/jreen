@@ -15,8 +15,8 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "tlsfeature.h"
-#include "tlsdatastream.h"
+#include "tlsfeature_p.h"
+#include "tlsdatastream_p.h"
 #include "client.h"
 #include <QXmlStreamWriter>
 #include <QDebug>

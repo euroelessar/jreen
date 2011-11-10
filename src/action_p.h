@@ -24,7 +24,7 @@
 namespace Jreen
 {
 
-class JREEN_EXPORT Action : public QObject
+class Action : public QObject
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(Action)

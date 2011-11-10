@@ -18,10 +18,13 @@
 
 namespace Jreen {
 
+class ChatStatePrivate;
+
 //XEP-0085 Chat State Notification
 //http://xmpp.org/extensions/xep-0085.html
 class ChatState : public Payload
 {
+	Q_DECLARE_PRIVATE(ChatState)
 	J_PAYLOAD(Jreen::ChatState)
 public:
 	enum State
@@ -32,11 +35,11 @@ public:
 		Composing,     // User is composing a message.
 		Paused         // User had been composing but now has stopped.
 	};
-	ChatState(State state) : m_state(state) {}
-	ChatState() {}
-	inline State state() const { return m_state; }
+	ChatState(State state);
+	~ChatState();
+	State state() const;
 private:
-	State m_state;
+	QScopedPointer<ChatStatePrivate> d_ptr;
 };
 
 } // namespace Jreen

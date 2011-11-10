@@ -17,4 +17,16 @@
 
 namespace Jreen {
 
+class PingPrivate
+{
+public:
+};
+
+Ping::Ping()
+{
+}
+
+Ping::~Ping()
+{
+}
 } // namespace Jreen

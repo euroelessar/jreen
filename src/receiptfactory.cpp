@@ -12,7 +12,7 @@
  *                                                                         *
  ***************************************************************************
 *****************************************************************************/
-#include "receiptfactory.h"
+#include "receiptfactory_p.h"
 #include <QStringList>
 #include <QXmlStreamReader>
 #include <QMap>

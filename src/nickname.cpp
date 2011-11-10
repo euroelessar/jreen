@@ -19,8 +19,24 @@
 namespace Jreen
 {
 
-Nickname::Nickname(const QString &nick) : m_nick(nick)
+class NicknamePrivate
 {
+public:
+	QString nick;
+};
+
+Nickname::Nickname(const QString &nick) : d_ptr(new NicknamePrivate)
+{
+	d_func()->nick = nick;
+}
+
+Nickname::~Nickname()
+{
+}
+
+QString Nickname::nick() const
+{
+	return d_func()->nick;
 }
 
 }

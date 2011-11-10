@@ -21,14 +21,18 @@
 namespace Jreen
 {
 
+class NicknamePrivate;
 class Nickname : public Payload
 {
+	Q_DECLARE_PRIVATE(Nickname)
 	J_PAYLOAD(Jreen::Nickname)
 public:
 	Nickname(const QString &nick);
-	const QString &nick() { return m_nick; }
+	~Nickname();
+	
+	QString nick() const;
 private:
-	QString m_nick;
+	QScopedPointer<NicknamePrivate> d_ptr;
 };
 
 }

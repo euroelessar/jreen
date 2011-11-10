@@ -14,7 +14,7 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "saslfeature.h"
+#include "saslfeature_p.h"
 #include "client_p.h"
 #include "../3rdparty/simplesasl/simplesasl.h"
 #include <QUrl>

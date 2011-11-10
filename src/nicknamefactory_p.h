@@ -14,7 +14,7 @@
 *****************************************************************************/
 #ifndef NICKNAMEFACTORY_H
 #define NICKNAMEFACTORY_H
-#include "stanzafactory.h"
+#include "stanzafactory_p.h"
 #include "nickname.h"
 
 namespace Jreen {

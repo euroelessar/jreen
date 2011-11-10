@@ -12,7 +12,7 @@
  *                                                                         *
  ***************************************************************************
 *****************************************************************************/
-#include "nicknamefactory.h"
+#include "nicknamefactory_p.h"
 #include <QStringList>
 
 #define NS_NICKNAME QLatin1String("http://jabber.org/protocol/nick")

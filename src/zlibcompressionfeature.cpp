@@ -14,8 +14,8 @@
  ***************************************************************************
  ****************************************************************************/
 
-#include "zlibcompressionfeature.h"
-#include "zlibdatastream.h"
+#include "zlibcompressionfeature_p.h"
+#include "zlibdatastream_p.h"
 #include <QXmlStreamWriter>
 
 namespace Jreen

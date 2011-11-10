@@ -18,12 +18,12 @@
 #define MESSAGE_H
 
 #include "stanza.h"
+#include "delayeddelivery.h"
 
 namespace Jreen
 {
 
 class MessagePrivate;
-class DelayedDelivery;
 
 class JREEN_EXPORT Message : public Stanza
 {
@@ -47,14 +47,14 @@ public:
 	inline Message &operator =(const Message &stanza)
 	{ return *static_cast<Message *>(&Jreen::Stanza::operator =(stanza)); }
 	Type subtype() const;
-	const QString &body(const QString &lang = QString()) const;
+	QString body(const QString &lang = QString()) const;
 	void setBody(const QString &text, const QString &lang = QString());
-	const QString &subject(const QString &lang = QString()) const;
+	QString subject(const QString &lang = QString()) const;
 	void setSubject(const QString &text, const QString &lang = QString());
-	const QString &thread() const;
+	QString thread() const;
 	void setThread(const QString &thread);
 	void setID(const QString &id);
-	const DelayedDelivery *when() const;
+	DelayedDelivery::Ptr when() const;
 };
 
 }

@@ -328,6 +328,8 @@ void DataFormFactory::handleEndElement(const QStringRef &name, const QStringRef 
 			d->fields.append(d->fieldParser.create());
 			d->state = AtNowhere;
 		}
+	} else if(d->depth == 2) {
+		d->state = AtNowhere;
 	}
 	d->depth--;
 }
@@ -353,8 +355,9 @@ void DataFormFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	DataForm *form = se_cast<DataForm*>(extension);
 	writer->writeStartElement(QLatin1String("x"));
 	writer->writeDefaultNamespace(NS_DATAFORM);
-	writeTextElement(writer,QLatin1String("title"),form->title());
-	//writer->writeTextElement(QLatin1String("instruction"),form->));
+	writer->writeAttribute(QLatin1String("type"), enumToStr(form->type(), dataform_types));
+	writeTextElement(writer,QLatin1String("title"), form->title());
+//	writer->writeTextElement(QLatin1String("instruction"), form->));
 	d->fieldParser.serialize(*form, writer);
 	writer->writeEndElement();
 }

@@ -14,7 +14,7 @@
 *****************************************************************************/
 
 #include "jid.h"
-#include "prep.h"
+#include "prep_p.h"
 #include <QAtomicInt>
 #include <QStringBuilder>
 

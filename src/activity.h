@@ -26,7 +26,7 @@ namespace Jreen {
 class ActivityPrivate;
 class JREEN_EXPORT Activity : public Payload
 {
-	Q_DECLARE_PRIVATE(Activity);
+	Q_DECLARE_PRIVATE(Activity)
 	J_PAYLOAD(Jreen::Activity)
 public:
 	enum General {

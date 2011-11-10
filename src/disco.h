@@ -40,33 +40,44 @@ class JREEN_EXPORT Disco : public QObject
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(Disco)
 public:
-	struct Identity
+	class IdentityData;
+	class Identity
 	{
-		inline Identity() {}
-		inline Identity(const QString &category, const QString &type, const QString &name, const QString &lang = QString())
-			: category(category), type(type), name(name), lang(lang) {}
-		QString category;
-		QString type;
-		QString name;
-		QString lang;
+	public:
+		Identity();
+		Identity(const QString &category, const QString &type, const QString &name, const QString &lang = QString());
+		Identity(const Identity &item);
+		Identity &operator =(const Identity &item);
+		~Identity();
+		
+		QString category() const;
+		QString type() const;
+		QString name() const;
+		QString lang() const;
+		
+	private:
+		QSharedDataPointer<IdentityData> d;
 	};
 	typedef QList<Identity> IdentityList;
-
+	
+	class InfoPrivate;
 	class Info : public Payload
 	{
+		Q_DECLARE_PRIVATE(Info)
 		J_PAYLOAD(Jreen::Disco::Info)
 	public:
-		inline Info(const QString &node = QString(), const IdentityList &identities = IdentityList(), const QSet<QString> &features = QSet<QString>(), QSharedPointer<DataForm> form = QSharedPointer<DataForm>())
-		  : m_node(node), m_identities(identities), m_features(features), m_form(form) {}
-		inline const QString &node() const { return m_node; }
-		inline const IdentityList &identities() const { return m_identities; }
-		inline const QSet<QString> &features() const { return m_features; }
-		inline const DataForm::Ptr form() const { return m_form; }
+		Info(const QString &node = QString(), const IdentityList &identities = IdentityList(),
+		        const QSet<QString> &features = QSet<QString>(),
+		        QSharedPointer<DataForm> form = QSharedPointer<DataForm>());
+		~Info();
+
+		QString node() const;
+		IdentityList identities() const;
+		QSet<QString> features() const;
+		DataForm::Ptr form() const;
+		
 	private:
-		QString m_node;
-		IdentityList m_identities;
-		QSet<QString> m_features;
-		DataForm::Ptr m_form;
+		QScopedPointer<InfoPrivate> d_ptr;
 	};
 
 	class ItemData;
@@ -112,19 +123,21 @@ public:
 		QSharedDataPointer<ItemData> d;
 	};
 	typedef QList<Item> ItemList;
-
+	
+	class ItemsPrivate;
 	class Items : public Payload
 	{
+		Q_DECLARE_PRIVATE(Items)
 		J_PAYLOAD(Jreen::Disco::Items)
-		public:
-			inline Items(const QString &node = QString(), const ItemList &items = ItemList())
-		  : m_items(items), m_node(node) {}
-		inline const QString &node() const { return m_node; }
-		inline const ItemList &items() const { return m_items; }
-		inline ItemList &items() { return m_items; }
+	public:
+		Items(const QString &node = QString(), const ItemList &items = ItemList());
+		~Items();
+		
+		QString node() const;
+		ItemList items() const;
+
 	private:
-		ItemList m_items;
-		QString m_node;
+		QScopedPointer<ItemsPrivate> d_ptr;
 	};
 
 	Disco(Client *client);

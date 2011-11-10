@@ -26,16 +26,21 @@ namespace Jreen
  * http://xmpp.org/extensions/xep-0092.html
  */
 
+class SoftwareVersionPrivate;
 class JREEN_EXPORT SoftwareVersion : public Payload
 {
+	Q_DECLARE_PRIVATE(SoftwareVersion)
 	J_PAYLOAD(Jreen::SoftwareVersion)
 public:
-	SoftwareVersion() {}
+	SoftwareVersion();
 	SoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
-	inline const QString &name() const { return m_name; }
-	inline const QString &version() const { return m_version; }
-	inline const QString &os() const { return m_os; }
+	~SoftwareVersion();
+	
+	QString name() const;
+	QString version() const;
+	QString os() const;
 private:
+	QScopedPointer<SoftwareVersionPrivate> d_ptr;
 	QString m_name;
 	QString m_version;
 	QString m_os;

@@ -21,8 +21,32 @@
 namespace Jreen
 {
 
-Receipt::Receipt(Type type,const QString &id) : m_type(type),m_id(id)
+class ReceiptPrivate
 {
+public:
+	Receipt::Type type;
+	QString id;
+};
+
+Receipt::Receipt(Type type,const QString &id) : d_ptr(new ReceiptPrivate)
+{
+	Q_D(Receipt);
+	d->type = type;
+	d->id = id;
+}
+
+Receipt::~Receipt()
+{
+}
+
+Receipt::Type Receipt::type() const
+{
+	return d_func()->type;
+}
+
+QString Receipt::id() const
+{
+	return d_func()->id;
 }
 
 }
