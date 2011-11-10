@@ -54,6 +54,7 @@ namespace Jreen
 	private:
 		void init();
 		
+		bool m_isSupported;
 		int m_depth;
 		State m_state;
 		QStringList m_mechs;
