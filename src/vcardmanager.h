@@ -1,12 +1,12 @@
 /****************************************************************************
 **
-** qutIM instant messenger
+** Jreen
 **
-** Copyright (C) 2011 Ruslan Nigmatullin <euroelessar@ya.ru>
+** Copyright (C) 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
-** $QUTIM_BEGIN_LICENSE$
+** $JREEN_BEGIN_LICENSE$
 ** This program is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation, either version 2 of the License, or
@@ -19,7 +19,7 @@
 **
 ** You should have received a copy of the GNU General Public License
 ** along with this program.  If not, see http://www.gnu.org/licenses/.
-** $QUTIM_END_LICENSE$
+** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
 
