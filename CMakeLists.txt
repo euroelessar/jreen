@@ -12,14 +12,6 @@ set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSI
 FILE(GLOB SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 FILE(GLOB HDR "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
-# Add 3rd-party sources
-FILE(GLOB_RECURSE 3RD_PARTY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/*.cpp")
-FILE(GLOB_RECURSE 3RD_PARTY_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/*.c")
-FILE(GLOB_RECURSE 3RD_PARTY_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/*.h")
-LIST(APPEND SRC ${3RD_PARTY_SRC} ${3RD_PARTY_SRC_C})
-LIST(APPEND SRC ${3RD_PARTY_SRC})
-LIST(APPEND HDR ${3RD_PARTY_HDR})
-
 # Require QT 4.6
 SET(QT_MIN_VERSION "4.6.0")
 
@@ -34,7 +26,7 @@ FIND_PACKAGE(LibIDN)
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config
 if(LINUX)
-	FIND_PACKAGE(PkgConfig)
+	find_package(PkgConfig)
 	pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
 	find_path(ZLIB_INCLUDE_DIR
 	  NAMES zlib.h
@@ -70,12 +62,44 @@ IF(LIBIDN_FOUND)
 	ADD_DEFINITIONS("-DHAVE_IDN=1")
 ENDIF(LIBIDN_FOUND)
 
+LIST(APPEND SRC ${3RD_PARTY_SRC_C})
+LIST(APPEND SRC ${3RD_PARTY_SRC})
+LIST(APPEND HDR ${3RD_PARTY_HDR})
+
 option(JREEN_USE_SIMPLESASL "Use SimpleSASL" ON)
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl")
 	set(JREEN_USE_SIMPLESASL OFF)
 endif()
 if(JREEN_USE_SIMPLESASL)
-	ADD_DEFINITIONS("-DHAVE_SIMPLESASL")
+	add_definitions("-DHAVE_SIMPLESASL")
+	file(GLOB_RECURSE SIMPLESASL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.cpp")
+	file(GLOB_RECURSE SIMPLESASL_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.c")
+	file(GLOB_RECURSE SIMPLESASL_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.h")
+	list(APPEND SRC ${SIMPLESASL_SRC})
+	list(APPEND SRC ${SIMPLESASL_SRC_C})
+	list(APPEND HDR ${SIMPLESASL_HDR})
+endif()
+
+option(JREEN_USE_SYSTEM_JDNS "Use system JDNS" OFF)
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns")
+	set(JREEN_USE_SYSTEM_JDNS ON)
+endif()
+if(JREEN_USE_SYSTEM_JDNS)
+	# For Linux it was found already before at line 29
+	if(NOT LINUX)
+		find_package(PkgConfig)
+	endif()
+	pkg_search_module(JDNS REQUIRED qjdns)
+	include_directories(${JDNS_INCLUDE_DIR})
+	list(APPEND EXTRA_LIBS ${JDNS_LIBRARIES})
+else()
+	file(GLOB_RECURSE JDNS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.cpp")
+	file(GLOB_RECURSE JDNS_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.c")
+	file(GLOB_RECURSE JDNS_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.h")
+	list(APPEND SRC ${JDNS_SRC})
+	list(APPEND SRC ${JDNS_SRC_C})
+	list(APPEND HDR ${JDNS_HDR})
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")
 endif()
 
 # Generate moc files
