@@ -41,7 +41,7 @@ class JREEN_EXPORT Disco : public QObject
 	Q_DECLARE_PRIVATE(Disco)
 public:
 	class IdentityData;
-	class Identity
+	class JREEN_EXPORT Identity
 	{
 	public:
 		Identity();
@@ -61,7 +61,7 @@ public:
 	typedef QList<Identity> IdentityList;
 	
 	class InfoPrivate;
-	class Info : public Payload
+	class JREEN_EXPORT Info : public Payload
 	{
 		Q_DECLARE_PRIVATE(Info)
 		J_PAYLOAD(Jreen::Disco::Info)
@@ -81,7 +81,7 @@ public:
 	};
 
 	class ItemData;
-	class Item
+	class JREEN_EXPORT Item
 	{
 	public:
 		enum Action
@@ -125,7 +125,7 @@ public:
 	typedef QList<Item> ItemList;
 	
 	class ItemsPrivate;
-	class Items : public Payload
+	class JREEN_EXPORT Items : public Payload
 	{
 		Q_DECLARE_PRIVATE(Items)
 		J_PAYLOAD(Jreen::Disco::Items)
