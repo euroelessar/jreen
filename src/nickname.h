@@ -22,7 +22,7 @@ namespace Jreen
 {
 
 class NicknamePrivate;
-class Nickname : public Payload
+class JREEN_EXPORT Nickname : public Payload
 {
 	Q_DECLARE_PRIVATE(Nickname)
 	J_PAYLOAD(Jreen::Nickname)
