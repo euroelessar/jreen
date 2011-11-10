@@ -22,7 +22,7 @@ class ChatStatePrivate;
 
 //XEP-0085 Chat State Notification
 //http://xmpp.org/extensions/xep-0085.html
-class ChatState : public Payload
+class JREEN_EXPORT ChatState : public Payload
 {
 	Q_DECLARE_PRIVATE(ChatState)
 	J_PAYLOAD(Jreen::ChatState)
