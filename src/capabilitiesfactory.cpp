@@ -40,11 +40,13 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 	QStringList sl;
 	const Disco::IdentityList &identity_list = disco->identities();
 	foreach(const Disco::Identity &i, identity_list)
-		sl << (i.category() % QLatin1Char('/') % i.type()
-			   % QLatin1Char('/') % i.lang() % QLatin1Char('/') % i.name());
+		sl << (i.category() % QLatin1Char('/')
+		       % i.type() % QLatin1Char('/')
+		       % i.lang() % QLatin1Char('/')
+		       % i.name());
 	sl.sort();
 	foreach(const QString &str, sl)
-		s.append(str);
+		s.append(str).append(QLatin1Char('<'));
 	sl = disco->features().values();
 	sl.sort();
 	foreach(const QString &str, sl)

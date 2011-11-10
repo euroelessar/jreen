@@ -365,7 +365,8 @@ void DataFormFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	DataForm *form = se_cast<DataForm*>(extension);
 	writer->writeStartElement(QLatin1String("x"));
 	writer->writeDefaultNamespace(NS_DATAFORM);
-	writer->writeAttribute(QLatin1String("type"), enumToStr(form->type(), dataform_types));
+	if (form->type() != DataForm::Invalid)
+		writer->writeAttribute(QLatin1String("type"), enumToStr(form->type(), dataform_types));
 	writeTextElement(writer,QLatin1String("title"), form->title());
 //	writer->writeTextElement(QLatin1String("instruction"), form->));
 	d->fieldParser.serialize(*form, writer);

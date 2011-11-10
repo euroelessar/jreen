@@ -89,7 +89,10 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			emit reply->received(*iq);
 			reply->deleteLater();
 		} else {
-			bool ok = jid.isDomain() || !roster || rooms.contains(iq->from().bare()) || iq->from().bare() == jid.bare();
+			bool ok = iq->from().isDomain()
+			        || !roster
+			        || rooms.contains(iq->from().bare())
+			        || iq->from().bare() == jid.bare();
 			if (!ok) {
 				RosterItem::Ptr item = roster->item(iq->from());
 				ok = item

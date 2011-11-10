@@ -116,7 +116,7 @@ void DiscoInfoFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		writer->writeAttribute(QLatin1String("type"), identity.type());
 		writer->writeAttribute(QLatin1String("name"), identity.name());
 		if (!identity.lang().isEmpty())
-			writer->writeAttribute(QLatin1String("lang"), identity.lang());
+			writer->writeAttribute(QLatin1String("xml:lang"), identity.lang());
 	}
 	foreach (const QString &feature, info->features()) {
 		writer->writeEmptyElement(QLatin1String("feature"));
