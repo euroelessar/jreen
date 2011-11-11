@@ -81,7 +81,6 @@ void Parser::activateFeature()
 	d->client->current_stream_feature = 0;
 	for (; i < d->client->features.size(); i++) {
 		StreamFeature *feature = d->client->features.at(i);
-		qDebug() << feature << feature->isActivatable();
 		if (feature->isActivatable()) {
 			d->client->current_stream_feature = feature;
 			feature->activate();

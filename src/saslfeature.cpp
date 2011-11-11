@@ -41,7 +41,6 @@ SASLFeature::SASLFeature() : StreamFeature(SASL)
 	QCA::setAppName("qutim");	
 	m_depth = 0;
 	m_isSupported = QCA::isSupported("sasl");
-	qDebug() << QCA::supportedFeatures();
 #ifdef HAVE_SIMPLESASL
 	if (!m_isSupported) {
 		QCA::insertProvider(XMPP::createProviderSimpleSASL());
@@ -141,10 +140,6 @@ bool SASLFeature::activate()
 	if (!m_isSupported)
 		return false;
 	init();
-	m_sasl->setPassword(QCA::SecureArray(m_info->password().toUtf8()));
-	m_sasl->setUsername(m_info->jid().node());
-	m_sasl->setRealm(m_info->jid().domain());
-	m_sasl->setAuthzid(m_info->jid().bare());
 	m_sasl->setConstraints(QCA::SASL::AllowPlain);
 	m_sasl->startClient("xmpp", QUrl::toAce(m_info->jid().domain()), m_mechs, QCA::SASL::AllowClientSendFirst);
 	return true;
@@ -159,7 +154,6 @@ void SASLFeature::onClientStarted(bool init, const QByteArray &data)
 	if (init)
 		writer->writeCharacters(QString::fromLatin1(data.toBase64()));
 	writer->writeEndElement();
-//	writer->writeCharacters(QString());
 }
 
 void SASLFeature::onNextStep(const QByteArray &data)
@@ -179,8 +173,8 @@ void SASLFeature::onNeedParams(const QCA::SASL::Params &params)
 		m_sasl->setUsername(m_info->jid().node());
 	if (params.canSendRealm())
 		m_sasl->setRealm(m_info->jid().domain());
-//	if (params.canSendAuthzid())
-//		m_sasl->setAuthzid(m_info->jid().bare());
+	if (params.canSendAuthzid())
+		m_sasl->setAuthzid(m_info->jid().bare());
 	m_sasl->continueAfterParams();
 }
 
