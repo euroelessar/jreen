@@ -1,2 +1,6 @@
+Version 1.0.1:
+	* Fixed segfault at SASL initialization
+	* Fixed Facebook support
+
 Version 1.0.0:
-    * First public release.
+	* First public release.
