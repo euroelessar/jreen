@@ -75,6 +75,7 @@ public:
 		bool isNickChanged() const;
 		bool isBanned() const;
 		bool isKicked() const;
+		bool isJoined() const;
 		QString newNick() const;
 		QString reason() const;
 		JID realJID() const;

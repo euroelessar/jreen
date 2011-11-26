@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QXmlStreamWriter>
 #include "capabilities.h"
+#include "capabilitiesfactory_p.h"
 
 namespace Jreen
 {
@@ -61,6 +62,12 @@ QString Capabilities::node() const
 QString Capabilities::ver() const
 {
 	return d_func()->ver;
+}
+
+QString Capabilities::calculatedNode() const
+{
+	//return CapabilitesFactory::hashValue(this);
+	return QString();
 }
 
 }

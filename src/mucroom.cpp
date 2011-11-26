@@ -76,12 +76,15 @@ bool checkParticipantPrivelege(MUCRolePrivilege priv, MUCRoom::Role role)
 class MUCRoom::ParticipantPrivate
 {
 public:
+	ParticipantPrivate() : joined(false) {}
+
 	void init(const Presence &pres)
 	{
 		query = pres.payload<MUCRoomUserQuery>();
 	}
 
 	MUCRoomUserQuery::Ptr query;
+	bool joined;
 };
 
 MUCRoom::Participant::Participant() : d_ptr(new ParticipantPrivate)
@@ -120,6 +123,11 @@ bool MUCRoom::Participant::isBanned() const
 bool MUCRoom::Participant::isKicked() const
 {
 	return d_func()->query->flags & MUCRoomUserQuery::Kicked;
+}
+
+bool MUCRoom::Participant::isJoined() const
+{
+	return d_func()->joined;
 }
 
 QString MUCRoom::Participant::newNick() const
@@ -214,6 +222,8 @@ void MUCRoomPrivate::handlePresence(const Presence &pres)
 				emit q->presenceReceived(hookPres, &tmp);
 			}
 		}
+		if (!participantsHash.contains(pres.from().resource()))
+			part.d_func()->joined = true;
 		participantsHash.insert(pres.from().resource(), part.d_func()->query);
 	}
 	if (part.isNickChanged() && pres.from().resource() == jid.resource())

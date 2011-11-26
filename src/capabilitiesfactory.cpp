@@ -39,11 +39,12 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 	QString s;
 	QStringList sl;
 	const Disco::IdentityList &identity_list = disco->identities();
-	foreach(const Disco::Identity &i, identity_list)
+	foreach(const Disco::Identity &i, identity_list) {
 		sl << (i.category() % QLatin1Char('/')
 		       % i.type() % QLatin1Char('/')
 		       % i.lang() % QLatin1Char('/')
-		       % i.name());
+			   % i.name());
+	}
 	sl.sort();
 	foreach(const QString &str, sl)
 		s.append(str).append(QLatin1Char('<'));
@@ -65,8 +66,7 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 		s.append(form_type).append(QLatin1Char('<'));
 
 		QMap<QString,QStringList>::iterator it = fields.begin();
-		for(; it != fields.end(); it++)
-		{
+		for(; it != fields.end(); it++) {
 			s.append(it.key()).append(QLatin1Char('<'));
 			foreach(const QString &value, it.value())
 				s.append(value).append(QLatin1Char('<'));
