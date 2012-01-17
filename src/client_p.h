@@ -48,6 +48,7 @@
 #include <QTimer>
 #include <QTextCodec>
 #include <QBuffer>
+#include <QNetworkProxyFactory>
 #include "stanza_p.h"
 #include "streamprocessor.h"
 
@@ -199,6 +200,7 @@ public:
 	QMultiMap<QString, AbstractPayloadFactory*> factoriesByUri;
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
+	QWeakPointer<QNetworkProxyFactory> proxyFactory;
 	int depth;
 	IQReply *createIQReply() { return new IQReply(q_func()); }
 	void _q_iq_received(const Jreen::IQ &iq, int context);

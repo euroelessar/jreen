@@ -124,8 +124,8 @@ qint64 BufferedDataStream::readData(char *data, qint64 maxlen)
 	Q_D(BufferedDataStream);
 	int len = qMin<int>(maxlen, d->len);
 	qMemCopy(data, d->buffer.data() + d->offset, len);
-	foreach (XmlStreamHandler *handler, *d->handlers)
-		handler->handleIncomingData(d->buffer.data() + d->offset, len);
+//	foreach (XmlStreamHandler *handler, *d->handlers)
+//		handler->handleIncomingData(d->buffer.data() + d->offset, len);
 	if (maxlen < d->len) {
 		d->len -= maxlen;
 		d->offset += maxlen;

@@ -83,20 +83,6 @@ public:
 	virtual int payloadType() const;
 };
 
-template <typename Extension>
-class SimplePayloadFactory : public PayloadFactory<Extension>
-{
-	Q_DISABLE_COPY(SimplePayloadFactory)
-public:
-	SimplePayloadFactory(const QString &name, const QString &uri, Client *client);
-	virtual ~SimplePayloadFactory();
-	
-	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-private:
-	QString m_elementName;
-	QString m_elementUri;
-};
-
 //template <typename T>
 //Q_INLINE_TEMPLATE T se_cast(Payload *se)
 //{
@@ -119,24 +105,6 @@ template <typename Extension>
 Q_INLINE_TEMPLATE int PayloadFactory<Extension>::payloadType() const
 {
 	return Extension::staticPayloadType();
-}
-
-template <typename Extension>
-Q_INLINE_TEMPLATE SimplePayloadFactory<Extension>::SimplePayloadFactory(const QString &name, const QString &uri, Client *client)
-	: SimplePayloadFactory(client), m_elementName(name), m_elementUri(uri)
-{
-}
-
-template <typename Extension>
-Q_INLINE_TEMPLATE SimplePayloadFactory<Extension>::~SimplePayloadFactory()
-{
-}
-
-template <typename Extension>
-Q_INLINE_TEMPLATE bool SimplePayloadFactory<Extension>::canParse(const QStringRef &name, const QStringRef &uri,
-                                                                 const QXmlStreamAttributes &)
-{
-	return name == m_elementName && uri == m_elementUri;
 }
 
 template <typename T>

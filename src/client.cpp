@@ -230,6 +230,9 @@ void Client::setPort(int port)
 	d_func()->server_port = port;
 }
 
+//void Client::setProxyFactory(QNetworkProxyFactory *factory);
+//QNetworkProxyFactory *Client::proxyFactory() const;
+
 void Client::addXmlStreamHandler(XmlStreamHandler *handler)
 {
 	d_func()->streamHandlers << handler;

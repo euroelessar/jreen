@@ -64,6 +64,9 @@ void Parser::reset()
 {
 	Q_D(Parser);
 	d->reader->clear();
+	d->nullReader.clear();
+	d->first = true;
+	d->buffer.clear();
 	d->state = WaitingForStanza;
 	d->depth = 0;
 	foreach (XmlStreamParser *parser, d->parsers)
@@ -87,6 +90,51 @@ void Parser::activateFeature()
 			break;
 		}
 	}
+}
+
+QByteArray Parser::nextPart(QByteArray &data, bool first, bool *needMoreData)
+{
+	QByteArray result;
+	*needMoreData = false;
+	if (first) {
+		first = false;
+		int begin = data.indexOf('>') + 1;
+		int end = data.indexOf('>', begin) + 1;
+		if (begin == -1 || end == -1) {
+			*needMoreData = true;
+			return result;
+		}
+		result = data.left(end);
+		data.remove(0, result.size());
+	} else {
+		int depth = 0;
+		int index = 0;
+		while (true) {
+			int start = data.indexOf('<', index);
+			int end = data.indexOf('>', start);
+			if (start == -1 || end == -1) {
+				*needMoreData = true;
+				return result;
+			}
+			index = end + 1;
+			bool startTag = data[start + 1] != '/';
+			if (startTag) {
+				bool emptyTag = data[end - 1] == '/';
+				depth += !emptyTag;
+			} else {
+				depth--;
+			}
+			if (depth == 0) {
+				break;
+			} else if (depth < 0) {
+				qSwap(result, data);
+				return result;
+			}
+		}
+		result = data.left(index);
+		data.remove(0, result.size());
+	}
+	return result;
 }
 
 bool Parser::canParse(const QStringRef &, const QStringRef &, const QXmlStreamAttributes &)
@@ -223,9 +271,12 @@ bool Parser::event(QEvent *ev)
 void Parser::appendData(const QByteArray &a)
 {
 	Q_D(Parser);
-	d->reader->addData(a);
+	d->buffer.append(a);
+//	d->reader->addData(a);
 	parseData();
 }
+
+#define HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?><stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" xmlns=\"jabber:client\">"
 
 void Parser::parseData()
 {
@@ -233,27 +284,61 @@ void Parser::parseData()
 	if (d->atParsing)
 		return;
 	d->atParsing = true;
-	while (d->reader->readNext() > QXmlStreamReader::Invalid) {
-		switch(d->reader->tokenType()) {
-		case QXmlStreamReader::StartElement:
-			handleStartElement(d->reader->name(), d->reader->namespaceUri(), d->reader->attributes());
-			break;
-		case QXmlStreamReader::EndElement:
-			handleEndElement(d->reader->name(), d->reader->namespaceUri());
-			break;
-		case QXmlStreamReader::Characters:
-			handleCharacterData(d->reader->text());
-			break;
-		default:
-			break;
-		}
-#ifdef PARSER_SPLIT_STANZAS_EVENTS
-		if (d->depth == 1 && d->reader->tokenType() == QXmlStreamReader::EndElement) {
+	bool needMoreData = false;
+	while (!d->buffer.isEmpty()) {
+		QByteArray result = nextPart(d->buffer, d->first, &needMoreData);
+		if (needMoreData) {
 			d->atParsing = false;
-			qApp->postEvent(this, new QEvent(*parserHookEventId()));
 			return;
 		}
+		d->nullReader.addData(result);
+		d->first = false;
+		forever {
+			QXmlStreamReader::TokenType type = d->nullReader.readNext();
+			if (type == QXmlStreamReader::Invalid
+			        || type == QXmlStreamReader::EndDocument) {
+				break;
+			}
+		}
+		if (d->nullReader.error() == QXmlStreamReader::NotWellFormedError) {
+			qWarning() << "---------------------------------";
+			qWarning() << "Broken stanza (" << d->nullReader.errorString() << ")";
+			qWarning() << result;
+			qWarning() << "---------------------------------";
+			result.prepend("<!--");
+			result.append("-->");
+			foreach (XmlStreamHandler *handler, d->client->streamHandlers)
+				handler->handleIncomingData(result.constData(), result.size());
+			
+			d->nullReader.clear();
+			d->nullReader.addData(HEADER);
+			continue;
+		}
+		d->reader->addData(result);
+		foreach (XmlStreamHandler *handler, d->client->streamHandlers)
+			handler->handleIncomingData(result.constData(), result.size());
+		while (d->reader->readNext() > QXmlStreamReader::Invalid) {
+			switch(d->reader->tokenType()) {
+			case QXmlStreamReader::StartElement:
+				handleStartElement(d->reader->name(), d->reader->namespaceUri(), d->reader->attributes());
+				break;
+			case QXmlStreamReader::EndElement:
+				handleEndElement(d->reader->name(), d->reader->namespaceUri());
+				break;
+			case QXmlStreamReader::Characters:
+				handleCharacterData(d->reader->text());
+				break;
+			default:
+				break;
+			}
+#ifdef PARSER_SPLIT_STANZAS_EVENTS
+			if (d->depth == 1 && d->reader->tokenType() == QXmlStreamReader::EndElement) {
+				d->atParsing = false;
+				qApp->postEvent(this, new QEvent(*parserHookEventId()));
+				return;
+			}
 #endif
+		}
 	}
 	d->atParsing = false;
 }

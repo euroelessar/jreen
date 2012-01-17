@@ -173,7 +173,7 @@ void SASLFeature::onNeedParams(const QCA::SASL::Params &params)
 		m_sasl->setUsername(m_info->jid().node());
 	if (params.canSendRealm())
 		m_sasl->setRealm(m_info->jid().domain());
-	if (params.canSendAuthzid())
+	if (params.canSendAuthzid() && m_info->jid().domain() != QLatin1String("chat.facebook.com"))
 		m_sasl->setAuthzid(m_info->jid().bare());
 	m_sasl->continueAfterParams();
 }

@@ -52,12 +52,15 @@ class ParserPrivate
 {
 public:
 	QXmlStreamReader *reader;
+	QXmlStreamReader nullReader;
 	Parser::State state;
 	QStack<XmlStreamParser*> parsers;
 	QStack<int> parsersCount;
 	QList<Payload::Ptr> extensions;
+	QByteArray buffer;
 	int depth;
 	bool atParsing;
+	bool first;
 	ClientPrivate *client;
 #ifdef PARSER_DEBUG_SPEED
 	int parsingTime;
