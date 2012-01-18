@@ -92,20 +92,31 @@ void Parser::activateFeature()
 	}
 }
 
+#define XML_HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+#define HEADER XML_HEADER "<stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" xmlns=\"jabber:client\">"
+
 QByteArray Parser::nextPart(QByteArray &data, bool first, bool *needMoreData)
 {
 	QByteArray result;
 	*needMoreData = false;
 	if (first) {
 		first = false;
-		int begin = data.indexOf('>') + 1;
-		int end = data.indexOf('>', begin) + 1;
-		if (begin == -1 || end == -1) {
+		int begin = data.indexOf('>');
+		if (begin == -1) {
 			*needMoreData = true;
 			return result;
 		}
-		result = data.left(end);
-		data.remove(0, result.size());
+		if (data[begin - 1] != '?') {
+			result += XML_HEADER;
+			begin = -1;
+		}
+		int end = data.indexOf('>', begin + 1) + 1;
+		if (end <= 0) {
+			*needMoreData = true;
+			return QByteArray();
+		}
+		result += data.left(end);
+		data.remove(0, end);
 	} else {
 		int depth = 0;
 		int index = 0;
@@ -275,8 +286,6 @@ void Parser::appendData(const QByteArray &a)
 //	d->reader->addData(a);
 	parseData();
 }
-
-#define HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?><stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" xmlns=\"jabber:client\">"
 
 void Parser::parseData()
 {
