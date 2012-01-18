@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Remko Troncon
+ * Copyright © 2008  Remko Troncon <remko@el-tramo.be>
  * See COPYING for license details.
  */
 

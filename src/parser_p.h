@@ -2,8 +2,8 @@
 **
 ** Jreen
 **
-** Copyright (C) 2003 Justin Karneges
-** Copyright (C) 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
+** Copyright © 2003 Justin Karneges <justin@affinix.com>
+** Copyright © 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
