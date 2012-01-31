@@ -43,6 +43,7 @@ public:
 	void setNode(const QString &node);
 	QString node() const;
 	QString ver() const;
+	QString calculatedNode() const;
 private:
 	QScopedPointer<CapabilitiesPrivate> d_ptr;
 };
