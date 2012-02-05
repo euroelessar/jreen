@@ -37,8 +37,8 @@ namespace Jreen
 
 TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 {
-	QCA::setAppName("qutim");
 	QCA::init();
+	QCA::setAppName("qutim");
 	m_required = false;
 	m_available = false;
 	m_hasTls = QCA::isSupported("tls");

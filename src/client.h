@@ -34,6 +34,7 @@
 #include "disco.h"
 
 class QNetworkProxyFactory;
+class QNetworkProxy;
 
 namespace Jreen
 {
@@ -91,8 +92,10 @@ public:
 	void setServer(const QString &server);
 	void setResource(const QString &resource);
 	void setPort(int port);
-//	void setProxyFactory(QNetworkProxyFactory *factory);
-//	QNetworkProxyFactory *proxyFactory() const;
+	void setProxy(const QNetworkProxy &proxy);
+	QNetworkProxy proxy() const;
+	void setProxyFactory(QNetworkProxyFactory *factory);
+	QNetworkProxyFactory *proxyFactory() const;
 	void addXmlStreamHandler(XmlStreamHandler *handler);
 	QSet<QString> serverFeatures() const;
 	Disco::IdentityList serverIdentities() const;

@@ -230,8 +230,27 @@ void Client::setPort(int port)
 	d_func()->server_port = port;
 }
 
-//void Client::setProxyFactory(QNetworkProxyFactory *factory);
-//QNetworkProxyFactory *Client::proxyFactory() const;
+void Client::setProxy(const QNetworkProxy &proxy)
+{
+	Q_D(Client);
+	d->proxy = proxy;
+}
+
+QNetworkProxy Client::proxy() const
+{
+	return d_func()->proxy;
+}
+
+void Client::setProxyFactory(QNetworkProxyFactory *factory)
+{
+	Q_D(Client);
+	d_func()->proxyFactory.reset(factory);
+}
+
+QNetworkProxyFactory *Client::proxyFactory() const
+{
+	return d_func()->proxyFactory.data();
+}
 
 void Client::addXmlStreamHandler(XmlStreamHandler *handler)
 {
@@ -430,11 +449,23 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 void Client::connectToServer()
 {
 	Q_D(Client);
-	qDebug() << d->server_port;
 	if(!d->conn)
 		setConnection(new TcpConnection(d->server, d->server_port));
 
 	if(!d->conn->isOpen()) {
+		if (DirectConnection *connection = qobject_cast<DirectConnection*>(d->conn)) {
+			QNetworkProxy proxy;
+			if (d->proxyFactory) {
+				QUrl url = QUrl::fromUserInput(d->jid);
+				url.setScheme(QLatin1String("xmpp"));
+				QNetworkProxyQuery query(url);
+				proxy = d->proxyFactory->queryProxy(query).value(0);
+			} else {
+				proxy = d->proxy;
+			}
+			connection->setProxy(proxy);
+		}
+		
 		if (d->streamProcessor) {
 			d->streamProcessor->setJID(d->jid);
 			d->streamProcessor->setStreamParser(d->parser);

@@ -122,7 +122,7 @@ public:
 	static ClientPrivate *get(Client *client) { return client->d_func(); }
 	
 	ClientPrivate(const Presence &p, Client *parent)
-		:  pingInterval(-1), q_ptr(parent), presence(p), current_id(0), conn(0)
+		:  pingInterval(-1), q_ptr(parent), proxyFactory(0), presence(p), current_id(0), conn(0)
 	{
 		Q_Q(Client);
 		disco = 0;
@@ -176,6 +176,8 @@ public:
 	QString server;
 	QString password;
 	int server_port;
+	QNetworkProxy proxy;
+	QScopedPointer<QNetworkProxyFactory> proxyFactory;
 	QList<XmlStreamHandler*> streamHandlers;
 	Presence presence;
 	int current_id;
@@ -200,7 +202,6 @@ public:
 	QMultiMap<QString, AbstractPayloadFactory*> factoriesByUri;
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
-	QWeakPointer<QNetworkProxyFactory> proxyFactory;
 	int depth;
 	IQReply *createIQReply() { return new IQReply(q_func()); }
 	void _q_iq_received(const Jreen::IQ &iq, int context);
