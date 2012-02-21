@@ -153,7 +153,7 @@ void ClientPrivate::init()
 	q_ptr->registerPayload(new SoftwareVersionFactory);
 	q_ptr->registerPayload(new MoodFactory);
 	q_ptr->registerPayload(new TuneFactory);
-	//q_ptr->registerPayload(new ActivityFactory); Sokol, try to add activitypep converter
+	q_ptr->registerPayload(new ActivityFactory);
 	q_ptr->registerPayload(new VCardFactory);
 	q_ptr->registerPayload(new PingFactory);
 	q_ptr->registerPayload(new VCardUpdateFactory);
