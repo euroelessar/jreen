@@ -247,20 +247,19 @@ void MUCRoomPrivate::handleMessage(const Message &msg)
 {
 	Q_Q(MUCRoom);
 	bool nice = false;
+	bool isPrivate = (msg.subtype() != Message::Groupchat);
 	if (msg.from() == jid.bare()) {
-		qDebug() << "service message" << msg.from() << jid;
 		emit q->serviceMessageReceived(msg);
 		nice = true;
 	}
 	if (!msg.subject().isEmpty()) {
-		qDebug() << "subject message" << msg.from() << jid;
 		subject = msg.subject();
 		emit q->subjectChanged(subject, msg.from().resource());
 		nice = true;
 	}
-	if (!nice && !msg.body().isEmpty()) {
-		qDebug() << "common message" << msg.from() << jid;
-		emit q->messageReceived(msg, msg.subtype() != Message::Groupchat);
+	// We want to receive "service" messages like chat states for private sessions
+	if (!nice && (isPrivate || !msg.body().isEmpty())) {
+		emit q->messageReceived(msg, isPrivate);
 	}
 }
 
