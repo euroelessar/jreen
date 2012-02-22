@@ -239,7 +239,15 @@ public:
 		writer->writeAttribute(QLatin1String("to"), jid.domain());
 		writer->writeDefaultNamespace(QLatin1String("jabber:client"));
 		writer->writeAttribute(QLatin1String("xmlns:stream"), QLatin1String("http://etherx.jabber.org/streams"));
-		writer->writeAttribute(QLatin1String("xml:lang"), QLatin1String("en"));
+		QLocale locale;
+		QString language;
+		if (locale.language() == QLocale::C) {
+			language = QLatin1String("en");
+		} else {
+			QString localeName = locale.name();
+			language = localeName.section(QLatin1Char('_'), 0, 0);
+		}
+		writer->writeAttribute(QLatin1String("xml:lang"), language);
 		writer->writeAttribute(QLatin1String("version"), QLatin1String("1.0"));
 		writer->writeCharacters(QString());
 	}
