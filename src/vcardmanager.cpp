@@ -151,4 +151,4 @@ Error::Ptr VCardReply::error() const
 }
 }
 
-#include "vcardmanager.moc"
+#include "moc_vcardmanager.cpp"

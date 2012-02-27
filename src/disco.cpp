@@ -677,4 +677,4 @@ Jreen::Error::Ptr DiscoReply::error() const
 
 }
 
-#include "disco.moc"
+#include "moc_disco.cpp"

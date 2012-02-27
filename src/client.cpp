@@ -583,4 +583,4 @@ QString Client::password() const
 
 }
 
-#include "client.moc"
+#include "moc_client.cpp"
