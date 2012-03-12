@@ -1,3 +1,9 @@
+Version 1.0.2
+	* Added support for ProxyFactory
+	* Added immunity to invalid stanzas
+	* Added localization support for incoming stanzas
+	* Fixed QJDns initialization behaviour
+
 Version 1.0.1:
 	* Fixed segfault at SASL initialization
 	* Fixed Facebook support
