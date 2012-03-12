@@ -28,20 +28,26 @@
 namespace Jreen
 {
 
-SJDns *SJDns::instance()
+SJDns &SJDns::instance()
 {
 	static SJDns *sjdns = 0;
+	if (sjdns && !sjdns->m_valid) {
+		delete sjdns;
+		sjdns = 0;
+	}
 	if (!sjdns) {
 		sjdns = new SJDns;
-		sjdns->qjdns = new QJDns;
-		if (!sjdns->qjdns->init(QJDns::Unicast, QHostAddress::Any)) {
-			delete sjdns;
-			sjdns = 0;
-			return 0;
+		sjdns->m_qjdns = new QJDns;
+		sjdns->m_valid = true;
+		if (!sjdns->m_qjdns->init(QJDns::Unicast, QHostAddress::Any)) {
+			delete sjdns->m_qjdns;
+			sjdns->m_qjdns = 0;
+			sjdns->m_valid = false;
+			return *sjdns;
 		}
-		connect(sjdns->qjdns, SIGNAL(resultsReady(int,QJDns::Response)), sjdns, SLOT(resultsReady(int,QJDns::Response)));
-		connect(sjdns->qjdns, SIGNAL(published(int)), sjdns, SLOT(published(int)));
-		connect(sjdns->qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
+		connect(sjdns->m_qjdns, SIGNAL(resultsReady(int,QJDns::Response)), sjdns, SLOT(resultsReady(int,QJDns::Response)));
+		connect(sjdns->m_qjdns, SIGNAL(published(int)), sjdns, SLOT(published(int)));
+		connect(sjdns->m_qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
 
 		QJDns::SystemInfo info = QJDns::systemInfo();
 		if (info.nameServers.isEmpty()) {
@@ -51,14 +57,20 @@ SJDns *SJDns::instance()
 			server.address = QLatin1String("77.88.39.152");
 			info.nameServers << server;
 		}
-		sjdns->qjdns->setNameServers(info.nameServers);
+		sjdns->m_qjdns->setNameServers(info.nameServers);
 	}
-	return sjdns;
+	return *sjdns;
+}
+
+bool SJDns::isValid()
+{
+	return m_valid;
 }
 
 void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
 {
-	int id = qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
+	Q_ASSERT(m_valid);
+	int id = m_qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
 	Action *action = new Action(this);
 	action->setData(host);
 	connect(action, SIGNAL(triggered()), receiver, member);
@@ -67,6 +79,7 @@ void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
 
 const QJDns::Response *SJDns::servers(const QString &host)
 {
+	Q_ASSERT(m_valid);
 	QHash<QString, QJDns::Response>::const_iterator iter = m_results.find(host);
 	if(iter == m_results.constEnd())
 		return 0;

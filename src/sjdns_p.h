@@ -41,11 +41,13 @@ namespace Jreen
 class SJDns : QObject
 {
 	Q_OBJECT
-	QJDns *qjdns;
+	QJDns *m_qjdns;
+	bool m_valid;
 	SJDns() {}
 	~SJDns() {}
 public:
-	static SJDns *instance();
+	static SJDns &instance();
+	bool isValid();
 	void doLookup(const QString &host, QObject *receiver, const char *member);
 	const QJDns::Response *servers(const QString &host);
 

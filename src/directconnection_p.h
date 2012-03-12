@@ -81,10 +81,12 @@ public:
 	void doLookup()
 	{
 		qDebug() << "doLookup";
-		stateChanged(QAbstractSocket::HostLookupState);
+		emit stateChanged(QAbstractSocket::HostLookupState);
 
-		if (SJDns::instance())
-			SJDns::instance()->doLookup(host_name, this, SLOT(lookupResultsReady()));
+		if (SJDns::instance().isValid())
+			SJDns::instance().doLookup(host_name, this, SLOT(lookupResultsReady()));
+		else
+			emit stateChanged(QAbstractSocket::UnconnectedState);
 	}
 	QAbstractSocket *socket;
 	QString host_name;
@@ -98,7 +100,7 @@ public:
 public slots:
 	void lookupResultsReady()
 	{
-		const QJDns::Response *response = SJDns::instance()->servers(host_name);
+		const QJDns::Response *response = SJDns::instance().servers(host_name);
 		dns_records.clear();
 		if(!response || !response->answerRecords.size()) {
 			Record record;
