@@ -28,15 +28,17 @@
 namespace Jreen
 {
 
-SJDns &SJDns::instance()
+SJDns *SJDns::instance()
 {
 	static SJDns *sjdns = 0;
-	if(!sjdns)
-	{
+	if (!sjdns) {
 		sjdns = new SJDns;
 		sjdns->qjdns = new QJDns;
-		sjdns->qjdns->init(QJDns::Unicast, QHostAddress::Any);
-		QJDns::NameServer host;
+		if (!sjdns->qjdns->init(QJDns::Unicast, QHostAddress::Any)) {
+			delete sjdns;
+			sjdns = 0;
+			return 0;
+		}
 		connect(sjdns->qjdns, SIGNAL(resultsReady(int,QJDns::Response)), sjdns, SLOT(resultsReady(int,QJDns::Response)));
 		connect(sjdns->qjdns, SIGNAL(published(int)), sjdns, SLOT(published(int)));
 		connect(sjdns->qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
@@ -51,7 +53,16 @@ SJDns &SJDns::instance()
 		}
 		sjdns->qjdns->setNameServers(info.nameServers);
 	}
-	return *sjdns;
+	return sjdns;
+}
+
+void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
+{
+	int id = qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
+	Action *action = new Action(this);
+	action->setData(host);
+	connect(action, SIGNAL(triggered()), receiver, member);
+	m_actions.insert(id, action);
 }
 
 const QJDns::Response *SJDns::servers(const QString &host)
@@ -70,6 +81,11 @@ void SJDns::resultsReady(int id, const QJDns::Response &results)
 		qDebug() << record.name << record.port << record.priority << record.weight;
 	m_results.insert(action->data().toString(), results);
 	action->trigger();
+}
+
+void SJDns::published(int id)
+{
+	Q_UNUSED(id);
 }
 
 void SJDns::error(int id, QJDns::Error e)

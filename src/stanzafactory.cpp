@@ -67,13 +67,18 @@ void StanzaFactory::writePayloads(Stanza *stanza, QXmlStreamWriter *writer)
 	}
 }
 
+void StanzaFactory::writeEscapedString(const QString &str, QXmlStreamWriter *writer)
+{
+	writer->writeCharacters(str);
+}
+
 void StanzaFactory::writeLangMap(const QString &tag, const LangMap &map, QXmlStreamWriter *writer)
 {
 	foreach(QString lang,map.langs()) {
 		writer->writeStartElement(tag);
 		if(!lang.isEmpty())
 			writer->writeAttribute(QLatin1String("xml:lang"),lang);
-		writer->writeCharacters(map.value(lang));
+		writeEscapedString(map.value(lang), writer);
 		writer->writeEndElement();
 	}
 }
