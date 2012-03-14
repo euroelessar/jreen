@@ -28,7 +28,7 @@
 #include "iq_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
-#include <QDebug>
+#include "logger.h"
 
 #define NS_BIND QLatin1String("urn:ietf:params:xml:ns:xmpp-bind")
 
@@ -148,7 +148,7 @@ void BindFeature::reset()
 bool BindFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	return name == QLatin1String("bind") && uri == NS_BIND;
 }
 
@@ -157,7 +157,7 @@ void BindFeature::handleStartElement(const QStringRef &name, const QStringRef &u
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	m_hasFeature = true;
 }
 

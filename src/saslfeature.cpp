@@ -26,7 +26,7 @@
 #include "saslfeature_p.h"
 #include "client_p.h"
 #include <QUrl>
-#include <QDebug>
+#include "logger.h"
 
 #ifdef HAVE_SIMPLESASL
 # include "../3rdparty/simplesasl/simplesasl.h"
@@ -186,6 +186,6 @@ void SASLFeature::onAuthCheck(const QString &user, const QString &authzid)
 void SASLFeature::onError()
 {
 	m_info->completed(StreamInfo::AuthorizationFailed);
-	qDebug() << Q_FUNC_INFO << (m_sasl ? m_sasl->errorCode() : -1);
+	Logger::debug() << Q_FUNC_INFO << (m_sasl ? m_sasl->errorCode() : -1);
 }
 }

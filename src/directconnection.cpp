@@ -67,8 +67,8 @@ bool DirectConnection::open()
 	if(d->do_lookup) {
 		d->doLookup();
 	} else {
-		qDebug() << "connectToHost" << d->host_name << d->port;
-		qDebug() << "proxy" << d->socket->proxy().type() << d->socket->proxy().hostName() << d->socket->proxy().port();
+		Logger::debug() << "connectToHost" << d->host_name << d->port;
+		Logger::debug() << "proxy" << d->socket->proxy().type() << d->socket->proxy().hostName() << d->socket->proxy().port();
 		if (QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket)) {
 			socket->setPeerVerifyMode(QSslSocket::VerifyNone);
 			QSslConfiguration conf = socket->sslConfiguration();

@@ -25,6 +25,7 @@
 
 #include "stanzafactory_p.h"
 #include "client_p.h"
+#include "logger.h"
 
 namespace Jreen
 {
@@ -63,7 +64,7 @@ void StanzaFactory::writePayloads(Stanza *stanza, QXmlStreamWriter *writer)
 		if(factory)
 			factory->serialize(extension.data(),writer);
 		else
-			qDebug("Invalid stanza extesion %d", extension->payloadType());
+			Logger::debug() << "Invalid stanza extesion" << extension->payloadType();
 	}
 }
 

@@ -28,6 +28,7 @@
 #include "pubsubeventfactory_p.h"
 #include <QXmlStreamWriter>
 #include <QStringList>
+#include "logger.h"
 
 #define NS_PUBSUB QLatin1String("http://jabber.org/protocol/pubsub")
 
@@ -112,7 +113,7 @@ void PublishFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		node = factory ? factory->features().value(0) : QString();
 	}
 	if (!factory || node.isEmpty()) {
-		qWarning("Invalid stanza extension at PubSub::Publish");
+		Logger::warning() << "Invalid stanza extension at PubSub::Publish";
 		return;
 	}
 	writer->writeStartElement(QLatin1String("pusbsub"));

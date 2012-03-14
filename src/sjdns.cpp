@@ -24,6 +24,7 @@
 ****************************************************************************/
 
 #include "sjdns_p.h"
+#include "logger.h"
 
 namespace Jreen
 {
@@ -91,7 +92,7 @@ void SJDns::resultsReady(int id, const QJDns::Response &results)
 	Action *action = m_actions.value(id, 0);
 	Q_ASSERT(action);
 	foreach(const QJDns::Record &record, results.answerRecords)
-		qDebug() << record.name << record.port << record.priority << record.weight;
+		Logger::debug() << record.name << record.port << record.priority << record.weight;
 	m_results.insert(action->data().toString(), results);
 	action->trigger();
 }
@@ -112,19 +113,18 @@ void SJDns::error(int id, QJDns::Error e)
 	response.answerRecords << record;
 	m_results.insert(record.name, response);
 	action->trigger();
-	switch(e)
-	{
+	switch (e) {
 	case QJDns::ErrorGeneric:
-		qDebug("error %s %d", "Generic", id);
+		Logger::critical() << "error Generic" << id;
 		break;
 	case QJDns::ErrorNXDomain:
-		qDebug("error %s %d", "NXDomain", id);
+		Logger::critical() << "error NXDomain" << id;
 		break;
 	case QJDns::ErrorTimeout:
-		qDebug("error %s %d", "Timeout", id);
+		Logger::critical() << "error Timeout" << id;
 		break;
 	case QJDns::ErrorConflict:
-		qDebug("error %s %d", "Conflict", id);
+		Logger::critical() << "error Conflict" << id;
 		break;
 	}
 }

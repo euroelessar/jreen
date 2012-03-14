@@ -28,7 +28,7 @@
 #include <QXmlStreamWriter>
 #include "util.h"
 #include "multimediadatafactory_p.h"
-#include <QDebug>
+#include "logger.h"
 #define NS_DATAFORM QLatin1String("jabber:x:data")
 
 namespace Jreen {
@@ -170,7 +170,7 @@ public:
 		if(m_state == AtOption) {
 			m_optionParser.handleEndElement(name,uri);
 			if(m_depth == 2) {
-				qDebug() << m_optionParser.create();
+				Logger::debug() << m_optionParser.create();
 				m_options.append(m_optionParser.create());
 			}
 		}
@@ -219,7 +219,7 @@ public:
 		d->label = m_label;
 		d->type = m_type;
 		d->options = m_options;
-//		qDebug() << m_label << m_var << field.var() << field.label() << d->var << d->label;
+//		Logger::debug() << m_label << m_var << field.var() << field.label() << d->var << d->label;
 		d->required = m_required;
 		clear();
 		return field;

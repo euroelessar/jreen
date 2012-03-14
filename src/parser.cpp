@@ -28,7 +28,7 @@
 #include "subscription.h"
 #include "presence.h"
 #include <QCoreApplication>
-#include <QDebug>
+#include "logger.h"
 #ifdef PARSER_DEBUG_SPEED
 #include <QTime>
 #endif
@@ -195,7 +195,7 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 	}
 	foreach (XmlStreamParser *parser, d->parsers)
 		parser->handleStartElement(name, uri, attributes);
-	//				qDebug() << d->reader->tokenString() << d->depth << name;
+	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
 #ifdef PARSER_DEBUG_SPEED
 	d->parsingTime += counter.elapsed();
 #endif
@@ -248,19 +248,19 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		d->totalParsingTime += d->parsingTime;
 		int logicTime = counter.elapsed();
 		d->totalLogicTime += logicTime;
-		qDebug("Total parsing time: %d ms", d->totalParsingTime);
-		qDebug("Parsing time: %d ms", d->parsingTime);
-		qDebug("Total logic time: %d ms", d->totalLogicTime);
-		qDebug("Total IQ logic time: %d ms", d->stanzaLogicTime[0]);
-		qDebug("Total Presence logic time: %d ms", d->stanzaLogicTime[1]);
-		qDebug("Total Message logic time: %d ms", d->stanzaLogicTime[2]);
-		qDebug("Logic time: %d ms", logicTime);
+		Logger::debug() << "Total parsing time:" << d->totalParsingTime << "ms";
+		Logger::debug() << "Parsing time:" << d->parsingTime << "ms";
+		Logger::debug() << "Total logic time:" << d->totalLogicTime << "ms";
+		Logger::debug() << "Total IQ logic time:" << d->stanzaLogicTime[0] << "ms";
+		Logger::debug() << "Total Presence logic time:" << d->stanzaLogicTime[1] << "ms";
+		Logger::debug() << "Total Message logic time:" << d->stanzaLogicTime[2] << "ms";
+		Logger::debug() << "Logic time:" << logicTime << "ms";
 #endif
 		d->state = WaitingForStanza;
 	} else if (d->depth == 0) {
 	}
 	d->parsers.resize(d->parsersCount.pop());
-	//				qDebug() << d->reader->tokenString() << d->depth << name;
+	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
 }
 
 void Parser::handleCharacterData(const QStringRef &text)
@@ -310,10 +310,10 @@ void Parser::parseData()
 			}
 		}
 		if (d->nullReader.error() == QXmlStreamReader::NotWellFormedError) {
-			qWarning() << "---------------------------------";
-			qWarning() << "Broken stanza (" << d->nullReader.errorString() << ")";
-			qWarning() << result;
-			qWarning() << "---------------------------------";
+			Logger::warning() << "---------------------------------";
+			Logger::warning() << "Broken stanza (" << d->nullReader.errorString() << ")";
+			Logger::warning() << result;
+			Logger::warning() << "---------------------------------";
 			result.prepend("<!--");
 			result.append("-->");
 			foreach (XmlStreamHandler *handler, d->client->streamHandlers)

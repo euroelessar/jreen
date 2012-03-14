@@ -32,7 +32,7 @@
 #include "jreen.h"
 #include "directconnection.h"
 #include "sjdns_p.h"
-#include <QDebug>
+#include "logger.h"
 #include <QUrl>
 
 namespace Jreen
@@ -80,7 +80,7 @@ public:
 	}
 	void doLookup()
 	{
-		qDebug() << "doLookup";
+		Logger::debug() << "doLookup";
 		emit stateChanged(QAbstractSocket::HostLookupState);
 
 		if (SJDns::instance().isValid())
@@ -121,12 +121,12 @@ public slots:
 			}
 		}
 		Record &record = dns_records[0];
-		qDebug() << "use:" << record.host << record.port;
+		Logger::debug() << "use:" << record.host << record.port;
 		socket->connectToHost(record.host, record.port);
 	}
 	void stateChanged(QAbstractSocket::SocketState ss)
 	{
-		qDebug() << ss;
+		Logger::debug() << ss;
 		if(socket_state == ss)
 			return;
 

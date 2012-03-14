@@ -27,7 +27,7 @@
 #include "client.h"
 #include <QBasicTimer>
 #include <QTimerEvent>
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {

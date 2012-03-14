@@ -27,6 +27,7 @@
 #include "pubsubeventfactory_p.h"
 #include "pubsubpublishfactory_p.h"
 #include "client_p.h"
+#include "logger.h"
 
 namespace Jreen
 {
@@ -135,7 +136,7 @@ void Manager::addEntityType(int type)
 	Q_ASSERT(!node.isEmpty());
 	d->client->disco()->addFeature(node);
 	d->client->disco()->addFeature(node + QLatin1String("+notify"));
-	qDebug("%s %d %s", Q_FUNC_INFO, d->factories.size(), qPrintable(node));
+	Logger::debug() << Q_FUNC_INFO << d->factories.size() << node;
 }
 
 void Manager::handleMessage(const Jreen::Message &message)

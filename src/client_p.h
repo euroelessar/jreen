@@ -26,7 +26,7 @@
 
 #ifndef CLIENT_P_H
 #define CLIENT_P_H
-#include <QDebug>
+#include "logger.h"
 #include <QXmlStreamWriter>
 
 #include "client.h"
@@ -208,7 +208,7 @@ public:
 	void _q_new_data()
 	{
 		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();
-		//		qDebug() << "-" << data.size() << data;
+		//		Logger::debug() << "-" << data.size() << data;
 		parser->appendData(data);
 		//		parser->appendData(data);
 		_q_read_more();

@@ -26,7 +26,7 @@
 #include "messagesession.h"
 #include "client_p.h"
 #include "util.h"
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {
@@ -199,9 +199,9 @@ MessageSession *MessageSessionManager::session(const JID &jid, Message::Type typ
 {
 	Q_D(MessageSessionManager);
 	QList<QPointer<MessageSession> > sessions = d->fullSessions.values(jid.full());
-	qDebug() << "d->full_sessions" << d->fullSessions;
+	Logger::debug() << "d->full_sessions" << d->fullSessions;
 	foreach(MessageSession *session, sessions)
-		qDebug() << "MessageSession" << (session ? session->jid() : JID());
+		Logger::debug() << "MessageSession" << (session ? session->jid() : JID());
 	for(int i = 0; i < sessions.size(); i++)
 	{
 		if(sessions[i].isNull())

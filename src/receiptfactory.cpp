@@ -27,7 +27,7 @@
 #include <QXmlStreamReader>
 #include <QMap>
 #include "jstrings.h"
-#include <QDebug>
+#include "logger.h"
 
 #define NS_RECEIPT QLatin1String("urn:xmpp:receipts")
 

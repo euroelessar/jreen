@@ -321,8 +321,8 @@ void Client::send(const Stanza &stanza)
 void Client::send(const Presence &pres)
 {
 	Q_D(Client);
-	qDebug() << Q_FUNC_INFO << d->jid << d->conn << pres.priority();
-	qDebug() << d->conn->isOpen();
+	Logger::debug() << Q_FUNC_INFO << d->jid << d->conn << pres.priority();
+	Logger::debug() << d->conn->isOpen();
 	if(!d->conn || !d->conn->isOpen() || !d->isConnected)
 		return;
 	if (StanzaPrivate::get(pres) == StanzaPrivate::get(d->presence)) {
@@ -347,7 +347,7 @@ IQReply *Client::send(const IQ &iq)
 		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
 
-	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
+	Logger::debug() << "send iq to" << iq.to() << "from" << iq.from();
 	d->send(iq);
 	if (iq.subtype() == IQ::Set || iq.subtype() == IQ::Get) {
 		IQReply *reply = d->createIQReply();
@@ -369,7 +369,7 @@ void Client::send(const IQ &iq, QObject *handler, const char *member, int contex
 		const_cast<StanzaPrivate*>(p)->id = getID();
 	}
 
-	qDebug() << "send iq to" << iq.to() << "from" << iq.from();
+	Logger::debug() << "send iq to" << iq.to() << "from" << iq.from();
 	d->send(iq);
 	if (iq.subtype() == IQ::Set || iq.subtype() == IQ::Get) {
 		IQReply *reply = new IQTrack(handler, member, context, this);
@@ -500,7 +500,7 @@ void ClientPrivate::_q_iq_received(const IQ &iq, int context)
 		serverIdentities = info->identities();
 		emit q_ptr->serverFeaturesReceived(serverFeatures);
 		emit q_ptr->serverIdentitiesReceived(serverIdentities);
-		qDebug() << serverFeatures;
+		Logger::debug() << serverFeatures;
 	}
 }
 
@@ -567,7 +567,7 @@ void Client::handleIQ(const IQ &iq)
 
 void Client::handleMessage(const Message &message)
 {
-	qDebug() << "Handle message" << message.from();
+	Logger::debug() << "Handle message" << message.from();
 	emit messageReceived(message);
 }
 
