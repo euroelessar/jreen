@@ -75,7 +75,7 @@ void BitsOfBinaryFactory::handleEndElement(const QStringRef &name, const QString
 void BitsOfBinaryFactory::handleCharacterData(const QStringRef &text)
 {
 	if (m_depth == 1)
-		m_query->setData(QByteArray::fromBase64(text.toLatin1()));
+		m_query->setData(QByteArray::fromBase64(text.toString().toLatin1()));
 }
 
 void BitsOfBinaryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
