@@ -180,9 +180,15 @@ void RegistrationManagerPrivate::_q_result_received(const Jreen::IQ &iq)
 		emit q->error(iq.error());
 	} else {
 		QObject::disconnect(client, 0, q, 0);
-		client->removeStreamFeature(feature);
-		delete feature;
-		feature = 0;
+		for (int i = 0; i < configs.size(); ++i) {
+			Client::Feature feature = static_cast<Client::Feature>(i);
+			client->setFeatureConfig(feature, configs[i]);
+		}
+		if (feature) {
+			client->removeStreamFeature(feature);
+			delete feature;
+			feature = 0;
+		}
 		emit q->success();
 	}
 }
@@ -224,8 +230,13 @@ void RegistrationManager::registerAtServer()
 	        SLOT(_q_on_disconnect(Jreen::Client::DisconnectReason)));
 	d->client->setJID(d->service);
 	d->client->registerStreamFeature(d->feature);
-	d->client->connectToServer();
+	d->configs.resize(3);
+	for (int i = 0; i < 3; ++i) {
+		Client::Feature feature = static_cast<Client::Feature>(i);
+		d->configs[i] = d->client->featureConfig(feature);
+	}
 	d->client->setFeatureConfig(Client::Authorization, Client::Disable);
+	d->client->connectToServer();
 }
 
 void RegistrationManager::registerAtService()

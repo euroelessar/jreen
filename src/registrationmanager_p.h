@@ -81,6 +81,7 @@ public:
 	bool fieldsReceived;
 	bool waitingForConnection;
 	QQueue<QPair<Jreen::IQ, QByteArray> > iqs;
+	QVector<Client::FeatureConfig> configs;
 	JID service;
 };
 
