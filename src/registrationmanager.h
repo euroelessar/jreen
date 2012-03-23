@@ -98,6 +98,7 @@ signals:
 	void formReceived(const Jreen::RegistrationData &data);
 	void error(const Jreen::Error::Ptr &error);
 	void success();
+	void unsupported();
 	
 public slots:
 	void registerAtServer();

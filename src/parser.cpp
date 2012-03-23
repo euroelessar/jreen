@@ -77,19 +77,79 @@ void Parser::reset()
 	d->extensions.clear();
 }
 
+static Client::Feature convertToFeature(int type)
+{
+	switch (type) {
+	case StreamFeature::CompressionLayer:
+		return Client::Compression;
+	case StreamFeature::SecurityLayer:
+		return Client::Encryption;
+	case StreamFeature::SASL:
+	case StreamFeature::SimpleAuthorization:
+		return Client::Authorization;
+	default:
+		return Client::InvalidFeature;
+	}
+}
+
+static Client::DisconnectReason convertToReason(Client::Feature feature)
+{
+	switch (feature) {
+	case Client::Encryption:
+		return Client::NoEncryptionSupport;
+	case Client::Compression:
+		return Client::NoCompressionSupport;
+	case Client::Authorization:
+		return Client::NoAuthorizationSupport;
+	default:
+		return Client::NoSupportedFuture;
+	}
+}
+
+static bool checkFeature(ClientPrivate *client, Client::Feature feature)
+{
+	if (client->configs[feature] == Client::Force
+	        && !(client->usedFeatures & (1 << feature))) {
+		client->emitDisconnected(convertToReason(feature));
+		return false;
+	}
+	return true;
+}
+
 void Parser::activateFeature()
 {
 	Q_D(Parser);
 	int i = d->client->features.indexOf(d->client->current_stream_feature) + 1;
 	d->client->current_stream_feature = 0;
+	bool foundAny = false;
 	for (; i < d->client->features.size(); i++) {
 		StreamFeature *feature = d->client->features.at(i);
+		Client::Feature clientFeature = convertToFeature(feature->type());
+		Client::FeatureConfig config = d->client->configs.value(clientFeature, Client::Auto);
+		if (config == Client::Disable)
+			continue;
+		if (clientFeature == Client::InvalidFeature
+		        && (!checkFeature(d->client, Client::Encryption)
+		            || !checkFeature(d->client, Client::Compression)
+		            || !checkFeature(d->client, Client::Authorization))) {
+			return;
+		}
+		if (clientFeature == Client::Authorization
+		        && !checkFeature(d->client, Client::Encryption)) {
+			return;
+		}
 		if (feature->isActivatable()) {
 			d->client->current_stream_feature = feature;
-			feature->activate();
-			break;
+			if (feature->activate()) {
+				if (clientFeature != Client::InvalidFeature)
+					d->client->usedFeatures |= (1 << clientFeature);
+				foundAny = true;
+				break;
+			}
 		}
 	}
+	if (!foundAny)
+		d->client->emitDisconnected(Client::NoSupportedFuture);
 }
 
 #define XML_HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

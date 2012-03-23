@@ -240,6 +240,20 @@ void Client::setProxy(const QNetworkProxy &proxy)
 	d->proxy = proxy;
 }
 
+void Client::setFeatureConfig(Client::Feature feature, Client::FeatureConfig config)
+{
+	Q_D(Client);
+	if (feature < 0 || feature >= d->configs.size())
+		return;
+	d->configs[feature] = config;
+}
+
+Client::FeatureConfig Client::featureConfig(Client::Feature feature)
+{
+	Q_D(Client);
+	return d->configs.value(feature, Auto);
+}
+
 QNetworkProxy Client::proxy() const
 {
 	return d_func()->proxy;

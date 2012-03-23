@@ -134,6 +134,10 @@ public:
 		device = new BufferedDataStream(&streamHandlers);
 		device->open(QIODevice::ReadWrite);
 		q->connect(device, SIGNAL(readyRead()), q, SLOT(_q_new_data()));
+		configs.append(Client::Auto);
+		configs.append(Client::Auto);
+		configs.append(Client::Force);
+		usedFeatures = 0;
 	}
 	void init();
 	void send(const Stanza &stanza)
@@ -193,6 +197,8 @@ public:
 	StreamFeature *current_stream_feature;
 	QHash<QString, IQReply*> iqTracks;
 	QXmlStreamWriter *writer;
+	QVector<Client::FeatureConfig> configs;
+	int usedFeatures;
 	QList<StanzaFactory*> stanzas;
 	QList<StreamFeature*> features;
 	QSet<QString> serverFeatures;
@@ -264,6 +270,7 @@ public:
 	{
 		pingTimer.stop();
 		isConnected = false;
+		usedFeatures = 0;
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamEnd();
 		authorized = false;

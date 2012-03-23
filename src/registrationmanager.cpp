@@ -189,10 +189,16 @@ void RegistrationManagerPrivate::_q_result_received(const Jreen::IQ &iq)
 
 void RegistrationManagerPrivate::_q_on_disconnect(Client::DisconnectReason reason)
 {
+	Q_Q(RegistrationManager);
 	waitingForConnection = true;
-	Logger::debug() << Q_FUNC_INFO << reason;
-	Q_UNUSED(reason);
-	QTimer::singleShot(0, client, SLOT(connectToServer()));
+	if (reason == Client::NoSupportedFuture
+	        || reason == Client::NoEncryptionSupport
+	        || reason == Client::NoCompressionSupport
+	        || reason == Client::NoAuthorizationSupport) {
+		emit q->unsupported();
+	} else {
+		QTimer::singleShot(0, client, SLOT(connectToServer()));
+	}
 }
 
 RegistrationManager::RegistrationManager(const JID &service, Client *client)
@@ -219,6 +225,7 @@ void RegistrationManager::registerAtServer()
 	d->client->setJID(d->service);
 	d->client->registerStreamFeature(d->feature);
 	d->client->connectToServer();
+	d->client->setFeatureConfig(Client::Authorization, Client::Disable);
 }
 
 void RegistrationManager::registerAtService()

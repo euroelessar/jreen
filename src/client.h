@@ -80,8 +80,26 @@ public:
 		InternalServerError,
 		SystemShutdown,
 		Conflict,
-		Unknown
+		Unknown,
+		NoCompressionSupport,
+		NoEncryptionSupport,
+		NoAuthorizationSupport,
+		NoSupportedFuture
 	};
+
+	enum Feature {
+		InvalidFeature = -1,
+		Compression = 0,
+		Encryption,
+		Authorization
+	};
+
+	enum FeatureConfig {
+		Force,
+		Disable,
+		Auto
+	};
+
 	Client(const JID &jid, const QString &password = QString(), int port = -1);
 	Client();
 	virtual ~Client();
@@ -93,6 +111,8 @@ public:
 	void setResource(const QString &resource);
 	void setPort(int port);
 	void setProxy(const QNetworkProxy &proxy);
+	void setFeatureConfig(Feature feature, FeatureConfig config);
+	FeatureConfig featureConfig(Feature feature);
 	QNetworkProxy proxy() const;
 	void setProxyFactory(QNetworkProxyFactory *factory);
 	QNetworkProxyFactory *proxyFactory() const;
