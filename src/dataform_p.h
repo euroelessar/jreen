@@ -45,6 +45,7 @@ namespace Jreen
 		QStringList values;
 		bool required;
 		QList<QPair<QString,QString> > options;
+		DataFormMedia::Ptr media;
 		
 		static DataFormFieldPrivate *get(DataFormField *field) { return field->d_ptr.data(); }
 	private:
@@ -71,6 +72,7 @@ namespace Jreen
 	{
 	public:
 		QString title;
+		QString instructions;
 		DataFormReported::Ptr reported;
 		QList<DataFormItem::Ptr> items;
 		DataForm::Type type;

@@ -115,7 +115,8 @@ public:
 	void setConnection(Connection *conn);
 	Connection *connection() const;
 	void registerPayload(AbstractPayloadFactory *factory);
-	void registerStreamFeature(StreamFeature *stream_feature);
+	void registerStreamFeature(StreamFeature *streamFeature);
+	void removeStreamFeature(StreamFeature *streamFeature);
 public slots:
 	void setPresence();
 	void setPresence(Jreen::Presence::Type type, const QString &text = QString(), int priority = -129);

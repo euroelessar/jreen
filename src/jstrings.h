@@ -65,19 +65,19 @@ Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
 	return -1;
 }
 
-template<typename T, int N, typename X>
-Q_INLINE_TEMPLATE int strToFlag(const T &str, const char *(&strings)[N])
+template<typename X, typename T, int N>
+Q_INLINE_TEMPLATE X strToFlag(const T &str, const char *(&strings)[N])
 {
 	return static_cast<X>(strToFlag(str,strings));
 }
 
 template<int N>
-Q_INLINE_TEMPLATE QString flagToStr(int i, const char *(&strings)[N])
+Q_INLINE_TEMPLATE QString flagToStr(uint i, const char *(&strings)[N])
 {
-	int n=1;
-	while(n < i)
-		n <<= 1;
-	if(n<0 || n>=N)
+	uint n = 1;
+	while ((1 << n) < i && n < N)
+		++n;
+	if (n >= N)
 		return QString();
 	return QLatin1String(strings[n]);
 }

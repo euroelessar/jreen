@@ -108,11 +108,17 @@ Q_INLINE_TEMPLATE int PayloadFactory<Extension>::payloadType() const
 }
 
 template <typename T>
-Q_INLINE_TEMPLATE T se_cast(Payload *se)
+Q_INLINE_TEMPLATE T payload_cast(Payload *se)
 {
 	if (se && reinterpret_cast<T>(0)->staticPayloadType() == se->payloadType())
 		return static_cast<T>(se);
 	return 0;
+}
+
+template <typename T>
+Q_INLINE_TEMPLATE T se_cast(Payload *se)
+{
+	return payload_cast<T>(se);
 }
 }
 

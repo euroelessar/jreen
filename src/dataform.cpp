@@ -26,10 +26,138 @@
 
 #include "dataform_p.h"
 #include "jstrings.h"
+#include "stanza.h"
+#include "bitsofbinary.h"
 #include <QStringList>
+#include <QSize>
+#include <QUrl>
 
 namespace Jreen
 {
+
+class DataFormMedia::UriPrivate : public QSharedData
+{
+public:
+	UriPrivate() {}
+	UriPrivate(const UriPrivate &o) : QSharedData(o), url(o.url), type(o.type) {}
+	
+	QUrl url;
+	QString type;
+};
+
+DataFormMedia::Uri::Uri() : d(new UriPrivate)
+{
+}
+
+DataFormMedia::Uri::Uri(const QUrl &url, const QString &type) : d(new UriPrivate)
+{
+	d->url = url;
+	d->type = type;
+}
+
+DataFormMedia::Uri::Uri(const DataFormMedia::Uri &o) : d(o.d)
+{
+}
+
+DataFormMedia::Uri &DataFormMedia::Uri::operator ==(const DataFormMedia::Uri &o)
+{
+	d = o.d;
+	return *this;
+}
+
+DataFormMedia::Uri::~Uri()
+{
+}
+
+bool DataFormMedia::Uri::operator ==(const DataFormMedia::Uri &o) const
+{
+	return d->type == o.d->type && d->url == o.d->url;
+}
+
+QUrl DataFormMedia::Uri::url() const
+{
+	return d->url;
+}
+
+void DataFormMedia::Uri::setUrl(const QUrl &url)
+{
+	d->url = url;
+}
+
+QString DataFormMedia::Uri::type() const
+{
+	return d->type;
+}
+
+void DataFormMedia::Uri::setType(const QString &type)
+{
+	d->type = type;
+}
+
+class DataFormMediaPrivate
+{
+public:
+	QSize size;
+	QList<DataFormMedia::Uri> uries;
+};
+
+DataFormMedia::DataFormMedia() : d_ptr(new DataFormMediaPrivate)
+{
+}
+
+DataFormMedia::~DataFormMedia()
+{
+}
+
+void DataFormMedia::appendUri(const DataFormMedia::Uri &uri)
+{
+	d_func()->uries.append(uri);
+}
+
+void DataFormMedia::appendUri(const QUrl &url, const QString &type)
+{
+	d_func()->uries.append(Uri(url, type));
+}
+
+void DataFormMedia::setUries(const QList<DataFormMedia::Uri> &uries)
+{
+	d_func()->uries = uries;
+}
+
+QList<DataFormMedia::Uri> DataFormMedia::uries() const
+{
+	return d_func()->uries;
+}
+
+QSize DataFormMedia::size() const
+{
+	return d_func()->size;
+}
+
+void DataFormMedia::setSize(const QSize &size)
+{
+	d_func()->size = size;
+}
+
+int DataFormMedia::width() const
+{
+	return d_func()->size.width();
+}
+
+void DataFormMedia::setWidth(int width)
+{
+	d_func()->size.setWidth(width);
+}
+
+int DataFormMedia::height() const
+{
+	return d_func()->size.height();
+}
+
+void DataFormMedia::setHeight(int height)
+{
+	d_func()->size.setHeight(height);
+}
 
 DataFormField::DataFormField(Type type, const QString &var, const QString &label) : d_ptr(new DataFormFieldPrivate)
 {
@@ -95,6 +223,16 @@ QString DataFormField::description() const
 void DataFormField::setDescription(const QString &desc)
 {
 	d_ptr->desc = desc;
+}
+
+DataFormMedia::Ptr DataFormField::media() const
+{
+	return d_ptr->media;
+}
+
+void DataFormField::setMedia(const DataFormMedia::Ptr &media)
+{
+	d_ptr->media = media;
 }
 
 void DataFormField::setValues(const QStringList &values)
@@ -466,6 +604,14 @@ DataForm::DataForm(Type type, const QString &title) : DataFormFieldContainer(*ne
 	d->title = title;
 }
 
+DataForm::DataForm(DataForm::Type type, const QString &title, const QString &instructions) : DataFormFieldContainer(*new DataFormPrivate)
+{
+	Q_D(DataForm);
+	d->type = type;
+	d->title = title;
+	d->instructions = instructions;
+}
+
 DataForm::~DataForm()
 {
 }
@@ -500,6 +646,11 @@ void DataForm::setTypeName(const QString &type)
 QString DataForm::title() const
 {
 	return d_func()->title;
+}
+
+QString DataForm::instructions() const
+{
+	return d_func()->instructions;
 }
 
 QList<DataFormItem::Ptr> DataForm::items() const

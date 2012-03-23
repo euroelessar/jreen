@@ -29,6 +29,7 @@
 #include "client.h"
 #include <QXmlStreamWriter>
 #include "logger.h"
+#include <QCoreApplication>
 
 #define NS_TLS QLatin1String("urn:ietf:params:xml:ns:xmpp-tls")
 
@@ -38,7 +39,7 @@ namespace Jreen
 TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 {
 	QCA::init();
-	QCA::setAppName("qutim");
+	QCA::setAppName(QCoreApplication::applicationName());
 	m_required = false;
 	m_available = false;
 	m_hasTls = QCA::isSupported("tls");

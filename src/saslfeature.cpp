@@ -26,6 +26,7 @@
 #include "saslfeature_p.h"
 #include "client_p.h"
 #include <QUrl>
+#include <QCoreApplication>
 #include "logger.h"
 
 #ifdef HAVE_SIMPLESASL
@@ -38,7 +39,7 @@ namespace Jreen
 SASLFeature::SASLFeature() : StreamFeature(SASL)
 {
 	QCA::init();
-	QCA::setAppName("qutim");	
+	QCA::setAppName(QCoreApplication::applicationName());
 	m_depth = 0;
 	m_isSupported = QCA::isSupported("sasl");
 #ifdef HAVE_SIMPLESASL

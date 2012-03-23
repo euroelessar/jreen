@@ -58,6 +58,8 @@
 #include "chatstatefactory_p.h"
 #include "capabilitiesfactory_p.h"
 #include "errorfactory_p.h"
+#include "registrationqueryfactory_p.h"
+#include "bitsofbinaryfactory_p.h"
 
 // Features
 #include "nonsaslauth_p.h"
@@ -165,6 +167,8 @@ void ClientPrivate::init()
 	q_ptr->registerPayload(new BookmarkFactory);
 	q_ptr->registerPayload(new PrivateXmlQueryFactory(q_ptr));
 	q_ptr->registerPayload(new PrivacyQueryFactory);
+	q_ptr->registerPayload(new RegistrationQueryFactory);
+	q_ptr->registerPayload(new BitsOfBinaryFactory);
 //	client->registerPayload(new PubSub::EventFactory);
 //	client->registerPayload(new PubSub::PublishFacatory);
 	//client->registerPayload(new PrivateXml::QueryFactory);
@@ -243,7 +247,6 @@ QNetworkProxy Client::proxy() const
 
 void Client::setProxyFactory(QNetworkProxyFactory *factory)
 {
-	Q_D(Client);
 	d_func()->proxyFactory.reset(factory);
 }
 
@@ -410,14 +413,21 @@ inline bool featureLessThan(StreamFeature *a, StreamFeature *b)
 	return a->type() == b->type() ? a->priority() > b->priority() : a->type() < b->type();
 }
 
-void Client::registerStreamFeature(StreamFeature *stream_feature)
+void Client::registerStreamFeature(StreamFeature *streamFeature)
 {
 	Q_D(Client);
-	if(!stream_feature)
+	if(!streamFeature)
 		return;
 	d->features.insert(qLowerBound(d->features.begin(), d->features.end(),
-									  stream_feature, featureLessThan), stream_feature);
-	stream_feature->setStreamInfo(d->stream_info);
+	                               streamFeature, featureLessThan), streamFeature);
+	streamFeature->setStreamInfo(d->stream_info);
+}
+
+void Client::removeStreamFeature(StreamFeature *streamFeature)
+{
+	Q_D(Client);
+	d->features.removeAll(streamFeature);
+	streamFeature->setStreamInfo(0);
 }
 
 void Client::setPingInterval(int interval)

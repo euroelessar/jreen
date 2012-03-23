@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,37 +23,27 @@
 **
 ****************************************************************************/
 
-#ifndef MULTIMEDIADATA_H
-#define MULTIMEDIADATA_H
-#include <QVariantMap>
+#ifndef JREEN_REGISTRATIONQUERY_P_H
+#define JREEN_REGISTRATIONQUERY_P_H
+
 #include "stanzaextension.h"
+#include "dataform.h"
+#include "registrationmanager_p.h"
 
-namespace Jreen
-{
+namespace Jreen {
 
-// XEP-0221
-// http://xmpp.org/extensions/xep-0221.html
-class MultimediaDataPrivate;
-class JREEN_EXPORT MultimediaData
+class RegistrationData;
+
+class RegistrationQuery : public Payload
 {
+	J_PAYLOAD(Jreen::RegistrationQuery)
 public:
-	enum Type
-	{
-		Audio,
-		Image
-	};
-	MultimediaData(Type type,const QVariantList &data,const QVariantMap &attributes = QVariantMap());
-	MultimediaData(const MultimediaData &other);
-	~MultimediaData();
-	MultimediaData &operator =(const MultimediaData &o);
-	QVariantMap attributes() const;
-	QVariantList data() const;
-	void setData(const QVariantList &data);
-	void setAttributes(const QVariantMap &attributes);
-private:
-	QSharedDataPointer<MultimediaDataPrivate> d_ptr;
-	friend class MultimediaDataPrivate;
+	RegistrationQuery();
+	RegistrationQuery(const RegistrationData &data);
+	
+	RegistrationDataPrivate::Ptr data;
 };
 
 } // namespace Jreen
-#endif // MULTIMEDIADATA_H
+
+#endif // JREEN_REGISTRATIONQUERY_P_H

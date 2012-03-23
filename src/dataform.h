@@ -40,11 +40,61 @@ namespace Jreen
 // http://xmpp.org/extensions/xep-0004.html
 
 class DataFormFieldPrivate;
+class DataFormMediaPrivate;
+class Stanza;
+
+class JREEN_EXPORT DataFormMedia
+{
+	Q_DECLARE_PRIVATE(DataFormMedia)
+public:
+	typedef QSharedPointer<DataFormMedia> Ptr;
+	
+	class UriPrivate;
+	class JREEN_EXPORT Uri
+	{
+	public:
+		Uri();
+		Uri(const QUrl &url, const QString &type);
+		Uri(const Uri &o);
+		Uri &operator ==(const Uri &o);
+		~Uri();
+		
+		bool operator==(const Uri &o) const;
+		
+		QUrl url() const;
+		void setUrl(const QUrl &url);
+		QString type() const;
+		void setType(const QString &type);
+	private:
+		QSharedDataPointer<UriPrivate> d;
+	};
+	
+	DataFormMedia();
+	~DataFormMedia();
+	
+	void appendUri(const Uri &uri);
+	void appendUri(const QUrl &url, const QString &type);
+	void setUries(const QList<Uri> &uries);
+	QList<Uri> uries() const;
+	
+	QSize size() const;
+	void setSize(const QSize &size);
+	int width() const;
+	void setWidth(int width);
+	int height() const;
+	void setHeight(int height);
+	
+private:
+	Q_DISABLE_COPY(DataFormMedia)
+	QScopedPointer<DataFormMediaPrivate> d_ptr;
+};
+
 class JREEN_EXPORT DataFormField
 {
 public:
 	enum Type
 	{
+		Invalid = -1,
 		Boolean,		/**< The field enables an entity to gather or provide an either-or
 		* choice between two options. The default value is "false". */
 		Fixed,			/**<  The field is intended for data description (e.g., human-readable
@@ -82,8 +132,7 @@ public:
 		* line or word of text, which may be shown in an interface.
 		* This field type is the default and MUST be assumed if a form-submitting
 		* entity receives a field type it does not understand. */
-		None,
-		Invalid
+		None
 	};
 	
 	DataFormField(Type type = Invalid, const QString &var = QString(), const QString &label = QString());
@@ -100,6 +149,9 @@ public:
 	void setLabel(const QString &label);
 	QString description() const;
 	void setDescription(const QString &desc);
+	
+	DataFormMedia::Ptr media() const;
+	void setMedia(const DataFormMedia::Ptr &media);
 	
 	void setValues(const QStringList &values);
 	QStringList values() const;
@@ -329,6 +381,7 @@ public:
 		Invalid
 	};
 	DataForm(Type type = Submit, const QString &title = QString());
+	DataForm(Type type, const QString &title, const QString &instructions);
 	virtual ~DataForm();
 	
 	Type type() const;
@@ -336,6 +389,7 @@ public:
 	QString typeName() const;
 	void setTypeName(const QString &type);
 	QString title() const;
+	QString instructions() const;
 	QList<DataFormItem::Ptr> items() const;
 	DataFormReported::Ptr reported() const;
 };

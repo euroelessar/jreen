@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,34 +23,35 @@
 **
 ****************************************************************************/
 
-#ifndef ERRORFACTORY_P_H
-#define ERRORFACTORY_P_H
-#include "error.h"
-#include "stanzaextension.h"
+#ifndef JREEN_REGISTRATIONFEATURE_P_H
+#define JREEN_REGISTRATIONFEATURE_P_H
 
-namespace Jreen {
+#include "streamfeature_p.h"
 
-class ErrorFactory : public PayloadFactory<Error>
+namespace Jreen
+{
+
+class RegistrationManager;
+
+class RegistrationFeature : public StreamFeature
 {
 public:
-    ErrorFactory();
-    virtual ~ErrorFactory();
-    virtual bool canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);
-    virtual Payload::Ptr createPayload();
-    virtual QStringList features() const;
-    virtual void handleStartElement(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);    
-    virtual void handleCharacterData(const QStringRef& text);
-    virtual void handleEndElement(const QStringRef& name, const QStringRef& uri);
-    virtual void serialize(Payload* obj, QXmlStreamWriter* writer);
+	RegistrationFeature(RegistrationManager *manager);
+	
+	virtual int priority();
+	virtual bool isActivatable();
+	virtual bool activate();
+	virtual void reset();
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	virtual void handleCharacterData(const QStringRef &text);
+	
 private:
-	enum State {AtCondition,AtText};
-	State m_state;
-	int m_depth;
-	QString m_text;
-	Error::Type m_type;
-	Error::Condition m_condition;
+	RegistrationManager *m_manager;
+	bool m_activatable;
 };
 
 } // namespace Jreen
 
-#endif // ERRORFACTORY_P_H
+#endif // JREEN_REGISTRATIONFEATURE_P_H

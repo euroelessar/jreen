@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,34 +23,32 @@
 **
 ****************************************************************************/
 
-#ifndef ERRORFACTORY_P_H
-#define ERRORFACTORY_P_H
-#include "error.h"
-#include "stanzaextension.h"
+#ifndef JREEN_BITSOFBINARYFACTORY_P_H
+#define JREEN_BITSOFBINARYFACTORY_P_H
 
-namespace Jreen {
+#include "bitsofbinary.h"
 
-class ErrorFactory : public PayloadFactory<Error>
+namespace Jreen
+{
+
+class BitsOfBinaryFactory : public Jreen::PayloadFactory<BitsOfBinary>
 {
 public:
-    ErrorFactory();
-    virtual ~ErrorFactory();
-    virtual bool canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);
-    virtual Payload::Ptr createPayload();
-    virtual QStringList features() const;
-    virtual void handleStartElement(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);    
-    virtual void handleCharacterData(const QStringRef& text);
-    virtual void handleEndElement(const QStringRef& name, const QStringRef& uri);
-    virtual void serialize(Payload* obj, QXmlStreamWriter* writer);
+	BitsOfBinaryFactory();
+	
+	QStringList features() const;
+	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
+	
 private:
-	enum State {AtCondition,AtText};
-	State m_state;
 	int m_depth;
-	QString m_text;
-	Error::Type m_type;
-	Error::Condition m_condition;
+	QScopedPointer<BitsOfBinary> m_query;
 };
 
 } // namespace Jreen
 
-#endif // ERRORFACTORY_P_H
+#endif // JREEN_BITSOFBINARYFACTORY_P_H

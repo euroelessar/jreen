@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,32 +23,17 @@
 **
 ****************************************************************************/
 
-#ifndef MULTIMEDIADATAFACTORY_H
-#define MULTIMEDIADATAFACTORY_P_H
-#include "multimediadata.h"
+#include "registrationquery_p.h"
+#include "registrationmanager_p.h"
 
 namespace Jreen {
 
-class MultimediaDataFactory : public XmlStreamParser
+RegistrationQuery::RegistrationQuery() : data(new RegistrationDataPrivate)
 {
-public:
-    MultimediaDataFactory();
-	virtual ~MultimediaDataFactory();
-	QStringList features() const;
-	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleEndElement(const QStringRef &name, const QStringRef &uri);
-	void handleCharacterData(const QStringRef &text);
-	void serialize(const MultimediaData &media, QXmlStreamWriter *writer);
-	MultimediaData create();
-private:
-	QVariantMap m_attributes;
-	QVariantList m_data;
-	QVariantMap m_currentDataItem;
-	int m_depth;
-	MultimediaData::Type m_type;
-};
+}
+
+RegistrationQuery::RegistrationQuery(const RegistrationData &d) : data(RegistrationDataPrivate::get(d))
+{
+}
 
 } // namespace Jreen
-
-#endif // MULTIMEDIADATAFACTORY_H

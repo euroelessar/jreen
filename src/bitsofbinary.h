@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,34 +23,38 @@
 **
 ****************************************************************************/
 
-#ifndef ERRORFACTORY_P_H
-#define ERRORFACTORY_P_H
-#include "error.h"
+#ifndef JREEN_BITSOFBINARY_H
+#define JREEN_BITSOFBINARY_H
+
 #include "stanzaextension.h"
 
-namespace Jreen {
-
-class ErrorFactory : public PayloadFactory<Error>
+namespace Jreen
 {
+
+class BitsOfBinaryPrivate;
+
+class JREEN_EXPORT BitsOfBinary : public Jreen::Payload
+{
+	J_PAYLOAD(Jreen::BitsOfBinary)
+	Q_DECLARE_PRIVATE(BitsOfBinary)
 public:
-    ErrorFactory();
-    virtual ~ErrorFactory();
-    virtual bool canParse(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);
-    virtual Payload::Ptr createPayload();
-    virtual QStringList features() const;
-    virtual void handleStartElement(const QStringRef& name, const QStringRef& uri, const QXmlStreamAttributes& attributes);    
-    virtual void handleCharacterData(const QStringRef& text);
-    virtual void handleEndElement(const QStringRef& name, const QStringRef& uri);
-    virtual void serialize(Payload* obj, QXmlStreamWriter* writer);
+	BitsOfBinary(const QByteArray &data = QByteArray(), qint64 age = -1);
+	BitsOfBinary(const QUrl &cid);
+	~BitsOfBinary();
+	
+	QUrl cid() const;
+	void setCid(const QUrl &cid);
+	qint64 maximumAge() const;
+	void setMaximumAge(qint64 age);
+	QString type() const;
+	void setType(const QString &type);
+	QByteArray data() const;
+	void setData(const QByteArray &data);
+	
 private:
-	enum State {AtCondition,AtText};
-	State m_state;
-	int m_depth;
-	QString m_text;
-	Error::Type m_type;
-	Error::Condition m_condition;
+	QScopedPointer<BitsOfBinaryPrivate> d_ptr;
 };
 
 } // namespace Jreen
 
-#endif // ERRORFACTORY_P_H
+#endif // JREEN_BITSOFBINARY_H

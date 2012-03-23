@@ -58,6 +58,14 @@ public:
 	{ addExtension(Payload::Ptr(se)); }
 	PayloadList payloads() const;
 	template< class T >
+	QList<typename T::Ptr> payloads() const
+	{
+		QList<typename T::Ptr> list;
+		foreach (const Payload::Ptr &payload, payloads().values(T::staticPayloadType()))
+			list << payload.staticCast<T>();
+		return list;
+	}
+	template< class T >
 	inline const QSharedPointer<T> payload() const
 	{ return qSharedPointerCast<T>(payloads().value(reinterpret_cast<T*>(0)->staticPayloadType())); }
 	template< class T >
