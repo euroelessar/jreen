@@ -86,11 +86,12 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 	int type = StanzaPrivate::get(*stanza)->type;
 	if (type == StanzaPrivate::StanzaIq) {
 		QSharedPointer<IQ> iq = stanza.staticCast<IQ>();
-		IQReply *reply = iqTracks.take(stanza->id());
-		if (reply) {
-			emit reply->received(*iq);
-			reply->deleteLater();
-		} else {
+		if (iq->subtype() == IQ::Result || iq->subtype() == IQ::Error) {
+			if (IQReply *reply = iqTracks.take(stanza->id())) {
+				emit reply->received(*iq);
+				reply->deleteLater();
+			}
+		} else if (iq->subtype() == IQ::Get || iq->subtype() == IQ::Set) {
 			bool ok = iq->from().isDomain()
 			        || !roster
 			        || rooms.contains(iq->from().bare())
@@ -110,7 +111,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 				return;
 			}
 			q_ptr->handleIQ(*iq);
-			if (!iq->accepted() && (iq->subtype() == IQ::Set || iq->subtype() == IQ::Get)) {
+			if (!iq->accepted()) {
 				IQ error(IQ::Error, iq->from(), iq->id());
 				error.addExtension(new Error(Error::Cancel, Error::ServiceUnavailable));
 				send(error);
