@@ -30,7 +30,7 @@
 namespace Jreen {
 
 //overkill
-class PingFactory : public PayloadFactory<Ping>
+class JREEN_AUTOTEST_EXPORT PingFactory : public PayloadFactory<Ping>
 {
 public:
 	PingFactory();

@@ -30,7 +30,7 @@
 
 namespace Jreen
 {
-class PrivacyQueryFactory : public PayloadFactory<PrivacyQuery>
+class JREEN_AUTOTEST_EXPORT PrivacyQueryFactory : public PayloadFactory<PrivacyQuery>
 {
 public:
 	PrivacyQueryFactory();

@@ -35,7 +35,7 @@ namespace Jreen {
 
 static const char *receipt_strings[] = {"request","received"};
 
-class ReceiptFactoryPrivate
+class JREEN_AUTOTEST_EXPORT ReceiptFactoryPrivate
 {
 public:
 	Receipt::Type type;

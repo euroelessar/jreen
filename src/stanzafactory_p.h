@@ -33,7 +33,7 @@
 namespace Jreen
 {
 
-class StanzaFactory : public XmlStreamFactory<Stanza>
+class JREEN_AUTOTEST_EXPORT StanzaFactory : public XmlStreamFactory<Stanza>
 {
 public:
 	StanzaFactory(Client *client);

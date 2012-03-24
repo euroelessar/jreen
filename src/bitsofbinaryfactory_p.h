@@ -31,7 +31,7 @@
 namespace Jreen
 {
 
-class BitsOfBinaryFactory : public Jreen::PayloadFactory<BitsOfBinary>
+class JREEN_AUTOTEST_EXPORT BitsOfBinaryFactory : public Jreen::PayloadFactory<BitsOfBinary>
 {
 public:
 	BitsOfBinaryFactory();

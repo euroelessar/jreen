@@ -29,7 +29,7 @@
 
 namespace Jreen {
 
-class NicknameFactoryPrivate
+class JREEN_AUTOTEST_EXPORT NicknameFactoryPrivate
 {
 public:
 	QString nickname;

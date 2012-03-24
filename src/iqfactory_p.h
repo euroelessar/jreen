@@ -31,7 +31,7 @@
 
 namespace Jreen
 {
-class IqFactory : public StanzaFactory
+class JREEN_AUTOTEST_EXPORT IqFactory : public StanzaFactory
 {
 public:
 	IqFactory(Client *client);

@@ -197,7 +197,7 @@ void RegistrationManagerPrivate::_q_on_disconnect(Client::DisconnectReason reaso
 {
 	Q_Q(RegistrationManager);
 	waitingForConnection = true;
-	if (reason == Client::NoSupportedFuture
+	if (reason == Client::NoSupportedFeature
 	        || reason == Client::NoEncryptionSupport
 	        || reason == Client::NoCompressionSupport
 	        || reason == Client::NoAuthorizationSupport) {

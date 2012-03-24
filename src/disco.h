@@ -157,12 +157,14 @@ public:
 	DiscoReply *requestItems(const Item &item);
 	
 	void addIdentity(const Identity &identity);
+	void addIdentity(const QString &category, const QString &type, const QString &name, const QString &lang = QString());
 	const IdentityList &identities() const;
 	IdentityList &identities();
 	const QSet<QString> &features() const;
 	QSet<QString> &features();
 	void addFeature(const QString &feature);
 	void setSoftwareVersion(const QString &name, const QString &version, const QString &os = QString());
+	void setSoftwareVersion(const QString &name, const QString &version, const QString &os, const QString &osVersion);
 	const DataForm *form() const;
 	void setForm(DataForm *form);
 

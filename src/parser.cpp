@@ -102,7 +102,7 @@ static Client::DisconnectReason convertToReason(Client::Feature feature)
 	case Client::Authorization:
 		return Client::NoAuthorizationSupport;
 	default:
-		return Client::NoSupportedFuture;
+		return Client::NoSupportedFeature;
 	}
 }
 
@@ -124,6 +124,8 @@ void Parser::activateFeature()
 	bool foundAny = false;
 	for (; i < d->client->features.size(); i++) {
 		StreamFeature *feature = d->client->features.at(i);
+		if (!feature->isActivatable())
+			continue;
 		Client::Feature clientFeature = convertToFeature(feature->type());
 		Client::FeatureConfig config = d->client->configs.value(clientFeature, Client::Auto);
 		if (config == Client::Disable)
@@ -138,18 +140,15 @@ void Parser::activateFeature()
 		        && !checkFeature(d->client, Client::Encryption)) {
 			return;
 		}
-		if (feature->isActivatable()) {
-			d->client->current_stream_feature = feature;
-			if (feature->activate()) {
-				if (clientFeature != Client::InvalidFeature)
-					d->client->usedFeatures |= (1 << clientFeature);
-				foundAny = true;
-				break;
-			}
-		}
+		d->client->current_stream_feature = feature;
+		foundAny = true;
+		feature->activate();
+		if (clientFeature != Client::InvalidFeature)
+			d->client->usedFeatures |= (1 << clientFeature);
+		break;
 	}
 	if (!foundAny)
-		d->client->emitDisconnected(Client::NoSupportedFuture);
+		d->client->emitDisconnected(Client::NoSupportedFeature);
 }
 
 #define XML_HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

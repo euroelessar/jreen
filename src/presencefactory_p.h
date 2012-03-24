@@ -33,7 +33,7 @@
 
 namespace Jreen
 {
-class PresenceFactory : public StanzaFactory
+class JREEN_AUTOTEST_EXPORT PresenceFactory : public StanzaFactory
 {
 public:
 	enum State { AtNowhere, AtShow, AtStatus,AtPriority };

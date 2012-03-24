@@ -248,10 +248,16 @@ void Client::setFeatureConfig(Client::Feature feature, Client::FeatureConfig con
 	d->configs[feature] = config;
 }
 
-Client::FeatureConfig Client::featureConfig(Client::Feature feature)
+Client::FeatureConfig Client::featureConfig(Client::Feature feature) const
 {
-	Q_D(Client);
+	Q_D(const Client);
 	return d->configs.value(feature, Auto);
+}
+
+bool Client::isFeatureActivated(Client::Feature feature) const
+{
+	Q_D(const Client);
+	return (d->usedFeatures & (1 << feature));
 }
 
 QNetworkProxy Client::proxy() const
@@ -400,7 +406,7 @@ void Client::setConnection(Connection *conn)
 	delete d->conn;
 	d->conn = conn;
 	d->streamProcessor = qobject_cast<StreamProcessor*>(conn);
-	d->device->setDevice(conn);
+	d->bufferedDevice->setDevice(conn);
 	//	connect(conn, SIGNAL(readyRead()), impl, SLOT(newData()));
 	connect(conn, SIGNAL(connected()), this, SLOT(_q_connected()));
 	connect(conn, SIGNAL(disconnected()), this, SLOT(_q_disconnected()));

@@ -32,7 +32,7 @@
 
 namespace Jreen {
 
-class ActivityFactory : public PayloadFactory<Activity>
+class JREEN_AUTOTEST_EXPORT ActivityFactory : public PayloadFactory<Activity>
 {
 public:
 	ActivityFactory();

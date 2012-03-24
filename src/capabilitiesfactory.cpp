@@ -33,8 +33,7 @@
 
 namespace Jreen {
 
-
-QString CapabilitesFactory::hashValue(Disco *disco)
+QString CapabilitesFactory::verificationValue(Jreen::Disco *disco)
 {
 	QString s;
 	QStringList sl;
@@ -72,6 +71,12 @@ QString CapabilitesFactory::hashValue(Disco *disco)
 				s.append(value).append(QLatin1Char('<'));
 		}
 	}
+	return s;
+}
+
+QString CapabilitesFactory::hashValue(Disco *disco)
+{
+	const QString s = verificationValue(disco);
 	return QString::fromLatin1(QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Sha1).toBase64());
 }
 

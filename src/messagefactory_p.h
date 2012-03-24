@@ -31,7 +31,7 @@
 
 namespace Jreen
 {
-class MessageFactory : public StanzaFactory
+class JREEN_AUTOTEST_EXPORT MessageFactory : public StanzaFactory
 {
 public:
 	enum State { AtMessage, AtBody, AtSubject,AtThread };

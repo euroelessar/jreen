@@ -68,7 +68,7 @@ protected:
 	QString m_ver;
 };
 
-class AbstractRosterQueryFactory : public PayloadFactory<AbstractRosterQuery>
+class JREEN_AUTOTEST_EXPORT AbstractRosterQueryFactory : public PayloadFactory<AbstractRosterQuery>
 {
 public:
 	AbstractRosterQueryFactory(AbstractRoster *roster);

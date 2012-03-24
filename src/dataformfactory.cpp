@@ -366,7 +366,7 @@ static const char* dataform_types[] = {
 	"result"
 };
 
-class DataFormFactoryPrivate
+class JREEN_AUTOTEST_EXPORT DataFormFactoryPrivate
 {
 public:
 	void clear()

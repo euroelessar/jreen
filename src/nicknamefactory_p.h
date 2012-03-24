@@ -29,8 +29,8 @@
 
 namespace Jreen {
 
-class NicknameFactoryPrivate;
-class NicknameFactory : public PayloadFactory<Nickname>
+class JREEN_AUTOTEST_EXPORT NicknameFactoryPrivate;
+class JREEN_AUTOTEST_EXPORT NicknameFactory : public PayloadFactory<Nickname>
 {
 	Q_DECLARE_PRIVATE(NicknameFactory)
 public:

@@ -41,7 +41,7 @@ class SessionQuery : public Payload
 		SessionQuery() {}
 };
 
-class SessionQueryFactory : public PayloadFactory<SessionQuery>
+class JREEN_AUTOTEST_EXPORT SessionQueryFactory : public PayloadFactory<SessionQuery>
 {
 public:
 	SessionQueryFactory() {}

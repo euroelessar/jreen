@@ -30,7 +30,7 @@
 
 namespace Jreen {
 
-class ErrorFactory : public PayloadFactory<Error>
+class JREEN_AUTOTEST_EXPORT ErrorFactory : public PayloadFactory<Error>
 {
 public:
     ErrorFactory();

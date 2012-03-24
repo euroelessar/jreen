@@ -148,7 +148,7 @@ bool SASLFeature::activate()
 
 void SASLFeature::onClientStarted(bool init, const QByteArray &data)
 {
-	QXmlStreamWriter *writer = ClientPrivate::get(m_client)->writer;
+	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("auth"));
 	writer->writeDefaultNamespace(QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl"));
 	writer->writeAttribute(QLatin1String("mechanism"), m_sasl->mechanism());
@@ -159,7 +159,7 @@ void SASLFeature::onClientStarted(bool init, const QByteArray &data)
 
 void SASLFeature::onNextStep(const QByteArray &data)
 {
-	QXmlStreamWriter *writer = ClientPrivate::get(m_client)->writer;
+	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("response"));
 	writer->writeDefaultNamespace(QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl"));
 	writer->writeCharacters(QString::fromLatin1(data.toBase64()));

@@ -33,7 +33,7 @@ namespace Jreen
 {
 namespace PubSub
 {
-class PublishFactory : public PayloadFactory<Publish>
+class JREEN_AUTOTEST_EXPORT PublishFactory : public PayloadFactory<Publish>
 {
 public:
 	PublishFactory(QList<AbstractPayloadFactory*> &factories);

@@ -30,7 +30,7 @@
 #include <QPair>
 
 namespace Jreen {
-class VCardFactoryPrivate;
+class JREEN_AUTOTEST_EXPORT VCardFactoryPrivate;
 
 class AbstractStructureParser : public XmlStreamParser
 {
@@ -97,7 +97,7 @@ protected:
 	TPrivate m_data;
 };
 
-class VCardFactory : public PayloadFactory<VCard>
+class JREEN_AUTOTEST_EXPORT VCardFactory : public PayloadFactory<VCard>
 {
 	Q_DECLARE_PRIVATE(VCardFactory)
 public:

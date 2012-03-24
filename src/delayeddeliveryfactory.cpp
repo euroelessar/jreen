@@ -33,7 +33,7 @@
 
 namespace Jreen {
 
-class DelayedDeliveryFactoryPrivate
+class JREEN_AUTOTEST_EXPORT DelayedDeliveryFactoryPrivate
 {
 public:
 	JID from;

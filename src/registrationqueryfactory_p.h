@@ -33,7 +33,7 @@
 namespace Jreen
 {
 
-class RegistrationQueryFactory : public PayloadFactory<RegistrationQuery>
+class JREEN_AUTOTEST_EXPORT RegistrationQueryFactory : public PayloadFactory<RegistrationQuery>
 {
 public:
 	RegistrationQueryFactory();

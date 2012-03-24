@@ -31,7 +31,7 @@
 
 namespace Jreen
 {
-	class TuneFactory : public PayloadFactory<Tune>
+	class JREEN_AUTOTEST_EXPORT TuneFactory : public PayloadFactory<Tune>
 	{
 	public:
 		TuneFactory();

@@ -49,7 +49,7 @@ private:
 	bool m_bind;
 };
 
-class BindQueryFactory : public PayloadFactory<BindQuery>
+class JREEN_AUTOTEST_EXPORT BindQueryFactory : public PayloadFactory<BindQuery>
 {
 public:
 	BindQueryFactory() : m_bind(true), m_depth(0), m_state(AtStart) {}

@@ -86,7 +86,7 @@ private:
 	int m_maxStanzas;
 	int m_seconds;
 	QDateTime m_since;
-	friend class MUCRoomQueryFactory;
+	friend class JREEN_AUTOTEST_EXPORT MUCRoomQueryFactory;
 };
 
 class MUCRoomItem

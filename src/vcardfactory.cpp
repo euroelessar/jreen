@@ -406,7 +406,7 @@ void vCardStringHelper(QString * & str, VCardPrivate *p, int type)
 		str = strings[type];
 }
 
-class VCardFactoryPrivate
+class JREEN_AUTOTEST_EXPORT VCardFactoryPrivate
 {
 public:
 	void clear();

@@ -131,9 +131,9 @@ public:
 		roster = 0;
 		authorized = false;
 		isConnected = false;
-		device = new BufferedDataStream(&streamHandlers);
-		device->open(QIODevice::ReadWrite);
-		q->connect(device, SIGNAL(readyRead()), q, SLOT(_q_new_data()));
+		bufferedDevice.reset(new BufferedDataStream(&streamHandlers));
+		bufferedDevice->open(QIODevice::ReadWrite);
+		q->connect(bufferedDevice.data(), SIGNAL(readyRead()), q, SLOT(_q_new_data()));
 		configs.append(Client::Auto);
 		configs.append(Client::Auto);
 		configs.append(Client::Force);
@@ -148,15 +148,15 @@ public:
 		}
 		foreach (StanzaFactory *factory, stanzas) {
 			if (factory->stanzaType() == StanzaPrivate::get(stanza)->type) {
-				factory->serialize(const_cast<Stanza*>(&stanza), writer);
+				factory->serialize(const_cast<Stanza*>(&stanza), writer.data());
 				break;
 			}
 		}
 	}
 	void send(const QString &data)
 	{
-		if(conn && device->isOpen())
-			device->write(data.toUtf8());
+		if(conn && bufferedDevice->isOpen())
+			bufferedDevice->write(data.toUtf8());
 	}
 	void processStreamFeature(StreamFeature *stream_feature)
 	{
@@ -187,7 +187,7 @@ public:
 	int current_id;
 	Parser *parser;
 	Connection *conn;
-	DataStream *device;
+	QScopedPointer<BufferedDataStream> bufferedDevice;
 	StreamProcessor *streamProcessor;
 	QList<DataStream*> devices;
 	bool authorized;
@@ -196,7 +196,7 @@ public:
 	Disco *disco;
 	StreamFeature *current_stream_feature;
 	QHash<QString, IQReply*> iqTracks;
-	QXmlStreamWriter *writer;
+	QScopedPointer<QXmlStreamWriter> writer;
 	QVector<Client::FeatureConfig> configs;
 	int usedFeatures;
 	QList<StanzaFactory*> stanzas;
@@ -213,7 +213,7 @@ public:
 	void _q_iq_received(const Jreen::IQ &iq, int context);
 	void _q_new_data()
 	{
-		QByteArray data = device->read(qMax(Q_INT64_C(0xffff), device->bytesAvailable())); // device->readAll();
+		QByteArray data = bufferedDevice->read(qMax(Q_INT64_C(0xffff), bufferedDevice->bytesAvailable())); // device->readAll();
 		//		Logger::debug() << "-" << data.size() << data;
 		parser->appendData(data);
 		//		parser->appendData(data);
@@ -222,24 +222,13 @@ public:
 	void _q_read_more();
 	void _q_send_header()
 	{
-		delete writer;
 		foreach (XmlStreamHandler *handler, streamHandlers)
 			handler->handleStreamBegin();
 		if (streamProcessor) {
-			writer = new QXmlStreamWriter(device);
-//			QByteArray data;
-//			QBuffer buffer(&data);
-//			buffer.open(QIODevice::WriteOnly);
-//			streamProcessor->restartStream();
-//			writer = new QXmlStreamWriter(&buffer);
-//			writer->writeStartDocument(QLatin1String("1.0"));
-//			writer->writeStartElement(QLatin1String("stream:stream"));
-//			writer->writeDefaultNamespace(QLatin1String("jabber:client"));
-//			writer->writeCharacters(QString());
-//			writer->setDevice(device);
+			writer.reset(new QXmlStreamWriter(bufferedDevice.data()));
 			return;
 		}
-		writer = new QXmlStreamWriter(device);
+		writer.reset(new QXmlStreamWriter(bufferedDevice.data()));
 		writer->writeStartDocument(QLatin1String("1.0"));
 		writer->writeStartElement(QLatin1String("stream:stream"));
 		writer->writeAttribute(QLatin1String("to"), jid.domain());
@@ -260,7 +249,7 @@ public:
 
 	void _q_connected()
 	{
-		writer = 0;
+		writer.reset();
 		depth = 0;
 		parser->reset();
 		_q_send_header();
@@ -280,7 +269,7 @@ public:
 		foreach (DataStream *dataStream, devices)
 			dataStream->deleteLater();
 		devices.clear();
-		device->setDevice(conn);
+		bufferedDevice->setDevice(conn);
 		QHash<QString, IQReply*>::iterator it = iqTracks.begin();
 		for (; it != iqTracks.end(); ++it)
 			it.value()->deleteLater();
@@ -290,7 +279,13 @@ public:
 	inline void emitConnected() { isConnected = true; q_ptr->handleConnect(); }
 	inline void emitDisconnected(Client::DisconnectReason reason)
 	{
-		emit q_func()->disconnected(reason);
+		Q_Q(Client);
+		writer->writeEndElement();
+		q->blockSignals(true);
+		conn->close();
+		_q_disconnected();
+		q->blockSignals(false);
+		emit q->disconnected(reason);
 	}
 };
 
@@ -335,7 +330,7 @@ public:
 	}
 	QXmlStreamWriter *writer()
 	{
-		return d->writer;
+		return d->writer.data();
 	}
 	void completed(const CompletedFlags &flags)
 	{
@@ -346,7 +341,7 @@ public:
 		if(flags & Authorized)
 			d->emitAuthorized();
 		if (flags & ResendHeader) {
-			d->device->readAll();
+			d->bufferedDevice->readAll();
 			d->_q_send_header();
 			if (d->streamProcessor)
 				d->streamProcessor->restartStream();
@@ -370,8 +365,8 @@ public:
 	void addDataStream(DataStream *dataStream) 
 	{
 		d->devices.append(dataStream);
-		dataStream->setDevice(d->device->device());
-		d->device->setDevice(dataStream);
+		dataStream->setDevice(d->bufferedDevice->device());
+		d->bufferedDevice->setDevice(dataStream);
 		//		QObject::disconnect(m_client_private->device, 0, m_client_private, 0);
 		//		m_client_private->device = dataStream;
 		dataStream->open(QIODevice::ReadWrite);

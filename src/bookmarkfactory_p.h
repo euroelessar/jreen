@@ -29,7 +29,7 @@
 
 namespace Jreen {
 
-class BookmarkFactory : public PayloadFactory<Bookmark>
+class JREEN_AUTOTEST_EXPORT BookmarkFactory : public PayloadFactory<Bookmark>
 {
 public:
 	BookmarkFactory();

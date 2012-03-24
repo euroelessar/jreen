@@ -33,7 +33,7 @@
 #include "presence.h"
 #include "disco.h"
 
-class QNetworkProxyFactory;
+class JREEN_AUTOTEST_EXPORT QNetworkProxyFactory;
 class QNetworkProxy;
 
 namespace Jreen
@@ -84,7 +84,7 @@ public:
 		NoCompressionSupport,
 		NoEncryptionSupport,
 		NoAuthorizationSupport,
-		NoSupportedFuture
+		NoSupportedFeature
 	};
 
 	enum Feature {
@@ -112,7 +112,8 @@ public:
 	void setPort(int port);
 	void setProxy(const QNetworkProxy &proxy);
 	void setFeatureConfig(Feature feature, FeatureConfig config);
-	FeatureConfig featureConfig(Feature feature);
+	FeatureConfig featureConfig(Feature feature) const;
+	bool isFeatureActivated(Feature feature) const;
 	QNetworkProxy proxy() const;
 	void setProxyFactory(QNetworkProxyFactory *factory);
 	QNetworkProxyFactory *proxyFactory() const;

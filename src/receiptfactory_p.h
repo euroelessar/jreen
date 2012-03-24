@@ -28,8 +28,8 @@
 
 namespace Jreen {
 
-class ReceiptFactoryPrivate;
-class ReceiptFactory : public PayloadFactory<Receipt>
+class JREEN_AUTOTEST_EXPORT ReceiptFactoryPrivate;
+class JREEN_AUTOTEST_EXPORT ReceiptFactory : public PayloadFactory<Receipt>
 {
 	Q_DECLARE_PRIVATE(ReceiptFactory)
 public:

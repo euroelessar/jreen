@@ -29,8 +29,8 @@
 
 namespace Jreen {
 
-class DataFormFactoryPrivate;
-class DataFormFactory : public PayloadFactory<DataForm>
+class JREEN_AUTOTEST_EXPORT DataFormFactoryPrivate;
+class JREEN_AUTOTEST_EXPORT DataFormFactory : public PayloadFactory<DataForm>
 {
 	Q_DECLARE_PRIVATE(DataFormFactory)
 public:

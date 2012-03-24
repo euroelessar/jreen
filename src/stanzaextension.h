@@ -73,7 +73,7 @@ public:
 typedef QMap<int, AbstractPayloadFactory*> PayloadFactoryMap;
 
 template <typename Extension>
-class PayloadFactory : public AbstractPayloadFactory
+class JREEN_AUTOTEST_EXPORT PayloadFactory : public AbstractPayloadFactory
 {
 	Q_DISABLE_COPY(PayloadFactory)
 public:
