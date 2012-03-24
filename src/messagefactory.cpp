@@ -77,11 +77,12 @@ void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 	if (message->subtype() == Message::Invalid)
 		return;
 
-	QString subtype = enumToStr(message->subtype(),message_types);
+	QLatin1String subtype = enumToStr(message->subtype(),message_types);
 
 	writer->writeStartElement(QLatin1String("message"));
 	writeAttributes(stanza, writer);
-	writer->writeAttribute(QLatin1String("type"),subtype);
+	if (subtype != QLatin1String(""))
+		writer->writeAttribute(QLatin1String("type"), subtype);
 	writeLangMap(QLatin1String("subject"),message->subject(),writer);
 	writeLangMap(QLatin1String("body"),message->body(),writer);
 	if(!message->thread().isEmpty())

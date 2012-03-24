@@ -60,6 +60,7 @@
 #include "errorfactory_p.h"
 #include "registrationqueryfactory_p.h"
 #include "bitsofbinaryfactory_p.h"
+#include "captchafactory_p.h"
 
 // Features
 #include "nonsaslauth_p.h"
@@ -170,6 +171,7 @@ void ClientPrivate::init()
 	q_ptr->registerPayload(new PrivacyQueryFactory);
 	q_ptr->registerPayload(new RegistrationQueryFactory);
 	q_ptr->registerPayload(new BitsOfBinaryFactory);
+	q_ptr->registerPayload(new CaptchaFactory);
 //	client->registerPayload(new PubSub::EventFactory);
 //	client->registerPayload(new PubSub::PublishFacatory);
 	//client->registerPayload(new PrivateXml::QueryFactory);
