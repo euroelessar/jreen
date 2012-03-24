@@ -56,7 +56,7 @@ public:
 		Uri();
 		Uri(const QUrl &url, const QString &type);
 		Uri(const Uri &o);
-		Uri &operator ==(const Uri &o);
+		Uri &operator =(const Uri &o);
 		~Uri();
 		
 		bool operator==(const Uri &o) const;

@@ -59,7 +59,7 @@ DataFormMedia::Uri::Uri(const DataFormMedia::Uri &o) : d(o.d)
 {
 }
 
-DataFormMedia::Uri &DataFormMedia::Uri::operator ==(const DataFormMedia::Uri &o)
+DataFormMedia::Uri &DataFormMedia::Uri::operator =(const DataFormMedia::Uri &o)
 {
 	d = o.d;
 	return *this;
