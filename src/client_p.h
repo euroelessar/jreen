@@ -275,6 +275,12 @@ public:
 			it.value()->deleteLater();
 		iqTracks.clear();
 	}
+	void _q_stateChanged(Connection::SocketState state)
+	{
+		if (state == Connection::UnconnectedState)
+			_q_disconnected();
+	}
+
 	inline void emitAuthorized() { q_ptr->handleAuthorized(); }
 	inline void emitConnected() { isConnected = true; q_ptr->handleConnect(); }
 	inline void emitDisconnected(Client::DisconnectReason reason)

@@ -168,7 +168,7 @@ private:
 	Q_PRIVATE_SLOT(d_func(), void _q_read_more())
 	Q_PRIVATE_SLOT(d_func(), void _q_send_header())
 	Q_PRIVATE_SLOT(d_func(), void _q_connected())
-	Q_PRIVATE_SLOT(d_func(), void _q_disconnected())
+	Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(Jreen::Connection::SocketState))
 };
 
 }
