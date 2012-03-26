@@ -414,7 +414,6 @@ void Client::setConnection(Connection *conn)
 	connect(conn, SIGNAL(connected()), this, SLOT(_q_connected()));
 	connect(conn, SIGNAL(stateChanged(Jreen::Connection::SocketState)),
 	        this, SLOT(_q_stateChanged(Jreen::Connection::SocketState)));
-	connect(conn, SIGNAL(disconnected()), this, SLOT(_q_disconnected()));
 }
 
 Connection *Client::connection() const

@@ -31,10 +31,11 @@
 namespace Jreen {
 
 static const char *message_types[] = {
-		"chat",
-		"error",
-		"groupchat",
-		"headline"
+    "chat",
+    "error",
+    "groupchat",
+    "headline",
+    "normal"
 };
 
 MessageFactory::MessageFactory(Client *client) :
@@ -107,7 +108,12 @@ void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef
 		clear();
 		parseAttributes(attributes);
 		QStringRef subtype = attributes.value(QLatin1String("type"));
-		m_subtype = strToEnum<Message::Type>(subtype,message_types);
+		if (subtype.isEmpty())
+			m_subtype = Message::Normal;
+		else
+			m_subtype = strToEnum<Message::Type>(subtype, message_types);
+		if (m_subtype < 0)
+			m_subtype = Message::Invalid;
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("body"))
 			m_state = AtBody;
