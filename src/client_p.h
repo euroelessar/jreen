@@ -51,6 +51,7 @@
 #include <QNetworkProxyFactory>
 #include "stanza_p.h"
 #include "streamprocessor.h"
+#include "jinglemanager.h"
 
 namespace Jreen
 {
@@ -203,11 +204,12 @@ public:
 	QList<StreamFeature*> features;
 	QSet<QString> serverFeatures;
 	Jreen::Disco::IdentityList serverIdentities;
-	QMap<QString, MUCRoomPrivate*> rooms;
+	QHash<QString, MUCRoomPrivate*> rooms;
 	PayloadFactoryMap factories;
-	QMultiMap<QString, AbstractPayloadFactory*> factoriesByUri;
+	QMultiHash<QString, AbstractPayloadFactory*> factoriesByUri;
 	MessageSessionManager *messageSessionManager;
 	AbstractRoster *roster;
+	QScopedPointer<JingleManager> jingleManager;
 	int depth;
 	IQReply *createIQReply() { return new IQReply(q_func()); }
 	void _q_iq_received(const Jreen::IQ &iq, int context);

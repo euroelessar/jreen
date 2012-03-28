@@ -119,32 +119,25 @@ QString Util::toStamp(const QDateTime &date_time)
 	return date_time.toUTC().toString(FULLZ_STAMP_STR);
 }
 
-QByteArray Util::randomHash( /*const JID &jid*/ )
+QByteArray Util::randomHash()
 {
-//	Holy shit...
-//	QCryptographicHash hash(QCryptographicHash::Sha1);
-//	qptrdiff temp = QDateTime::currentDateTime().toTime_t();
-//	QByteArray data;
-//	data.append(jid.full().toUtf8());
-//	data.append('\0');
-//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-//		data.append(temp % 0x100);
-//	data.append('\0');
-//	temp = reinterpret_cast<qptrdiff>(&jid);
-//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-//		data.append(temp % 0x100);
-//	hash.addData(data);
-//	data.append('\0');
-//	temp = qrand();
-//	for(uint i = 0; i < sizeof(qptrdiff); i++, temp /= 0x100)
-//		data.append(temp % 0x100);
-//	hash.addData(data);
-//	return QLatin1String(hash.result().toHex());
-//	Nobody whould find a differ
 	qint32 buf[5];
 	for (int i = 0; i < 5; i++)
 		buf[i] = qrand();
-	return QByteArray(reinterpret_cast<char*>(buf), sizeof(buf)).toHex();
+	return QByteArray::fromRawData(reinterpret_cast<char*>(buf), sizeof(buf)).toHex();
+}
+
+QString Util::randomStringHash(int length)
+{
+	QString str(length, Qt::Uninitialized);
+	for (int i = 0; i < length; ++i) {
+		int c = qrand() % (10 + 26);
+		if (c < 10)
+			str[i] = QLatin1Char('0' + c);
+		else
+			str[i] = QLatin1Char('a' + c - 10);
+	}
+	return str;
 }
 
 }

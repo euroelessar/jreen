@@ -70,7 +70,7 @@ void DiscoInfoFactory::handleStartElement(const QStringRef &name, const QStringR
 			Disco::Identity identity(attributes.value(QLatin1String("category")).toString(),
 									 attributes.value(QLatin1String("type")).toString(),
 									 attributes.value(QLatin1String("name")).toString(),
-									 attributes.value(QLatin1String("lang")).toString());
+									 attributes.value(QLatin1String("xml:lang")).toString());
 			m_identities.append(identity);
 		} else if (name == QLatin1String("feature")) {
 			m_features.insert(attributes.value(QLatin1String("var")).toString());

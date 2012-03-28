@@ -49,6 +49,7 @@ class StreamFeature;
 class Disco;
 class MessageSessionManager;
 class AbstractRoster;
+class JingleManager;
 
 class XmlStreamHandler
 {
@@ -128,6 +129,7 @@ public:
 	Disco *disco();
 	MessageSessionManager *messageSessionManager();
 	AbstractRoster *roster();
+	JingleManager *jingleManager();
 	bool isConnected() const;
 	void send(const Stanza &stanza);
 	void send(const Presence &pres);

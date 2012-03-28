@@ -127,9 +127,9 @@ void CapabilitesFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 	QString ver = caps->ver().isEmpty() ? hashValue(m_disco) : caps->ver();
 	writer->writeStartElement(QLatin1String("c"));
 	writer->writeDefaultNamespace(NS_CAPS);
-	writer->writeAttribute(QLatin1String("hash"),QLatin1String("sha-1"));
-	writer->writeAttribute(QLatin1String("ver"),ver);
-	writer->writeAttribute(QLatin1String("node"),caps->node());
+	writer->writeAttribute(QLatin1String("hash"), QLatin1String("sha-1"));
+	writer->writeAttribute(QLatin1String("ver"), ver);
+	writer->writeAttribute(QLatin1String("node"), caps->node());
 	writer->writeEndElement();
 }
 
