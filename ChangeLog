@@ -1,3 +1,10 @@
+Version 1.0.4
+	* Added support for in-band registration
+	* Added ability to force/deny compression/encryption
+	* Added CAPTCHA support
+	* Fixed IQ requests to yourself
+	* Fixed handling of messages' types in MessageSession
+
 Version 1.0.3
 	* Added Logger implementation
 	* Fixed QJDns initialization issue
