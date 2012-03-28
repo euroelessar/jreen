@@ -33,6 +33,8 @@
 #include "logger.h"
 #include "util.h"
 
+#define NS_ROSTER QLatin1String("jabber:iq:roster")
+
 namespace Jreen
 {
 
@@ -55,13 +57,13 @@ AbstractRosterQueryFactory::AbstractRosterQueryFactory(AbstractRoster *roster)
 
 QStringList AbstractRosterQueryFactory::features() const
 {
-	return QStringList(QLatin1String("jabber:iq:roster"));
+	return QStringList(NS_ROSTER);
 }
 
 bool AbstractRosterQueryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return name == QLatin1String("query") && uri == QLatin1String("jabber:iq:roster");
+	return name == QLatin1String("query") && uri == NS_ROSTER;
 }
 
 void AbstractRosterQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -119,7 +121,7 @@ void AbstractRosterQueryFactory::serialize(Payload *extension, QXmlStreamWriter 
 	if (!query)
 		return;
 	writer->writeStartElement(QLatin1String("query"));
-	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
+	writer->writeDefaultNamespace(NS_ROSTER);
 	if (query->items().isEmpty())
 		writer->writeAttribute(QLatin1String("ver"), query->ver());
 	foreach (const RosterItem::Ptr &item, query->items()) {

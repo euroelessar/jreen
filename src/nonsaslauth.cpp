@@ -30,6 +30,8 @@
 #include "client.h"
 #include "jstrings.h"
 
+#define NS_IQ_AUTH QLatin1String("http://jabber.org/features/iq-auth")
+
 namespace Jreen
 {
 
@@ -37,7 +39,7 @@ bool NonSaslAuth::canParse(const QStringRef &name, const QStringRef &uri, const 
 {
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	return name == QLatin1String("auth") && uri == QLatin1String("http://jabber.org/features/iq-auth");
+	return name == QLatin1String("auth") && uri == NS_IQ_AUTH;
 }
 
 void NonSaslAuth::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)

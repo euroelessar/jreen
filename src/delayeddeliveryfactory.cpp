@@ -28,8 +28,8 @@
 #include "util.h"
 
 
-#define NS_DELAY "urn:xmpp:delay"
-#define NS_DELAY_DEPRECATED "jabber:x:delay"
+#define NS_DELAY QLatin1String("urn:xmpp:delay")
+#define NS_DELAY_DEPRECATED QLatin1String("jabber:x:delay")
 
 namespace Jreen {
 

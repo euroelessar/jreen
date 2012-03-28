@@ -33,6 +33,8 @@
 # include "../3rdparty/simplesasl/simplesasl.h"
 #endif
 
+#define NS_SASL QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl")
+
 namespace Jreen
 {
 
@@ -84,7 +86,7 @@ bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const 
 		return false;
 	Q_UNUSED(name);
 	Q_UNUSED(attributes);
-	return uri == QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl");
+	return uri == NS_SASL;
 }
 
 void SASLFeature::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -150,7 +152,7 @@ void SASLFeature::onClientStarted(bool init, const QByteArray &data)
 {
 	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("auth"));
-	writer->writeDefaultNamespace(QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl"));
+	writer->writeDefaultNamespace(NS_SASL);
 	writer->writeAttribute(QLatin1String("mechanism"), m_sasl->mechanism());
 	if (init)
 		writer->writeCharacters(QString::fromLatin1(data.toBase64()));
@@ -161,7 +163,7 @@ void SASLFeature::onNextStep(const QByteArray &data)
 {
 	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("response"));
-	writer->writeDefaultNamespace(QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl"));
+	writer->writeDefaultNamespace(NS_SASL);
 	writer->writeCharacters(QString::fromLatin1(data.toBase64()));
 	writer->writeEndElement();
 }
