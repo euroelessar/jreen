@@ -1,15 +1,18 @@
-Version 1.0.4
+Version 1.0.5:
+	* Fixed parsing of message's thread attribute
+
+Version 1.0.4:
 	* Added support for in-band registration
 	* Added ability to force/deny compression/encryption
 	* Added CAPTCHA support
 	* Fixed IQ requests to yourself
 	* Fixed handling of messages' types in MessageSession
 
-Version 1.0.3
+Version 1.0.3:
 	* Added Logger implementation
 	* Fixed QJDns initialization issue
 
-Version 1.0.2
+Version 1.0.2:
 	* Added support for ProxyFactory
 	* Added immunity to invalid stanzas
 	* Added localization support for incoming stanzas
