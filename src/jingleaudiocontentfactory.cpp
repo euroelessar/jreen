@@ -32,7 +32,7 @@ namespace Jreen
 {
 
 JingleAudioContentFactory::JingleAudioContentFactory()
-    : JingleContentFactory(NS_RTP, QLatin1String("audio")), m_state(AtRoot), m_depth(0)
+    : JingleContentFactory<JingleAudioDescription>(NS_RTP, QLatin1String("audio")), m_state(AtRoot), m_depth(0)
 {
 }
 

@@ -30,6 +30,7 @@
 #include <QList>
 #include "3rdparty/icesupport/ice176.h"
 #include "3rdparty/icesupport/udpportreserver.h"
+//#include <nice.h>
 
 namespace Jreen
 {

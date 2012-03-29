@@ -112,19 +112,21 @@ void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 #ifdef Q_OS_LINUX
 		if (qobject_cast<QTcpSocket*>(socket)) {
 			int fd = socket->socketDescriptor();
+			Q_ASSERT(fd != -1);
 			Logger::debug() << "Trying to set KeepAlive attributes to socket descriptor" << fd;
 			if (fd != -1) {
+				socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
 				int enableKeepAlive = 1;
-				setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
+				Logger::debug() << setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
 			
 				int maxIdle = 15; // seconds
-				setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
+				Logger::debug() << setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
 			
 				int count = 3;  // send up to 3 keepalive packets out, then disconnect if no response
-				setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
+				Logger::debug() << setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
 			
 				int interval = 2;   // send a keepalive packet out every 2 seconds (after the idle period)
-				setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+				Logger::debug() << setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
 			}
 		}
 #endif
