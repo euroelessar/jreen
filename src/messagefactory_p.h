@@ -50,7 +50,7 @@ private:
 	LangMap m_body;
 	LangMap m_subject;
 	State m_state;
-	QStringRef m_thread;
+	QString m_thread;
 };
 
 } // namespace  Jreen
