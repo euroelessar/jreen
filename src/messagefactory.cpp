@@ -68,7 +68,7 @@ Stanza::Ptr MessageFactory::createStanza()
 	p->body = m_body;
 	p->subject = m_subject;
 	p->subtype = m_subtype;
-	p->thread = m_thread.toString();
+	p->thread = m_thread;
 	return Stanza::Ptr(new Message(*p));
 }
 
@@ -141,7 +141,7 @@ void MessageFactory::handleCharacterData(const QStringRef &name)
 		else if(m_state == AtSubject)
 			m_subject = name.toString();
 		else if(m_state == AtThread)
-			m_thread = name;
+			m_thread = name.toString();
 	}
 }
 
