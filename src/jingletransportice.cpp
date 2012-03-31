@@ -173,7 +173,7 @@ void Transport::onIceReadyRead(int component)
 }
 
 TransportFactory::TransportFactory()
-    : JingleTransportFactory(NS_ICE_UDP), m_depth(0)
+    : JingleTransportFactory<TransportInfo>(NS_ICE_UDP), m_depth(0)
 {
 }
 
