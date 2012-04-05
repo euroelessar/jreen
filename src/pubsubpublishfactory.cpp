@@ -116,7 +116,7 @@ void PublishFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		Logger::warning() << "Invalid stanza extension at PubSub::Publish";
 		return;
 	}
-	writer->writeStartElement(QLatin1String("pusbsub"));
+	writer->writeStartElement(QLatin1String("pubsub"));
 	writer->writeDefaultNamespace(NS_PUBSUB);
 	writer->writeStartElement(QLatin1String("publish"));
 	writer->writeAttribute(QLatin1String("node"), node);
