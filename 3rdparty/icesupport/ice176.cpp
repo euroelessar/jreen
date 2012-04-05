@@ -1339,4 +1339,4 @@ bool Ice176::isIPv6LinkLocalAddress(const QHostAddress &addr)
 
 }
 
-#include "moc_ice176.cpp"
+#include "ice176.moc"

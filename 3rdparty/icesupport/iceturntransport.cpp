@@ -248,4 +248,4 @@ void IceTurnTransport::setDebugLevel(DebugLevel level)
 
 }
 
-#include "moc_iceturntransport.cpp"
+#include "iceturntransport.moc"

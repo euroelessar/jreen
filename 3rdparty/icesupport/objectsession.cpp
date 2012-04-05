@@ -298,4 +298,4 @@ void ObjectSession::resume()
 
 }
 
-#include "moc_objectsession.cpp"
+#include "objectsession.moc"
