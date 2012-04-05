@@ -94,6 +94,11 @@ void Stanza::removePayloads()
 	d_ptr->extensions.clear();
 }
 
+void Stanza::removePayload(int id)
+{
+	d_ptr->extensions.remove(id);
+}
+
 Error::Ptr Stanza::error() const
 {
 	return payload<Error>();

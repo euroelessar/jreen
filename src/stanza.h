@@ -67,11 +67,14 @@ public:
 	}
 	template< class T >
 	inline const QSharedPointer<T> payload() const
-	{ return qSharedPointerCast<T>(payloads().value(reinterpret_cast<T*>(0)->staticPayloadType())); }
+	{ return qSharedPointerCast<T>(payloads().value(T::staticPayloadType())); }
 	template< class T >
 	inline bool containsPayload() const
-	{ return payloads().contains(reinterpret_cast<T*>(0)->staticPayloadType()); }
+	{ return payloads().contains(T::staticPayloadType()); }
 	void removePayloads();
+	template< class T >
+	inline void removePayload() { removePayload(T::staticPayloadType()); }
+	void removePayload(int id);
 	Error::Ptr error() const;
 protected:
 	Stanza(StanzaPrivate &);
