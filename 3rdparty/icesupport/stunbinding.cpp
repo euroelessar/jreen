@@ -297,4 +297,4 @@ QString StunBinding::errorString() const
 
 }
 
-#include "stunbinding.moc"
+#include "moc_stunbinding.cpp"

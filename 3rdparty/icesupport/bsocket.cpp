@@ -394,6 +394,6 @@ void BSocket::qs_error(QAbstractSocket::SocketError x)
 		error(ErrRead);
 }
 
-#include "bsocket.moc"
+#include "moc_bsocket.cpp"
 
 // CS_NAMESPACE_END

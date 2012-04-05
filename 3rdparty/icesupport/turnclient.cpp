@@ -1144,4 +1144,4 @@ void TurnClient::setDebugLevel(DebugLevel level)
 
 }
 
-#include "turnclient.moc"
+#include "moc_turnclient.cpp"

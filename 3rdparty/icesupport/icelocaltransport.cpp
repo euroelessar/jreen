@@ -885,4 +885,4 @@ void IceLocalTransport::setDebugLevel(DebugLevel level)
 
 }
 
-#include "icelocaltransport.moc"
+#include "moc_icelocaltransport.cpp"

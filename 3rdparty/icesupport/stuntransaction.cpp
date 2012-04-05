@@ -742,4 +742,4 @@ void StunTransactionPool::setDebugLevel(DebugLevel level)
 
 }
 
-#include "stuntransaction.moc"
+#include "moc_stuntransaction.cpp"

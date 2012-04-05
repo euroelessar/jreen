@@ -1053,4 +1053,4 @@ void IceComponent::setDebugLevel(DebugLevel level)
 
 }
 
-#include "icecomponent.moc"
+#include "moc_icecomponent.cpp"

@@ -432,4 +432,4 @@ void UdpPortReserver::returnSockets(const QList<QUdpSocket*> &sockList)
 
 }
 
-#include "udpportreserver.moc"
+#include "moc_udpportreserver.cpp"

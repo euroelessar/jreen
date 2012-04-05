@@ -1452,4 +1452,4 @@ QByteArray StunAllocate::readChannelData(const quint8 *data, int size)
 
 }
 
-#include "stunallocate.moc"
+#include "moc_stunallocate.cpp"
