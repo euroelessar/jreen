@@ -69,6 +69,8 @@ Stanza::Ptr MessageFactory::createStanza()
 	p->subject = m_subject;
 	p->subtype = m_subtype;
 	p->thread = m_thread;
+	qSwap(p->tokens, m_tokens);
+	qSwap(p->buffer, m_buffer);
 	return Stanza::Ptr(new Message(*p));
 }
 
