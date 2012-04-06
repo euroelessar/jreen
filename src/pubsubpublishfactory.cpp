@@ -39,6 +39,7 @@ namespace PubSub
 PublishFactory::PublishFactory(QList<AbstractPayloadFactory*> &factories) : m_factories(factories)
 {
 	m_depth = 0;
+	m_factory = 0;
 	m_state = AtNowhere;
 }
 
@@ -65,7 +66,7 @@ void PublishFactory::handleStartElement(const QStringRef &name, const QStringRef
 	if (m_depth == 1) {
 		m_publish.reset(new Publish);
 	} if (m_depth == 2 && name == QLatin1String("publish")) {
-		findFactory(attributes.value(QLatin1String("node")));
+		m_factory = findFactory(attributes.value(QLatin1String("node")));
 		m_state = m_factory ? AtPublish : AtNowhere;
 	} else if (m_depth == 3 && m_state == AtPublish && name == QLatin1String("item")) {
 		m_state = AtItem;
