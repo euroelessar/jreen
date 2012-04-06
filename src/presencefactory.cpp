@@ -61,6 +61,8 @@ Stanza::Ptr PresenceFactory::createStanza()
 	p->subtype = m_subtype;
 	p->status = m_status;
 	p->priority = m_priority;
+	qSwap(p->tokens, m_tokens);
+	qSwap(p->buffer, m_buffer);
 	return Stanza::Ptr(new Presence(*p));
 }
 

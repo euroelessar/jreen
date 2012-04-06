@@ -46,6 +46,8 @@ Stanza::Ptr IqFactory::createStanza()
 	p->to = m_to;
 	p->id = m_id;
 	p->subtype = m_type;
+	qSwap(p->tokens, m_tokens);
+	qSwap(p->buffer, m_buffer);
 	return Stanza::Ptr(new IQ(*p));
 }
 

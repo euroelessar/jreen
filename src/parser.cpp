@@ -273,9 +273,9 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		XmlStreamParser *parser = d->parsers.at(i);
 		parser->handleEndElement(name, uri);
 		if (d->depth == 2 && d->state == ReadStanza && i > d->parsersCount.at(1)) {
-			Payload::Ptr se;
-			se = static_cast<AbstractPayloadFactory*>(parser)->createPayload();
-			d->extensions.append(se);
+			Payload::Ptr payload = static_cast<AbstractPayloadFactory*>(parser)->createPayload();
+			if (payload)
+				d->extensions.append(payload);
 		}
 	}
 #ifdef PARSER_DEBUG_SPEED

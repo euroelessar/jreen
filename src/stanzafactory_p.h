@@ -26,7 +26,7 @@
 #ifndef STANZAFACTORY_H
 #define STANZAFACTORY_H
 
-#include "stanza.h"
+#include "stanza_p.h"
 #include "langmap.h"
 #include <QXmlStreamAttributes>
 
@@ -38,8 +38,14 @@ class JREEN_AUTOTEST_EXPORT StanzaFactory : public XmlStreamFactory<Stanza>
 public:
 	StanzaFactory(Client *client);
 	virtual ~StanzaFactory();
+	
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &name);
+	
 	virtual int stanzaType() = 0;
 	virtual Stanza::Ptr createStanza() = 0;
+	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
 protected:
 	void parseAttributes(const QXmlStreamAttributes &attributes);
 	void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
@@ -50,6 +56,8 @@ protected:
 	JID m_to;
 	QString m_id;
 	Client *m_client;
+	QList<StanzaPrivate::Token*> m_tokens;
+	QString m_buffer;
 };
 }
 
