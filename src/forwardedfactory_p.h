@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,30 +23,41 @@
 **
 ****************************************************************************/
 
-#ifndef MESSAGEFACTORY_P_H
-#define MESSAGEFACTORY_P_H
+#ifndef JREEN_FORWARDEDFACTORY_P_H
+#define JREEN_FORWARDEDFACTORY_P_H
 
-#include "stanzafactory_p.h"
-#include "message.h"
+#include "forwarded.h"
+#include "messagefactory_p.h"
+#include "delayeddeliveryfactory_p.h"
 
 namespace Jreen
 {
-class JREEN_AUTOTEST_EXPORT MessageFactory : public StanzaFactory
+
+class JREEN_AUTOTEST_EXPORT ForwardedFactory : public PayloadFactory<Forwarded>
 {
 public:
-	enum State { AtMessage, AtBody, AtSubject,AtThread };
-	MessageFactory(Client *client);
-	int stanzaType();
-	Stanza::Ptr createStanza();
-	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
+	ForwardedFactory(Client *client);
+
+	QStringList features() const;
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
-	void handleCharacterData(const QStringRef &name);
+	void handleCharacterData(const QStringRef &text);
+	void serialize(Payload *extension, QXmlStreamWriter *writer);
+	Payload::Ptr createPayload();
+
 private:
-	State m_state;
+	enum State {
+		AtUnknown,
+		AtDelayed,
+		AtMessage
+	} m_state;
+	int m_depth;
+	MessageFactory m_messageFactory;
+	DelayedDeliveryFactory m_delayedFactory;
+	QScopedPointer<Forwarded> m_forwarded;
 };
 
-} // namespace  Jreen
+} // namespace Jreen
 
-#endif // MESSAGEFACTORY_P_H
+#endif // JREEN_FORWARDEDFACTORY_P_H

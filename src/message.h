@@ -51,6 +51,7 @@ public:
 		Normal,       /**< A normal message. */
 		Invalid	      /**< The message stanza is invalid. */
 	};
+	Message(Type type = Invalid);
 	Message(Type type, const JID& to, const QString &body = QString(), const QString &subject = QString(),
 			const QString &thread = QString(), const QString &xmllang = QString());
 	Message(MessagePrivate &p);

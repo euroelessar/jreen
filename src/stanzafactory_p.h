@@ -29,6 +29,7 @@
 #include "stanza_p.h"
 #include "langmap.h"
 #include <QXmlStreamAttributes>
+#include <QStack>
 
 namespace Jreen
 {
@@ -47,17 +48,14 @@ public:
 	virtual Stanza::Ptr createStanza() = 0;
 	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
 protected:
-	void parseAttributes(const QXmlStreamAttributes &attributes);
 	void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
 	void writePayloads(Stanza *stanza, QXmlStreamWriter *writer);
 	void writeEscapedString(const QString &str, QXmlStreamWriter *writer);
 	void writeLangMap(const QString &tag, const LangMap &map,QXmlStreamWriter *writer); //may be move to XmlStreamFactory?
-	JID m_from;
-	JID m_to;
-	QString m_id;
+	int m_depth;
+	QScopedPointer<StanzaPrivate> m_stanza;
 	Client *m_client;
-	QList<StanzaPrivate::Token*> m_tokens;
-	QString m_buffer;
+	QStack<XmlStreamParser*> m_parsers;
 };
 }
 

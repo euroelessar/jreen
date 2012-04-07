@@ -42,9 +42,6 @@ public:
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &name);
-private:
-	int m_depth;
-	IQ::Type m_type;
 };
 }
 

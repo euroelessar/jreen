@@ -46,13 +46,8 @@ public:
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &name);
 private:
-	void clear();
-	int m_depth;
-	Presence::Type m_subtype;
-	int m_priority;
-	LangMap m_status;
 	State m_state;
-	QStringRef m_xmllang;
+	QString m_xmllang;
 };
 }
 

@@ -2,8 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2003 Justin Karneges <justin@affinix.com>
-** Copyright © 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -24,50 +23,46 @@
 **
 ****************************************************************************/
 
-#ifndef PARSER_P_H
-#define PARSER_P_H
-
-#include "jreen.h"
-#include "parser.h"
-#include "streamfeature_p.h"
-#include "stanzaextension.h"
-#include "stanza.h"
-#include "stanzafactory_p.h"
-#include "client_p.h"
-#include <QStack>
-
-// #define PARSER_DEBUG_SPEED 1
-#undef PARSER_DEBUG_SPEED
-#define PARSER_SPLIT_STANZAS_EVENTS 1
-
-/*
- * WARNING!
- * This file is not a part of JReen API, it may be chagned or even removed
- * without any notification.
- */
+#include "forwarded.h"
 
 namespace Jreen
 {
-class ParserPrivate
+
+class ForwardedPrivate
 {
 public:
-	QXmlStreamReader *reader;
-	QXmlStreamReader nullReader;
-	Parser::State state;
-	QStack<XmlStreamParser*> parsers;
-	QStack<int> parsersCount;
-	QByteArray buffer;
-	int depth;
-	bool atParsing;
-	bool first;
-	ClientPrivate *client;
-#ifdef PARSER_DEBUG_SPEED
-	int parsingTime;
-	int totalParsingTime;
-	int totalLogicTime;
-	int stanzaLogicTime[4];
-#endif
+	ForwardedPrivate(const Message &m, const DelayedDelivery::Ptr &t)
+	    : message(m), time(t) {}
+	Message message;
+	DelayedDelivery::Ptr time;
 };
+
+Forwarded::Forwarded(const Message &message, const DelayedDelivery::Ptr &time)
+    : d_ptr(new ForwardedPrivate(message, time))
+{
 }
 
-#endif // PARSER_P_H
+Forwarded::~Forwarded()
+{
+}
+
+Message Forwarded::message() const
+{
+	return d_func()->message;
+}
+
+void Forwarded::setMessage(const Message &message)
+{
+	d_func()->message = message;
+}
+
+DelayedDelivery::Ptr Forwarded::time() const
+{
+	return d_func()->time;
+}
+
+void Forwarded::setTime(const DelayedDelivery::Ptr &time)
+{
+	d_func()->time = time;
+}
+} // namespace Jreen

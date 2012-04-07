@@ -62,6 +62,7 @@
 #include "bitsofbinaryfactory_p.h"
 #include "captchafactory_p.h"
 #include "pgpfactory_p.h"
+#include "forwardedfactory_p.h"
 
 // Features
 #include "nonsaslauth_p.h"
@@ -175,6 +176,7 @@ void ClientPrivate::init()
 	q_ptr->registerPayload(new CaptchaFactory);
 	q_ptr->registerPayload(new PGPSignedFactory);
 	q_ptr->registerPayload(new PGPEncryptedFactory);
+	q_ptr->registerPayload(new ForwardedFactory(q_ptr));
 
 	q_ptr->registerStreamFeature(new NonSaslAuth);
 	q_ptr->registerStreamFeature(new SASLFeature);
