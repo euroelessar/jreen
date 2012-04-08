@@ -32,7 +32,7 @@
 namespace Jreen
 {
 
-PGPSignedFactory::PGPSignedFactory()
+PGPSignedFactory::PGPSignedFactory() : m_depth(0)
 {
 }
 
@@ -85,7 +85,7 @@ Payload::Ptr PGPSignedFactory::createPayload()
 	return Payload::Ptr(m_query.take());
 }
 
-PGPEncryptedFactory::PGPEncryptedFactory()
+PGPEncryptedFactory::PGPEncryptedFactory() : m_depth(0)
 {
 }
 
