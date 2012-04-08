@@ -255,7 +255,6 @@ public:
 		depth = 0;
 		parser->reset();
 		_q_send_header();
-		isConnected = true;
 	}
 	void _q_disconnected()
 	{
@@ -283,7 +282,7 @@ public:
 			_q_disconnected();
 	}
 
-	inline void emitAuthorized() { q_ptr->handleAuthorized(); }
+	inline void emitAuthorized() { authorized = true; q_ptr->handleAuthorized(); }
 	inline void emitConnected() { isConnected = true; q_ptr->handleConnect(); }
 	inline void emitDisconnected(Client::DisconnectReason reason)
 	{

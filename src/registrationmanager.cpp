@@ -27,6 +27,7 @@
 #include "registrationquery_p.h"
 #include "registrationfeature_p.h"
 #include "iqreply.h"
+#include "iq_p.h"
 #include "logger.h"
 #include <QCoreApplication>
 #include <QTimer>
@@ -135,7 +136,7 @@ QList<BitsOfBinary::Ptr> RegistrationData::bitsOfBinaries() const
 
 void RegistrationManagerPrivate::requestInfo()
 {
-	IQ iq(IQ::Get, service);
+	ConnectionIQ iq(IQ::Get, service);
 	iq.addPayload(new RegistrationQuery);
 	sendIQ(iq, SLOT(_q_form_received(Jreen::IQ)));
 }
@@ -255,7 +256,7 @@ void RegistrationManager::fetchFields()
 void RegistrationManager::send(const Jreen::RegistrationData &data)
 {
 	Q_D(RegistrationManager);
-	IQ iq(IQ::Set, d->service);
+	ConnectionIQ iq(IQ::Set, d->service);
 	iq.addPayload(new RegistrationQuery(data));
 	d->sendIQ(iq, SLOT(_q_result_received(Jreen::IQ)));
 }
