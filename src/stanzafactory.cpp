@@ -70,8 +70,10 @@ void StanzaFactory::handleEndElement(const QStringRef &name, const QStringRef &u
 	m_stanza->tokens << new StanzaPrivate::EndToken;
 	if (m_depth == 2) {
 		for (int i = 0; i < m_parsers.size(); i++) {
-			XmlStreamParser *parser = m_parsers.at(i);
-			Payload::Ptr payload = static_cast<AbstractPayloadFactory*>(parser)->createPayload();
+			AbstractPayloadFactory *parser = static_cast<AbstractPayloadFactory*>(m_parsers.at(i));
+			Payload::Ptr payload = parser->createPayload();
+			if (payload.isNull())
+				qFatal("Payload is null from %s", Payload::payloadName(parser->payloadType()));
 			m_stanza->extensions.insert(payload->payloadType(), payload);
 		}
 		m_parsers.clear();
