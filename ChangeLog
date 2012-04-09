@@ -1,3 +1,9 @@
+Version ***
+	* Added PGP payloads
+	* Added support for Message Forwarding
+	* Added experimental Jingle support
+	* Fixed authorization with SCRAM-SHA1
+
 Version 1.0.6:
 	* Fixed parsing of PubSub payload
 	* Fixed serializing of PubSub payload
