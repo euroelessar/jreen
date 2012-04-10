@@ -143,7 +143,7 @@ public:
 	void init();
 	void send(const Stanza &stanza)
 	{
-		if(stanza.from().full().isEmpty()) {
+		if(isConnected && stanza.from().full().isEmpty()) {
 			const StanzaPrivate *p = StanzaPrivate::get(stanza);
 			const_cast<StanzaPrivate*>(p)->from = jid;
 		}
