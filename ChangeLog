@@ -1,8 +1,10 @@
 Version ***
 	* Added PGP payloads
 	* Added support for Message Forwarding
+	* Added MetaContacts support
 	* Added experimental Jingle support
 	* Fixed authorization with SCRAM-SHA1
+	* Fixed sending of IQ's on connect
 
 Version 1.0.6:
 	* Fixed parsing of PubSub payload

@@ -43,6 +43,7 @@
 #include "pubsubmanager_p.h"
 #include "tunefactory_p.h"
 #include "bookmarkfactory_p.h"
+#include "metacontactsfactory_p.h"
 #include "privacyqueryfactory_p.h"
 #include "delayeddeliveryfactory_p.h"
 #include "receiptfactory_p.h"
@@ -169,6 +170,7 @@ void ClientPrivate::init()
 	q_ptr->registerPayload(new MUCRoomOwnerQueryFactory);
 	q_ptr->registerPayload(new EntityTimeFactory);
 	q_ptr->registerPayload(new BookmarkFactory);
+	q_ptr->registerPayload(new MetaContactsFactory);
 	q_ptr->registerPayload(new PrivateXmlQueryFactory(q_ptr));
 	q_ptr->registerPayload(new PrivacyQueryFactory);
 	q_ptr->registerPayload(new RegistrationQueryFactory);

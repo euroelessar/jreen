@@ -1,15 +1,15 @@
 /****************************************************************************
 **
-** qutIM instant messenger
+** Jreen
 **
-** Copyright (C) 2011 Ruslan Nigmatullin <euroelessar@ya.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
-** $QUTIM_BEGIN_LICENSE$
+** $JREEN_BEGIN_LICENSE$
 ** This program is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation, either version 3 of the License, or
+** the Free Software Foundation, either version 2 of the License, or
 ** (at your option) any later version.
 **
 ** This program is distributed in the hope that it will be useful,
@@ -19,17 +19,20 @@
 **
 ** You should have received a copy of the GNU General Public License
 ** along with this program.  If not, see http://www.gnu.org/licenses/.
-** $QUTIM_END_LICENSE$
+** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "jingletransportice_p.h"
+
+#ifdef HAVE_IRISICE
+
 #include <QHostAddress>
 #include <QNetworkInterface>
-#include "jstrings.h"
 #include "jinglecontent.h"
 #include "jinglesession.h"
-#include "util.h"
+#include "../jstrings.h"
+#include "../util.h"
 
 #define NS_ICE_UDP QLatin1String("urn:xmpp:jingle:transports:ice-udp:1")
 
@@ -265,4 +268,7 @@ Payload::Ptr TransportFactory::createPayload()
 }
 
 }
+
 }
+
+#endif

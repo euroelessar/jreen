@@ -185,6 +185,8 @@ void SASLFeature::onNeedParams(const QCA::SASL::Params &params)
 
 void SASLFeature::onAuthCheck(const QString &user, const QString &authzid)
 {
+	Q_UNUSED(user);
+	Q_UNUSED(authzid);
 	m_sasl->continueAfterAuthCheck();
 }
 

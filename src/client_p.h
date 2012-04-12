@@ -51,7 +51,7 @@
 #include <QNetworkProxyFactory>
 #include "stanza_p.h"
 #include "streamprocessor.h"
-#include "jinglemanager.h"
+#include "experimental/jinglemanager.h"
 
 namespace Jreen
 {

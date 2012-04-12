@@ -1,15 +1,15 @@
 /****************************************************************************
 **
-** qutIM instant messenger
+** Jreen
 **
-** Copyright (C) 2011 Ruslan Nigmatullin <euroelessar@ya.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
-** $QUTIM_BEGIN_LICENSE$
+** $JREEN_BEGIN_LICENSE$
 ** This program is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation, either version 3 of the License, or
+** the Free Software Foundation, either version 2 of the License, or
 ** (at your option) any later version.
 **
 ** This program is distributed in the hope that it will be useful,
@@ -19,38 +19,44 @@
 **
 ** You should have received a copy of the GNU General Public License
 ** along with this program.  If not, see http://www.gnu.org/licenses/.
-** $QUTIM_END_LICENSE$
+** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
 
-#ifndef JINGLEAUDIOCONTENTFACTORY_P_H
-#define JINGLEAUDIOCONTENTFACTORY_P_H
+#ifndef JINGLEFACTORY_P_H
+#define JINGLEFACTORY_P_H
 
-#include "jingleaudiocontent_p.h"
-#include "jingleaudiopayload.h"
+#include "jingle_p.h"
+#include "../client_p.h"
 
 namespace Jreen
 {
 
-class JingleAudioContentFactory : public JingleContentFactory<JingleAudioDescription>
+class JingleFactory : public PayloadFactory<Jingle>
 {
 public:
-    JingleAudioContentFactory();
-	
-	virtual JingleContent *createObject(JingleSession *session);
+    JingleFactory(Client *client);
+
+	static bool checkSupport(const QSet<QString> &features);
 	virtual QStringList features() const;
-	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri,
+	                      const QXmlStreamAttributes &attributes);
+	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri,
+	                                const QXmlStreamAttributes &attributes);
 	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	virtual void handleCharacterData(const QStringRef &text);
 	virtual void serialize(Payload *obj, QXmlStreamWriter *writer);
 	virtual Payload::Ptr createPayload();
+	
 private:
-	enum State { AtRoot, AtPayload } m_state;
+	ClientPrivate *m_client;
+	enum State { AtRoot, AtContent, AtTransport, AtDescription, AtReason } m_state;
 	int m_depth;
-	JingleAudioDescription::Ptr m_info;
-	QScopedPointer<JingleAudioPayload> m_payload;
+	Jingle::Ptr m_jingle;
+	AbstractPayloadFactory *m_factory;
+	QScopedPointer<Jingle::Content> m_content;
 };
 
 }
 
-#endif // JINGLEAUDIOCONTENTFACTORY_P_H
+#endif // JINGLEFACTORY_P_H

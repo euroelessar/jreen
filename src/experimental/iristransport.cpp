@@ -1,15 +1,15 @@
 /****************************************************************************
 **
-** qutIM - instant messenger
+** Jreen
 **
 ** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
-** $QUTIM_BEGIN_LICENSE$
+** $JREEN_BEGIN_LICENSE$
 ** This program is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation, either version 3 of the License, or
+** the Free Software Foundation, either version 2 of the License, or
 ** (at your option) any later version.
 **
 ** This program is distributed in the hope that it will be useful,
@@ -19,16 +19,11 @@
 **
 ** You should have received a copy of the GNU General Public License
 ** along with this program.  If not, see http://www.gnu.org/licenses/.
-** $QUTIM_END_LICENSE$
+** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
 
-#ifndef JREEN_JINGLEICE_IRISTRANSPORT_H
-#define JREEN_JINGLEICE_IRISTRANSPORT_H
-
-#include "jingletransport.h"
-#include "3rdparty/icesupport/ice176.h"
-#include "3rdparty/icesupport/udpportreserver.h"
+#include "iristransport.h"
 
 namespace Jreen
 {
@@ -37,5 +32,3 @@ namespace JingleIce
 
 } // namespace JingleIce
 } // namespace Jreen
-
-#endif // JREEN_JINGLEICE_IRISTRANSPORT_H
