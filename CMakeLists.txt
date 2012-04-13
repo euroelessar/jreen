@@ -4,8 +4,8 @@ PROJECT(Jreen)
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_JREEN_VERSION_MAJOR 1 CACHE INT "Major Jreen version number" FORCE)
-set(CMAKE_JREEN_VERSION_MINOR 0 CACHE INT "Minor Jreen version number" FORCE)
-set(CMAKE_JREEN_VERSION_PATCH 6 CACHE INT "Release Jreen version number" FORCE)
+set(CMAKE_JREEN_VERSION_MINOR 1 CACHE INT "Minor Jreen version number" FORCE)
+set(CMAKE_JREEN_VERSION_PATCH 0 CACHE INT "Release Jreen version number" FORCE)
 set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSION_MINOR}.${CMAKE_JREEN_VERSION_PATCH}" CACHE STRING "Jreen version string" FORCE)
 
 # Search for source and headers in source directory (non-recursive)

@@ -1,4 +1,4 @@
-Version ***
+Version 1.1.0
 	* Added PGP payloads
 	* Added support for Message Forwarding
 	* Added MetaContacts support
