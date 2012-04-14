@@ -109,7 +109,8 @@ void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 
 	switch(ss) {
 	case QAbstractSocket::ConnectedState: {
-#ifdef Q_OS_LINUX
+	// It's known that KeepAlive breaks connections on Maemo 5
+#if defined(Q_OS_LINUX) && !defined(Q_WS_MAEMO_5)
 		if (qobject_cast<QTcpSocket*>(socket)) {
 			int fd = socket->socketDescriptor();
 			Q_ASSERT(fd != -1);
