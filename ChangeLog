@@ -1,3 +1,6 @@
+Version ***
+	* Added support for XEP-224: Attentions
+
 Version 1.1.0
 	* Added PGP payloads
 	* Added support for Message Forwarding
