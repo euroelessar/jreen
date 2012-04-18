@@ -41,7 +41,7 @@ class JREEN_EXPORT MetaContactStorage : public QObject
 	Q_DECLARE_PRIVATE(MetaContactStorage)
 public:
 	class ItemData;
-	class Item
+	class JREEN_EXPORT Item
 	{
 	public:
 		Item();
