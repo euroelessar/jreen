@@ -30,6 +30,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <qmath.h>
+#include "../logger.h"
 
 namespace Jreen
 {
@@ -138,7 +139,7 @@ qint64 JingleAudioDevice::readData(char *data, qint64 maxSize)
 	qint64 size = qMin<qint64>(m_outputBuffer.size(), maxSize);
 	qMemCopy(data, m_outputBuffer.data(), size);
 	m_outputBuffer.remove(0, size);
-	return maxSize;
+	return size;
 }
 
 qint64 JingleAudioDevice::writeData(const char *data, qint64 len)
@@ -259,7 +260,7 @@ void JingleAudioContentPrivate::send(int payload, const QByteArray &data)
 void JingleAudioContent::receive(int component, const QByteArray &receivedData)
 {
 	if (component == JingleRTCP) {
-		qDebug() << Q_FUNC_INFO << receivedData.toHex();
+		Logger::debug() << Q_FUNC_INFO << receivedData.toHex();
 	}
 	if (component != JingleRTP)
 		return;

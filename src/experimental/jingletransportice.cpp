@@ -33,6 +33,7 @@
 #include "jinglesession.h"
 #include "../jstrings.h"
 #include "../util.h"
+#include "../logger.h"
 
 #define NS_ICE_UDP QLatin1String("urn:xmpp:jingle:transports:ice-udp:1")
 
@@ -129,7 +130,7 @@ void Transport::send(int component, const QByteArray &data)
 void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool final)
 {
 	Q_UNUSED(final);
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	TransportInfo::Ptr info = genericInfo.staticCast<TransportInfo>();
 	if (!info->ufrag.isEmpty())
 		m_ice->setPeerUfrag(info->ufrag);
@@ -141,18 +142,18 @@ void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool 
 
 void Transport::onIceStarted()
 {
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 }
 
 void Transport::onIceError(XMPP::Ice176::Error error)
 {
-	qDebug() << Q_FUNC_INFO << error;
+	Logger::debug() << Q_FUNC_INFO << error;
 	setState(Failed);
 }
 
 void Transport::onIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate> &candidates)
 {
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	TransportInfo::Ptr info = TransportInfo::Ptr::create();
 	info->candidates = candidates;
 	info->ufrag = m_ice->localUfrag();
@@ -163,7 +164,7 @@ void Transport::onIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate> &
 void Transport::onIceComponentReady(int component)
 {
 	m_ready.remove(component);
-	qDebug() << Q_FUNC_INFO << component;
+	Logger::debug() << Q_FUNC_INFO << component;
 	if (m_ready.isEmpty())
 		setState(Connected);
 }
@@ -260,8 +261,8 @@ void TransportFactory::serialize(Payload *obj, QXmlStreamWriter *writer)
 
 Payload::Ptr TransportFactory::createPayload()
 {
-	qDebug() << Q_FUNC_INFO << m_info->pwd << m_info->ufrag;
-	qDebug() << Q_FUNC_INFO << m_info->candidates.size();
+	Logger::debug() << Q_FUNC_INFO << m_info->pwd << m_info->ufrag;
+	Logger::debug() << Q_FUNC_INFO << m_info->candidates.size();
 	Payload::Ptr result = m_info;
 	m_info.clear();
 	return result;

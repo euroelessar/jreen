@@ -26,6 +26,7 @@
 #include "jinglefactory_p.h"
 #include "../jstrings.h"
 #include "../client_p.h"
+#include "../logger.h"
 
 #define NS_JINGLE QLatin1String("urn:xmpp:jingle:1")
 #define NS_JINGLE_RTP QLatin1String("urn:xmpp:jingle:apps:rtp:1")
@@ -101,7 +102,7 @@ void JingleFactory::handleStartElement(const QStringRef &name, const QStringRef 
 			m_content->senders = Jingle::Both;
 	} else if (m_depth == 3 && m_state == AtContent) {
 		foreach (m_factory, m_client->factoriesByUri.values(uri.toString())) {
-			qDebug() << uri << Payload::payloadName(m_factory->payloadType())
+			Logger::debug() << uri << Payload::payloadName(m_factory->payloadType())
 			         << m_factory->canParse(name, uri, attributes);
 			if (m_factory->canParse(name, uri, attributes))
 				break;
@@ -114,7 +115,7 @@ void JingleFactory::handleStartElement(const QStringRef &name, const QStringRef 
 			m_state = AtDescription;
 		else
 			m_factory = 0;
-		qDebug() << name << uri << m_factory;
+		Logger::debug() << name << uri << m_factory;
 	}
 	if (m_factory)
 		m_factory->handleStartElement(name, uri, attributes);
@@ -173,7 +174,7 @@ void JingleFactory::serialize(Payload *obj, QXmlStreamWriter *writer)
 			if (factory)
 				factory->serialize(content.description.data(), writer);
 		} else {
-			qDebug("No description");
+			Logger::debug() << "No description";
 		}
 		for (int j = 0; j < content.transports.size(); ++j) {
 			Payload *payload = content.transports.at(j).data();

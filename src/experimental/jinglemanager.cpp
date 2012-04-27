@@ -28,6 +28,7 @@
 #include "jinglesession_p.h"
 #include "jingletransportice_p.h"
 #include "jingleaudiocontentfactory_p.h"
+#include "../logger.h"
 
 namespace Jreen
 {
@@ -64,7 +65,7 @@ void JingleManagerPrivate::_q_iqReceived(const Jreen::IQ &iq)
 	Jingle::Ptr jingle = iq.payload<Jingle>();
 	if (!jingle)
 		return;
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	iq.accept();
 	JingleSession *session = sessions.value(jingle->sid);
 	if (session) {
