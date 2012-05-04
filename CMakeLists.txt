@@ -179,7 +179,11 @@ foreach(header ${JREEN_INCLUDE_HEADERS})
 	"
 			)
 		endif(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
-	LIST(APPEND JREEN_INSTALL_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/${header}")
+		get_filename_component(headerPath ${header} PATH)
+		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/${header}"
+				DESTINATION include/jreen/${headerPath}
+				COMPONENT jreenDevel
+		)
     endif(NOT ${header} MATCHES ".*_p\\.h")
 endforeach(header)
 
@@ -227,7 +231,3 @@ install( TARGETS jreen
 	BUNDLE DESTINATION library
 )
 
-INSTALL(FILES ${JREEN_INSTALL_HEADERS}
-	DESTINATION include/jreen
-		COMPONENT jreenDevel
-)
