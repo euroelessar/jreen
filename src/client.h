@@ -67,6 +67,7 @@ class JREEN_EXPORT Client : public QObject
 	Q_OBJECT
 	Q_PROPERTY(QSet<QString> serverFeatures READ serverFeatures NOTIFY serverFeaturesReceived)
 	Q_PROPERTY(Jreen::Disco::IdentityList serverIdentities READ serverIdentities NOTIFY serverIdentitiesReceived)
+	Q_ENUMS(DisconnectReason Feature FeatureConfig)
 	Q_DECLARE_PRIVATE(Client)
 public:
 
