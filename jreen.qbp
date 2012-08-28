@@ -7,7 +7,6 @@ Project {
     property string jreenVersion: vreenVersionMajor + '.' + vreenVersionMinor + '.' + vreenVersionRelease
 
     property bool jreenUseSimpleSasl: true
-    property bool jreenJingleSupport: false
 
     moduleSearchPaths: "qbs"
 
@@ -18,9 +17,11 @@ Project {
 
         //cpp.warningLevel: "all"
         cpp.includePaths: [
+            ".",
             "3rdparty",
             "3rdparty/jdns",
             "3rdparty/simplesasl",
+            "3rdparty/icesupport",
             "src",
             "src/experimental"
         ]
@@ -271,6 +272,7 @@ Project {
         Depends { name: "Qt.network" }
         Depends { name: "qca" }
         Depends { name: "zlib" }
+        Depends { name: "speex" }
 
         Group {
             //jdns files
@@ -292,6 +294,50 @@ Project {
             ]
         }
         Group {
+            //ice files
+            files: [
+                "3rdparty/icesupport/udpportreserver.h",
+                "3rdparty/icesupport/iceturntransport.h",
+                "3rdparty/icesupport/icecomponent_p.h",
+                "3rdparty/icesupport/icecomponent.h",
+                "3rdparty/icesupport/stunbinding.h",
+                "3rdparty/icesupport/stunutil.h",
+                "3rdparty/icesupport/servsock.h",
+                "3rdparty/icesupport/socks.h",
+                "3rdparty/icesupport/ice176.h",
+                "3rdparty/icesupport/bytestream.h",
+                "3rdparty/icesupport/httpconnect.h",
+                "3rdparty/icesupport/bsocket.h",
+                "3rdparty/icesupport/stunmessage.h",
+                "3rdparty/icesupport/stuntransaction.h",
+                "3rdparty/icesupport/objectsession.h",
+                "3rdparty/icesupport/icelocaltransport.h",
+                "3rdparty/icesupport/turnclient.h",
+                "3rdparty/icesupport/stuntypes.h",
+                "3rdparty/icesupport/stunallocate.h",
+                "3rdparty/icesupport/icetransport.h",
+                "3rdparty/icesupport/servsock.cpp",
+                "3rdparty/icesupport/stuntransaction.cpp",
+                "3rdparty/icesupport/stunmessage.cpp",
+                "3rdparty/icesupport/icecomponent.cpp",
+                "3rdparty/icesupport/stunallocate.cpp",
+                "3rdparty/icesupport/udpportreserver.cpp",
+                "3rdparty/icesupport/iceturntransport.cpp",
+                "3rdparty/icesupport/objectsession.cpp",
+                "3rdparty/icesupport/bsocket.cpp",
+                "3rdparty/icesupport/stunutil.cpp",
+                "3rdparty/icesupport/turnclient.cpp",
+                "3rdparty/icesupport/stuntypes.cpp",
+                "3rdparty/icesupport/stunbinding.cpp",
+                "3rdparty/icesupport/httpconnect.cpp",
+                "3rdparty/icesupport/ice176.cpp",
+                "3rdparty/icesupport/icetransport.cpp",
+                "3rdparty/icesupport/icelocaltransport.cpp",
+                "3rdparty/icesupport/socks.cpp",
+                "3rdparty/icesupport/bytestream.cpp"
+            ]
+        }
+        Group {
             //simple sasl files
             condition: project.jreenUseSimpleSasl
             files: [
@@ -307,7 +353,6 @@ Project {
         }
         Group {
             //experimental jingle support
-            condition: project.jreenJingleSupport
             files: [
                 "src/experimental/jingleaudiopayload.h",
                 "src/experimental/jinglemanager.h",
@@ -338,6 +383,70 @@ Project {
                 "src/experimental/jingletransportice.cpp",
                 "src/experimental/jingleaudiopayload.cpp",
                 "src/experimental/jinglecontent.cpp",
+            ]
+        }
+
+        Group {
+            //install headers
+            qbs.installDir: "include/jreen"
+            fileTags: ["install"]
+            files: [
+                "src/entitytime.h",
+                "src/udpconnection.h",
+                "src/receipt.h",
+                "src/captcha.h",
+                "src/directconnection.h",
+                "src/messagesession.h",
+                "src/attention.h",
+                "src/pubsubmanager.h",
+                "src/pgpsigned.h",
+                "src/client.h",
+                "src/abstractroster.h",
+                "src/capabilities.h",
+                "src/mucroom.h",
+                "src/util.h",
+                "src/jid.h",
+                "src/jstrings.h",
+                "src/activity.h",
+                "src/buffereddatastream.h",
+                "src/stanza.h",
+                "src/nickname.h",
+                "src/parser.h",
+                "src/datastream.h",
+                "src/iq.h",
+                "src/disco.h",
+                "src/vcard.h",
+                "src/pgpencrypted.h",
+                "src/stanzaextension.h",
+                "src/softwareversion.h",
+                "src/forwarded.h",
+                "src/privatexml.h",
+                "src/iqreply.h",
+                "src/logger.h",
+                "src/connectionbosh.h",
+                "src/bookmarkstorage.h",
+                "src/mood.h",
+                "src/vcardupdate.h",
+                "src/jreen.h",
+                "src/tune.h",
+                "src/connection.h",
+                "src/privacymanager.h",
+                "src/tcpconnection.h",
+                "src/delayeddelivery.h",
+                "src/bookmark.h",
+                "src/dataform.h",
+                "src/registrationmanager.h",
+                "src/vcardmanager.h",
+                "src/bitsofbinary.h",
+                "src/metacontactstorage.h",
+                "src/subscription.h",
+                "src/error.h",
+                "src/pubsubevent.h",
+                "src/presence.h",
+                "src/ping.h",
+                "src/streamprocessor.h",
+                "src/chatstate.h",
+                "src/message.h",
             ]
         }
     }
