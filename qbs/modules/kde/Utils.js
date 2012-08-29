@@ -1,2 +1,0 @@
-//internal cache
-var variables = []

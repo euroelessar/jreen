@@ -1,0 +1,3 @@
+[submodule "qbs"]
+	path = qbs
+	url = git@github.com:qutIM/qbs-labs.git
