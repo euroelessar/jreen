@@ -12,9 +12,12 @@ Module {
         id: libraryProbe
         names: libraryNames
     }
+    Properties {
+        condition: libraryProbe.found
 
-    cpp.dynamicLibraries: {
-        print("LibraryProbe: found library " + libraryProbe.filePath);
-        return libraryProbe.filePath;
+        cpp.dynamicLibraries: {
+            print("LibraryProbe: found library " + libraryProbe.filePath);
+            return libraryProbe.filePath;
+        }
     }
 }
