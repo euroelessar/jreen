@@ -1,8 +1,6 @@
 import qbs.base 1.0
 
 Project {
-    moduleSearchPaths: "qbs"
-
     references: "jreen.qbs"
 }
 

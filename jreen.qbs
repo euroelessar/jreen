@@ -7,10 +7,12 @@ Product {
     property string versionRelease: '0'
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
     
+    moduleSearchPaths: "qbs/modules"
+
     destination: "lib"
     type: ["dynamiclibrary", "installed_content"]
 
-    cpp.warningLevel: "all"
+    //cpp.warningLevel: "all"
     cpp.includePaths: [
         ".",
         "3rdparty",
@@ -268,6 +270,8 @@ Product {
     Depends { name: "qca" }
     Depends { name: "zlib" }
     Depends { name: "speex" }
+    Depends { name: "windows.ws2_32" }
+    Depends { name: "windows.advapi32" }
 
     Group {
         //jdns files
