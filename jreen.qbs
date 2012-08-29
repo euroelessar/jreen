@@ -12,6 +12,15 @@ Product {
     destination: "lib"
     type: ["dynamiclibrary", "installed_content"]
 
+    Depends { name: "cpp" }
+    Depends { name: "Qt.core" }
+    Depends { name: "Qt.network" }
+    Depends { name: "qca"; required: true }
+    Depends { name: "zlib"; required: true }
+    Depends { name: "speex" }
+    Depends { name: "windows.ws2_32" }
+    Depends { name: "windows.advapi32" }
+
     //cpp.warningLevel: "all"
     cpp.includePaths: [
         ".",
@@ -22,22 +31,21 @@ Product {
         "src",
         "src/experimental"
     ]
-    cpp.defines: {
-        var defines = ["J_BUILD_LIBRARY"];
-        if (useSimpleSasl)
-            defines.push("HAVE_SIMPLESASL");
-        return defines;
-    }
-    cpp.cxxFlags: {
-        var flags = [];
-        if (qbs.toolchain === "gcc") {
-            if (qbs.platform !== "windows") {
-                flags.push("-fvisibility=hidden");
-            }
-        }
-        return flags;
-    }
+    cpp.defines: ["J_BUILD_LIBRARY"]
     cpp.positionIndependentCode: true
+
+    Properties {
+        condition: false //speex.found
+        cpp.defines: "JREEN_HAVE_SPEEX=1"
+    }
+    Properties {
+        condition: useSimpleSasl
+        cpp.defines: "HAVE_SIMPLESASL"
+    }
+    Properties {
+        condition: qbs.toolchain === "gcc" && (qbs.platform !== "windows")
+        cpp.cxxFlags: "-fvisibility=hidden"
+    }
 
     files: [
         "src/entitytime.h",
@@ -263,15 +271,6 @@ Product {
         "src/pgpfactory.cpp",
         "src/sessionfeature.cpp"
     ]
-
-    Depends { name: "cpp" }
-    Depends { name: "Qt.core" }
-    Depends { name: "Qt.network" }
-    Depends { name: "qca" }
-    Depends { name: "zlib" }
-    Depends { name: "speex" }
-    Depends { name: "windows.ws2_32" }
-    Depends { name: "windows.advapi32" }
 
     Group {
         //jdns files
