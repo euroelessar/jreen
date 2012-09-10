@@ -15,11 +15,11 @@ Product {
     Depends { name: "cpp" }
     Depends { name: "Qt.core" }
     Depends { name: "Qt.network" }
-    Depends { name: "qca"; required: true }
-    Depends { name: "zlib"; required: true }
-    Depends { name: "speex" }
-    Depends { name: "windows.ws2_32" }
-    Depends { name: "windows.advapi32" }
+    Depends { name: "qca" }
+    Depends { name: "zlib" }
+    Depends { name: "speex"; required: false }
+    Depends { name: "windows.ws2_32"; condition: qbs.targetOS === 'windows' }
+    Depends { name: "windows.advapi32"; condition: qbs.targetOS === 'windows' }
 
     //cpp.warningLevel: "all"
     cpp.includePaths: [
@@ -84,12 +84,12 @@ Product {
         qbs.installDir: "include/jreen"
         fileTags: ["install"]
         files: [
-            "src/*[^p].h",
+            "src/*[^_][a-z].h",
         ]
     }
 
     ProductModule {
         Depends { name: "cpp" }
-        cpp.includePaths: product.buildDirectory + "include/vreen"
+        cpp.includePaths: product.buildDirectory + "/include/vreen"
     }
 } 
