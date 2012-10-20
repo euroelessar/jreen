@@ -24,6 +24,7 @@
 ****************************************************************************/
 
 #include "sjdns_p.h"
+#include "logger.h"
 
 namespace Jreen
 {
@@ -31,15 +32,23 @@ namespace Jreen
 SJDns &SJDns::instance()
 {
 	static SJDns *sjdns = 0;
-	if(!sjdns)
-	{
+	if (sjdns && !sjdns->m_valid) {
+		delete sjdns;
+		sjdns = 0;
+	}
+	if (!sjdns) {
 		sjdns = new SJDns;
-		sjdns->qjdns = new QJDns;
-		sjdns->qjdns->init(QJDns::Unicast, QHostAddress::Any);
-		QJDns::NameServer host;
-		connect(sjdns->qjdns, SIGNAL(resultsReady(int,QJDns::Response)), sjdns, SLOT(resultsReady(int,QJDns::Response)));
-		connect(sjdns->qjdns, SIGNAL(published(int)), sjdns, SLOT(published(int)));
-		connect(sjdns->qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
+		sjdns->m_qjdns = new QJDns;
+		sjdns->m_valid = true;
+		if (!sjdns->m_qjdns->init(QJDns::Unicast, QHostAddress::Any)) {
+			delete sjdns->m_qjdns;
+			sjdns->m_qjdns = 0;
+			sjdns->m_valid = false;
+			return *sjdns;
+		}
+		connect(sjdns->m_qjdns, SIGNAL(resultsReady(int,QJDns::Response)), sjdns, SLOT(resultsReady(int,QJDns::Response)));
+		connect(sjdns->m_qjdns, SIGNAL(published(int)), sjdns, SLOT(published(int)));
+		connect(sjdns->m_qjdns, SIGNAL(error(int,QJDns::Error)), sjdns, SLOT(error(int,QJDns::Error)));
 
 		QJDns::SystemInfo info = QJDns::systemInfo();
 		if (info.nameServers.isEmpty()) {
@@ -49,13 +58,29 @@ SJDns &SJDns::instance()
 			server.address = QLatin1String("77.88.39.152");
 			info.nameServers << server;
 		}
-		sjdns->qjdns->setNameServers(info.nameServers);
+		sjdns->m_qjdns->setNameServers(info.nameServers);
 	}
 	return *sjdns;
 }
 
+bool SJDns::isValid()
+{
+	return m_valid;
+}
+
+void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
+{
+	Q_ASSERT(m_valid);
+	int id = m_qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
+	Action *action = new Action(this);
+	action->setData(host);
+	connect(action, SIGNAL(triggered()), receiver, member);
+	m_actions.insert(id, action);
+}
+
 const QJDns::Response *SJDns::servers(const QString &host)
 {
+	Q_ASSERT(m_valid);
 	QHash<QString, QJDns::Response>::const_iterator iter = m_results.find(host);
 	if(iter == m_results.constEnd())
 		return 0;
@@ -67,9 +92,14 @@ void SJDns::resultsReady(int id, const QJDns::Response &results)
 	Action *action = m_actions.value(id, 0);
 	Q_ASSERT(action);
 	foreach(const QJDns::Record &record, results.answerRecords)
-		qDebug() << record.name << record.port << record.priority << record.weight;
+		Logger::debug() << record.name << record.port << record.priority << record.weight;
 	m_results.insert(action->data().toString(), results);
 	action->trigger();
+}
+
+void SJDns::published(int id)
+{
+	Q_UNUSED(id);
 }
 
 void SJDns::error(int id, QJDns::Error e)
@@ -83,19 +113,18 @@ void SJDns::error(int id, QJDns::Error e)
 	response.answerRecords << record;
 	m_results.insert(record.name, response);
 	action->trigger();
-	switch(e)
-	{
+	switch (e) {
 	case QJDns::ErrorGeneric:
-		qDebug("error %s %d", "Generic", id);
+		Logger::critical() << "error Generic" << id;
 		break;
 	case QJDns::ErrorNXDomain:
-		qDebug("error %s %d", "NXDomain", id);
+		Logger::critical() << "error NXDomain" << id;
 		break;
 	case QJDns::ErrorTimeout:
-		qDebug("error %s %d", "Timeout", id);
+		Logger::critical() << "error Timeout" << id;
 		break;
 	case QJDns::ErrorConflict:
-		qDebug("error %s %d", "Conflict", id);
+		Logger::critical() << "error Conflict" << id;
 		break;
 	}
 }

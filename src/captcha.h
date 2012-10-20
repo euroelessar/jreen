@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,37 +23,30 @@
 **
 ****************************************************************************/
 
-#ifndef MULTIMEDIADATA_H
-#define MULTIMEDIADATA_H
-#include <QVariantMap>
-#include "stanzaextension.h"
+#ifndef JREEN_CAPTCHA_H
+#define JREEN_CAPTCHA_H
 
-namespace Jreen
-{
+#include "dataform.h"
 
-// XEP-0221
-// http://xmpp.org/extensions/xep-0221.html
-class MultimediaDataPrivate;
-class JREEN_EXPORT MultimediaData
+namespace Jreen {
+
+class CaptchaPrivate;
+
+class JREEN_EXPORT Captcha : public Payload
 {
+	J_PAYLOAD(Jreen::Captcha)
+	Q_DECLARE_PRIVATE(Captcha)
 public:
-	enum Type
-	{
-		Audio,
-		Image
-	};
-	MultimediaData(Type type,const QVariantList &data,const QVariantMap &attributes = QVariantMap());
-	MultimediaData(const MultimediaData &other);
-	~MultimediaData();
-	MultimediaData &operator =(const MultimediaData &o);
-	QVariantMap attributes() const;
-	QVariantList data() const;
-	void setData(const QVariantList &data);
-	void setAttributes(const QVariantMap &attributes);
+	Captcha(DataForm::Ptr form = DataForm::Ptr());
+	~Captcha();
+	
+	DataForm::Ptr form() const;
+	void setForm(const DataForm::Ptr &form);
+	
 private:
-	QSharedDataPointer<MultimediaDataPrivate> d_ptr;
-	friend class MultimediaDataPrivate;
+	QScopedPointer<CaptchaPrivate> d_ptr;
 };
 
 } // namespace Jreen
-#endif // MULTIMEDIADATA_H
+
+#endif // JREEN_CAPTCHA_H

@@ -35,16 +35,7 @@ namespace Jreen
 
 PresenceFactory::PresenceFactory(Client *client) : StanzaFactory(client)
 {
-	m_depth = 0;
 	m_state = AtNowhere;
-	clear();
-}
-
-void PresenceFactory::clear()
-{
-	m_status.clear();
-	m_priority = 0;
-	m_subtype = Presence::Available;
 }
 
 int PresenceFactory::stanzaType()
@@ -54,18 +45,15 @@ int PresenceFactory::stanzaType()
 
 Stanza::Ptr PresenceFactory::createStanza()
 {
-	PresencePrivate *p = new PresencePrivate;
-	p->from = m_from;
-	p->to = m_to;
-	p->id = m_id;
-	p->subtype = m_subtype;
-	p->status = m_status;
-	p->priority = m_priority;
-	return Stanza::Ptr(new Presence(*p));
+	return Stanza::Ptr(new Presence(*static_cast<PresencePrivate*>(m_stanza.take())));
 }
 
 void PresenceFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 {
+	if (!StanzaPrivate::get(*stanza)->tokens.isEmpty()) {
+		StanzaFactory::serialize(stanza, writer);
+		return;
+	}
 	Presence *presence = static_cast<Presence*>(stanza);
 	if(presence->subtype() == Presence::Invalid)
 		return;
@@ -133,28 +121,29 @@ bool PresenceFactory::canParse(const QStringRef &name, const QStringRef &uri, co
 
 void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	Q_UNUSED(uri);
 	m_depth++;
+	if (m_depth == 1)
+		m_stanza.reset(new PresencePrivate);
+	StanzaFactory::handleStartElement(name, uri, attributes);
+	PresencePrivate *p = static_cast<PresencePrivate*>(m_stanza.data());
 	if (m_depth == 1) {
-		clear();
-		parseAttributes(attributes);
 		QStringRef type = attributes.value(QLatin1String("type"));
 		if (type == QLatin1String("unavailable"))
-			m_subtype = Presence::Unavailable;
+			p->subtype = Presence::Unavailable;
 		else if (type == QLatin1String("probe"))
-			m_subtype = Presence::Probe;
+			p->subtype = Presence::Probe;
 		else if (type == QLatin1String("subscribe"))
-			m_subtype = Presence::Subscribe;
+			p->subtype = Presence::Subscribe;
 		else if (type == QLatin1String("unsubscribe"))
-			m_subtype = Presence::Unsubscribe;
+			p->subtype = Presence::Unsubscribe;
 		else if (type == QLatin1String("subscribed"))
-			m_subtype = Presence::Subscribe;
+			p->subtype = Presence::Subscribe;
 		else if (type == QLatin1String("unsubscribed"))
-			m_subtype = Presence::Unsubscribe;
+			p->subtype = Presence::Unsubscribe;
 		else if (type == QLatin1String("error"))
-			m_subtype = Presence::Error;
+			p->subtype = Presence::Error;
 		else
-			m_subtype = Presence::Available;
+			p->subtype = Presence::Available;
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("show"))
 			m_state = AtShow;
@@ -163,42 +152,39 @@ void PresenceFactory::handleStartElement(const QStringRef &name, const QStringRe
 		}
 		else if(name == QLatin1String("status")) {
 			m_state = AtStatus;
-			m_xmllang = attributes.value(QLatin1String("xml:lang"));
+			m_xmllang = attributes.value(QLatin1String("xml:lang")).toString();
 		}
 	}
 }
 
 void PresenceFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	StanzaFactory::handleEndElement(name, uri);
 	if (m_depth == 2)
 		m_state = AtNowhere;
 	m_depth--;
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
 }
 
 void PresenceFactory::handleCharacterData(const QStringRef &text)
 {
+	StanzaFactory::handleCharacterData(text);
 	if(m_depth == 2) {
+		PresencePrivate *p = static_cast<PresencePrivate*>(m_stanza.data());
 		if(m_state == AtShow) {
-/*			if(text == QLatin1String("available"))
-				m_type = Presence::Available;
-			else if(text == QLatin1String("unavailable"))
-				m_type = Presence::Unavailable;
-			else */if(text == QLatin1String("away"))
-				m_subtype = Presence::Away;
+			if(text == QLatin1String("away"))
+				p->subtype = Presence::Away;
 			else if(text == QLatin1String("chat"))
-				m_subtype = Presence::Chat;
+				p->subtype = Presence::Chat;
 			else if(text == QLatin1String("dnd"))
-				m_subtype = Presence::DND;
+				p->subtype = Presence::DND;
 			else if(text == QLatin1String("xa"))
-				m_subtype = Presence::XA;
+				p->subtype = Presence::XA;
 		}
 		else if(m_state == AtPriority) {
-			m_priority = text.toString().toInt();
+			p->priority = text.toString().toInt();
 		}
 		else if(m_state == AtStatus) {
-			m_status[m_xmllang.toString()] = text.toString();
+			p->status[m_xmllang] = text.toString();
 		}
 	}
 }

@@ -161,6 +161,7 @@ public:
 	~Error();
 
 	Type type() const;
+	QString text(const QString &lang = QString()) const;
 	Condition condition() const;
 	QString conditionText() const;
 private:

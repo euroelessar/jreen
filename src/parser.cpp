@@ -28,7 +28,7 @@
 #include "subscription.h"
 #include "presence.h"
 #include <QCoreApplication>
-#include <QDebug>
+#include "logger.h"
 #ifdef PARSER_DEBUG_SPEED
 #include <QTime>
 #endif
@@ -74,7 +74,45 @@ void Parser::reset()
 	d->parsers.clear();
 	foreach (StreamFeature *feature, d->client->features)
 		feature->reset();
-	d->extensions.clear();
+}
+
+static Client::Feature convertToFeature(int type)
+{
+	switch (type) {
+	case StreamFeature::CompressionLayer:
+		return Client::Compression;
+	case StreamFeature::SecurityLayer:
+		return Client::Encryption;
+	case StreamFeature::SASL:
+	case StreamFeature::SimpleAuthorization:
+		return Client::Authorization;
+	default:
+		return Client::InvalidFeature;
+	}
+}
+
+static Client::DisconnectReason convertToReason(Client::Feature feature)
+{
+	switch (feature) {
+	case Client::Encryption:
+		return Client::NoEncryptionSupport;
+	case Client::Compression:
+		return Client::NoCompressionSupport;
+	case Client::Authorization:
+		return Client::NoAuthorizationSupport;
+	default:
+		return Client::NoSupportedFeature;
+	}
+}
+
+static bool checkFeature(ClientPrivate *client, Client::Feature feature)
+{
+	if (client->configs[feature] == Client::Force
+	        && !(client->usedFeatures & (1 << feature))) {
+		client->emitDisconnected(convertToReason(feature));
+		return false;
+	}
+	return true;
 }
 
 void Parser::activateFeature()
@@ -82,14 +120,34 @@ void Parser::activateFeature()
 	Q_D(Parser);
 	int i = d->client->features.indexOf(d->client->current_stream_feature) + 1;
 	d->client->current_stream_feature = 0;
+	bool foundAny = false;
 	for (; i < d->client->features.size(); i++) {
 		StreamFeature *feature = d->client->features.at(i);
-		if (feature->isActivatable()) {
-			d->client->current_stream_feature = feature;
-			feature->activate();
-			break;
+		if (!feature->isActivatable())
+			continue;
+		Client::Feature clientFeature = convertToFeature(feature->type());
+		Client::FeatureConfig config = d->client->configs.value(clientFeature, Client::Auto);
+		if (config == Client::Disable)
+			continue;
+		if (clientFeature == Client::InvalidFeature
+		        && (!checkFeature(d->client, Client::Encryption)
+		            || !checkFeature(d->client, Client::Compression)
+		            || !checkFeature(d->client, Client::Authorization))) {
+			return;
 		}
+		if (clientFeature == Client::Authorization
+		        && !checkFeature(d->client, Client::Encryption)) {
+			return;
+		}
+		d->client->current_stream_feature = feature;
+		foundAny = true;
+		feature->activate();
+		if (clientFeature != Client::InvalidFeature)
+			d->client->usedFeatures |= (1 << clientFeature);
+		break;
 	}
+	if (!foundAny)
+		d->client->emitDisconnected(Client::NoSupportedFeature);
 }
 
 #define XML_HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -187,15 +245,10 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 			if (feature->canParse(name, uri, attributes))
 				d->parsers.append(feature);
 		}
-	} else if (d->state == ReadStanza && d->depth == 2) {
-		foreach (AbstractPayloadFactory *factory, d->client->factories) {
-			if (factory->canParse(name, uri, attributes))
-				d->parsers.append(factory);
-		}
 	}
 	foreach (XmlStreamParser *parser, d->parsers)
 		parser->handleStartElement(name, uri, attributes);
-	//				qDebug() << d->reader->tokenString() << d->depth << name;
+	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
 #ifdef PARSER_DEBUG_SPEED
 	d->parsingTime += counter.elapsed();
 #endif
@@ -213,11 +266,6 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 	for (int i = 0; i < d->parsers.size(); i++) {
 		XmlStreamParser *parser = d->parsers.at(i);
 		parser->handleEndElement(name, uri);
-		if (d->depth == 2 && d->state == ReadStanza && i > d->parsersCount.at(1)) {
-			Payload::Ptr se;
-			se = static_cast<AbstractPayloadFactory*>(parser)->createPayload();
-			d->extensions.append(se);
-		}
 	}
 #ifdef PARSER_DEBUG_SPEED
 	d->parsingTime += counter.elapsed();
@@ -232,14 +280,11 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		} else if (d->state == ReadStanza) {
 			StanzaFactory *factory = static_cast<StanzaFactory*>(d->parsers.top());
 			Stanza::Ptr stanza = factory->createStanza();
-			foreach (const Payload::Ptr &se, d->extensions)
-				stanza->addExtension(se);
 #ifdef PARSER_DEBUG_SPEED
 			d->parsingTime += counter.elapsed();
 			counter.restart();
 #endif
 			d->client->handleStanza(stanza);
-			d->extensions.clear();
 #ifdef PARSER_DEBUG_SPEED
 			d->stanzaLogicTime[factory->stanzaType()] += counter.elapsed();
 #endif
@@ -248,19 +293,19 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		d->totalParsingTime += d->parsingTime;
 		int logicTime = counter.elapsed();
 		d->totalLogicTime += logicTime;
-		qDebug("Total parsing time: %d ms", d->totalParsingTime);
-		qDebug("Parsing time: %d ms", d->parsingTime);
-		qDebug("Total logic time: %d ms", d->totalLogicTime);
-		qDebug("Total IQ logic time: %d ms", d->stanzaLogicTime[0]);
-		qDebug("Total Presence logic time: %d ms", d->stanzaLogicTime[1]);
-		qDebug("Total Message logic time: %d ms", d->stanzaLogicTime[2]);
-		qDebug("Logic time: %d ms", logicTime);
+		Logger::debug() << "Total parsing time:" << d->totalParsingTime << "ms";
+		Logger::debug() << "Parsing time:" << d->parsingTime << "ms";
+		Logger::debug() << "Total logic time:" << d->totalLogicTime << "ms";
+		Logger::debug() << "Total IQ logic time:" << d->stanzaLogicTime[0] << "ms";
+		Logger::debug() << "Total Presence logic time:" << d->stanzaLogicTime[1] << "ms";
+		Logger::debug() << "Total Message logic time:" << d->stanzaLogicTime[2] << "ms";
+		Logger::debug() << "Logic time:" << logicTime << "ms";
 #endif
 		d->state = WaitingForStanza;
 	} else if (d->depth == 0) {
 	}
 	d->parsers.resize(d->parsersCount.pop());
-	//				qDebug() << d->reader->tokenString() << d->depth << name;
+	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
 }
 
 void Parser::handleCharacterData(const QStringRef &text)
@@ -310,10 +355,10 @@ void Parser::parseData()
 			}
 		}
 		if (d->nullReader.error() == QXmlStreamReader::NotWellFormedError) {
-			qWarning() << "---------------------------------";
-			qWarning() << "Broken stanza (" << d->nullReader.errorString() << ")";
-			qWarning() << result;
-			qWarning() << "---------------------------------";
+			Logger::warning() << "---------------------------------";
+			Logger::warning() << "Broken stanza (" << d->nullReader.errorString() << ")";
+			Logger::warning() << result;
+			Logger::warning() << "---------------------------------";
 			result.prepend("<!--");
 			result.append("-->");
 			foreach (XmlStreamHandler *handler, d->client->streamHandlers)

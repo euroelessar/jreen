@@ -30,7 +30,7 @@
 
 namespace Jreen {
 
-class ChatStateFactory : public PayloadFactory<ChatState>
+class JREEN_AUTOTEST_EXPORT ChatStateFactory : public PayloadFactory<ChatState>
 {
 public:
 	ChatStateFactory();

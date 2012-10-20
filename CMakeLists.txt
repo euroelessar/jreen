@@ -4,13 +4,13 @@ PROJECT(Jreen)
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_JREEN_VERSION_MAJOR 1 CACHE INT "Major Jreen version number" FORCE)
-set(CMAKE_JREEN_VERSION_MINOR 0 CACHE INT "Minor Jreen version number" FORCE)
-set(CMAKE_JREEN_VERSION_PATCH 1 CACHE INT "Release Jreen version number" FORCE)
+set(CMAKE_JREEN_VERSION_MINOR 1 CACHE INT "Minor Jreen version number" FORCE)
+set(CMAKE_JREEN_VERSION_PATCH 0 CACHE INT "Release Jreen version number" FORCE)
 set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSION_MINOR}.${CMAKE_JREEN_VERSION_PATCH}" CACHE STRING "Jreen version string" FORCE)
 
 # Search for source and headers in source directory (non-recursive)
-FILE(GLOB SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-FILE(GLOB HDR "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+FILE(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+FILE(GLOB_RECURSE HDR "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
 # Require QT 4.6
 SET(QT_MIN_VERSION "4.6.0")
@@ -20,9 +20,29 @@ FIND_PACKAGE(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
 INCLUDE(${QT_USE_FILE})
 INCLUDE(jreenMacros)
 FIND_PACKAGE(QCA2 REQUIRED)
-#FIND_PACKAGE(ZLIB REQUIRED)
-FIND_PACKAGE(LibIDN)
 
+if( JREEN_BUILD_INTERNAL )
+	add_definitions( "-DJ_BUILD_INTERNAL" )
+endif()
+FIND_PACKAGE(PkgConfig)
+
+#pkg_search_module(NICE nice)
+#if(NOT NICE_FOUND)
+#	message(STATUS "Could not find nice library.")
+#else(NOT NICE_FOUND)
+#	message(STATUS "Nice library is found.")
+#	include_directories(${NICE_INCLUDE_DIRS})
+#	ADD_DEFINITIONS("-DJREEN_HAVE_NICE=1")
+#endif(NOT NICE_FOUND)
+
+pkg_search_module(SPEEX speex)
+if(NOT SPEEX_FOUND)
+	message(STATUS "Could not find speex library.")
+else(NOT SPEEX_FOUND)
+	message(STATUS "Speex library is found.")
+	include_directories(${SPEEX_INCLUDE_DIRS})
+	ADD_DEFINITIONS("-DJREEN_HAVE_SPEEX=1")
+endif(NOT SPEEX_FOUND)
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config
 if(LINUX)
@@ -42,6 +62,8 @@ if(LINUX)
 	if(NOT ZLIB_LIBRARIES)
 	  message(SEND_ERROR "Could not find zlib library.")
 	endif(NOT ZLIB_LIBRARIES)
+
+
 else()
 	find_package(ZLIB REQUIRED)
 endif()
@@ -57,14 +79,22 @@ INCLUDE_DIRECTORIES(.
 	${QCA2_INCLUDE_DIR}
 	${ZLIB_INCLUDE_DIR}
 )
-IF(LIBIDN_FOUND)
-	INCLUDE_DIRECTORIES(${LIBIDN_INCLUDE_DIR})
-	ADD_DEFINITIONS("-DHAVE_IDN=1")
-ENDIF(LIBIDN_FOUND)
 
 LIST(APPEND SRC ${3RD_PARTY_SRC_C})
 LIST(APPEND SRC ${3RD_PARTY_SRC})
 LIST(APPEND HDR ${3RD_PARTY_HDR})
+
+# Ice support
+option(JREEN_USE_IRISICE "Use ICE from IRIS" OFF)
+if (JREEN_USE_IRISICE)
+	file(GLOB_RECURSE ICESUPPORT_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.cpp")
+	file(GLOB_RECURSE ICESUPPORT_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.c")
+	file(GLOB_RECURSE ICESUPPORT_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.h")
+	list(APPEND SRC ${ICESUPPORT_SRC})
+	list(APPEND SRC ${ICESUPPORT_SRC_C})
+	list(APPEND HDR ${ICESUPPORT_HDR})
+	add_definitions("-DHAVE_IRISICE")
+endif()
 
 option(JREEN_USE_SIMPLESASL "Use SimpleSASL" ON)
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl")
@@ -140,7 +170,7 @@ set_target_properties(jreen PROPERTIES
 )
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/jreen" )
-file(GLOB JREEN_INCLUDE_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+file(GLOB_RECURSE JREEN_INCLUDE_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 foreach(header ${JREEN_INCLUDE_HEADERS})
 	if(NOT ${header} MATCHES ".*_p\\.h")
 		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
@@ -149,7 +179,11 @@ foreach(header ${JREEN_INCLUDE_HEADERS})
 	"
 			)
 		endif(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
-	LIST(APPEND JREEN_INSTALL_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/${header}")
+		get_filename_component(headerPath ${header} PATH)
+		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/${header}"
+				DESTINATION include/jreen/${headerPath}
+				COMPONENT jreenDevel
+		)
     endif(NOT ${header} MATCHES ".*_p\\.h")
 endforeach(header)
 
@@ -159,9 +193,12 @@ set(JREEN_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include" CACHE INTERNAL "")
 IF(WIN32)
 	LIST(APPEND EXTRA_LIBS ws2_32)
 ENDIF()
-IF(LIBIDN_FOUND)
-	LIST(APPEND EXTRA_LIBS ${LIBIDN_LIBRARIES})
-ENDIF(LIBIDN_FOUND)
+#IF(NICE_FOUND)
+#	LIST(APPEND EXTRA_LIBS ${NICE_LIBRARIES})
+#ENDIF(NICE_FOUND)
+IF(SPEEX_FOUND)
+	LIST(APPEND EXTRA_LIBS ${SPEEX_LIBRARIES})
+ENDIF(SPEEX_FOUND)
 
 # Link with Qt
 #IF(SYMBIAN)
@@ -194,7 +231,3 @@ install( TARGETS jreen
 	BUNDLE DESTINATION library
 )
 
-INSTALL(FILES ${JREEN_INSTALL_HEADERS}
-	DESTINATION include/jreen
-		COMPONENT jreenDevel
-)

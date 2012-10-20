@@ -39,14 +39,24 @@ class MessageSession;
 class MessageSessionManager;
 class Client;
 
-#define J_MESSAGE_FILTER \
-	public: \
-		static const Jreen::MessageFilterMeta &meta() \
+#define J_MESSAGE_FILTER(Class) \
+	public:  \
+		typedef QSharedPointer<Class> Ptr; \
+		static int staticFilterType() \
 		{ \
-			static Jreen::MessageFilterMeta staticFilterMeta; \
-			return staticFilterMeta; \
+			static QBasicAtomicInt filterType = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			if (!filterType) { \
+				filterType = Jreen::Payload::registerPayloadType( #Class ); \
+				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \
+				Q_UNUSED(useFullNameWithNamespaces); \
+			} \
+			return filterType; \
 		} \
-		virtual int filterType() const { return meta().type; } \
+		virtual int filterType() const \
+		{ \
+			Q_UNUSED(static_cast<const ::Class*>(this)); \
+			return staticFilterType(); \
+		} \
 	private:
 
 struct MessageFilterMeta

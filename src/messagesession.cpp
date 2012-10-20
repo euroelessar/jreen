@@ -26,7 +26,7 @@
 #include "messagesession.h"
 #include "client_p.h"
 #include "util.h"
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {
@@ -155,7 +155,7 @@ MessageSessionManager::MessageSessionManager(Client *client) :
 {
 	Q_D(MessageSessionManager);
 	d->client = client;
-	d->sessionHandlers.resize(Message::Invalid);
+	d->sessionHandlers.resize(Message::Invalid + 1);
 	qsrand(QDateTime::currentDateTime().toTime_t());
 	connect(client, SIGNAL(messageReceived(Jreen::Message)),
 	        this, SLOT(handleMessage(Jreen::Message)));
@@ -183,25 +183,28 @@ void MessageSessionManager::registerMessageSession(MessageSession *session)
 
 void MessageSessionManager::registerMessageSessionHandler(MessageSessionHandler *handler, QList<Message::Type> types)
 {
-	for(int i = 0; i < types.size(); i++)
-		d_func()->sessionHandlers[i] = handler;
+	for (int i = 0; i < types.size(); i++) {
+		Q_ASSERT(types.at(i) >= 0 && types.at(i) <= Message::Invalid);
+		d_func()->sessionHandlers[types.at(i)] = handler;
+	}
 }
 
 void MessageSessionManager::removeMessageSessionHandler(MessageSessionHandler *handler)
 {
 	Q_D(MessageSessionManager);
-	for(int i = 0; i < d->sessionHandlers.size(); i++)
+	for (int i = 0; i < d->sessionHandlers.size(); i++) {
 		if(d->sessionHandlers[i] == handler)
 			d->sessionHandlers[i] = 0;
+	}
 }
 
 MessageSession *MessageSessionManager::session(const JID &jid, Message::Type type, bool create)
 {
 	Q_D(MessageSessionManager);
 	QList<QPointer<MessageSession> > sessions = d->fullSessions.values(jid.full());
-	qDebug() << "d->full_sessions" << d->fullSessions;
+	Logger::debug() << "d->full_sessions" << d->fullSessions;
 	foreach(MessageSession *session, sessions)
-		qDebug() << "MessageSession" << (session ? session->jid() : JID());
+		Logger::debug() << "MessageSession" << (session ? session->jid() : JID());
 	for(int i = 0; i < sessions.size(); i++)
 	{
 		if(sessions[i].isNull())

@@ -29,8 +29,8 @@
 namespace Jreen
 {
 
-class DelayedDeliveryFactoryPrivate;
-class DelayedDeliveryFactory : public PayloadFactory<DelayedDelivery>
+class JREEN_AUTOTEST_EXPORT DelayedDeliveryFactoryPrivate;
+class JREEN_AUTOTEST_EXPORT DelayedDeliveryFactory : public PayloadFactory<DelayedDelivery>
 {
 	Q_DECLARE_PRIVATE(DelayedDeliveryFactory)
 public:

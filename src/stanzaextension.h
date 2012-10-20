@@ -52,8 +52,10 @@ public:
 	virtual ~Payload();
 	
 	static int registerPayloadType(const char *type);
+	static const char *payloadName(int type);
 	
 	virtual int payloadType() const = 0;
+	const char *payloadName() const;
 };
 
 typedef QMultiMap<int, Payload::Ptr> PayloadList;
@@ -73,7 +75,7 @@ public:
 typedef QMap<int, AbstractPayloadFactory*> PayloadFactoryMap;
 
 template <typename Extension>
-class PayloadFactory : public AbstractPayloadFactory
+class JREEN_AUTOTEST_EXPORT PayloadFactory : public AbstractPayloadFactory
 {
 	Q_DISABLE_COPY(PayloadFactory)
 public:
@@ -108,11 +110,17 @@ Q_INLINE_TEMPLATE int PayloadFactory<Extension>::payloadType() const
 }
 
 template <typename T>
-Q_INLINE_TEMPLATE T se_cast(Payload *se)
+Q_INLINE_TEMPLATE T payload_cast(Payload *se)
 {
 	if (se && reinterpret_cast<T>(0)->staticPayloadType() == se->payloadType())
 		return static_cast<T>(se);
 	return 0;
+}
+
+template <typename T>
+Q_INLINE_TEMPLATE T se_cast(Payload *se)
+{
+	return payload_cast<T>(se);
 }
 }
 

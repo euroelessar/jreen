@@ -27,6 +27,9 @@
 #include "zlibdatastream_p.h"
 #include <QXmlStreamWriter>
 
+#define NS_COMPRESS_FEATURE QLatin1String("http://jabber.org/features/compress")
+#define NS_COMPRESS_PROTOCOL QLatin1String("http://jabber.org/protocol/compress")
+
 namespace Jreen
 {
 ZLibCompressionFeature::ZLibCompressionFeature() : StreamFeature(CompressionLayer)
@@ -45,7 +48,7 @@ bool ZLibCompressionFeature::canParse(const QStringRef &name, const QStringRef &
 {
 	Q_UNUSED(name);
 	Q_UNUSED(attributes);
-	return uri == QLatin1String("http://jabber.org/features/compress") || uri == QLatin1String("http://jabber.org/protocol/compress");
+	return uri == NS_COMPRESS_FEATURE || uri == NS_COMPRESS_PROTOCOL;
 }
 
 void ZLibCompressionFeature::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -90,7 +93,7 @@ bool ZLibCompressionFeature::activate()
 {
 	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("compress"));
-	writer->writeDefaultNamespace(QLatin1String("http://jabber.org/protocol/compress"));
+	writer->writeDefaultNamespace(NS_COMPRESS_PROTOCOL);
 	writer->writeTextElement(QLatin1String("method"), QLatin1String("zlib"));
 	writer->writeEndElement();
 	return true;

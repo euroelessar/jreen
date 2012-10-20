@@ -50,11 +50,48 @@ public:
 		StanzaMessage,
 		StanzaSubscription
 	};
+	struct Token
+	{
+		enum Type {
+			StartElement,
+			EndElement,
+			Characters
+		};
+		Token(Type t) : type(t) {}
+
+		Type type;
+	};
+	
+	struct StartToken : public Token
+	{
+		StartToken() : Token(StartElement) {}
+
+		QStringRef name;
+		QStringRef uri;
+		QXmlStreamAttributes attributes;
+	};
+	
+	struct EndToken : public Token
+	{
+		EndToken() : Token(EndElement) {}
+	};
+	
+	struct CharactersToken : public Token
+	{
+		CharactersToken() : Token(Characters) {}
+
+		QStringRef text;
+	};
 	
 	StanzaPrivate(Type t) : type(t)
 	{
 		ref = 1;
 	}
+	~StanzaPrivate()
+	{
+		qDeleteAll(tokens);
+	}
+
 	void addExtensions(QXmlStreamWriter *writer) const
 	{
 		Q_UNUSED(writer);
@@ -79,6 +116,8 @@ public:
 	JID to;
 	QString id;
 	PayloadList extensions;
+	QList<Token*> tokens;
+	QString buffer;
 };
 
 }

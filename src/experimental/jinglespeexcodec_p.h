@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Aleksey Sidorov <gorthauer87@yandex.ru>
+** Copyright © 2012 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,32 +23,40 @@
 **
 ****************************************************************************/
 
-#ifndef MULTIMEDIADATAFACTORY_H
-#define MULTIMEDIADATAFACTORY_P_H
-#include "multimediadata.h"
+#if !defined(JINGLESPEEXCODEC_P_H) && defined(JREEN_HAVE_SPEEX)
+#define JINGLESPEEXCODEC_P_H
 
-namespace Jreen {
+#include "jingleaudiocontent.h"
+#include <speex/speex.h>
 
-class MultimediaDataFactory : public XmlStreamParser
+namespace Jreen
+{
+
+class JingleSpeexCodec : public JingleAudioCodec
 {
 public:
-    MultimediaDataFactory();
-	virtual ~MultimediaDataFactory();
-	QStringList features() const;
-	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleEndElement(const QStringRef &name, const QStringRef &uri);
-	void handleCharacterData(const QStringRef &text);
-	void serialize(const MultimediaData &media, QXmlStreamWriter *writer);
-	MultimediaData create();
+	JingleSpeexCodec(const JingleAudioPayload &payload);
+	~JingleSpeexCodec();
+	
+	virtual int frameSize() const;
+	virtual QByteArray encodeFrame(const char *data, int size);
+	virtual QByteArray decodeFrame(const char *data, int size);
+
 private:
-	QVariantMap m_attributes;
-	QVariantList m_data;
-	QVariantMap m_currentDataItem;
-	int m_depth;
-	MultimediaData::Type m_type;
+	SpeexBits m_bits;
+	void *m_decodingState;
+    void *m_encodingState;
+	int m_frameSize;
 };
 
-} // namespace Jreen
+class JingleSpeexCodecFactory : public JingleAudioCodecFactory
+{
+public:
+	virtual QList<JingleAudioPayload> supportedPayloads();
+	virtual bool supportsPayload(const JingleAudioPayload &payload);
+	virtual JingleAudioCodec *createCodec(const JingleAudioPayload &payload);
+};
 
-#endif // MULTIMEDIADATAFACTORY_H
+}
+
+#endif // JINGLESPEEXCODEC_P_H

@@ -56,7 +56,6 @@ public:
 	Parser::State state;
 	QStack<XmlStreamParser*> parsers;
 	QStack<int> parsersCount;
-	QList<Payload::Ptr> extensions;
 	QByteArray buffer;
 	int depth;
 	bool atParsing;

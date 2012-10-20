@@ -30,7 +30,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrl>
-#include <QDebug>
+#include "logger.h"
 #include <QBuffer>
 #include <QPointer>
 #include <QNetworkProxy>
@@ -64,7 +64,7 @@ public:
 	{
 		QByteArray seed = Util::randomHash();
 		keys.clear();
-		qDebug() << Q_FUNC_INFO << keyNum;
+		Logger::debug() << Q_FUNC_INFO << keyNum;
 		for (int i = 0; i < keyNum; i++) {
 			seed = QCryptographicHash::hash(seed, QCryptographicHash::Sha1).toHex();
 			keys.append(seed);
@@ -84,7 +84,7 @@ void ConnectionBOSHPrivate::send(bool empty, bool header)
 	QByteArray data = resultXml;
 	resultBuffer.seek(0);
 	resultXml.clear();
-	qDebug() << Q_FUNC_INFO << data;
+	Logger::debug() << Q_FUNC_INFO << data;
 	QNetworkRequest request(host);
 	request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QByteArray("text/xml; charset=utf-8"));
@@ -222,9 +222,9 @@ qint64 ConnectionBOSH::readData(char *data, qint64 maxlen)
 
 qint64 ConnectionBOSH::writeData(const char *payloaddata, qint64 payloadlen)
 {
-	qDebug() << Q_FUNC_INFO;
+	Logger::debug() << Q_FUNC_INFO;
 	Q_D(ConnectionBOSH);
-	qDebug() << d->dataRequest << d->emptyRequest;
+	Logger::debug() << d->dataRequest << d->emptyRequest;
 	if (d->dataRequest && payloadlen > 0) {
 		d->payloads.append(payloaddata, payloadlen);
 		return payloadlen;
@@ -252,14 +252,14 @@ void ConnectionBOSH::onRequestFinished(QNetworkReply *reply)
 {
 	Q_D(ConnectionBOSH);
 	reply->deleteLater();
-	qDebug() << Q_FUNC_INFO << reply->error() << reply->errorString();
+	Logger::debug() << Q_FUNC_INFO << reply->error() << reply->errorString();
 	if (reply->error() != QNetworkReply::NoError) {
 		// TODO: Implement
 		return;
 	}
 	bool header = reply->property("header").toBool();
 	QByteArray data = reply->readAll();
-	qDebug() << Q_FUNC_INFO << header << data;
+	Logger::debug() << Q_FUNC_INFO << header << data;
 	d->reader.addData(data);
 	// Hook for parsers invoked in eventloops, which are run inside parser
 	if (d->depth != 0)

@@ -26,29 +26,36 @@
 #ifndef STANZAFACTORY_H
 #define STANZAFACTORY_H
 
-#include "stanza.h"
+#include "stanza_p.h"
 #include "langmap.h"
 #include <QXmlStreamAttributes>
+#include <QStack>
 
 namespace Jreen
 {
 
-class StanzaFactory : public XmlStreamFactory<Stanza>
+class JREEN_AUTOTEST_EXPORT StanzaFactory : public XmlStreamFactory<Stanza>
 {
 public:
 	StanzaFactory(Client *client);
 	virtual ~StanzaFactory();
+	
+	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
+	void handleEndElement(const QStringRef &name, const QStringRef &uri);
+	void handleCharacterData(const QStringRef &name);
+	
 	virtual int stanzaType() = 0;
 	virtual Stanza::Ptr createStanza() = 0;
+	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
 protected:
-	void parseAttributes(const QXmlStreamAttributes &attributes);
 	void writeAttributes(Stanza *stanza, QXmlStreamWriter *writer);
 	void writePayloads(Stanza *stanza, QXmlStreamWriter *writer);
+	void writeEscapedString(const QString &str, QXmlStreamWriter *writer);
 	void writeLangMap(const QString &tag, const LangMap &map,QXmlStreamWriter *writer); //may be move to XmlStreamFactory?
-	JID m_from;
-	JID m_to;
-	QString m_id;
+	int m_depth;
+	QScopedPointer<StanzaPrivate> m_stanza;
 	Client *m_client;
+	QStack<XmlStreamParser*> m_parsers;
 };
 }
 

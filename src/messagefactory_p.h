@@ -31,7 +31,7 @@
 
 namespace Jreen
 {
-class MessageFactory : public StanzaFactory
+class JREEN_AUTOTEST_EXPORT MessageFactory : public StanzaFactory
 {
 public:
 	enum State { AtMessage, AtBody, AtSubject,AtThread };
@@ -44,13 +44,7 @@ public:
 	void handleEndElement(const QStringRef &name, const QStringRef &uri);
 	void handleCharacterData(const QStringRef &name);
 private:
-	void clear();
-	int m_depth;
-	Message::Type m_subtype;
-	LangMap m_body;
-	LangMap m_subject;
 	State m_state;
-	QStringRef m_thread;
 };
 
 } // namespace  Jreen

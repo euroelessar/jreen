@@ -69,12 +69,13 @@ class JREEN_EXPORT StreamFeature : public XmlStreamParser
 public:
 	enum Type
 	{
-		SecurityLayer,
-		CompressionLayer,
-		SASL,
-		SimpleAuthorization,
-		Custom,
-		Invalid
+		SecurityLayer       = 0,
+		CompressionLayer    = 0x10,
+		RegistrationRequest = 0x20,
+		SASL                = 0x100,
+		SimpleAuthorization = 0x1000,
+		Custom              = 0x10000,
+		Invalid             = -1
 	};
 	StreamFeature(Type type) : m_info(0), m_client(0), m_type(type) {}
 	virtual ~StreamFeature() {}
@@ -96,6 +97,6 @@ private:
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::StreamInfo::CompletedFlags)
-Q_DECLARE_INTERFACE(Jreen::StreamFeature,"org.qutim.JReen.StreamFeature");
+Q_DECLARE_INTERFACE(Jreen::StreamFeature, "org.qutim.Jreen.StreamFeature")
 
 #endif // STREAMFEATURE_H

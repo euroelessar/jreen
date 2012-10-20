@@ -27,7 +27,7 @@
 #include "pubsubmanager.h"
 #include "privatexml.h"
 #include <QPointer>
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {
@@ -81,14 +81,12 @@ void BookmarkStorage::onResultReady(const Payload::Ptr &node,
 									PrivateXml::Result result, const Error::Ptr &error)
 {
 	Q_UNUSED(error);
-	qDebug() << "onResultReady";
+	Logger::debug() << "onResultReady";
 	if(result == PrivateXml::RequestOk) {
 		Bookmark *bookmark = se_cast<Bookmark*>(node.data());
-		qDebug() << "received bookmarks" << bookmark << node.data();
-		if (bookmark) {
-			qDebug("%s %p %d", Q_FUNC_INFO, bookmark, bookmark->conferences().size());
+		Logger::debug() << "received bookmarks" << bookmark << node.data();
+		if (bookmark)
 			emit bookmarksReceived(node.staticCast<Bookmark>());
-		}
 		else
 			emit bookmarksReceived(Bookmark::Ptr::create());
 	}

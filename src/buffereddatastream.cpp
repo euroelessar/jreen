@@ -27,7 +27,7 @@
 #include "client.h"
 #include <QBasicTimer>
 #include <QTimerEvent>
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {
@@ -93,7 +93,7 @@ void BufferedDataStream::incomingDataReady()
 	int bytes = device()->bytesAvailable();
 	d->ensureSize(bytes);
 	device()->read(d->buffer.data() + d->offset + d->len, bytes);
-//	qDebug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
+//	Logger::debug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
 	d->len += bytes;
 	emit readyRead();
 }
@@ -115,7 +115,7 @@ void BufferedDataStream::flush()
 	foreach (XmlStreamHandler *handler, *d->handlers)
 		handler->handleOutgoingData(d->outBuffer.constData(), d->outBuffer.size());
 	device()->write(d->outBuffer.constData(), d->outBuffer.size());
-//	qDebug("> \"%s\"", d->outBuffer.constData());
+//	Logger::debug("> \"%s\"", d->outBuffer.constData());
 	d->outBuffer.clear();
 }
 

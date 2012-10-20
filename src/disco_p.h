@@ -46,7 +46,7 @@ public:
 	static DiscoPrivate *get(Disco *disco) { return disco->d_func(); }
 };
 
-class DiscoInfoFactory : public PayloadFactory<Disco::Info>
+class JREEN_AUTOTEST_EXPORT DiscoInfoFactory : public PayloadFactory<Disco::Info>
 {
 public:
 	DiscoInfoFactory();
@@ -68,7 +68,7 @@ private:
 	bool m_hasDataForm;
 };
 
-class DiscoItemsFactory : public PayloadFactory<Disco::Items>
+class JREEN_AUTOTEST_EXPORT DiscoItemsFactory : public PayloadFactory<Disco::Items>
 {
 public:
 	DiscoItemsFactory();

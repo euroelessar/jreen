@@ -32,7 +32,7 @@
 namespace Jreen {
 
 class Disco;
-class CapabilitesFactory : public PayloadFactory<Capabilities>
+class JREEN_AUTOTEST_EXPORT CapabilitesFactory : public PayloadFactory<Capabilities>
 {
 public:
 	CapabilitesFactory(Disco *disco);
@@ -44,6 +44,7 @@ public:
 	void handleCharacterData(const QStringRef &text);
 	void serialize(Payload *extension, QXmlStreamWriter *writer);
 	Payload::Ptr createPayload();
+	static QString verificationValue(Disco *disco);
 	static QString hashValue(Disco *disco);
 private:	
 	Disco *m_disco;

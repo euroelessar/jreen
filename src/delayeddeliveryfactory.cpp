@@ -28,12 +28,12 @@
 #include "util.h"
 
 
-#define NS_DELAY "urn:xmpp:delay"
-#define NS_DELAY_DEPRECATED "jabber:x:delay"
+#define NS_DELAY QLatin1String("urn:xmpp:delay")
+#define NS_DELAY_DEPRECATED QLatin1String("jabber:x:delay")
 
 namespace Jreen {
 
-class DelayedDeliveryFactoryPrivate
+class JREEN_AUTOTEST_EXPORT DelayedDeliveryFactoryPrivate
 {
 public:
 	JID from;
@@ -90,7 +90,8 @@ void DelayedDeliveryFactory::serialize(Payload *extension, QXmlStreamWriter *wri
 	writer->writeStartElement(QLatin1String("delay"));
 	writer->writeAttribute(QLatin1String("stamp"), Util::toStamp(delivery->dateTime()));
 	writer->writeDefaultNamespace(NS_DELAY);
-	writer->writeAttribute(QLatin1String("from"), delivery->from());
+	if (delivery->from().isValid())
+		writer->writeAttribute(QLatin1String("from"), delivery->from());
 	writer->writeCharacters(delivery->reason());
 	writer->writeEndElement();
 }

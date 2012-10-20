@@ -31,7 +31,7 @@
 
 namespace Jreen {
 
-class MoodFactory : public PayloadFactory<Mood>
+class JREEN_AUTOTEST_EXPORT MoodFactory : public PayloadFactory<Mood>
 {
 public:
 	MoodFactory();

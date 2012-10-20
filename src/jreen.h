@@ -35,11 +35,21 @@
 # include <QtCore/QXmlStreamWriter> //needed on OS X (10.5) for QXmlStreamWriter typedef
 
 # ifndef J_BUILD_STATIC
+#  ifdef J_BUILD_INTERNAL
+#   ifdef J_BUILD_LIBRARY
+#    define JREEN_AUTOTEST_EXPORT Q_DECL_EXPORT
+#   else
+#    define JREEN_AUTOTEST_EXPORT Q_DECL_IMPORT
+#   endif
+#  endif
 #  ifdef J_BUILD_LIBRARY
 #   define JREEN_EXPORT Q_DECL_EXPORT
 #  else
 #   define JREEN_EXPORT Q_DECL_IMPORT
 #  endif
+# endif
+# ifndef JREEN_AUTOTEST_EXPORT
+#  define JREEN_AUTOTEST_EXPORT
 # endif
 # ifndef JREEN_EXPORT
 #  define JREEN_EXPORT

@@ -30,8 +30,10 @@
 #include "client_p.h"
 #include "jid.h"
 #include <QXmlStreamWriter>
-#include <QDebug>
+#include "logger.h"
 #include "util.h"
+
+#define NS_ROSTER QLatin1String("jabber:iq:roster")
 
 namespace Jreen
 {
@@ -55,13 +57,13 @@ AbstractRosterQueryFactory::AbstractRosterQueryFactory(AbstractRoster *roster)
 
 QStringList AbstractRosterQueryFactory::features() const
 {
-	return QStringList(QLatin1String("jabber:iq:roster"));
+	return QStringList(NS_ROSTER);
 }
 
 bool AbstractRosterQueryFactory::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	return name == QLatin1String("query") && uri == QLatin1String("jabber:iq:roster");
+	return name == QLatin1String("query") && uri == NS_ROSTER;
 }
 
 void AbstractRosterQueryFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
@@ -119,7 +121,7 @@ void AbstractRosterQueryFactory::serialize(Payload *extension, QXmlStreamWriter 
 	if (!query)
 		return;
 	writer->writeStartElement(QLatin1String("query"));
-	writer->writeDefaultNamespace(QLatin1String("jabber:iq:roster"));
+	writer->writeDefaultNamespace(NS_ROSTER);
 	if (query->items().isEmpty())
 		writer->writeAttribute(QLatin1String("ver"), query->ver());
 	foreach (const RosterItem::Ptr &item, query->items()) {
@@ -141,12 +143,8 @@ Payload::Ptr AbstractRosterQueryFactory::createPayload()
 	return Payload::Ptr(new AbstractRosterQuery(m_items, m_ver));
 }
 
-static const QStringList roster_subscriptions = QStringList()
-<< QLatin1String("from") << QLatin1String("to")
-<< QLatin1String("both") << QLatin1String("remove");
-
 RosterItem::RosterItem(const QString &jid, const QString &name,
-									   const QStringList &groups, SubscriptionType s10n)
+                       const QStringList &groups, SubscriptionType s10n)
 	: d_ptr(new RosterItemPrivate)
 {
 	Q_D(RosterItem);
@@ -223,7 +221,7 @@ void AbstractRoster::load()
 {
 	Q_D(AbstractRoster);
 	IQ iq(IQ::Get, JID(), d->client->getID());
-	qDebug() << Q_FUNC_INFO << d->version;
+	Logger::debug() << Q_FUNC_INFO << d->version;
 	iq.addExtension(new AbstractRosterQuery(d->version));
 	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), LoadRoster);
 }
@@ -293,7 +291,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	d->version = roster->ver();
 	iq.accept();
 	foreach (const RosterItem::Ptr &item, roster->items()) {
-		qDebug() << "handle item" << item->jid();
+		Logger::debug() << "handle item" << item->jid();
 		if(item->subscription() == RosterItem::Remove) {
 			onItemRemoved(item->jid());
 			d->items.remove(item->jid());
@@ -342,7 +340,7 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 		break;
 	case AddRosterItem:
 	case RemoveRosterItem: {
-		qDebug() << "handle add/remove item" << (iq.subtype() == IQ::Error);
+		Logger::debug() << "handle add/remove item" << (iq.subtype() == IQ::Error);
 //		IQ request = d->iqHash.take(iq.id());
 //		Q_ASSERT(request.subtype() != IQ::Invalid);
 //		if(iq.subtype() == IQ::Error)

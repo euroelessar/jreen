@@ -1,3 +1,38 @@
+Version ***
+	* Added support for XEP-224: Attentions
+
+Version 1.1.0
+	* Added PGP payloads
+	* Added support for Message Forwarding
+	* Added MetaContacts support
+	* Added experimental Jingle support
+	* Fixed authorization with SCRAM-SHA1
+	* Fixed sending of IQ's on connect
+
+Version 1.0.6:
+	* Fixed parsing of PubSub payload
+	* Fixed serializing of PubSub payload
+
+Version 1.0.5:
+	* Fixed parsing of message's thread attribute
+
+Version 1.0.4:
+	* Added support for in-band registration
+	* Added ability to force/deny compression/encryption
+	* Added CAPTCHA support
+	* Fixed IQ requests to yourself
+	* Fixed handling of messages' types in MessageSession
+
+Version 1.0.3:
+	* Added Logger implementation
+	* Fixed QJDns initialization issue
+
+Version 1.0.2:
+	* Added support for ProxyFactory
+	* Added immunity to invalid stanzas
+	* Added localization support for incoming stanzas
+	* Fixed QJDns initialization behaviour
+
 Version 1.0.1:
 	* Fixed segfault at SASL initialization
 	* Fixed Facebook support

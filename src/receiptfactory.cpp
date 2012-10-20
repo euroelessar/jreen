@@ -27,7 +27,7 @@
 #include <QXmlStreamReader>
 #include <QMap>
 #include "jstrings.h"
-#include <QDebug>
+#include "logger.h"
 
 #define NS_RECEIPT QLatin1String("urn:xmpp:receipts")
 
@@ -35,7 +35,7 @@ namespace Jreen {
 
 static const char *receipt_strings[] = {"request","received"};
 
-class ReceiptFactoryPrivate
+class JREEN_AUTOTEST_EXPORT ReceiptFactoryPrivate
 {
 public:
 	Receipt::Type type;

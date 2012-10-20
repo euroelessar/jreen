@@ -58,7 +58,7 @@ class RosterItem;
 class RosterItemPrivate;
 class AbstractRosterQuery;
 
-class ItemFactory : public XmlStreamFactory<RosterItem>
+class JREEN_AUTOTEST_EXPORT ItemFactory : public XmlStreamFactory<RosterItem>
 {
 public:
 };
@@ -137,7 +137,7 @@ protected:
 	virtual void onLoaded(const QList<QSharedPointer<RosterItem> > &items);
 	QScopedPointer<AbstractRosterPrivate> d_ptr;
 	friend class AbstractRosterQuery;
-	friend class AbstractRosterQueryFactory;
+	friend class JREEN_AUTOTEST_EXPORT AbstractRosterQueryFactory;
 	friend class RosterItem;
 };
 

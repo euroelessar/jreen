@@ -31,7 +31,7 @@
 
 namespace Jreen
 {
-class MUCRoomQueryFactory : public PayloadFactory<MUCRoomQuery>
+class JREEN_AUTOTEST_EXPORT MUCRoomQueryFactory : public PayloadFactory<MUCRoomQuery>
 {
 public:
 	MUCRoomQueryFactory();
@@ -45,7 +45,7 @@ public:
 	Payload::Ptr createPayload();
 };
 
-class MUCRoomItemFactory : public XmlStreamFactory<MUCRoomItem>
+class JREEN_AUTOTEST_EXPORT MUCRoomItemFactory : public XmlStreamFactory<MUCRoomItem>
 {
 public:
 	MUCRoomItemFactory();
@@ -62,7 +62,7 @@ private:
 	QScopedPointer<MUCRoomItem> m_item;
 };
 
-class MUCRoomUserQueryFactory : public PayloadFactory<MUCRoomUserQuery>
+class JREEN_AUTOTEST_EXPORT MUCRoomUserQueryFactory : public PayloadFactory<MUCRoomUserQuery>
 {
 public:
 	MUCRoomUserQueryFactory();
@@ -82,7 +82,7 @@ private:
 	State m_state;
 };
 
-class MUCRoomAdminQueryFactory : public PayloadFactory<MUCRoomAdminQuery>
+class JREEN_AUTOTEST_EXPORT MUCRoomAdminQueryFactory : public PayloadFactory<MUCRoomAdminQuery>
 {
 public:
 	MUCRoomAdminQueryFactory();
@@ -101,7 +101,7 @@ private:
 	QScopedPointer<MUCRoomAdminQuery> m_query;
 };
 
-class MUCRoomOwnerQueryFactory : public PayloadFactory<MUCRoomOwnerQuery>
+class JREEN_AUTOTEST_EXPORT MUCRoomOwnerQueryFactory : public PayloadFactory<MUCRoomOwnerQuery>
 {
 public:
 	MUCRoomOwnerQueryFactory();

@@ -70,7 +70,7 @@ void DiscoInfoFactory::handleStartElement(const QStringRef &name, const QStringR
 			Disco::Identity identity(attributes.value(QLatin1String("category")).toString(),
 									 attributes.value(QLatin1String("type")).toString(),
 									 attributes.value(QLatin1String("name")).toString(),
-									 attributes.value(QLatin1String("lang")).toString());
+									 attributes.value(QLatin1String("xml:lang")).toString());
 			m_identities.append(identity);
 		} else if (name == QLatin1String("feature")) {
 			m_features.insert(attributes.value(QLatin1String("var")).toString());
@@ -545,6 +545,11 @@ void Disco::addIdentity(const Identity &identity)
 	d_func()->identities.append(identity);
 }
 
+void Disco::addIdentity(const QString &category, const QString &type, const QString &name, const QString &lang)
+{
+	d_func()->identities.append(Identity(category, type, name, lang));
+}
+
 const QSet<QString> &Disco::features() const
 {
 	Q_D(const Disco);
@@ -583,6 +588,11 @@ void DiscoPrivate::_q_received(const Jreen::IQ &iq)
 
 void Disco::setSoftwareVersion(const QString &name, const QString &version, const QString &os)
 {
+	setSoftwareVersion(name, version, os, QString());
+}
+
+void Disco::setSoftwareVersion(const QString &name, const QString &version, const QString &os, const QString &osVersion)
+{
 	Q_D(Disco);
 	d->software_name = name;
 	d->software_version = version;
@@ -592,6 +602,8 @@ void Disco::setSoftwareVersion(const QString &name, const QString &version, cons
 	form->appendField(DataFormFieldHidden(QLatin1String("FORM_TYPE"), QLatin1String("urn:xmpp:dataforms:softwareinfo")));
 	form->appendField(DataFormFieldNone(QLatin1String("ip_version"), QStringList() << QLatin1String("ipv4") << QLatin1String("ipv6")));
 	form->appendField(DataFormFieldNone(QLatin1String("os"), QStringList(os)));
+	if (!osVersion.isEmpty())
+		form->appendField(DataFormFieldNone(QLatin1String("os_version"), QStringList(osVersion)));
 	form->appendField(DataFormFieldNone(QLatin1String("software"), QStringList(name)));
 	form->appendField(DataFormFieldNone(QLatin1String("software_version"), QStringList(version)));
 	d->form = form;

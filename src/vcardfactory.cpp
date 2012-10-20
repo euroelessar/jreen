@@ -406,7 +406,7 @@ void vCardStringHelper(QString * & str, VCardPrivate *p, int type)
 		str = strings[type];
 }
 
-class VCardFactoryPrivate
+class JREEN_AUTOTEST_EXPORT VCardFactoryPrivate
 {
 public:
 	void clear();
@@ -447,7 +447,7 @@ bool VCardFactory::canParse(const QStringRef& name, const QStringRef& uri, const
 Payload::Ptr VCardFactory::createPayload()
 {
 	Q_D(VCardFactory);
-	return Payload::Ptr(d->vcard ? new VCard(*d->vcard.take()) : 0); //here is segfault
+	return Payload::Ptr(new VCard(*d->vcard.take()));
 }
 
 QStringList VCardFactory::features() const

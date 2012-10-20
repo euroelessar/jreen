@@ -26,10 +26,12 @@
 #include "dataformfactory_p.h"
 #include "jstrings.h"
 #include <QXmlStreamWriter>
+#include <QSize>
+#include <QUrl>
 #include "util.h"
-#include "multimediadatafactory_p.h"
-#include <QDebug>
+#include "logger.h"
 #define NS_DATAFORM QLatin1String("jabber:x:data")
+#define NS_MEDIA QLatin1String("urn:xmpp:media-element")
 
 namespace Jreen {
 
@@ -110,6 +112,86 @@ private:
 	QString m_value;
 };
 
+class DataFormMediaParser : public XmlStreamFactory<DataFormMedia>
+{
+public:
+	DataFormMediaParser() : m_depth(0), m_state(AtNowhere)
+	{
+	}
+	
+	virtual ~DataFormMediaParser()
+	{
+	}
+	
+	virtual bool canParse(const QStringRef &name, const QStringRef &uri,
+						  const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(attributes);
+		return name == QLatin1String("media") && uri == NS_MEDIA;
+	}
+	virtual void handleStartElement(const QStringRef &name, const QStringRef &uri,
+									const QXmlStreamAttributes &attributes)
+	{
+		Q_UNUSED(name);
+		Q_UNUSED(uri);
+		m_depth++;
+		
+		if(m_depth == 1) {
+			m_state = AtNowhere;
+			m_media = DataFormMedia::Ptr::create();
+		} else if (m_depth == 2 && name == QLatin1String("uri")) {
+			m_state = AtUri;
+			m_uriType = attributes.value(QLatin1String("type")).toString();
+		}
+	}
+	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri)
+	{
+		Q_UNUSED(name);
+		Q_UNUSED(uri);
+		if (m_depth == 2)
+			m_state = AtNowhere;
+		m_depth--;
+	}
+	virtual void handleCharacterData(const QStringRef &text)
+	{
+		if(m_depth == 2 && m_state == AtUri) {
+			m_media->appendUri(text.toString(), m_uriType);
+		}
+	}
+	virtual void serialize(DataFormMedia *media, QXmlStreamWriter *writer)
+	{
+		writer->writeStartElement(QLatin1String("media"));
+		const QSize size = media->size();
+		if (size.width() >= 0)
+			writer->writeAttribute(QLatin1String("width"), QString::number(size.width()));
+		if (size.height() >= 0)
+			writer->writeAttribute(QLatin1String("height"), QString::number(size.height()));
+		writer->writeDefaultNamespace(NS_MEDIA);
+		foreach (const DataFormMedia::Uri &uri, media->uries()) {
+			writer->writeStartElement(QLatin1String("uri"));
+			writer->writeAttribute(QLatin1String("type"), uri.type());
+			writer->writeCharacters(uri.url().toString());
+			writer->writeEndElement();
+		}
+		writer->writeEndElement();
+	}
+	DataFormMedia::Ptr create()
+	{
+		DataFormMedia::Ptr result;
+		qSwap(result, m_media);
+		return result;
+	}
+	
+private:
+	int m_depth;
+	enum State {
+		AtNowhere,
+		AtUri
+	} m_state;
+	QString m_uriType;
+	DataFormMedia::Ptr m_media;
+};
+
 static const char* datafield_types[] = {
 	"boolean",
 	"fixed",
@@ -120,7 +202,8 @@ static const char* datafield_types[] = {
 	"list-single",
 	"text-multi",
 	"text-private",
-	"text-single"
+	"text-single",
+	""
 };
 
 class DataFormFieldParser : XmlStreamFactory<DataFormField>
@@ -155,6 +238,8 @@ public:
 				m_state = AtValue;
 			} else if(m_optionParser.canParse(name,uri,attributes)) {
 				m_state = AtOption;
+			} else if (m_mediaParser.canParse(name, uri, attributes)) {
+				m_state = AtMedia;
 			} else if(name == QLatin1String("required")) {
 				m_state = AtRequied;
 				m_required = true;
@@ -164,15 +249,21 @@ public:
 		}
 		if(m_state == AtOption)
 			m_optionParser.handleStartElement(name,uri,attributes);
+		else if(m_state == AtMedia)
+			m_mediaParser.handleStartElement(name, uri, attributes);
 	}
 	virtual void handleEndElement(const QStringRef &name, const QStringRef &uri)
 	{
 		if(m_state == AtOption) {
 			m_optionParser.handleEndElement(name,uri);
 			if(m_depth == 2) {
-				qDebug() << m_optionParser.create();
+				Logger::debug() << m_optionParser.create();
 				m_options.append(m_optionParser.create());
 			}
+		} else if(m_state == AtMedia) {
+			m_mediaParser.handleEndElement(name, uri);
+			if(m_depth == 2)
+				m_media = m_mediaParser.create();
 		}
 		if (m_depth <= 2)
 			m_state = AtNowhere;
@@ -186,6 +277,10 @@ public:
 			break;
 		case AtOption:
 			m_optionParser.handleCharacterData(text);
+			break;
+		case AtMedia:
+			m_mediaParser.handleCharacterData(text);
+			break;
 		default:
 			break;
 		}
@@ -219,8 +314,8 @@ public:
 		d->label = m_label;
 		d->type = m_type;
 		d->options = m_options;
-//		qDebug() << m_label << m_var << field.var() << field.label() << d->var << d->label;
 		d->required = m_required;
+		d->media = m_media;
 		clear();
 		return field;
 	}
@@ -229,6 +324,7 @@ private:
 		AtValue,
 		AtOption,
 		AtRequied,
+		AtMedia,
 		AtNowhere
 	};
 	void clear() {
@@ -237,10 +333,12 @@ private:
 		m_label.clear();
 		m_var.clear();
 		m_values.clear();
+		m_media.clear();
 		m_required = false;
 		m_state = AtNowhere;
 	}
 	State m_state;
+//	QScopedPointer<DataFormFieldPrivate> m_form;
 	int m_depth;
 	DataFormField::Type m_type;
 	QString m_label;
@@ -248,8 +346,9 @@ private:
 	QStringList m_values;
 	QList<QPair<QString, QString> > m_options;
 	bool m_required;
+	DataFormMedia::Ptr m_media;
 	DataFormOptionParser m_optionParser;
-	MultimediaDataFactory m_multimediaDataFactory;
+	DataFormMediaParser m_mediaParser;
 };
 
 enum DataFormState { AtNowhere, AtTitle, AtInstruction, AtField };
@@ -267,7 +366,7 @@ static const char* dataform_types[] = {
 	"result"
 };
 
-class DataFormFactoryPrivate
+class JREEN_AUTOTEST_EXPORT DataFormFactoryPrivate
 {
 public:
 	void clear()
@@ -320,7 +419,7 @@ void DataFormFactory::handleStartElement(const QStringRef &name, const QStringRe
 			d->state = AtField;
 		else if(name == QLatin1String("title"))
 			d->state = AtTitle;
-		else if(name == QLatin1String("instruction"))
+		else if(name == QLatin1String("instructions"))
 			d->state = AtInstruction;
 		else
 			d->state = AtNowhere;
@@ -350,10 +449,13 @@ void DataFormFactory::handleCharacterData(const QStringRef &text)
 	switch(d->state) {
 	case AtTitle:
 		d->title = text.toString();
+		break;
 	case AtInstruction:
 		d->instruction = text.toString();
+		break;
 	case AtField:
 		d->fieldParser.handleCharacterData(text);
+		break;
 	default:
 		break;
 	}
@@ -376,7 +478,7 @@ void DataFormFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 Payload::Ptr DataFormFactory::createPayload()
 {
 	Q_D(DataFormFactory);
-	DataForm *form = new DataForm(d->formType,d->title);
+	DataForm *form = new DataForm(d->formType, d->title, d->instruction);
 	form->setFields(d->fields);
 	d->clear();
 	return Payload::Ptr(form);

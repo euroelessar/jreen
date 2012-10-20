@@ -33,7 +33,7 @@ namespace Jreen
 {
 namespace PubSub
 {
-class EventFactory : public PayloadFactory<Event>
+class JREEN_AUTOTEST_EXPORT EventFactory : public PayloadFactory<Event>
 {
 public:
 	EventFactory(QList<AbstractPayloadFactory*> &factories);

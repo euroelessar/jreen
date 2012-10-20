@@ -25,13 +25,12 @@
 
 #include "iqfactory_p.h"
 #include "iq_p.h"
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {
 IqFactory::IqFactory(Client *client) : StanzaFactory(client)
 {
-	m_depth = 0;
 }
 
 int IqFactory::stanzaType()
@@ -41,16 +40,15 @@ int IqFactory::stanzaType()
 
 Stanza::Ptr IqFactory::createStanza()
 {
-	IQPrivate *p = new IQPrivate;
-	p->from = m_from;
-	p->to = m_to;
-	p->id = m_id;
-	p->subtype = m_type;
-	return Stanza::Ptr(new IQ(*p));
+	return Stanza::Ptr(new IQ(*static_cast<IQPrivate*>(m_stanza.take())));
 }
 
 void IqFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 {
+	if (!StanzaPrivate::get(*stanza)->tokens.isEmpty()) {
+		StanzaFactory::serialize(stanza, writer);
+		return;
+	}
 	IQ *iq = static_cast<IQ*>(stanza);
 	if (iq->subtype() == IQ::Invalid)
 		return;
@@ -87,35 +85,35 @@ bool IqFactory::canParse(const QStringRef &name, const QStringRef &uri, const QX
 
 void IqFactory::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
 	m_depth++;
+	if (m_depth == 1)
+		m_stanza.reset(new IQPrivate);
+	StanzaFactory::handleStartElement(name, uri, attributes);
 	if (m_depth == 1) {
-		parseAttributes(attributes);
+		IQPrivate *p = static_cast<IQPrivate*>(m_stanza.data());
 		QStringRef type = attributes.value(QLatin1String("type"));
 		if (type == QLatin1String("get"))
-			m_type = IQ::Get;
+			p->subtype = IQ::Get;
 		else if (type == QLatin1String("set"))
-			m_type = IQ::Set;
+			p->subtype = IQ::Set;
 		else if (type == QLatin1String("result"))
-			m_type = IQ::Result;
+			p->subtype = IQ::Result;
 		else if (type == QLatin1String("error"))
-			m_type = IQ::Error;
+			p->subtype = IQ::Error;
 		else
-			m_type = IQ::Invalid;
+			p->subtype = IQ::Invalid;
 	}
 }
 
 void IqFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
+	StanzaFactory::handleEndElement(name, uri);
 	m_depth--;
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
 }
 
 void IqFactory::handleCharacterData(const QStringRef &name)
 {
-	Q_UNUSED(name);
+	StanzaFactory::handleCharacterData(name);
 }
 
 }

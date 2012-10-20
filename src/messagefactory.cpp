@@ -31,26 +31,16 @@
 namespace Jreen {
 
 static const char *message_types[] = {
-		"chat",
-		"error",
-		"groupchat",
-		"headline"
+    "chat",
+    "error",
+    "groupchat",
+    "headline",
+    "normal"
 };
 
 MessageFactory::MessageFactory(Client *client) :
-	StanzaFactory(client),
-	m_depth(0)
+    StanzaFactory(client), m_state(AtMessage)
 {
-	clear();
-}
-
-void MessageFactory::clear()
-{
-	m_body.clear();
-	m_subject.clear();
-	m_thread.clear();
-	m_subtype = Message::Normal;
-	m_state = AtMessage;
 }
 
 int MessageFactory::stanzaType()
@@ -60,28 +50,25 @@ int MessageFactory::stanzaType()
 
 Stanza::Ptr MessageFactory::createStanza()
 {
-	MessagePrivate *p = new MessagePrivate;
-	p->from = m_from;
-	p->to = m_to;
-	p->id = m_id;
-	p->body = m_body;
-	p->subject = m_subject;
-	p->subtype = m_subtype;
-	p->thread = m_thread.toString();
-	return Stanza::Ptr(new Message(*p));
+	return Stanza::Ptr(new Message(*static_cast<MessagePrivate*>(m_stanza.take())));
 }
 
 void MessageFactory::serialize(Stanza *stanza, QXmlStreamWriter *writer)
 {
+	if (!StanzaPrivate::get(*stanza)->tokens.isEmpty()) {
+		StanzaFactory::serialize(stanza, writer);
+		return;
+	}
 	Message *message = static_cast<Message*>(stanza);
 	if (message->subtype() == Message::Invalid)
 		return;
 
-	QString subtype = enumToStr(message->subtype(),message_types);
+	QLatin1String subtype = enumToStr(message->subtype(),message_types);
 
 	writer->writeStartElement(QLatin1String("message"));
 	writeAttributes(stanza, writer);
-	writer->writeAttribute(QLatin1String("type"),subtype);
+	if (subtype != QLatin1String(""))
+		writer->writeAttribute(QLatin1String("type"), subtype);
 	writeLangMap(QLatin1String("subject"),message->subject(),writer);
 	writeLangMap(QLatin1String("body"),message->body(),writer);
 	if(!message->thread().isEmpty())
@@ -100,13 +87,20 @@ bool MessageFactory::canParse(const QStringRef &name, const QStringRef &uri, con
 void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef &uri,
 										const QXmlStreamAttributes &attributes)
 {
-	Q_UNUSED(uri);
 	m_depth++;
+	if (m_depth == 1)
+		m_stanza.reset(new MessagePrivate);
+	StanzaFactory::handleStartElement(name, uri, attributes);
 	if (m_depth == 1) {
-		clear();
-		parseAttributes(attributes);
+		m_state = AtMessage;
+		MessagePrivate *p = static_cast<MessagePrivate*>(m_stanza.data());
 		QStringRef subtype = attributes.value(QLatin1String("type"));
-		m_subtype = strToEnum<Message::Type>(subtype,message_types);
+		if (subtype.isEmpty())
+			p->subtype = Message::Normal;
+		else
+			p->subtype = strToEnum<Message::Type>(subtype, message_types);
+		if (p->subtype < 0)
+			p->subtype = Message::Invalid;
 	} else if(m_depth == 2) {
 		if(name == QLatin1String("body"))
 			m_state = AtBody;
@@ -119,8 +113,7 @@ void MessageFactory::handleStartElement(const QStringRef &name, const QStringRef
 
 void MessageFactory::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-	Q_UNUSED(name);
-	Q_UNUSED(uri);
+	StanzaFactory::handleEndElement(name, uri);
 	if (m_depth == 2)
 		m_state = AtMessage;
 	m_depth--;
@@ -128,13 +121,15 @@ void MessageFactory::handleEndElement(const QStringRef &name, const QStringRef &
 
 void MessageFactory::handleCharacterData(const QStringRef &name)
 {
+	StanzaFactory::handleCharacterData(name);
 	if(m_depth == 2) {
+		MessagePrivate *p = static_cast<MessagePrivate*>(m_stanza.data());
 		if(m_state == AtBody)
-			m_body = name.toString();
+			p->body = name.toString();
 		else if(m_state == AtSubject)
-			m_subject = name.toString();
+			p->subject = name.toString();
 		else if(m_state == AtThread)
-			m_thread = name;
+			p->thread = name.toString();
 	}
 }
 

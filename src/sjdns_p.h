@@ -41,26 +41,19 @@ namespace Jreen
 class SJDns : QObject
 {
 	Q_OBJECT
-	QJDns *qjdns;
+	QJDns *m_qjdns;
+	bool m_valid;
 	SJDns() {}
 	~SJDns() {}
 public:
 	static SJDns &instance();
-	void doLookup(const QString &host, QObject *receiver, const char *member)
-	{
-		int id = qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
-		Action *action = new Action(this);
-		action->setData(host);
-		connect(action, SIGNAL(triggered()), receiver, member);
-		m_actions.insert(id, action);
-	}
+	bool isValid();
+	void doLookup(const QString &host, QObject *receiver, const char *member);
 	const QJDns::Response *servers(const QString &host);
+
 private slots:
 	void resultsReady(int id, const QJDns::Response &results);
-	void published(int id)
-	{
-		Q_UNUSED(id);
-	}
+	void published(int id);
 	void error(int id, QJDns::Error e);
 private:
 	QMap<int, Action *> m_actions;

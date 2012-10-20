@@ -29,7 +29,7 @@
 
 namespace Jreen {
 
-class VCardUpdateFactory : public PayloadFactory<VCardUpdate>
+class JREEN_AUTOTEST_EXPORT VCardUpdateFactory : public PayloadFactory<VCardUpdate>
 {
 public:
     VCardUpdateFactory();

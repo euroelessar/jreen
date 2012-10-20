@@ -26,7 +26,7 @@
 #include "moodfactory_p.h"
 #include "jstrings.h"
 #include <QXmlStreamWriter>
-#include <QDebug>
+#include "logger.h"
 
 #define NS_MOOD QLatin1String("http://jabber.org/protocol/mood")
 

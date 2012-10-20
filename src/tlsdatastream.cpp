@@ -24,7 +24,7 @@
 ****************************************************************************/
 
 #include "tlsdatastream_p.h"
-#include <QDebug>
+#include "logger.h"
 
 namespace Jreen
 {

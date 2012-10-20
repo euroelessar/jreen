@@ -30,7 +30,7 @@
 
 namespace Jreen {
 
-class ErrorFactory : public PayloadFactory<Error>
+class JREEN_AUTOTEST_EXPORT ErrorFactory : public PayloadFactory<Error>
 {
 public:
     ErrorFactory();
@@ -46,6 +46,7 @@ private:
 	enum State {AtCondition,AtText};
 	State m_state;
 	int m_depth;
+	QString m_text;
 	Error::Type m_type;
 	Error::Condition m_condition;
 };

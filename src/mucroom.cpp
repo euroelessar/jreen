@@ -197,8 +197,9 @@ void MUCRoom::Item::setReason(const QString &reason)
 void MUCRoomPrivate::handlePresence(const Presence &pres)
 {
 	Q_Q(MUCRoom);
-	qDebug() << "handle presence" << pres.from();
+	Logger::debug() << "handle presence" << pres.from();
 	if (Error::Ptr e = pres.payload<Error>()) {
+		startedJoining = false;
 		emit q->error(e);
 		return;
 	}
@@ -312,9 +313,9 @@ Presence::Type MUCRoom::presence() const
 void MUCRoom::join(Presence::Type type, const QString &message, int priority)
 {
 	Q_D(MUCRoom);
-	if (!isJoined()) {
-		d->startedJoining = true;
-	}
+	if (d->startedJoining)
+		return;
+	d->startedJoining = true;
 	Presence pres(type, d->jid, message, priority);
 	MUCRoomQuery *query = new MUCRoomQuery(d->password);
 	query->setMaxChars(d->maxChars);
@@ -587,6 +588,7 @@ void MUCRoom::onConnected()
 void MUCRoom::onDisconnected()
 {
 	Q_D(MUCRoom);
+	d->startedJoining = false;
 	if (d->currentPresence.subtype() != Presence::Unavailable) {
 		d->participantsHash.clear();
 		d->isJoined = false;
