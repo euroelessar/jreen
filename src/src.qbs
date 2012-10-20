@@ -7,9 +7,12 @@ Product {
     property string versionRelease: '0'
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
     
-    moduleSearchPaths: "qbs/modules"
-
-    destination: "lib"
+    destination: {
+        if (qbs.targetOS === 'windows')
+            return "bin";
+        else
+            return "lib";
+    }
     type: ["dynamiclibrary", "installed_content"]
 
     Depends { name: "cpp" }
@@ -23,16 +26,17 @@ Product {
 
     //cpp.warningLevel: "all"
     cpp.includePaths: [
+        "..",
+        "../3rdparty",
+        "../3rdparty/jdns",
+        "../3rdparty/simplesasl",
+        "../3rdparty/icesupport",
         ".",
-        "3rdparty",
-        "3rdparty/jdns",
-        "3rdparty/simplesasl",
-        "3rdparty/icesupport",
-        "src",
-        "src/experimental"
+        "experimental"
     ]
     cpp.defines: ["J_BUILD_LIBRARY"]
     cpp.positionIndependentCode: true
+    cpp.visibility: ["hidden"]
 
     Properties {
         condition: useSimpleSasl
@@ -44,39 +48,43 @@ Product {
     }
 
     files: [
-        "src/*.h",
-        "src/*.cpp"
+        "*.h",
+        "*.cpp"
     ]
 
     Group {
         //jdns files
+        prefix: "../3rdparty/jdns/"
         files: [
-            "3rdparty/jdns/*.h",
-            "3rdparty/jdns/*.c",
-            "3rdparty/jdns/*.cpp",
+            "*.h",
+            "*.c",
+            "*.cpp",
         ]
     }
     Group {
         //ice files
+        prefix: "../3rdparty/icesupport/"
         files: [
-            "3rdparty/icesupport/*.h",
-            "3rdparty/icesupport/*.c",
-            "3rdparty/icesupport/*.cpp",
+            "*.h",
+            "*.c",
+            "*.cpp",
         ]
     }
     Group {
         //simple sasl files
         condition: useSimpleSasl
+        prefix: "../3rdparty/simplesasl/"
         files: [
-            "3rdparty/simplesasl/*.h",
-            "3rdparty/simplesasl/*.cpp",
+            "*.h",
+            "*.cpp",
         ]
     }
     Group {
         //experimental jingle support
+        prefix: "experimental/"
         files: [
-            "src/experimental/*.h",
-            "src/experimental/*.cpp",
+            "*.h",
+            "*.cpp",
         ]
     }
     Group {
@@ -84,7 +92,7 @@ Product {
         qbs.installDir: "include/jreen"
         fileTags: ["install"]
         files: [
-            "src/*[^_][a-z].h",
+            "*[^_][a-z].h",
         ]
     }
 
