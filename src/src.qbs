@@ -1,12 +1,12 @@
 Product {
     name: "jreen"
-    
+
     property bool useSimpleSasl: true
     property string versionMajor: '1'
     property string versionMinor: '1'
     property string versionRelease: '0'
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
-    
+
     destination: {
         if (qbs.targetOS === 'windows')
             return "bin";
@@ -16,6 +16,7 @@ Product {
     type: ["dynamiclibrary", "installed_content"]
 
     Depends { name: "cpp" }
+    //Depends { name: "headers" }
     Depends { name: "Qt.core" }
     Depends { name: "Qt.network" }
     Depends { name: "qca" }
@@ -48,7 +49,6 @@ Product {
     }
 
     files: [
-        "*.h",
         "*.cpp"
     ]
 
@@ -87,17 +87,24 @@ Product {
             "*.cpp",
         ]
     }
+
     Group {
-        //install headers
+        //public headers
         qbs.installDir: "include/jreen"
+        overrideTags: false
         fileTags: ["install"]
         files: [
             "*[^_][a-z].h",
         ]
     }
 
+    Group {
+        //private headers
+        files: "*_p.h"
+    }
+
     ProductModule {
         Depends { name: "cpp" }
         cpp.includePaths: product.buildDirectory + "/include/vreen"
     }
-} 
+}
