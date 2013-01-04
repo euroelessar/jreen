@@ -81,8 +81,8 @@ void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
 const QJDns::Response *SJDns::servers(const QString &host)
 {
 	Q_ASSERT(m_valid);
-	QHash<QString, QJDns::Response>::iterator iter = m_results.find(host);
-	if(iter == m_results.end())
+	QHash<QString, QJDns::Response>::const_iterator iter = m_results.constFind(host);
+	if(iter == m_results.constEnd())
 		return 0;
 	return &iter.value();
 }
