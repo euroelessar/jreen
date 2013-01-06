@@ -98,6 +98,7 @@ void ClientPrivate::handleStanza(const Stanza::Ptr &stanza)
 			}
 		} else if (iq->subtype() == IQ::Get || iq->subtype() == IQ::Set) {
 			bool ok = iq->from().isDomain()
+					|| !iq->from().isValid()
 			        || !roster
 			        || rooms.contains(iq->from().bare())
 			        || iq->from().bare() == jid.bare();
