@@ -156,8 +156,8 @@ public:
 	using AbstractRoster::add;
 	using AbstractRoster::remove;
 signals:
-	void itemAdded(const RosterItem::Ptr &item);
-	void itemUpdated(const RosterItem::Ptr &item);
+	void itemAdded(const Jreen::RosterItem::Ptr &item);
+	void itemUpdated(const Jreen::RosterItem::Ptr &item);
 	void itemRemoved(const QString &jid);
 	void presenceReceived(const Jreen::RosterItem::Ptr &item, const Jreen::Presence &presence);
 	void subscriptionReceived(const Jreen::RosterItem::Ptr &item, const Jreen::Presence &presence);
