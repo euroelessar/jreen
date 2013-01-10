@@ -25,9 +25,6 @@
 ****************************************************************************/
 
 #include "directconnection_p.h"
-#include <QSslSocket>
-#include <QSslConfiguration>
-#include <QSsl>
 
 #ifdef Q_OS_LINUX
 # include <sys/types.h>
@@ -49,11 +46,7 @@ DirectConnectionPrivate::DirectConnectionPrivate(const QString &hn, int p, Direc
 
 void DirectConnectionPrivate::connectSocket()
 {
-	if (qobject_cast<QSslSocket*>(socket)) {
-		connect(socket, SIGNAL(encrypted()), parent, SIGNAL(connected()));
-	} else {
-		connect(socket, SIGNAL(connected()), parent, SIGNAL(connected()));
-	}
+	connect(socket, SIGNAL(connected()), parent, SIGNAL(connected()));
 	connect(socket, SIGNAL(disconnected()), parent, SIGNAL(disconnected()));
 	connect(socket, SIGNAL(readyRead()), parent, SIGNAL(readyRead()));
 	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
@@ -103,7 +96,7 @@ void DirectConnectionPrivate::lookupResultsReady()
 
 void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 {
-	Logger::debug() << ss;
+	Logger::debug() << Q_FUNC_INFO << socket_state << ss;
 	if(socket_state == ss)
 		return;
 
@@ -142,8 +135,8 @@ void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 		break;
 	}
 
-	socket_state = ss;
-	emit parent->stateChanged(static_cast<Connection::SocketState>(ss));
+	socket_state = socket->state();
+	emit parent->stateChanged(static_cast<Connection::SocketState>(socket_state));
 }
 
 void DirectConnectionPrivate::error(QAbstractSocket::SocketError se)
@@ -176,6 +169,7 @@ DirectConnection::~DirectConnection()
 bool DirectConnection::open()
 {
 	Q_D(DirectConnection);
+	Logger::debug() << Q_FUNC_INFO << d->socket_state << d->socket->state();
 	if(d->socket_state != QAbstractSocket::UnconnectedState) {
 		if(d->socket_state == QAbstractSocket::ListeningState) {
 			d->socket_state = QAbstractSocket::ConnectedState;
@@ -189,15 +183,7 @@ bool DirectConnection::open()
 	} else {
 		Logger::debug() << "connectToHost" << d->host_name << d->port;
 		Logger::debug() << "proxy" << d->socket->proxy().type() << d->socket->proxy().hostName() << d->socket->proxy().port();
-		if (QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket)) {
-			socket->setPeerVerifyMode(QSslSocket::VerifyNone);
-			QSslConfiguration conf = socket->sslConfiguration();
-			conf.setProtocol(QSsl::TlsV1);
-			socket->setSslConfiguration(conf);
-			socket->connectToHostEncrypted(d->host_name, d->port);
-		} else {
-			d->socket->connectToHost(d->host_name, d->port);
-		}
+		d->socket->connectToHost(d->host_name, d->port);
 	}
 	return true;
 }
@@ -245,6 +231,11 @@ Connection::SocketError DirectConnection::socketError() const
 {
 	Q_D(const DirectConnection);
 	return static_cast<SocketError>(d->socket_error);
+}
+
+QAbstractSocket *DirectConnection::socket() const
+{
+	return d_func()->socket;
 }
 
 qint64 DirectConnection::readData(char *data, qint64 maxlen)

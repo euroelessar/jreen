@@ -24,18 +24,18 @@
 ****************************************************************************/
 
 #include "tcpconnection.h"
-#include <QTcpSocket>
+#include <QSslSocket>
 
 namespace Jreen
 {
 
 TcpConnection::TcpConnection(const QString &host_name, qint16 port)
-		: DirectConnection(new QTcpSocket, host_name, port)
+		: DirectConnection(new QSslSocket, host_name, port)
 {
 }
 
 TcpConnection::TcpConnection(const QHostAddress &address, qint16 port)
-		: DirectConnection(new QTcpSocket, address, port)
+		: DirectConnection(new QSslSocket, address, port)
 {
 }
 

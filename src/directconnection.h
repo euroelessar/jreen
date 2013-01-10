@@ -55,6 +55,8 @@ public:
 	SocketState socketState() const;
 	SocketError socketError() const;
 
+	QAbstractSocket *socket() const;
+
 signals:
 	void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
 

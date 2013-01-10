@@ -498,6 +498,7 @@ void Client::setPresence(Presence::Type type, const QString &text, int priority)
 void Client::connectToServer()
 {
 	Q_D(Client);
+
 	if(!d->conn)
 		setConnection(new TcpConnection(d->server, d->server_port));
 

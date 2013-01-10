@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
+** Copyright © 2013 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -27,7 +27,10 @@
 #define TLSFEATURE_H
 
 #include "streamfeature_p.h"
-#include <QtCrypto>
+#include <QPointer>
+
+class QSslError;
+class QSslSocket;
 
 namespace Jreen
 {
@@ -43,7 +46,6 @@ public:
 	};
     TLSFeature();
 	int priority() { return 10; }
-//		void setStreamInfo(StreamInfo *info);
 	void reset();
 	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
 	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
@@ -54,18 +56,12 @@ public:
 	bool activate();
 private slots:
 	void onHandshaken();
-	void onClosed();
-	void onError();
+	void onPeerVerifyError(const QSslError &error);
 	void onDisconnected();
 private:
 	void init();
-	
-	struct ScopedPointerEventDeleter
-	{
-		static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
-	};
-	QScopedPointer<QCA::TLS, ScopedPointerEventDeleter> m_tls;
-	bool m_hasTls;
+
+	QPointer<QSslSocket> m_socket;
 	bool m_required;
 	bool m_available;
 };
