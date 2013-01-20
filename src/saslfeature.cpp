@@ -223,7 +223,7 @@ void SASLFeature::handleCharacterData(const QStringRef &text)
 	} else if (m_state == AtChallenge) {
 #ifdef USE_GSASL
 		char *result;
-		int error = gsasl_step64(m_session.data(), text.toLatin1(), &result);
+		int error = gsasl_step64(m_session.data(), text.toString().toLatin1(), &result);
 		if (error == GSASL_NEEDS_MORE || error == GSASL_OK) {
 			QXmlStreamWriter *writer = m_info->writer();
 			writer->writeStartElement(QLatin1String("response"));
