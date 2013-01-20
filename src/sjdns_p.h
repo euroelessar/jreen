@@ -26,7 +26,12 @@
 #ifndef QJDNS_P_H
 #define QJDNS_P_H
 
-//#include <QAction>
+#include <qglobal.h>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#  error Check build scripts
+#endif
+
 #include <jdns/qjdns.h>
 #include <QUrl>
 #include "action_p.h"
@@ -34,15 +39,9 @@
 namespace Jreen
 {
 
-//class JAction;
-
-// TODO: Make DNS API shared
-
-class SJDns : QObject
+class SJDns : public QObject
 {
 	Q_OBJECT
-	QJDns *m_qjdns;
-	bool m_valid;
 	SJDns() {}
 	~SJDns() {}
 public:
@@ -56,9 +55,65 @@ private slots:
 	void published(int id);
 	void error(int id, QJDns::Error e);
 private:
+	QJDns *m_qjdns;
+	bool m_valid;
 	QMap<int, Action *> m_actions;
 	QHash<QString, QJDns::Response> m_results;
 };
+
+class DnsServiceRecord
+{
+public:
+	inline QString target() const { return m_target; }
+	inline quint16 port() const { return m_port; }
+	inline quint16 priority() const { return m_priority; }
+	inline quint16 weight() const { return m_weight; }
+
+	QString m_target;
+	quint16 m_port;
+	quint16 m_priority;
+	quint16 m_weight;
+};
+
+class DnsLookup : public QObject
+{
+	Q_OBJECT
+public:
+	enum Error {
+		NoError,
+		SomeError
+	};
+
+	enum Type {
+		Invalid = -1,
+		SRV = QJDns::Srv
+	};
+
+	DnsLookup(QObject *parent);
+	~DnsLookup();
+
+	void setType(Type type);
+	void setName(const QString &name);
+	void lookup();
+
+	QList<DnsServiceRecord> serviceRecords() const;
+	Error error() const;
+
+signals:
+	void finished();
+
+private slots:
+	void onResultReady();
+
+private:
+	QJDns::Type m_type;
+	QString m_name;
+	const QJDns::Response *m_response;
+};
+
+typedef DnsLookup QDnsLookup;
+typedef DnsServiceRecord QDnsServiceRecord;
+//#endif
 
 }
 

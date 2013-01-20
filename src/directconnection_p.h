@@ -31,7 +31,6 @@
 #include <QNetworkProxy>
 #include "jreen.h"
 #include "directconnection.h"
-#include "sjdns_p.h"
 #include "logger.h"
 #include <QUrl>
 

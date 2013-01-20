@@ -29,60 +29,152 @@
 #include <QCoreApplication>
 #include "logger.h"
 
-#ifdef HAVE_SIMPLESASL
-# include "../3rdparty/simplesasl/simplesasl.h"
-#endif
-
 #define NS_SASL QLatin1String("urn:ietf:params:xml:ns:xmpp-sasl")
 
 namespace Jreen
 {
 
-SASLFeature::SASLFeature() : StreamFeature(SASL)
+#ifdef USE_GSASL
+static Gsasl *sasl_context = NULL;
+
+static int callback_function(Gsasl *, Gsasl_session *session, Gsasl_property prop)
 {
-	QCA::init();
-	QCA::setAppName(QCoreApplication::applicationName());
-	m_depth = 0;
-	m_isSupported = QCA::isSupported("sasl");
-#ifdef HAVE_SIMPLESASL
-	if (!m_isSupported) {
-		QCA::insertProvider(XMPP::createProviderSimpleSASL());
-		m_isSupported = true;
+	StreamInfo *info = reinterpret_cast<StreamInfo*>(gsasl_session_hook_get(session));
+	Q_ASSERT(info);
+	switch (prop) {
+	case GSASL_SERVICE:
+		gsasl_property_set(session, GSASL_SERVICE,  "xmpp");
+		return GSASL_OK;
+	case GSASL_HOSTNAME:
+		gsasl_property_set(session, GSASL_HOSTNAME,    QUrl::toAce(info->jid().domain()));
+		return GSASL_OK;
+	case GSASL_REALM:
+		gsasl_property_set(session, GSASL_REALM,    info->jid().domain().toUtf8());
+		return GSASL_OK;
+	case GSASL_AUTHID:
+		gsasl_property_set(session, GSASL_AUTHID,   info->jid().node().toUtf8());
+		return GSASL_OK;
+//	case GSASL_AUTHZID:
+//		gsasl_property_set(session, GSASL_AUTHZID,  info->jid().bare().toUtf8());
+//		return GSASL_OK;
+	case GSASL_PASSWORD:
+		gsasl_property_set(session, GSASL_PASSWORD, info->password().toUtf8());
+		return GSASL_OK;
+	default:
+		jreenWarning() << "SASL property request unhandled:" << prop;
+		return GSASL_NO_CALLBACK;
 	}
-#endif
 }
 
-void SASLFeature::init()
+static void destroy_sasl_context()
 {
-	if (!m_isSupported)
-		return;
-	Q_ASSERT(!m_sasl);
-	m_sasl.reset(new QCA::SASL(this));
-	m_sasl->setConstraints(QCA::SASL::AllowPlain);
-	connect(m_sasl.data(), SIGNAL(clientStarted(bool,QByteArray)),
-			this, SLOT(onClientStarted(bool,QByteArray)));
-	connect(m_sasl.data(), SIGNAL(nextStep(QByteArray)),
-			this, SLOT(onNextStep(QByteArray)));
-	connect(m_sasl.data(), SIGNAL(needParams(QCA::SASL::Params)),
-			this, SLOT(onNeedParams(QCA::SASL::Params)));
-	connect(m_sasl.data(), SIGNAL(authCheck(QString,QString)),
-			this, SLOT(onAuthCheck(QString,QString)));
-	// Don't listen it for sure
-//	connect(m_sasl.data(), SIGNAL(error()), this, SLOT(onError()));
+	gsasl_done(sasl_context);
 }
+
+#else
+
+static sasl_callback_t sasl_callbacks[] = {
+	{ SASL_CB_GETREALM, NULL, NULL },
+	{ SASL_CB_USER, NULL, NULL },
+	{ SASL_CB_AUTHNAME, NULL, NULL },
+	{ SASL_CB_PASS, NULL, NULL },
+	{ SASL_CB_LIST_END, NULL, NULL }
+};
+#endif
+
+static bool sasl_inited_successfully = false;
+static bool sasl_tried_to_init = false;
+
+SASLFeature::SASLFeature() : StreamFeature(SASL), m_session(NULL)
+{
+	m_depth = 0;
+	if (!sasl_tried_to_init) {
+		sasl_tried_to_init = true;
+#ifdef USE_GSASL
+		int error = gsasl_init(&sasl_context);
+		if (error != GSASL_OK) {
+			sasl_context = NULL;
+			jreenWarning() << "Cannot initialize libgsasl:" << error << ": " << gsasl_strerror (error);
+			return;
+		} else {
+			sasl_inited_successfully = true;
+			gsasl_callback_set(sasl_context, callback_function);
+			qAddPostRoutine(destroy_sasl_context);
+		}
+#else
+		int error = sasl_client_init(sasl_callbacks);
+		if (error == SASL_OK) {
+			sasl_inited_successfully = true;
+			qAddPostRoutine(sasl_done);
+		} else {
+			jreenWarning() << "Cannot initialize sasl2:" << error << ": " << sasl_errstring(error, NULL, NULL);
+		}
+#endif
+	}
+}
+
+#ifndef USE_GSASL
+void SASLFeature::getParameters()
+{
+	const int *maybe_sff;
+	int result_ssf = 0;
+	if (SASL_OK == sasl_getprop(m_session, SASL_SSF, reinterpret_cast<const void **>(&maybe_sff)))
+		result_ssf = *maybe_sff;
+
+	const int *maybe_maxoutbuf;
+	int maxoutbuf = 0;
+	if (SASL_OK == sasl_getprop(m_session, SASL_MAXOUTBUF, reinterpret_cast<const void **>(&maybe_maxoutbuf)))
+		maxoutbuf = *maybe_maxoutbuf;
+
+	jreenWarning() << "getParameters" << result_ssf << maybe_sff << maxoutbuf << maybe_maxoutbuf;
+}
+
+void SASLFeature::interactWithInfo(sasl_interact_t *interacts)
+{
+	for (size_t i = 0; interacts[i].id != SASL_CB_LIST_END; ++i) {
+		sasl_interact *interact = &interacts[i];
+		switch (interact->id) {
+		case SASL_CB_AUTHNAME:
+			setInteractionResult(interact, m_info->jid().node().toUtf8());
+			break;
+		case SASL_CB_GETREALM:
+			setInteractionResult(interact, m_info->jid().domain().toUtf8());
+			break;
+		case SASL_CB_USER:
+//			setInteractionResult(interact, m_info->jid().bare().toUtf8());
+			break;
+		case SASL_CB_PASS:
+			setInteractionResult(interact, m_info->password().toUtf8());
+			break;
+		}
+	}
+}
+
+void SASLFeature::setInteractionResult(sasl_interact_t *interact, const QByteArray &value)
+{
+	m_interact << value;
+	interact->result = value.constData();
+}
+
+#endif
 
 void SASLFeature::reset()
 {
-	if (!m_isSupported)
+	if (!sasl_inited_successfully)
 		return;
 	m_depth = 0;
 	m_mechs.clear();
-	m_sasl.reset(0);
+#ifdef USE_GSASL
+	m_session.reset();
+#else
+	sasl_dispose(&m_session);
+	m_interact.clear();
+#endif
 }
 
 bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	if (!m_isSupported)
+	if (!sasl_inited_successfully)
 		return false;
 	Q_UNUSED(name);
 	Q_UNUSED(attributes);
@@ -91,7 +183,7 @@ bool SASLFeature::canParse(const QStringRef &name, const QStringRef &uri, const 
 
 void SASLFeature::handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
-	Q_ASSERT(m_isSupported);
+	Q_ASSERT(sasl_inited_successfully);
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
 	m_depth++;
@@ -109,7 +201,7 @@ void SASLFeature::handleStartElement(const QStringRef &name, const QStringRef &u
 
 void SASLFeature::handleEndElement(const QStringRef &name, const QStringRef &uri)
 {
-	Q_ASSERT(m_isSupported);
+	Q_ASSERT(sasl_inited_successfully);
 	Q_UNUSED(uri);
 	if (m_depth == 2 && m_state == AtMechanism)
 		m_state = AtMechanisms;
@@ -118,81 +210,166 @@ void SASLFeature::handleEndElement(const QStringRef &name, const QStringRef &uri
 		if (name == QLatin1String("success"))
 			m_info->completed(StreamInfo::Authorized | StreamInfo::ResendHeader);
 		if (name == QLatin1String("failure"))
-			onError();
+			m_info->completed(StreamInfo::AuthorizationFailed);
 	}
 	m_depth--;
 }
 
 void SASLFeature::handleCharacterData(const QStringRef &text)
 {
-	Q_ASSERT(m_isSupported);
+	Q_ASSERT(sasl_inited_successfully);
 	if (m_state == AtMechanism) {
 		m_mechs.append(text.toString());
 	} else if (m_state == AtChallenge) {
-		m_sasl->putStep(QByteArray::fromBase64(text.toString().toLatin1()));
+#ifdef USE_GSASL
+		char *result;
+		int error = gsasl_step64(m_session.data(), text.toLatin1(), &result);
+		if (error == GSASL_NEEDS_MORE || error == GSASL_OK) {
+			QXmlStreamWriter *writer = m_info->writer();
+			writer->writeStartElement(QLatin1String("response"));
+			writer->writeDefaultNamespace(NS_SASL);
+			writer->writeCharacters(QString::fromLatin1(result));
+			writer->writeEndElement();
+			gsasl_free(result);
+		} else {
+			jreenWarning() << "SASL next step:" << error << ":" << gsasl_strerror(error);
+			m_info->completed(StreamInfo::AuthorizationFailed);
+			m_session.reset();
+		}
+#else
+		QByteArray input = QByteArray::fromBase64(text.toLatin1());
+		sasl_interact_t *interacts = NULL;
+		const char *result;
+		unsigned result_length;
+		int error;
+
+		do {
+
+			error = sasl_client_step(m_session,
+									 input,
+									 input.size(),
+									 &interacts,
+									 &result,
+									 &result_length);
+
+			if (error == SASL_INTERACT) {
+				interactWithInfo(interacts);
+			}
+
+
+		} while (error == SASL_INTERACT);
+
+		if (error != SASL_CONTINUE && error != SASL_OK) {
+			jreenWarning() << "Cannot do step:" << error << ":" << sasl_errstring(error, NULL, NULL);
+			sasl_dispose(&m_session);
+			m_info->completed(StreamInfo::AuthorizationFailed);
+			return;
+		}
+
+		getParameters();
+
+		QXmlStreamWriter *writer = m_info->writer();
+		writer->writeStartElement(QLatin1String("response"));
+		writer->writeDefaultNamespace(NS_SASL);
+		writer->writeCharacters(QString::fromLatin1(
+									QByteArray::fromRawData(result, result_length)
+									.toBase64()));
+		writer->writeEndElement();
+#endif
 	}
 }
 
 bool SASLFeature::isActivatable()
 {
-	return m_isSupported && !m_mechs.isEmpty();
+	return sasl_inited_successfully && !m_mechs.isEmpty();
 }
 
 bool SASLFeature::activate()
 {
-	if (!m_isSupported)
+	if (!sasl_inited_successfully)
 		return false;
-	init();
-	m_sasl->setConstraints(QCA::SASL::AllowPlain);
-	m_sasl->startClient("xmpp", QUrl::toAce(m_info->jid().domain()), m_mechs, QCA::SASL::AllowClientSendFirst);
-	return true;
-}
 
-void SASLFeature::onClientStarted(bool init, const QByteArray &data)
-{
+#ifdef USE_GSASL
+	Gsasl_session *session;
+	QByteArray mechs = m_mechs.join(QLatin1String(":")).toLatin1();
+	const char *mech = gsasl_client_suggest_mechanism(sasl_context, mechs.data());
+	int error = gsasl_client_start(sasl_context, mech, &session);
+	if (error != GSASL_OK) {
+		jreenWarning() << "SASL Cannot initialize client:" << error << ":" << gsasl_strerror(error);
+		return false;
+	}
+	m_session.reset(session);
+	gsasl_session_hook_set(session, m_info);
+
+	char *result;
+	error = gsasl_step64(session, "", &result);
+	if (error == GSASL_NEEDS_MORE || error == GSASL_OK) {
+		QXmlStreamWriter *writer = m_info->writer();
+		writer->writeStartElement(QLatin1String("auth"));
+		writer->writeDefaultNamespace(NS_SASL);
+		writer->writeAttribute(QLatin1String("mechanism"), QString::fromUtf8(mech));
+		if (result && *result)
+			writer->writeCharacters(QString::fromLatin1(result));
+		writer->writeEndElement();
+		gsasl_free(result);
+	} else {
+		jreenWarning() << "SASL activate:" << error << ":" << gsasl_strerror(error);
+		m_info->completed(StreamInfo::AuthorizationFailed);
+		m_session.reset();
+		return false;
+	}
+#else
+	int error = sasl_client_new("xmpp",
+								QUrl::toAce(m_info->jid().domain()),
+								NULL, NULL, // local and remote ip
+								NULL, // session-specific callbacks
+								0, // security flags
+								&m_session);
+
+	if (error != SASL_OK) {
+		jreenWarning() << "Cannot initialize client:" << error
+				 << ":" << sasl_errstring(error, NULL, NULL);
+		return false;
+	}
+
+	QByteArray mechlist = m_mechs.join(QLatin1String(" ")).toLatin1();
+	sasl_interact_t *interacts = NULL;
+	const char *result, *mechusing;
+	unsigned result_length;
+
+	do {
+
+		error = sasl_client_start(m_session,
+								 mechlist,
+								 &interacts,
+								 &result,
+								 &result_length,
+								 &mechusing);
+
+		if (error == SASL_INTERACT) {
+			interactWithInfo(interacts);
+		}
+
+
+	} while (error == SASL_INTERACT);
+
+	if (error != SASL_CONTINUE) {
+		jreenWarning() << "Cannot start client:" << error << ":" << sasl_errstring(error, NULL, NULL);
+		sasl_dispose(&m_session);
+		m_info->completed(StreamInfo::AuthorizationFailed);
+		return false;
+	}
+	getParameters();
+
 	QXmlStreamWriter *writer = m_info->writer();
 	writer->writeStartElement(QLatin1String("auth"));
 	writer->writeDefaultNamespace(NS_SASL);
-	writer->writeAttribute(QLatin1String("mechanism"), m_sasl->mechanism());
-	if (init)
-		writer->writeCharacters(QString::fromLatin1(data.toBase64()));
+	writer->writeAttribute(QLatin1String("mechanism"), QString::fromUtf8(mechusing));
+	writer->writeCharacters(QString::fromLatin1(
+								QByteArray::fromRawData(result, result_length)
+								.toBase64()));
 	writer->writeEndElement();
-}
-
-void SASLFeature::onNextStep(const QByteArray &data)
-{
-	QXmlStreamWriter *writer = m_info->writer();
-	writer->writeStartElement(QLatin1String("response"));
-	writer->writeDefaultNamespace(NS_SASL);
-	writer->writeCharacters(QString::fromLatin1(data.toBase64()));
-	writer->writeEndElement();
-}
-
-void SASLFeature::onNeedParams(const QCA::SASL::Params &params)
-{
-	if (params.needPassword())
-		m_sasl->setPassword(QCA::SecureArray(m_info->password().toUtf8()));
-	if (params.needUsername())
-		m_sasl->setUsername(m_info->jid().node());
-	if (params.canSendRealm())
-		m_sasl->setRealm(m_info->jid().domain());
-	// ???
-	// Why SASL tells me that I can send Authzid?
-	/*if (params.canSendAuthzid() && m_info->jid().domain() != QLatin1String("chat.facebook.com"))
-		m_sasl->setAuthzid(m_info->jid().bare());*/
-	m_sasl->continueAfterParams();
-}
-
-void SASLFeature::onAuthCheck(const QString &user, const QString &authzid)
-{
-	Q_UNUSED(user);
-	Q_UNUSED(authzid);
-	m_sasl->continueAfterAuthCheck();
-}
-
-void SASLFeature::onError()
-{
-	m_info->completed(StreamInfo::AuthorizationFailed);
-	Logger::debug() << Q_FUNC_INFO << (m_sasl ? m_sasl->errorCode() : -1);
+#endif
+	return true;
 }
 }

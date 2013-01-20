@@ -122,7 +122,7 @@ bool RegistrationData::hasFields() const
 void RegistrationData::setFieldValue(RegistrationData::FieldType type, const QString &value)
 {
 	if (d->values.size() <= type) {
-		Logger::warning() << "Unkown RegistrationData::ValueType:" << type;
+		jreenWarning() << "Unkown RegistrationData::ValueType:" << type;
 		return;
 	}
 	d->valuesFlags |= (1 << type);

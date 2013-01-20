@@ -197,7 +197,7 @@ void MUCRoom::Item::setReason(const QString &reason)
 void MUCRoomPrivate::handlePresence(const Presence &pres)
 {
 	Q_Q(MUCRoom);
-	Logger::debug() << "handle presence" << pres.from();
+	jreenDebug() << "handle presence" << pres.from();
 	if (Error::Ptr e = pres.payload<Error>()) {
 		startedJoining = false;
 		emit q->error(e);

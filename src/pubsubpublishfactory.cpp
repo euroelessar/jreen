@@ -114,7 +114,7 @@ void PublishFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		node = factory ? factory->features().value(0) : QString();
 	}
 	if (!factory || node.isEmpty()) {
-		Logger::warning() << "Invalid stanza extension at PubSub::Publish";
+		jreenWarning() << "Invalid stanza extension at PubSub::Publish";
 		return;
 	}
 	writer->writeStartElement(QLatin1String("pubsub"));

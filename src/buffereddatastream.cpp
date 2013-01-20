@@ -93,7 +93,7 @@ void BufferedDataStream::incomingDataReady()
 	int bytes = device()->bytesAvailable();
 	d->ensureSize(bytes);
 	device()->read(d->buffer.data() + d->offset + d->len, bytes);
-//	Logger::debug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
+//	jreenDebug("< \"%s\"", QByteArray(d->buffer.constData() + d->offset + d->len, bytes).constData());
 	d->len += bytes;
 	emit readyRead();
 }
@@ -115,7 +115,7 @@ void BufferedDataStream::flush()
 	foreach (XmlStreamHandler *handler, *d->handlers)
 		handler->handleOutgoingData(d->outBuffer.constData(), d->outBuffer.size());
 	device()->write(d->outBuffer.constData(), d->outBuffer.size());
-//	Logger::debug("> \"%s\"", d->outBuffer.constData());
+//	jreenDebug("> \"%s\"", d->outBuffer.constData());
 	d->outBuffer.clear();
 }
 
@@ -123,7 +123,7 @@ qint64 BufferedDataStream::readData(char *data, qint64 maxlen)
 {
 	Q_D(BufferedDataStream);
 	int len = qMin<int>(maxlen, d->len);
-	qMemCopy(data, d->buffer.data() + d->offset, len);
+	memcpy(data, d->buffer.data() + d->offset, len);
 //	foreach (XmlStreamHandler *handler, *d->handlers)
 //		handler->handleIncomingData(d->buffer.data() + d->offset, len);
 	if (maxlen < d->len) {

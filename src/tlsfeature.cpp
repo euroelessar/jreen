@@ -42,7 +42,7 @@ TLSFeature::TLSFeature() : StreamFeature(SecurityLayer)
 	m_required = false;
 	m_available = false;
 	if (!QSslSocket::supportsSsl())
-		Logger::warning() << "Jreen: TLS is not provided by QtNetwork";
+		jreenWarning() << "Jreen: TLS is not provided by QtNetwork";
 }
 
 void TLSFeature::init()

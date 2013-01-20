@@ -110,7 +110,7 @@ void SessionFeature::reset()
 bool SessionFeature::canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes)
 {
 	Q_UNUSED(attributes);
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	return name == QLatin1String("session") && uri == NS_SESSION;
 }
 
@@ -119,7 +119,7 @@ void SessionFeature::handleStartElement(const QStringRef &name, const QStringRef
 	Q_UNUSED(name);
 	Q_UNUSED(uri);
 	Q_UNUSED(attributes);
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	m_hasFeature = true;
 }
 

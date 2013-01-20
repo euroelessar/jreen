@@ -71,7 +71,7 @@ bool SJDns::isValid()
 void SJDns::doLookup(const QString &host, QObject *receiver, const char *member)
 {
 	Q_ASSERT(m_valid);
-	int id = m_qjdns->queryStart("_xmpp-client._tcp." + QUrl::toAce(host), QJDns::Srv);
+	int id = m_qjdns->queryStart(host.toLatin1(), QJDns::Srv);
 	Action *action = new Action(this);
 	action->setData(host);
 	connect(action, SIGNAL(triggered()), receiver, member);
@@ -92,7 +92,7 @@ void SJDns::resultsReady(int id, const QJDns::Response &results)
 	Action *action = m_actions.value(id, 0);
 	Q_ASSERT(action);
 	foreach(const QJDns::Record &record, results.answerRecords)
-		Logger::debug() << record.name << record.port << record.priority << record.weight;
+		jreenDebug() << record.name << record.port << record.priority << record.weight;
 	m_results.insert(action->data().toString(), results);
 	action->trigger();
 }
@@ -115,18 +115,72 @@ void SJDns::error(int id, QJDns::Error e)
 	action->trigger();
 	switch (e) {
 	case QJDns::ErrorGeneric:
-		Logger::critical() << "error Generic" << id;
+		jreenCritical() << "error Generic" << id;
 		break;
 	case QJDns::ErrorNXDomain:
-		Logger::critical() << "error NXDomain" << id;
+		jreenCritical() << "error NXDomain" << id;
 		break;
 	case QJDns::ErrorTimeout:
-		Logger::critical() << "error Timeout" << id;
+		jreenCritical() << "error Timeout" << id;
 		break;
 	case QJDns::ErrorConflict:
-		Logger::critical() << "error Conflict" << id;
+		jreenCritical() << "error Conflict" << id;
 		break;
 	}
+}
+
+DnsLookup::DnsLookup(QObject *parent)
+	: QObject(parent), m_type(QJDns::Any), m_response(NULL)
+{
+}
+
+DnsLookup::~DnsLookup()
+{
+}
+
+void DnsLookup::setType(DnsLookup::Type type)
+{
+	m_type = static_cast<QJDns::Type>(type);
+}
+
+void DnsLookup::setName(const QString &name)
+{
+	m_name = name;
+}
+
+void DnsLookup::lookup()
+{
+	if (SJDns::instance().isValid())
+		SJDns::instance().doLookup(m_name, this, SIGNAL(finished()));
+	else
+		emit finished();
+}
+
+QList<DnsServiceRecord> DnsLookup::serviceRecords() const
+{
+	QList<DnsServiceRecord> result;
+	if (!m_response)
+		return result;
+
+	foreach(const QJDns::Record &qrecord, m_response->answerRecords)	{
+		DnsServiceRecord record;
+		record.m_target = QUrl::fromAce(qrecord.name);
+		record.m_port = qrecord.port;
+		record.m_weight = qrecord.weight;
+		record.m_priority = qrecord.priority;
+		result << record;
+	}
+	return result;
+}
+
+DnsLookup::Error DnsLookup::error() const
+{
+	return m_response ? NoError : SomeError;
+}
+
+void DnsLookup::onResultReady()
+{
+	m_response = SJDns::instance().servers(m_name);
 }
 
 }

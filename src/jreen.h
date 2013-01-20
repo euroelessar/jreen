@@ -55,6 +55,12 @@
 #  define JREEN_EXPORT
 # endif
 
+#ifdef QT_DEPRECATED_SINCE
+#  define JREEN_QT_DEPRECATED_SINCE(a, b) QT_DEPRECATED_SINCE(a, b)
+#else
+#  define QT_DEPRECATED_SINCE(a, b) false
+#endif
+
 
 # define J_PURE_SINGLETON(Class) \
 public: \

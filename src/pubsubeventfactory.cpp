@@ -111,7 +111,7 @@ void EventFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 		node = factory ? factory->features().value(0) : QString();
 	}
 	if (!factory || node.isEmpty()) {
-		Logger::warning() << "Invalid stanza extension at PubSub::Event";
+		jreenWarning() << "Invalid stanza extension at PubSub::Event";
 		return;
 	}
 	writer->writeStartElement(QLatin1String("event"));

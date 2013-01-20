@@ -135,9 +135,9 @@ void JingleAudioDevice::appendData(const QByteArray &data)
 
 qint64 JingleAudioDevice::readData(char *data, qint64 maxSize)
 {
-	qMemSet(data, 0, maxSize);
+	memset(data, 0, maxSize);
 	qint64 size = qMin<qint64>(m_outputBuffer.size(), maxSize);
-	qMemCopy(data, m_outputBuffer.data(), size);
+	memcpy(data, m_outputBuffer.data(), size);
 	m_outputBuffer.remove(0, size);
 	return size;
 }
@@ -260,7 +260,7 @@ void JingleAudioContentPrivate::send(int payload, const QByteArray &data)
 void JingleAudioContent::receive(int component, const QByteArray &receivedData)
 {
 	if (component == JingleRTCP) {
-		Logger::debug() << Q_FUNC_INFO << receivedData.toHex();
+		jreenDebug() << Q_FUNC_INFO << receivedData.toHex();
 	}
 	if (component != JingleRTP)
 		return;

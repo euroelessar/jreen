@@ -28,7 +28,17 @@
 
 #include "streamfeature_p.h"
 #include <QStringList>
-#include <QtCrypto>
+
+#define USE_GSASL
+
+#ifdef USE_GSASL
+#  include <gsasl.h>
+#else
+extern "C"
+{
+#  include <sasl/sasl.h>
+}
+#endif
 
 namespace Jreen
 {
@@ -54,24 +64,26 @@ namespace Jreen
 		void handleCharacterData(const QStringRef &text);
 		bool isActivatable();
 		bool activate();
-	public slots:
-		void onClientStarted(bool init, const QByteArray &data);
-		void onNextStep(const QByteArray &data);
-		void onNeedParams(const QCA::SASL::Params &params);
-		void onAuthCheck(const QString &user, const QString &authzid);
-		void onError();
 	private:
-		void init();
-		
-		bool m_isSupported;
+#ifndef USE_GSASL
+		void getParameters();
+		void interactWithInfo(sasl_interact_t *interacts);
+		void setInteractionResult(sasl_interact_t *interact, const QByteArray &value);
+#endif
+
 		int m_depth;
 		State m_state;
 		QStringList m_mechs;
-		struct ScopedPointerEventDeleter
+#ifdef USE_GSASL
+		struct SessionCleanup
 		{
-			static inline void cleanup(QObject *pointer) { if (pointer) pointer->deleteLater(); }
+			static inline void cleanup(Gsasl_session *pointer) { if (pointer) gsasl_finish(pointer); }
 		};
-		QScopedPointer<QCA::SASL, ScopedPointerEventDeleter> m_sasl;
+		QScopedPointer<Gsasl_session, SessionCleanup> m_session;
+#else
+		sasl_conn_t *m_session;
+		QList<QByteArray> m_interact;
+#endif
 	};
 }
 #endif // SASLFEATURE_H

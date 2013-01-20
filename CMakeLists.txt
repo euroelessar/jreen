@@ -209,6 +209,7 @@ JREEN_TARGET_LINK_LIBRARIES(jreen
 	${QCA2_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${EXTRA_LIBS}
+gsasl
 )
 
 # Install package config file

@@ -65,7 +65,7 @@ void JingleManagerPrivate::_q_iqReceived(const Jreen::IQ &iq)
 	Jingle::Ptr jingle = iq.payload<Jingle>();
 	if (!jingle)
 		return;
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	iq.accept();
 	JingleSession *session = sessions.value(jingle->sid);
 	if (session) {

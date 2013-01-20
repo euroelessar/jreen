@@ -139,7 +139,7 @@ void StanzaFactory::writePayloads(Stanza *stanza, QXmlStreamWriter *writer)
 		if(factory)
 			factory->serialize(extension.data(),writer);
 		else
-			Logger::debug() << "Invalid stanza extesion" << extension->payloadType();
+			jreenDebug() << "Invalid stanza extesion" << extension->payloadType();
 	}
 }
 

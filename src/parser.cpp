@@ -248,7 +248,7 @@ void Parser::handleStartElement(const QStringRef &name, const QStringRef &uri,
 	}
 	foreach (XmlStreamParser *parser, d->parsers)
 		parser->handleStartElement(name, uri, attributes);
-	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
+	//				jreenDebug() << d->reader->tokenString() << d->depth << name;
 #ifdef PARSER_DEBUG_SPEED
 	d->parsingTime += counter.elapsed();
 #endif
@@ -293,19 +293,19 @@ void Parser::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		d->totalParsingTime += d->parsingTime;
 		int logicTime = counter.elapsed();
 		d->totalLogicTime += logicTime;
-		Logger::debug() << "Total parsing time:" << d->totalParsingTime << "ms";
-		Logger::debug() << "Parsing time:" << d->parsingTime << "ms";
-		Logger::debug() << "Total logic time:" << d->totalLogicTime << "ms";
-		Logger::debug() << "Total IQ logic time:" << d->stanzaLogicTime[0] << "ms";
-		Logger::debug() << "Total Presence logic time:" << d->stanzaLogicTime[1] << "ms";
-		Logger::debug() << "Total Message logic time:" << d->stanzaLogicTime[2] << "ms";
-		Logger::debug() << "Logic time:" << logicTime << "ms";
+		jreenDebug() << "Total parsing time:" << d->totalParsingTime << "ms";
+		jreenDebug() << "Parsing time:" << d->parsingTime << "ms";
+		jreenDebug() << "Total logic time:" << d->totalLogicTime << "ms";
+		jreenDebug() << "Total IQ logic time:" << d->stanzaLogicTime[0] << "ms";
+		jreenDebug() << "Total Presence logic time:" << d->stanzaLogicTime[1] << "ms";
+		jreenDebug() << "Total Message logic time:" << d->stanzaLogicTime[2] << "ms";
+		jreenDebug() << "Logic time:" << logicTime << "ms";
 #endif
 		d->state = WaitingForStanza;
 	} else if (d->depth == 0) {
 	}
 	d->parsers.resize(d->parsersCount.pop());
-	//				Logger::debug() << d->reader->tokenString() << d->depth << name;
+	//				jreenDebug() << d->reader->tokenString() << d->depth << name;
 }
 
 void Parser::handleCharacterData(const QStringRef &text)
@@ -355,10 +355,10 @@ void Parser::parseData()
 			}
 		}
 		if (d->nullReader.error() == QXmlStreamReader::NotWellFormedError) {
-			Logger::warning() << "---------------------------------";
-			Logger::warning() << "Broken stanza (" << d->nullReader.errorString() << ")";
-			Logger::warning() << result;
-			Logger::warning() << "---------------------------------";
+			jreenWarning() << "---------------------------------";
+			jreenWarning() << "Broken stanza (" << d->nullReader.errorString() << ")";
+			jreenWarning() << result;
+			jreenWarning() << "---------------------------------";
 			result.prepend("<!--");
 			result.append("-->");
 			foreach (XmlStreamHandler *handler, d->client->streamHandlers)

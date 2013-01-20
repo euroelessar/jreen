@@ -28,6 +28,7 @@
 #include "iq.h"
 #include "client.h"
 #include "vcardupdate.h"
+#include <QPointer>
 
 namespace Jreen
 {
@@ -102,7 +103,7 @@ public:
 	void _q_received(const Jreen::IQ &iq);
 	
 	VCardReply *q_ptr;
-	QWeakPointer<VCardManager> manager;
+	QPointer<VCardManager> manager;
 	JID jid;
 	VCard::Ptr vcard;
 	Error::Ptr error;

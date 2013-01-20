@@ -221,7 +221,7 @@ void AbstractRoster::load()
 {
 	Q_D(AbstractRoster);
 	IQ iq(IQ::Get, JID(), d->client->getID());
-	Logger::debug() << Q_FUNC_INFO << d->version;
+	jreenDebug() << Q_FUNC_INFO << d->version;
 	iq.addExtension(new AbstractRosterQuery(d->version));
 	d->client->send(iq, this, SLOT(handleIQ(Jreen::IQ,int)), LoadRoster);
 }
@@ -291,7 +291,7 @@ void AbstractRoster::handleIQ(const IQ &iq)
 	d->version = roster->ver();
 	iq.accept();
 	foreach (const RosterItem::Ptr &item, roster->items()) {
-		Logger::debug() << "handle item" << item->jid();
+		jreenDebug() << "handle item" << item->jid();
 		if(item->subscription() == RosterItem::Remove) {
 			onItemRemoved(item->jid());
 			d->items.remove(item->jid());
@@ -340,7 +340,7 @@ void AbstractRoster::handleIQ(const IQ &iq, int context)
 		break;
 	case AddRosterItem:
 	case RemoveRosterItem: {
-		Logger::debug() << "handle add/remove item" << (iq.subtype() == IQ::Error);
+		jreenDebug() << "handle add/remove item" << (iq.subtype() == IQ::Error);
 //		IQ request = d->iqHash.take(iq.id());
 //		Q_ASSERT(request.subtype() != IQ::Invalid);
 //		if(iq.subtype() == IQ::Error)

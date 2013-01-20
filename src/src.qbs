@@ -6,6 +6,7 @@ Product {
     property string versionMinor: '1'
     property string versionRelease: '1'
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
+    property bool useIrisIce: false
 
     destination: {
         if (qbs.targetOS === 'windows')
@@ -19,7 +20,6 @@ Product {
     //Depends { name: "headers" }
     Depends { name: "Qt.core" }
     Depends { name: "Qt.network" }
-    Depends { name: "qca" }
     Depends { name: "zlib" }
     Depends { name: "speex"; required: false }
     Depends { name: "windows.ws2_32"; condition: qbs.targetOS === 'windows' }
@@ -35,13 +35,21 @@ Product {
         ".",
         "experimental"
     ]
-    cpp.defines: ["J_BUILD_LIBRARY"]
+    cpp.defines: [
+        "J_BUILD_LIBRARY",
+        "QT_DISABLE_DEPRECATED_BEFORE=" + ((4 << 16) + (0 << 8) + (0)).toString()
+    ]
     cpp.positionIndependentCode: true
     cpp.visibility: ["hidden"]
+    cpp.dynamicLibraries: ["sasl2", "gsasl"]
 
     Properties {
         condition: useSimpleSasl
         cpp.defines: outer.concat("HAVE_SIMPLESASL")
+    }
+    Properties {
+        condition: useIrisIce
+        cpp.defines: outer.concat("HAVE_IRISICE")
     }
     Properties {
         condition: false //speex.found
@@ -49,11 +57,13 @@ Product {
     }
 
     files: [
-        "*.cpp"
+        "*.cpp",
+        "*_p.h"
     ]
+    excludeFiles: qt.core.versionMajor < 5 ? undefined : "sjdns*"
 
     Group {
-        //jdns files
+        condition: qt.core.versionMajor < 5
         prefix: "../3rdparty/jdns/"
         files: [
             "*.h",
@@ -62,20 +72,11 @@ Product {
         ]
     }
     Group {
-        //ice files
+        condition: useIrisIce
         prefix: "../3rdparty/icesupport/"
         files: [
             "*.h",
             "*.c",
-            "*.cpp",
-        ]
-    }
-    Group {
-        //simple sasl files
-        condition: useSimpleSasl
-        prefix: "../3rdparty/simplesasl/"
-        files: [
-            "*.h",
             "*.cpp",
         ]
     }
@@ -96,11 +97,6 @@ Product {
         files: [
             "*[^_][a-z].h",
         ]
-    }
-
-    Group {
-        //private headers
-        files: "*_p.h"
     }
 
     ProductModule {

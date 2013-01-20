@@ -81,10 +81,10 @@ void BookmarkStorage::onResultReady(const Payload::Ptr &node,
 									PrivateXml::Result result, const Error::Ptr &error)
 {
 	Q_UNUSED(error);
-	Logger::debug() << "onResultReady";
+	jreenDebug() << "onResultReady";
 	if(result == PrivateXml::RequestOk) {
 		Bookmark *bookmark = se_cast<Bookmark*>(node.data());
-		Logger::debug() << "received bookmarks" << bookmark << node.data();
+		jreenDebug() << "received bookmarks" << bookmark << node.data();
 		if (bookmark)
 			emit bookmarksReceived(node.staticCast<Bookmark>());
 		else

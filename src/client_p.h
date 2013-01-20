@@ -216,7 +216,7 @@ public:
 	void _q_new_data()
 	{
 		QByteArray data = bufferedDevice->read(qMax(Q_INT64_C(0xffff), bufferedDevice->bytesAvailable())); // device->readAll();
-		//		Logger::debug() << "-" << data.size() << data;
+		//		jreenDebug() << "-" << data.size() << data;
 		parser->appendData(data);
 		//		parser->appendData(data);
 		_q_read_more();

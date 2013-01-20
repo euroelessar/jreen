@@ -30,7 +30,7 @@
 namespace Jreen
 {
 
-LangMapData LangMapData::shared_null = { Q_BASIC_ATOMIC_INITIALIZER(1), QString(), LangMapData::Base() };
+LangMapData LangMapData::shared_null = { 1, QString(), LangMapData::Base() };
 
 void LangMapData::fillNode(QXmlStreamWriter *writer, const QString &name, const QString &uri) const
 {

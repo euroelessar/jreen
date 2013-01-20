@@ -28,6 +28,7 @@
 namespace Jreen
 {
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0) || QT_DEPRECATED_SINCE(5, 0)
 Q_GLOBAL_STATIC(QList<QtMsgHandler>, handlers)
 
 Logger::Logger()
@@ -59,5 +60,6 @@ void Logger::flushDebug(Debug::Stream *stream)
 	foreach (QtMsgHandler handler, *handlers())
 		handler(stream->type, data);
 }
+#endif
 
 }

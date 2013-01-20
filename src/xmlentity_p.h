@@ -59,7 +59,7 @@ namespace Jreen
 		typedef QSharedPointer<Class> Ptr; \
 		static int staticXmlEntityType() \
 		{ \
-			static QBasicAtomicInt entityType = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			static int entityType = 0; \
 			if (!entityType) { \
 				entityType = XmlEntity::registerXmlEntityType( #Class ); \
 				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \

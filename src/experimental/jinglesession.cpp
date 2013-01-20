@@ -51,7 +51,7 @@ JingleSessionContent *JingleSessionPrivate::findContent(JingleContent *content)
 
 void JingleSessionPrivate::handle(const Jingle::Ptr &jingle)
 {
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	if (jingle->action == Jingle::SessionAccept) {
 		foreach (const Jingle::Content &remoteContent, jingle->contents) {
 			JingleSessionContent *content = findContent(remoteContent.name);

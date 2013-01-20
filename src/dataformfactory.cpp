@@ -257,7 +257,7 @@ public:
 		if(m_state == AtOption) {
 			m_optionParser.handleEndElement(name,uri);
 			if(m_depth == 2) {
-				Logger::debug() << m_optionParser.create();
+				jreenDebug() << m_optionParser.create();
 				m_options.append(m_optionParser.create());
 			}
 		} else if(m_state == AtMedia) {

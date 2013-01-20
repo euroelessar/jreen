@@ -102,7 +102,7 @@ void JingleFactory::handleStartElement(const QStringRef &name, const QStringRef 
 			m_content->senders = Jingle::Both;
 	} else if (m_depth == 3 && m_state == AtContent) {
 		foreach (m_factory, m_client->factoriesByUri.values(uri.toString())) {
-			Logger::debug() << uri << Payload::payloadName(m_factory->payloadType())
+			jreenDebug() << uri << Payload::payloadName(m_factory->payloadType())
 			         << m_factory->canParse(name, uri, attributes);
 			if (m_factory->canParse(name, uri, attributes))
 				break;
@@ -115,7 +115,7 @@ void JingleFactory::handleStartElement(const QStringRef &name, const QStringRef 
 			m_state = AtDescription;
 		else
 			m_factory = 0;
-		Logger::debug() << name << uri << m_factory;
+		jreenDebug() << name << uri << m_factory;
 	}
 	if (m_factory)
 		m_factory->handleStartElement(name, uri, attributes);
@@ -174,7 +174,7 @@ void JingleFactory::serialize(Payload *obj, QXmlStreamWriter *writer)
 			if (factory)
 				factory->serialize(content.description.data(), writer);
 		} else {
-			Logger::debug() << "No description";
+			jreenDebug() << "No description";
 		}
 		for (int j = 0; j < content.transports.size(); ++j) {
 			Payload *payload = content.transports.at(j).data();

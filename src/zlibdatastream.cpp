@@ -129,7 +129,7 @@ qint64 ZLibDataStream::readData(char *data, qint64 maxlen)
 {
 	Q_D(ZLibDataStream);
 	int len = qMin<int>(maxlen, d->len);
-	qMemCopy(data, d->buffer.data() + d->offset, len);
+	memcpy(data, d->buffer.data() + d->offset, len);
 	if (maxlen < d->len) {
 		d->len -= maxlen;
 		d->offset += maxlen;

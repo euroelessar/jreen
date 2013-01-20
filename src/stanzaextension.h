@@ -129,7 +129,7 @@ Q_INLINE_TEMPLATE T se_cast(Payload *se)
 		typedef QSharedPointer<Class> Ptr; \
 		static int staticPayloadType() \
 		{ \
-			static QBasicAtomicInt payloadType = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			static int payloadType = 0; \
 			if (!payloadType) { \
 				payloadType = Payload::registerPayloadType( #Class ); \
 				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \

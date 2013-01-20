@@ -352,7 +352,7 @@ void PrivacyManager::handleIQ(const Jreen::IQ &iq, int context)
 		d->lists = lists;
 		d->defaultList = query->defaultList;
 		d->activeList = query->activeList;
-		Logger::debug() << Q_FUNC_INFO << d->lists << d->defaultList << d->activeList;
+		jreenDebug() << Q_FUNC_INFO << d->lists << d->defaultList << d->activeList;
 		if (d->activeList.isEmpty())
 			d->activeList = d->defaultList;
 		emit listsReceived();

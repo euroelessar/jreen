@@ -26,6 +26,12 @@
 
 #include "directconnection_p.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#  include "sjdns_p.h"
+#else
+#  include <QDnsLookup>
+#endif
+
 #ifdef Q_OS_LINUX
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -59,44 +65,52 @@ void DirectConnectionPrivate::connectSocket()
 
 void DirectConnectionPrivate::doLookup()
 {
-	Logger::debug() << "doLookup";
+	jreenDebug() << "doLookup";
 	emit stateChanged(QAbstractSocket::HostLookupState);
 
-	if (SJDns::instance().isValid())
-		SJDns::instance().doLookup(host_name, this, SLOT(lookupResultsReady()));
-	else
-		emit stateChanged(QAbstractSocket::UnconnectedState);
+	QDnsLookup *dns = new QDnsLookup(this);
+	connect(dns, SIGNAL(finished()), this, SLOT(lookupResultsReady()));
+
+	dns->setType(QDnsLookup::SRV);
+	dns->setName(QString::fromLatin1("_xmpp-client._tcp." + QUrl::toAce(host_name)));
+	dns->lookup();
 }
 
 void DirectConnectionPrivate::lookupResultsReady()
 {
-	const QJDns::Response *response = SJDns::instance().servers(host_name);
+	QDnsLookup *dns = qobject_cast<QDnsLookup*>(sender());
+	dns->deleteLater();
+	Q_ASSERT(dns);
+
+	QList<QDnsServiceRecord> results = dns->serviceRecords();
 	dns_records.clear();
-	if (!response || !response->answerRecords.size()) {
+
+	if (results.isEmpty()) {
 		Record record;
 		record.host = host_name;
 		dns_records << record;
 	} else {
-		foreach(const QJDns::Record &qrecord, response->answerRecords)	{
+		foreach (const QDnsServiceRecord &result, results) {
 			Record record;
-			record.host = QUrl::fromAce(qrecord.name);
+			record.host = result.target();
 			// may be it's a reason of connection problems of some users
 			if (record.host.endsWith(QLatin1Char('.')))
 				record.host.chop(1);
-			record.port = qrecord.port;
-			record.weight = qrecord.weight;
-			record.priority = qrecord.priority;
+			record.port = result.port();
+			record.weight = result.weight();
+			record.priority = result.priority();
 			dns_records << record;
 		}
 	}
+
 	Record &record = dns_records[0];
-	Logger::debug() << "use:" << record.host << record.port;
+	jreenDebug() << "use:" << record.host << record.port;
 	socket->connectToHost(record.host, record.port);
 }
 
 void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 {
-	Logger::debug() << Q_FUNC_INFO << socket_state << ss;
+	jreenDebug() << Q_FUNC_INFO << socket_state << ss;
 	if(socket_state == ss)
 		return;
 
@@ -106,21 +120,22 @@ void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 #if defined(Q_OS_LINUX) && !defined(Q_WS_MAEMO_5) && !defined(MEEGO_EDITION_HARMATTAN)
 		if (qobject_cast<QTcpSocket*>(socket)) {
 			int fd = socket->socketDescriptor();
-			Q_ASSERT(fd != -1);
-			Logger::debug() << "Trying to set KeepAlive attributes to socket descriptor" << fd;
 			if (fd != -1) {
-				socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
-				int enableKeepAlive = 1;
-				Logger::debug() << setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
-			
-				int maxIdle = 15; // seconds
-				Logger::debug() << setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
-			
-				int count = 3;  // send up to 3 keepalive packets out, then disconnect if no response
-				Logger::debug() << setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
-			
-				int interval = 2;   // send a keepalive packet out every 2 seconds (after the idle period)
-				Logger::debug() << setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+				jreenDebug() << "Trying to set KeepAlive attributes to socket descriptor" << fd;
+				if (fd != -1) {
+					socket->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
+					int enableKeepAlive = 1;
+					jreenDebug() << setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &enableKeepAlive, sizeof(enableKeepAlive));
+
+					int maxIdle = 15; // seconds
+					jreenDebug() << setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &maxIdle, sizeof(maxIdle));
+
+					int count = 3;  // send up to 3 keepalive packets out, then disconnect if no response
+					jreenDebug() << setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
+
+					int interval = 2;   // send a keepalive packet out every 2 seconds (after the idle period)
+					jreenDebug() << setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+				}
 			}
 		}
 #endif
@@ -169,7 +184,7 @@ DirectConnection::~DirectConnection()
 bool DirectConnection::open()
 {
 	Q_D(DirectConnection);
-	Logger::debug() << Q_FUNC_INFO << d->socket_state << d->socket->state();
+	jreenDebug() << Q_FUNC_INFO << d->socket_state << d->socket->state();
 	if(d->socket_state != QAbstractSocket::UnconnectedState) {
 		if(d->socket_state == QAbstractSocket::ListeningState) {
 			d->socket_state = QAbstractSocket::ConnectedState;
@@ -181,8 +196,8 @@ bool DirectConnection::open()
 	if(d->do_lookup) {
 		d->doLookup();
 	} else {
-		Logger::debug() << "connectToHost" << d->host_name << d->port;
-		Logger::debug() << "proxy" << d->socket->proxy().type() << d->socket->proxy().hostName() << d->socket->proxy().port();
+		jreenDebug() << "connectToHost" << d->host_name << d->port;
+		jreenDebug() << "proxy" << d->socket->proxy().type() << d->socket->proxy().hostName() << d->socket->proxy().port();
 		d->socket->connectToHost(d->host_name, d->port);
 	}
 	return true;

@@ -27,6 +27,7 @@
 #include "metacontacts_p.h"
 #include "logger.h"
 #include "client.h"
+#include <QPointer>
 
 namespace Jreen {
 
@@ -117,7 +118,7 @@ class MetaContactStoragePrivate
 {
 public:
 	Client *client;
-	QWeakPointer<PrivateXml> privateXml;
+	QPointer<PrivateXml> privateXml;
 };
 
 MetaContactStorage::MetaContactStorage(Client *client) :
@@ -157,10 +158,10 @@ void MetaContactStorage::storeMetaContacts(const MetaContactStorage::ItemList &i
 void MetaContactStorage::onResultReady(const Payload::Ptr &payload, PrivateXml::Result result, const Error::Ptr &error)
 {
 	Q_UNUSED(error);
-	Logger::debug() << "onResultReady";
+	jreenDebug() << "onResultReady";
 	if(result == PrivateXml::RequestOk) {
 		MetaContacts *metacontacts = payload_cast<MetaContacts*>(payload.data());
-		Logger::debug() << "received metacontacts" << metacontacts << payload.data();
+		jreenDebug() << "received metacontacts" << metacontacts << payload.data();
 		if (metacontacts)
 			emit metaContactsReceived(metacontacts->items);
 		else

@@ -44,7 +44,7 @@ class Client;
 		typedef QSharedPointer<Class> Ptr; \
 		static int staticFilterType() \
 		{ \
-			static QBasicAtomicInt filterType = Q_BASIC_ATOMIC_INITIALIZER(0); \
+			static int filterType = 0; \
 			if (!filterType) { \
 				filterType = Jreen::Payload::registerPayloadType( #Class ); \
 				Class *useFullNameWithNamespaces = reinterpret_cast< ::Class* >(0); \

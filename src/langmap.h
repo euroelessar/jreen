@@ -45,7 +45,7 @@ struct JREEN_EXPORT LangMapData
 #else
 	typedef QHash<QString,QString> Base;
 #endif
-	QBasicAtomicInt ref;
+	QAtomicInt ref;
 	QString base;
 	Base other;
 
@@ -103,7 +103,11 @@ public:
 	inline int size() const { return count(); }
 	inline bool isEmpty() const { return count() == 0; }
 protected:
-	inline void detach() { if(d->ref != 1) detach_helper(); }
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	inline void detach() { if (d->ref != 1) detach_helper(); }
+#else
+	inline void detach() { if (d->ref.load() != 1) detach_helper(); }
+#endif
 	void detach_helper()
 	{
 		d->ref.deref();

@@ -73,7 +73,7 @@ void JingleContentPrivate::_q_tryStateChanged(Jreen::JingleTransport::State stat
 void JingleContentPrivate::setTransport(JingleTransport *trueTransport)
 {
 	transport = trueTransport;
-	Logger::debug() << Q_FUNC_INFO << transport;
+	jreenDebug() << Q_FUNC_INFO << transport;
 	QObject::connect(transport, SIGNAL(received(int,QByteArray)),
 	                 q_func(), SLOT(_q_received(int,QByteArray)));
 	QObject::connect(transport, SIGNAL(stateChanged(Jreen::JingleTransport::State)),

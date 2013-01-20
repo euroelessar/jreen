@@ -136,7 +136,7 @@ void Manager::addEntityType(int type)
 	Q_ASSERT(!node.isEmpty());
 	d->client->disco()->addFeature(node);
 	d->client->disco()->addFeature(node + QLatin1String("+notify"));
-	Logger::debug() << Q_FUNC_INFO << d->factories.size() << node;
+	jreenDebug() << Q_FUNC_INFO << d->factories.size() << node;
 }
 
 void Manager::handleMessage(const Jreen::Message &message)

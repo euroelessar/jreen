@@ -26,13 +26,26 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <QtCore/QDebug>
+#include <QtDebug>
 #include "jreen.h"
 
 namespace Jreen
 {
 class Logger;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#  define jreenDebug QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "jreen").debug
+#  define jreenWarning QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "jreen").warning
+#  define jreenCritical QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "jreen").critical
+#  define jreenFatal QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "jreen").critical
+#else
+#  define jreenDebug Logger::debug
+#  define jreenWarning Logger::warning
+#  define jreenCritical Logger::critical
+#  define jreenFatal Logger::fatal
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0) || QT_DEPRECATED_SINCE(5, 0)
 class JREEN_EXPORT Debug
 {
 	struct Stream {
@@ -66,6 +79,7 @@ public:
 
 	static void addHandler(QtMsgHandler handler);
 	static void removeHandler(QtMsgHandler handler);
+
 	static bool isNull();
 
 private:
@@ -100,6 +114,7 @@ Q_INLINE_TEMPLATE Debug &Debug::operator<<(T t)
 		stream->debug << t;
 	return *this;
 }
+#endif
 
 }
 

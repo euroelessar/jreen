@@ -130,7 +130,7 @@ void Transport::send(int component, const QByteArray &data)
 void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool final)
 {
 	Q_UNUSED(final);
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	TransportInfo::Ptr info = genericInfo.staticCast<TransportInfo>();
 	if (!info->ufrag.isEmpty())
 		m_ice->setPeerUfrag(info->ufrag);
@@ -142,18 +142,18 @@ void Transport::setRemoteInfo(const JingleTransportInfo::Ptr &genericInfo, bool 
 
 void Transport::onIceStarted()
 {
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 }
 
 void Transport::onIceError(XMPP::Ice176::Error error)
 {
-	Logger::debug() << Q_FUNC_INFO << error;
+	jreenDebug() << Q_FUNC_INFO << error;
 	setState(Failed);
 }
 
 void Transport::onIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate> &candidates)
 {
-	Logger::debug() << Q_FUNC_INFO;
+	jreenDebug() << Q_FUNC_INFO;
 	TransportInfo::Ptr info = TransportInfo::Ptr::create();
 	info->candidates = candidates;
 	info->ufrag = m_ice->localUfrag();
@@ -164,7 +164,7 @@ void Transport::onIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate> &
 void Transport::onIceComponentReady(int component)
 {
 	m_ready.remove(component);
-	Logger::debug() << Q_FUNC_INFO << component;
+	jreenDebug() << Q_FUNC_INFO << component;
 	if (m_ready.isEmpty())
 		setState(Connected);
 }
@@ -261,8 +261,8 @@ void TransportFactory::serialize(Payload *obj, QXmlStreamWriter *writer)
 
 Payload::Ptr TransportFactory::createPayload()
 {
-	Logger::debug() << Q_FUNC_INFO << m_info->pwd << m_info->ufrag;
-	Logger::debug() << Q_FUNC_INFO << m_info->candidates.size();
+	jreenDebug() << Q_FUNC_INFO << m_info->pwd << m_info->ufrag;
+	jreenDebug() << Q_FUNC_INFO << m_info->candidates.size();
 	Payload::Ptr result = m_info;
 	m_info.clear();
 	return result;

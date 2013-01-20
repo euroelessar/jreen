@@ -45,9 +45,9 @@ namespace Jreen
 {
 	typedef void Stringprep_profile;
 	typedef int Stringprep_profile_flags;
-	static void *Jreen_idn_stringprep_nameprep = 0;
-	static void *Jreen_idn_stringprep_xmpp_nodeprep = 0;
-	static void *Jreen_idn_stringprep_xmpp_resourceprep = 0;
+	static Stringprep_profile *Jreen_idn_stringprep_nameprep = 0;
+	static Stringprep_profile *Jreen_idn_stringprep_xmpp_nodeprep = 0;
+	static Stringprep_profile *Jreen_idn_stringprep_xmpp_resourceprep = 0;
 	typedef int (*Jreen_idn_stringprep_) (char *in, size_t maxlen, Stringprep_profile_flags flags,
 	                                      const Stringprep_profile *profile);
 	static Jreen_idn_stringprep_ Jreen_idn_stringprep = 0;
@@ -76,9 +76,12 @@ namespace Jreen
 #endif // Q_OS_WIN32
 				return false;
 		}
-		Jreen_idn_stringprep_nameprep = lib.resolve("stringprep_nameprep");
-		Jreen_idn_stringprep_xmpp_nodeprep = lib.resolve("stringprep_xmpp_nodeprep");
-		Jreen_idn_stringprep_xmpp_resourceprep = lib.resolve("stringprep_xmpp_resourceprep");
+		Jreen_idn_stringprep_nameprep
+				= reinterpret_cast<Stringprep_profile*>(lib.resolve("stringprep_nameprep"));
+		Jreen_idn_stringprep_xmpp_nodeprep
+				= reinterpret_cast<Stringprep_profile*>(lib.resolve("stringprep_xmpp_nodeprep"));
+		Jreen_idn_stringprep_xmpp_resourceprep
+				= reinterpret_cast<Stringprep_profile*>(lib.resolve("stringprep_xmpp_resourceprep"));
 		Jreen_idn_stringprep = reinterpret_cast<Jreen_idn_stringprep_>(lib.resolve("stringprep"));
 		return true;
 	}

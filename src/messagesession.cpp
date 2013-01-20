@@ -202,9 +202,9 @@ MessageSession *MessageSessionManager::session(const JID &jid, Message::Type typ
 {
 	Q_D(MessageSessionManager);
 	QList<QPointer<MessageSession> > sessions = d->fullSessions.values(jid.full());
-	Logger::debug() << "d->full_sessions" << d->fullSessions;
+	jreenDebug() << "d->full_sessions" << d->fullSessions;
 	foreach(MessageSession *session, sessions)
-		Logger::debug() << "MessageSession" << (session ? session->jid() : JID());
+		jreenDebug() << "MessageSession" << (session ? session->jid() : JID());
 	for(int i = 0; i < sessions.size(); i++)
 	{
 		if(sessions[i].isNull())
