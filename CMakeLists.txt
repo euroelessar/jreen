@@ -19,12 +19,12 @@ SET(QT_MIN_VERSION "4.6.0")
 FIND_PACKAGE(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
 INCLUDE(${QT_USE_FILE})
 INCLUDE(jreenMacros)
-FIND_PACKAGE(QCA2 REQUIRED)
 
 if( JREEN_BUILD_INTERNAL )
 	add_definitions( "-DJ_BUILD_INTERNAL" )
 endif()
 FIND_PACKAGE(PkgConfig)
+FIND_PACKAGE(GSASL REQUIRED)
 
 #pkg_search_module(NICE nice)
 #if(NOT NICE_FOUND)
@@ -76,7 +76,7 @@ endif()
 INCLUDE_DIRECTORIES(.
 	${CMAKE_CURRENT_BINARY_DIR}
 	3rdparty
-	${QCA2_INCLUDE_DIR}
+	${GSASL_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIR}
 )
 
@@ -96,11 +96,6 @@ if (JREEN_USE_IRISICE)
 	add_definitions("-DHAVE_IRISICE")
 endif()
 
-option(JREEN_USE_SIMPLESASL "Use SimpleSASL" ON)
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl")
-	set(JREEN_USE_SIMPLESASL OFF)
-	message("Using cyrus sasl auth")
-endif()
 if(JREEN_USE_SIMPLESASL)
 	message("Using simple sasl auth instead cyrus sasl")
 	add_definitions("-DHAVE_SIMPLESASL")
@@ -206,7 +201,7 @@ ENDIF(SPEEX_FOUND)
 
 JREEN_TARGET_LINK_LIBRARIES(jreen
 	${QT_LIBRARIES}
-	${QCA2_LIBRARIES}
+	${GSASL_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${EXTRA_LIBS}
 gsasl
