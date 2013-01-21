@@ -92,7 +92,7 @@ void SJDns::resultsReady(int id, const QJDns::Response &results)
 	Action *action = m_actions.value(id, 0);
 	Q_ASSERT(action);
 	foreach(const QJDns::Record &record, results.answerRecords)
-		jreenDebug() << record.name << record.port << record.priority << record.weight;
+		jreenDebug() << action->data() << record.name << record.port << record.priority << record.weight;
 	m_results.insert(action->data().toString(), results);
 	action->trigger();
 }
@@ -151,7 +151,7 @@ void DnsLookup::setName(const QString &name)
 void DnsLookup::lookup()
 {
 	if (SJDns::instance().isValid())
-		SJDns::instance().doLookup(m_name, this, SIGNAL(finished()));
+		SJDns::instance().doLookup(m_name, this, SLOT(onResultReady()));
 	else
 		emit finished();
 }
@@ -181,6 +181,7 @@ DnsLookup::Error DnsLookup::error() const
 void DnsLookup::onResultReady()
 {
 	m_response = SJDns::instance().servers(m_name);
+	emit finished();
 }
 
 }
