@@ -42,7 +42,7 @@ static int callback_function(Gsasl *context, Gsasl_session *session, Gsasl_prope
 	StreamInfo *info = reinterpret_cast<StreamInfo*>(gsasl_session_hook_get(session));
 	if (!info) {
 		jreenDebug() << Q_FUNC_INFO << context << session << prop;
-		return;
+		return GSASL_NO_CALLBACK;
 	}
 	Q_ASSERT(info);
 	switch (prop) {
