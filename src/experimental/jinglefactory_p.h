@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEFACTORY_P_H
-#define JINGLEFACTORY_P_H
+#ifndef JREEN_JINGLEFACTORY_P_H
+#define JREEN_JINGLEFACTORY_P_H
 
 #include "jingle_p.h"
 #include "../client_p.h"
@@ -59,4 +59,4 @@ private:
 
 }
 
-#endif // JINGLEFACTORY_P_H
+#endif // JREEN_JINGLEFACTORY_P_H

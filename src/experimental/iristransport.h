@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JREEN_JINGLEICE_IRISTRANSPORT_H
-#define JREEN_JINGLEICE_IRISTRANSPORT_H
+#ifndef JREEN_IRISTRANSPORT_H
+#define JREEN_IRISTRANSPORT_H
 
 #include "jingletransport.h"
 #include "3rdparty/icesupport/ice176.h"
@@ -38,4 +38,4 @@ namespace JingleIce
 } // namespace JingleIce
 } // namespace Jreen
 
-#endif // JREEN_JINGLEICE_IRISTRANSPORT_H
+#endif // JREEN_IRISTRANSPORT_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#if !defined(JINGLESPEEXCODEC_P_H) && defined(JREEN_HAVE_SPEEX)
-#define JINGLESPEEXCODEC_P_H
+#if !defined(JREEN_JINGLESPEEXCODEC_P_H) && defined(JREEN_HAVE_SPEEX)
+#define JREEN_JINGLESPEEXCODEC_P_H
 
 #include "jingleaudiocontent.h"
 #include <speex/speex.h>
@@ -59,4 +59,4 @@ public:
 
 }
 
-#endif // JINGLESPEEXCODEC_P_H
+#endif // JREEN_JINGLESPEEXCODEC_P_H

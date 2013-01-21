@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRIVACYQUERYFACTORY_P_H
-#define PRIVACYQUERYFACTORY_P_H
+#ifndef JREEN_PRIVACYQUERYFACTORY_P_H
+#define JREEN_PRIVACYQUERYFACTORY_P_H
 
 #include "privacymanager_p.h"
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace Jreen
 
-#endif // PRIVACYQUERYFACTORY_P_H
+#endif // JREEN_PRIVACYQUERYFACTORY_P_H

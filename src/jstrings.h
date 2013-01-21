@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JSTRINGS_H
-#define JSTRINGS_H
+#ifndef JREEN_JSTRINGS_H
+#define JREEN_JSTRINGS_H
 
 #include "jreen.h"
 
@@ -85,4 +85,4 @@ Q_INLINE_TEMPLATE QString flagToStr(uint i, const char *(&strings)[N])
 
 }
 
-#endif // JSTRINGS_H
+#endif // JREEN_JSTRINGS_H

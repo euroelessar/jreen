@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRIVACYMANAGER_P_H
-#define PRIVACYMANAGER_P_H
+#ifndef JREEN_PRIVACYMANAGER_P_H
+#define JREEN_PRIVACYMANAGER_P_H
 
 #include "privacymanager.h"
 #include "stanzaextension.h"
@@ -83,4 +83,4 @@ public:
 };
 }
 
-#endif // PRIVACYMANAGER_P_H
+#endif // JREEN_PRIVACYMANAGER_P_H

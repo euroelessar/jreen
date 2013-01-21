@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SOFTWAREVERSIONFACTORY_H
-#define SOFTWAREVERSIONFACTORY_H
+#ifndef JREEN_SOFTWAREVERSIONFACTORY_P_H
+#define JREEN_SOFTWAREVERSIONFACTORY_P_H
 #include "softwareversion.h"
 
 namespace Jreen {
@@ -48,4 +48,4 @@ private:
 
 } // namespace Jreen
 
-#endif // SOFTWAREVERSIONFACTORY_H
+#endif // JREEN_SOFTWAREVERSIONFACTORY_P_H

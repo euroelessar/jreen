@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef XMLENTITY_H
-#define XMLENTITY_H
+#ifndef JREEN_XMLENTITY_P_H
+#define JREEN_XMLENTITY_P_H
 
 #include "jreen.h"
 #include <QSharedPointer>
@@ -74,4 +74,4 @@ namespace Jreen
 		} \
 	private:
 
-#endif // XMLENTITY_H
+#endif // JREEN_XMLENTITY_P_H

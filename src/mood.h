@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MOOD_H
-#define MOOD_H
+#ifndef JREEN_MOOD_H
+#define JREEN_MOOD_H
 #include "stanzaextension.h"
 
 namespace Jreen
@@ -140,4 +140,4 @@ private:
 };
 } // namespace Jreen
 
-#endif // MOOD_H
+#endif // JREEN_MOOD_H

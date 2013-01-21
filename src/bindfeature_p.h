@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef BINDFEATURE_H
-#define BINDFEATURE_H
+#ifndef JREEN_BINDFEATURE_P_H
+#define JREEN_BINDFEATURE_P_H
 
 #include "streamfeature_p.h"
 #include "stanzaextension.h"
@@ -55,4 +55,4 @@ private:
 };
 }
 
-#endif // BINDFEATURE_H
+#endif // JREEN_BINDFEATURE_P_H

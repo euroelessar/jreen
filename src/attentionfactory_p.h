@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ATTENTIONFACTORY_P_H
-#define ATTENTIONFACTORY_P_H
+#ifndef JREEN_ATTENTIONFACTORY_P_H
+#define JREEN_ATTENTIONFACTORY_P_H
 #include "stanzaextension.h"
 #include "attention.h"
 
@@ -46,4 +46,4 @@ public:
 
 } // namespace Jreen
 
-#endif // ATTENTIONFACTORY_P_H
+#endif // JREEN_ATTENTIONFACTORY_P_H

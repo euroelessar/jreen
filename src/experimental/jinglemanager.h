@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEMANAGER_H
-#define JINGLEMANAGER_H
+#ifndef JREEN_JINGLEMANAGER_H
+#define JREEN_JINGLEMANAGER_H
 
 #include "../iq.h"
 
@@ -60,4 +60,4 @@ protected:
 
 }
 
-#endif // JINGLEMANAGER_H
+#endif // JREEN_JINGLEMANAGER_H

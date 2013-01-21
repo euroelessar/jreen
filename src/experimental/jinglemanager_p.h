@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEMANAGER_P_H
-#define JINGLEMANAGER_P_H
+#ifndef JREEN_JINGLEMANAGER_P_H
+#define JREEN_JINGLEMANAGER_P_H
 
 #include "jinglemanager.h"
 #include "jinglefactory_p.h"
@@ -50,4 +50,4 @@ public:
 
 }
 
-#endif // JINGLEMANAGER_P_H
+#endif // JREEN_JINGLEMANAGER_P_H

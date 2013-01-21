@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef CHATSTATEFACTORY_P_H
-#define CHATSTATEFACTORY_P_H
+#ifndef JREEN_CHATSTATEFACTORY_P_H
+#define JREEN_CHATSTATEFACTORY_P_H
 #include "stanzaextension.h"
 #include "chatstate.h"
 
@@ -48,4 +48,4 @@ private:
 
 } // namespace Jreen
 
-#endif // CHATSTATEFACTORY_P_H
+#endif // JREEN_CHATSTATEFACTORY_P_H

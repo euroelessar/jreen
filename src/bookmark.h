@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef BOOKMARK_H
-#define BOOKMARK_H
+#ifndef JREEN_BOOKMARK_H
+#define JREEN_BOOKMARK_H
 #include "stanzaextension.h"
 #include "jid.h"
 
@@ -108,4 +108,4 @@ private:
 
 } // namespace Jreen
 
-#endif // BOOKMARK_H
+#endif // JREEN_BOOKMARK_H

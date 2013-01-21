@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEAUDIOCONTENT_H
-#define JINGLEAUDIOCONTENT_H
+#ifndef JREEN_JINGLEAUDIOCONTENT_H
+#define JREEN_JINGLEAUDIOCONTENT_H
 
 #include "jinglecontent.h"
 #include "jingleaudiopayload.h"
@@ -82,4 +82,4 @@ public:
 
 Q_DECLARE_INTERFACE(Jreen::JingleAudioCodecFactory, "org.qutim.Jreen.Jingle.AudioCodecFactory")
 
-#endif // JINGLEAUDIOCONTENT_H
+#endif // JREEN_JINGLEAUDIOCONTENT_H

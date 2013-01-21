@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ERRORFACTORY_P_H
-#define ERRORFACTORY_P_H
+#ifndef JREEN_ERRORFACTORY_P_H
+#define JREEN_ERRORFACTORY_P_H
 #include "error.h"
 #include "stanzaextension.h"
 
@@ -53,4 +53,4 @@ private:
 
 } // namespace Jreen
 
-#endif // ERRORFACTORY_P_H
+#endif // JREEN_ERRORFACTORY_P_H

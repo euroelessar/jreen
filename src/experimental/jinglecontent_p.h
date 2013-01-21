@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLECONTENT_P_H
-#define JINGLECONTENT_P_H
+#ifndef JREEN_JINGLECONTENT_P_H
+#define JREEN_JINGLECONTENT_P_H
 
 #include "jinglecontent.h"
 
@@ -65,4 +65,4 @@ public:
 
 }
 
-#endif // JINGLECONTENT_P_H
+#endif // JREEN_JINGLECONTENT_P_H

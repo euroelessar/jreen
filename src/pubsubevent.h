@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PUBSUBEVENT_H
-#define PUBSUBEVENT_H
+#ifndef JREEN_PUBSUBEVENT_H
+#define JREEN_PUBSUBEVENT_H
 
 #include "stanzaextension.h"
 
@@ -54,4 +54,4 @@ private:
 }
 }
 
-#endif // PUBSUBEVENT_H
+#endif // JREEN_PUBSUBEVENT_H

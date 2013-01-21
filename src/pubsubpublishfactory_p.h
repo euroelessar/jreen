@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PUBSUBPUBLISHFACTORY_P_H
-#define PUBSUBPUBLISHFACTORY_P_H
+#ifndef JREEN_PUBSUBPUBLISHFACTORY_P_H
+#define JREEN_PUBSUBPUBLISHFACTORY_P_H
 
 #include "pubsubmanager_p.h"
 #include "dataformfactory_p.h"
@@ -59,4 +59,4 @@ private:
 }
 }
 
-#endif // PUBSUBPUBLISHFACTORY_P_H
+#endif // JREEN_PUBSUBPUBLISHFACTORY_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARDUPDATE_H
-#define VCARDUPDATE_H
+#ifndef JREEN_VCARDUPDATE_H
+#define JREEN_VCARDUPDATE_H
 #include "stanzaextension.h"
 
 namespace Jreen
@@ -54,4 +54,4 @@ private:
 
 } // namespace Jreen
 
-#endif // VCARDUPDATE_H
+#endif // JREEN_VCARDUPDATE_H

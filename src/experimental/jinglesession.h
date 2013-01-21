@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLESESSION_H
-#define JINGLESESSION_H
+#ifndef JREEN_JINGLESESSION_H
+#define JREEN_JINGLESESSION_H
 
 #include "jinglecontent.h"
 #include "../stanzaextension.h"
@@ -72,4 +72,4 @@ protected:
 
 }
 
-#endif // JINGLESESSION_H
+#endif // JREEN_JINGLESESSION_H

@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef DELAYEDDELIVERYFACTORY_H
-#define DELAYEDDELIVERYFACTORY_H
+#ifndef JREEN_DELAYEDDELIVERYFACTORY_P_H
+#define JREEN_DELAYEDDELIVERYFACTORY_P_H
 #include "delayeddelivery.h"
 
 namespace Jreen
@@ -48,4 +48,4 @@ private:
 };
 
 }
-#endif // DELAYEDDELIVERYFACTORY_H
+#endif // JREEN_DELAYEDDELIVERYFACTORY_P_H

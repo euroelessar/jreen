@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRESENCE_P_H
-#define PRESENCE_P_H
+#ifndef JREEN_PRESENCE_P_H
+#define JREEN_PRESENCE_P_H
 
 #include "stanza_p.h"
 #include "presence.h"
@@ -46,4 +46,4 @@ public:
 };
 }
 
-#endif // PRESENCE_P_H
+#endif // JREEN_PRESENCE_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef NICKNAME_H
-#define NICKNAME_H
+#ifndef JREEN_NICKNAME_H
+#define JREEN_NICKNAME_H
 
 #include "stanzaextension.h"
 
@@ -47,4 +47,4 @@ private:
 
 }
 
-#endif // NICKNAME_H
+#endif // JREEN_NICKNAME_H

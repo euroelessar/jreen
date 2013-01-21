@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRESENCEFACTORY_P_H
-#define PRESENCEFACTORY_P_H
+#ifndef JREEN_PRESENCEFACTORY_P_H
+#define JREEN_PRESENCEFACTORY_P_H
 
 #include "stanzafactory_p.h"
 #include "presence.h"
@@ -51,4 +51,4 @@ private:
 };
 }
 
-#endif // PRESENCEFACTORY_P_H
+#endif // JREEN_PRESENCEFACTORY_P_H

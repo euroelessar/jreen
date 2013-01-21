@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTCONNECTION_H
-#define DIRECTCONNECTION_H
+#ifndef JREEN_DIRECTCONNECTION_H
+#define JREEN_DIRECTCONNECTION_H
 
 #include "connection.h"
 
@@ -73,4 +73,4 @@ protected:
 
 }
 
-#endif // DIRECTCONNECTION_H
+#endif // JREEN_DIRECTCONNECTION_H

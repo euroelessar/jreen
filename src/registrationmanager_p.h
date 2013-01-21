@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef REGISTRATIONMANAGER_P_H
-#define REGISTRATIONMANAGER_P_H
+#ifndef JREEN_REGISTRATIONMANAGER_P_H
+#define JREEN_REGISTRATIONMANAGER_P_H
 
 #include "registrationmanager.h"
 #include "client.h"
@@ -87,4 +87,4 @@ public:
 
 }
 
-#endif // REGISTRATIONMANAGER_P_H
+#endif // JREEN_REGISTRATIONMANAGER_P_H

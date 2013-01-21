@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef IQFACTORY_P_H
-#define IQFACTORY_P_H
+#ifndef JREEN_IQFACTORY_P_H
+#define JREEN_IQFACTORY_P_H
 
 #include "stanzafactory_p.h"
 #include "iq.h"
@@ -45,4 +45,4 @@ public:
 };
 }
 
-#endif // IQFACTORY_P_H
+#endif // JREEN_IQFACTORY_P_H

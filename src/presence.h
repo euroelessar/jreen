@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRESENCE_H
-#define PRESENCE_H
+#ifndef JREEN_PRESENCE_H
+#define JREEN_PRESENCE_H
 
 #include "stanza.h"
 
@@ -83,4 +83,4 @@ public:
 
 }
 
-#endif // PRESENCE_H
+#endif // JREEN_PRESENCE_H

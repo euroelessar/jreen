@@ -25,8 +25,8 @@
 
 // TODO: Create simple RosterManager for bots and simple applications
 
-#ifndef ABSTRACTROSTER_H
-#define ABSTRACTROSTER_H
+#ifndef JREEN_ABSTRACTROSTER_H
+#define JREEN_ABSTRACTROSTER_H
 
 #include <QSharedPointer>
 
@@ -171,4 +171,4 @@ protected:
 
 }
 
-#endif // ABSTRACTROSTER_H
+#endif // JREEN_ABSTRACTROSTER_H

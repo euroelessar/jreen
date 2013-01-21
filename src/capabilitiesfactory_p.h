@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef CAPABILITIESFACTORY_P_H
-#define CAPABILITIESFACTORY_P_H
+#ifndef JREEN_CAPABILITIESFACTORY_P_H
+#define JREEN_CAPABILITIESFACTORY_P_H
 
 #include "stanzaextension.h"
 #include "capabilities.h"
@@ -54,4 +54,4 @@ private:
 
 } // namespace Jreen
 
-#endif // CAPABILITIESFACTORY_P_H
+#endif // JREEN_CAPABILITIESFACTORY_P_H

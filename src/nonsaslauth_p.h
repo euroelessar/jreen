@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef NONSASLAUTH_H
-#define NONSASLAUTH_H
+#ifndef JREEN_NONSASLAUTH_P_H
+#define JREEN_NONSASLAUTH_P_H
 
 #include "streamfeature_p.h"
 #include "stanzaextension.h"
@@ -76,4 +76,4 @@ private:
 
 }
 
-#endif // NONSASLAUTH_H
+#endif // JREEN_NONSASLAUTH_P_H

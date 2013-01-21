@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef IQ_P_H
-#define IQ_P_H
+#ifndef JREEN_IQ_P_H
+#define JREEN_IQ_P_H
 
 #include "iq.h"
 #include "stanza_p.h"
@@ -56,4 +56,4 @@ public:
 };
 }
 
-#endif // IQ_P_H
+#endif // JREEN_IQ_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEAUDIOCONTENT_P_H
-#define JINGLEAUDIOCONTENT_P_H
+#ifndef JREEN_JINGLEAUDIOCONTENT_P_H
+#define JREEN_JINGLEAUDIOCONTENT_P_H
 
 #include "jingleaudiocontent.h"
 #include "jingleaudiopayload_p.h"
@@ -82,4 +82,4 @@ public:
 
 }
 
-#endif // JINGLEAUDIOCONTENT_P_H
+#endif // JREEN_JINGLEAUDIOCONTENT_P_H

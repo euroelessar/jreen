@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JID_H
-#define JID_H
+#ifndef JREEN_JID_H
+#define JREEN_JID_H
 
 #include "jreen.h"
 #include <QSharedData>
@@ -90,4 +90,4 @@ inline uint qHash(const Jreen::JID &jid) { return qHash(jid.full()); }
 
 Q_DECLARE_METATYPE(Jreen::JID)
 
-#endif // JID_H
+#endif // JREEN_JID_H

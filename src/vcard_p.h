@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARD_P_H
-#define VCARD_P_H
+#ifndef JREEN_VCARD_P_H
+#define JREEN_VCARD_P_H
 
 #include "vcard.h"
 #include "jid.h"
@@ -147,4 +147,4 @@ public:
 };
 }
 
-#endif // VCARD_P_H
+#endif // JREEN_VCARD_P_H

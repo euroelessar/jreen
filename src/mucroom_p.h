@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef MUCROOM_P_H
-#define MUCROOM_P_H
+#ifndef JREEN_MUCROOM_P_H
+#define JREEN_MUCROOM_P_H
 
 #include "mucroom.h"
 #include "mucmessagesession_p.h"
@@ -198,4 +198,4 @@ class MUCRoomOwnerQuery : public Payload
 };
 }
 
-#endif // MUCROOM_P_H
+#endif // JREEN_MUCROOM_P_H

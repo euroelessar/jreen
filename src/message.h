@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef JREEN_MESSAGE_H
+#define JREEN_MESSAGE_H
 
 #include "stanza.h"
 #include "delayeddelivery.h"
@@ -70,4 +70,4 @@ public:
 
 }
 
-#endif // MESSAGE_H
+#endif // JREEN_MESSAGE_H

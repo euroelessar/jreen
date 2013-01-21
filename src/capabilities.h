@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef CAPABILITIES_H
-#define CAPABILITIES_H
+#ifndef JREEN_CAPABILITIES_H
+#define JREEN_CAPABILITIES_H
 
 #include "stanzaextension.h"
 
@@ -50,4 +50,4 @@ private:
 
 }
 
-#endif // CAPABILITIES_H
+#endif // JREEN_CAPABILITIES_H

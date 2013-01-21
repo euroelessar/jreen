@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef IQREPLY_H
-#define IQREPLY_H
+#ifndef JREEN_IQREPLY_H
+#define JREEN_IQREPLY_H
 
 #include "jreen.h"
 
@@ -56,4 +56,4 @@ protected:
 };
 }
 
-#endif // IQREPLY_H
+#endif // JREEN_IQREPLY_H

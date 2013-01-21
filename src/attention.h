@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef ATTENTION_H
-#define ATTENTION_H
+#ifndef JREEN_ATTENTION_H
+#define JREEN_ATTENTION_H
 #include "stanzaextension.h"
 
 namespace Jreen {
@@ -45,4 +45,4 @@ private:
 
 } // namespace Jreen
 
-#endif // ATTENTION_H
+#endif // JREEN_ATTENTION_H

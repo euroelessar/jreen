@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PUBSUBMANAGER_H
-#define PUBSUBMANAGER_H
+#ifndef JREEN_PUBSUBMANAGER_H
+#define JREEN_PUBSUBMANAGER_H
 
 #include "pubsubevent.h"
 
@@ -87,4 +87,4 @@ private:
 }
 }
 
-#endif // PUBSUBMANAGER_H
+#endif // JREEN_PUBSUBMANAGER_H

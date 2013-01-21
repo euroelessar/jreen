@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STREAMPROCESSOR_H
-#define STREAMPROCESSOR_H
+#ifndef JREEN_STREAMPROCESSOR_H
+#define JREEN_STREAMPROCESSOR_H
 
 #include "jreen.h"
 #include <QObject>
@@ -49,4 +49,4 @@ public:
 
 Q_DECLARE_INTERFACE(Jreen::StreamProcessor, "org.qutim.Jreen.StreamProcessor")
 
-#endif // STREAMPROCESSOR_H
+#endif // JREEN_STREAMPROCESSOR_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef IQ_H
-#define IQ_H
+#ifndef JREEN_IQ_H
+#define JREEN_IQ_H
 
 #include "stanza.h"
 
@@ -62,4 +62,4 @@ public:
 
 }
 
-#endif // IQ_H
+#endif // JREEN_IQ_H

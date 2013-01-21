@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DATAFORM_P_H
-#define DATAFORM_P_H
+#ifndef JREEN_DATAFORM_P_H
+#define JREEN_DATAFORM_P_H
 
 #include "dataform.h"
 #include <QVariant>
@@ -79,4 +79,4 @@ namespace Jreen
 	};
 }
 
-#endif // DATAFORM_P_H
+#endif // JREEN_DATAFORM_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ABSTRACTROSTER_P_H
-#define ABSTRACTROSTER_P_H
+#ifndef JREEN_ABSTRACTROSTER_P_H
+#define JREEN_ABSTRACTROSTER_P_H
 
 #include "abstractroster.h"
 
@@ -94,4 +94,4 @@ private:
 };
 }
 
-#endif // ABSTRACTROSTER_P_H
+#endif // JREEN_ABSTRACTROSTER_P_H

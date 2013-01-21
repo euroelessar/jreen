@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef NICKNAMEFACTORY_H
-#define NICKNAMEFACTORY_H
+#ifndef JREEN_NICKNAMEFACTORY_P_H
+#define JREEN_NICKNAMEFACTORY_P_H
 #include "stanzafactory_p.h"
 #include "nickname.h"
 
@@ -49,4 +49,4 @@ private:
 
 } // namespace Jreen
 
-#endif // NICKNAMEFACTORY_H
+#endif // JREEN_NICKNAMEFACTORY_P_H

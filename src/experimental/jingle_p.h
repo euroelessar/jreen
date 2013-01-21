@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLE_H
-#define JINGLE_H
+#ifndef JREEN_JINGLE_P_H
+#define JREEN_JINGLE_P_H
 
 #include "../stanzaextension.h"
 #include "../jid.h"
@@ -105,4 +105,4 @@ public:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::Jingle::SendersType)
 
-#endif // JINGLE_H
+#endif // JREEN_JINGLE_P_H

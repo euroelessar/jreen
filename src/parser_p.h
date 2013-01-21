@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef PARSER_P_H
-#define PARSER_P_H
+#ifndef JREEN_PARSER_P_H
+#define JREEN_PARSER_P_H
 
 #include "jreen.h"
 #include "parser.h"
@@ -70,4 +70,4 @@ public:
 };
 }
 
-#endif // PARSER_P_H
+#endif // JREEN_PARSER_P_H

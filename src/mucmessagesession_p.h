@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MUCMESSAGESESSION_P_H
-#define MUCMESSAGESESSION_P_H
+#ifndef JREEN_MUCMESSAGESESSION_P_H
+#define JREEN_MUCMESSAGESESSION_P_H
 
 #include "messagesession.h"
 
@@ -48,4 +48,4 @@ namespace Jreen
 	};
 }
 
-#endif // MUCMESSAGESESSION_P_H
+#endif // JREEN_MUCMESSAGESESSION_P_H

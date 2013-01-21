@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEAUDIOPAYLOAD_H
-#define JINGLEAUDIOPAYLOAD_H
+#ifndef JREEN_JINGLEAUDIOPAYLOAD_H
+#define JREEN_JINGLEAUDIOPAYLOAD_H
 
 #include "../jreen.h"
 #include <QSharedDataPointer>
@@ -67,4 +67,4 @@ private:
 
 }
 
-#endif // JINGLEAUDIOPAYLOAD_H
+#endif // JREEN_JINGLEAUDIOPAYLOAD_H

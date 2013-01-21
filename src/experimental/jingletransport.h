@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLETRANSPORT_H
-#define JINGLETRANSPORT_H
+#ifndef JREEN_JINGLETRANSPORT_H
+#define JREEN_JINGLETRANSPORT_H
 
 #include "jinglemanager.h"
 #include "../stanzaextension.h"
@@ -127,4 +127,4 @@ Q_INLINE_TEMPLATE bool JingleTransportFactory<Extension>::canParse(const QString
 
 }
 
-#endif // JINGLETRANSPORT_H
+#endif // JREEN_JINGLETRANSPORT_H

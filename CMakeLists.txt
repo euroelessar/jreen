@@ -40,7 +40,7 @@ if(NOT SPEEX_FOUND)
 else()
 	message(STATUS "Speex library is found.")
 	include_directories(${SPEEX_INCLUDE_DIRS})
-        add_definitions("-DJREEN_HAVE_SPEEX=1")
+    add_definitions("-DJREEN_HAVE_SPEEX=1")
 endif()
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config

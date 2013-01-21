@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MESSAGE_P_H
-#define MESSAGE_P_H
+#ifndef JREEN_MESSAGE_P_H
+#define JREEN_MESSAGE_P_H
 
 #include "stanza_p.h"
 #include "langmap.h"
@@ -44,4 +44,4 @@ public:
 
 } //namespace Jreen
 
-#endif // MESSAGE_P_H
+#endif // JREEN_MESSAGE_P_H
