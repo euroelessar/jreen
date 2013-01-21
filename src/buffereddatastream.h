@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef BUFFEREDDATASTREAM_H
-#define BUFFEREDDATASTREAM_H
+#ifndef JREEN_BUFFEREDDATASTREAM_H
+#define JREEN_BUFFEREDDATASTREAM_H
 
 #include "datastream.h"
 
@@ -54,4 +54,4 @@ namespace Jreen
 	};
 }
 
-#endif // BUFFEREDDATASTREAM_H
+#endif // JREEN_BUFFEREDDATASTREAM_H

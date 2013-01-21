@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MUCROOMFACTORY_P_H
-#define MUCROOMFACTORY_P_H
+#ifndef JREEN_MUCROOMFACTORY_P_H
+#define JREEN_MUCROOMFACTORY_P_H
 
 #include "mucroom_p.h"
 #include "dataformfactory_p.h"
@@ -120,4 +120,4 @@ private:
 	QScopedPointer<MUCRoomOwnerQuery> m_query;
 };
 }
-#endif // MUCROOMFACTORY_P_H
+#endif // JREEN_MUCROOMFACTORY_P_H

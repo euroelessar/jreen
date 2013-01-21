@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEICE_H
-#define JINGLEICE_H
+#ifndef JREEN_JINGLETRANSPORTICE_P_H
+#define JREEN_JINGLETRANSPORTICE_P_H
 
 #include "jingletransport.h"
 
@@ -96,4 +96,4 @@ private:
 
 #endif // HAVE_IRISICE
 
-#endif // JINGLEICE_H
+#endif // JREEN_JINGLETRANSPORTICE_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTCONNECTION_P_H
-#define DIRECTCONNECTION_P_H
+#ifndef JREEN_DIRECTCONNECTION_P_H
+#define JREEN_DIRECTCONNECTION_P_H
 
 #include <QSslSocket>
 #include <QHostAddress>
@@ -72,4 +72,4 @@ public slots:
 
 }
 
-#endif // DIRECTCONNECTION_P_H
+#endif // JREEN_DIRECTCONNECTION_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLEAUDIOPAYLOAD_P_H
-#define JINGLEAUDIOPAYLOAD_P_H
+#ifndef JREEN_JINGLEAUDIOPAYLOAD_P_H
+#define JREEN_JINGLEAUDIOPAYLOAD_P_H
 
 #include "jingleaudiopayload.h"
 #include <QMap>
@@ -54,4 +54,4 @@ public:
 
 }
 
-#endif // JINGLEAUDIOPAYLOAD_P_H
+#endif // JREEN_JINGLEAUDIOPAYLOAD_P_H

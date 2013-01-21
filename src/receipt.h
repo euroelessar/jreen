@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef RECEIPT_H
-#define RECEIPT_H
+#ifndef JREEN_RECEIPT_H
+#define JREEN_RECEIPT_H
 
 #include "stanzaextension.h"
 
@@ -56,4 +56,4 @@ private:
 
 }
 
-#endif // RECEIPT_H
+#endif // JREEN_RECEIPT_H

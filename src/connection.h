@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef JREEN_CONNECTION_H
+#define JREEN_CONNECTION_H
 
 #include <QIODevice>
 #include "jreen.h"
@@ -106,4 +106,4 @@ signals:
 
 }
 
-#endif // CONNECTION_H
+#endif // JREEN_CONNECTION_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JREEN_PGPFACTORY_H
-#define JREEN_PGPFACTORY_H
+#ifndef JREEN_PGPFACTORY_P_H
+#define JREEN_PGPFACTORY_P_H
 
 #include "pgpsigned.h"
 #include "pgpencrypted.h"
@@ -65,4 +65,4 @@ private:
 
 } // namespace Jreen
 
-#endif // JREEN_PGPFACTORY_H
+#endif // JREEN_PGPFACTORY_P_H

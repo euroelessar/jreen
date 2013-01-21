@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STANZAFACTORY_H
-#define STANZAFACTORY_H
+#ifndef JREEN_STANZAFACTORY_P_H
+#define JREEN_STANZAFACTORY_P_H
 
 #include "stanza_p.h"
 #include "langmap.h"
@@ -59,4 +59,4 @@ protected:
 };
 }
 
-#endif // STANZAFACTORY_H
+#endif // JREEN_STANZAFACTORY_P_H

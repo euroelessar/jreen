@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JREEN_H
-#define JREEN_H
+#ifndef JREEN_JREEN_H
+#define JREEN_JREEN_H
 
 # ifndef __cplusplus
 #  error "C++ is needed"
@@ -122,4 +122,4 @@ namespace Jreen
 
 }
 
-#endif // JREEN_H
+#endif // JREEN_JREEN_H

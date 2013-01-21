@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef REGISTRATIONMANAGER_H
-#define REGISTRATIONMANAGER_H
+#ifndef JREEN_REGISTRATIONMANAGER_H
+#define JREEN_REGISTRATIONMANAGER_H
 
 #include "dataform.h"
 #include "error.h"
@@ -115,4 +115,4 @@ private:
 
 }
 
-#endif // REGISTRATIONMANAGER_H
+#endif // JREEN_REGISTRATIONMANAGER_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STANZAEXTENSION_H
-#define STANZAEXTENSION_H
+#ifndef JREEN_STANZAEXTENSION_H
+#define JREEN_STANZAEXTENSION_H
 
 #include <QObject>
 #include <QSharedPointer>
@@ -144,4 +144,4 @@ Q_INLINE_TEMPLATE T se_cast(Payload *se)
 		} \
 	private:
 
-#endif // STANZAEXTENSION_H
+#endif // JREEN_STANZAEXTENSION_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef SUBSCRIPTION_H
-#define SUBSCRIPTION_H
+#ifndef JREEN_SUBSCRIPTION_H
+#define JREEN_SUBSCRIPTION_H
 
 #include "stanza.h"
 
@@ -56,4 +56,4 @@ namespace Jreen
 
 }
 
-#endif // SUBSCRIPTION_H
+#endif // JREEN_SUBSCRIPTION_H

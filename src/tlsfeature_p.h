@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef TLSFEATURE_H
-#define TLSFEATURE_H
+#ifndef JREEN_TLSFEATURE_P_H
+#define JREEN_TLSFEATURE_P_H
 
 #include "streamfeature_p.h"
 #include <QPointer>
@@ -67,4 +67,4 @@ private:
 };
 }
 
-#endif // TLSFEATURE_H
+#endif // JREEN_TLSFEATURE_P_H

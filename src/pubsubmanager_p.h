@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PUBSUBMANAGER_P_H
-#define PUBSUBMANAGER_P_H
+#ifndef JREEN_PUBSUBMANAGER_P_H
+#define JREEN_PUBSUBMANAGER_P_H
 
 #include "pubsubmanager.h"
 #include "dataform.h"
@@ -52,4 +52,4 @@ namespace Jreen
 		};
 	}
 }
-#endif // PUBSUBMANAGER_P_H
+#endif // JREEN_PUBSUBMANAGER_P_H

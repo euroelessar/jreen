@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef ACTIVITYFACTORY_P_H
-#define ACTIVITYFACTORY_P_H
+#ifndef JREEN_ACTIVITYFACTORY_P_H
+#define JREEN_ACTIVITYFACTORY_P_H
 
 #include "stanzaextension.h"
 #include "activity.h"
@@ -60,4 +60,4 @@ private:
 
 } // namespace Jreen
 
-#endif // ACTIVITYFACTORY_P_H
+#endif // JREEN_ACTIVITYFACTORY_P_H

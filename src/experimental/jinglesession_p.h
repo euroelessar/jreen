@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef JINGLESESSION_P_H
-#define JINGLESESSION_P_H
+#ifndef JREEN_JINGLESESSION_P_H
+#define JREEN_JINGLESESSION_P_H
 
 #include "jinglesession.h"
 #include "jinglemanager_p.h"
@@ -71,4 +71,4 @@ public:
 
 }
 
-#endif // JINGLESESSION_P_H
+#endif // JREEN_JINGLESESSION_P_H

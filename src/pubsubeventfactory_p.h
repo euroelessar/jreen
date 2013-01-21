@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PUBSUBEVENTFACTORY_H
-#define PUBSUBEVENTFACTORY_H
+#ifndef JREEN_PUBSUBEVENTFACTORY_P_H
+#define JREEN_PUBSUBEVENTFACTORY_P_H
 
 #include "pubsubevent.h"
 #include <QMap>
@@ -58,4 +58,4 @@ private:
 }
 }
 
-#endif // PUBSUBEVENTFACTORY_H
+#endif // JREEN_PUBSUBEVENTFACTORY_P_H

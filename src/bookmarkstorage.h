@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef BOOKMARKSTORAGE_H
-#define BOOKMARKSTORAGE_H
+#ifndef JREEN_BOOKMARKSTORAGE_H
+#define JREEN_BOOKMARKSTORAGE_H
 
 #include "bookmark.h"
 #include "privatexml.h"
@@ -58,4 +58,4 @@ private:
 };
 }
 
-#endif // BOOKMARKSTORAGE_H
+#endif // JREEN_BOOKMARKSTORAGE_H

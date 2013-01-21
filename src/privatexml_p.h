@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRIVATEXML_P_H
-#define PRIVATEXML_P_H
+#ifndef JREEN_PRIVATEXML_P_H
+#define JREEN_PRIVATEXML_P_H
 
 #include "privatexml.h"
 #include "jstrings.h"
@@ -113,4 +113,4 @@ enum PrivateXmlContext
 
 }
 
-#endif // PRIVATEXML_P_H
+#endif // JREEN_PRIVATEXML_P_H

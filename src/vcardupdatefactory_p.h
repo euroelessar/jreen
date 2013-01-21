@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARDUPDATEFACTORY_P_H
-#define VCARDUPDATEFACTORY_P_H
+#ifndef JREEN_VCARDUPDATEFACTORY_P_H
+#define JREEN_VCARDUPDATEFACTORY_P_H
 #include "vcardupdate.h"
 
 namespace Jreen {
@@ -50,4 +50,4 @@ private:
 
 } // namespace Jreen
 
-#endif // VCARDUPDATEFACTORY_P_H
+#endif // JREEN_VCARDUPDATEFACTORY_P_H

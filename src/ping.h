@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PING_H
-#define PING_H
+#ifndef JREEN_PING_H
+#define JREEN_PING_H
 #include "stanzaextension.h"
 #include "jid.h"
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace Jreen
 
-#endif // PING_H
+#endif // JREEN_PING_H

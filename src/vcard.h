@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARD_H
-#define VCARD_H
+#ifndef JREEN_VCARD_H
+#define JREEN_VCARD_H
 #include "stanzaextension.h"
 #include "nickname.h"
 #include <QDateTime>
@@ -407,4 +407,4 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::VCard::Telephone::Types)
 
-#endif // VCARD_H
+#endif // JREEN_VCARD_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ENTITYTIMEFACTORY_P_H
-#define ENTITYTIMEFACTORY_P_H
+#ifndef JREEN_ENTITYTIMEFACTORY_P_H
+#define JREEN_ENTITYTIMEFACTORY_P_H
 
 #include "entitytime.h"
 
@@ -50,4 +50,4 @@ namespace Jreen
 	};
 }
 
-#endif // ENTITYTIMEFACTORY_P_H
+#endif // JREEN_ENTITYTIMEFACTORY_P_H

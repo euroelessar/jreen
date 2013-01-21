@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARDFACTORY_P_H
-#define VCARDFACTORY_P_H
+#ifndef JREEN_VCARDFACTORY_P_H
+#define JREEN_VCARDFACTORY_P_H
 #include "vcard_p.h"
 #include "stanzaextension.h"
 #include <QPair>
@@ -127,4 +127,4 @@ private:
 
 } // namespace Jreen
 
-#endif // VCARDFACTORY_P_H
+#endif // JREEN_VCARDFACTORY_P_H

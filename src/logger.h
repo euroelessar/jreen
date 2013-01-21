@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef JREEN_LOGGER_H
+#define JREEN_LOGGER_H
 
 #include <QtDebug>
 #include "jreen.h"
@@ -118,4 +118,4 @@ Q_INLINE_TEMPLATE Debug &Debug::operator<<(T t)
 
 }
 
-#endif // LOGGER_H
+#endif // JREEN_LOGGER_H

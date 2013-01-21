@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STANZA_H
-#define STANZA_H
+#ifndef JREEN_STANZA_H
+#define JREEN_STANZA_H
 
 #include "stanzaextension.h"
 #include "error.h"
@@ -84,4 +84,4 @@ protected:
 
 }
 
-#endif // STANZA_H
+#endif // JREEN_STANZA_H

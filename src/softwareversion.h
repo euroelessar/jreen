@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef SOFTWAREVERSION_H
-#define SOFTWAREVERSION_H
+#ifndef JREEN_SOFTWAREVERSION_H
+#define JREEN_SOFTWAREVERSION_H
 
 #include "stanzaextension.h"
 
@@ -58,4 +58,4 @@ private:
 
 }
 
-#endif // SOFTWAREVERSION_H
+#endif // JREEN_SOFTWAREVERSION_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef LANGMAP_H
-#define LANGMAP_H
+#ifndef JREEN_LANGMAP_H
+#define JREEN_LANGMAP_H
 
 #include <QStringList>
 #ifdef LANGMAP_USE_MAP
@@ -201,4 +201,4 @@ inline int LangMap::count() const
 
 }
 
-#endif // LANGMAP_H
+#endif // JREEN_LANGMAP_H

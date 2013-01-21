@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef CONNECTIONBOSH_H
-#define CONNECTIONBOSH_H
+#ifndef JREEN_CONNECTIONBOSH_H
+#define JREEN_CONNECTIONBOSH_H
 
 #include "connection.h"
 #include "streamprocessor.h"
@@ -63,4 +63,4 @@ private:
 };
 }
 
-#endif // CONNECTIONBOSH_H
+#endif // JREEN_CONNECTIONBOSH_H

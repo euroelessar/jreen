@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef UDPCONNECTION_H
-#define UDPCONNECTION_H
+#ifndef JREEN_UDPCONNECTION_H
+#define JREEN_UDPCONNECTION_H
 
 #include "directconnection.h"
 
@@ -41,4 +41,4 @@ public:
 
 }
 
-#endif // UDPCONNECTION_H
+#endif // JREEN_UDPCONNECTION_H

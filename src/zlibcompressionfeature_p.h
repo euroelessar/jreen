@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ZLIBCOMPRESSIONFEATURE_H
-#define ZLIBCOMPRESSIONFEATURE_H
+#ifndef JREEN_ZLIBCOMPRESSIONFEATURE_P_H
+#define JREEN_ZLIBCOMPRESSIONFEATURE_P_H
 
 #include "streamfeature_p.h"
 #include <QStringList>
@@ -56,4 +56,4 @@ namespace Jreen
 	};
 }
 
-#endif // ZLIBCOMPRESSIONFEATURE_H
+#endif // JREEN_ZLIBCOMPRESSIONFEATURE_P_H

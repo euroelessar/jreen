@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ZLIBDATASTREAM_H
-#define ZLIBDATASTREAM_H
+#ifndef JREEN_ZLIBDATASTREAM_P_H
+#define JREEN_ZLIBDATASTREAM_P_H
 
 #include "datastream.h"
 
@@ -51,4 +51,4 @@ namespace Jreen
 	};
 }
 
-#endif // ZLIBDATASTREAM_H
+#endif // JREEN_ZLIBDATASTREAM_P_H

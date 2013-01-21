@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MESSAGESESSION_H
-#define MESSAGESESSION_H
+#ifndef JREEN_MESSAGESESSION_H
+#define JREEN_MESSAGESESSION_H
 
 #include "message.h"
 #include <QPointer>
@@ -149,4 +149,4 @@ private:
 
 }
 
-#endif // MESSAGESESSION_H
+#endif // JREEN_MESSAGESESSION_H

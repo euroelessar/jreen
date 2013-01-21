@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef RECEIPTFACTORY_H
-#define RECEIPTFACTORY_H
+#ifndef JREEN_RECEIPTFACTORY_P_H
+#define JREEN_RECEIPTFACTORY_P_H
 #include "receipt.h"
 
 namespace Jreen {
@@ -48,4 +48,4 @@ private:
 
 } // namespace Jreen
 
-#endif // RECEIPTFACTORY_H
+#endif // JREEN_RECEIPTFACTORY_P_H

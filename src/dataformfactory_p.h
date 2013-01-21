@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DATAFORMFACTORY_P_H
-#define DATAFORMFACTORY_P_H
+#ifndef JREEN_DATAFORMFACTORY_P_H
+#define JREEN_DATAFORMFACTORY_P_H
 #include "dataform_p.h"
 
 namespace Jreen {
@@ -49,4 +49,4 @@ private:
 
 } // namespace Jreen
 
-#endif // DATAFORMFACTORY_P_H
+#endif // JREEN_DATAFORMFACTORY_P_H

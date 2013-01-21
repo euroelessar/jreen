@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef SASLFEATURE_H
-#define SASLFEATURE_H
+#ifndef JREEN_SASLFEATURE_P_H
+#define JREEN_SASLFEATURE_P_H
 
 #include "streamfeature_p.h"
 #include <QStringList>
@@ -86,4 +86,4 @@ namespace Jreen
 #endif
 	};
 }
-#endif // SASLFEATURE_H
+#endif // JREEN_SASLFEATURE_P_H

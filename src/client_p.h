@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef CLIENT_P_H
-#define CLIENT_P_H
+#ifndef JREEN_CLIENT_P_H
+#define JREEN_CLIENT_P_H
 #include "logger.h"
 #include <QXmlStreamWriter>
 
@@ -385,4 +385,4 @@ private:
 
 }
 
-#endif // CLIENT_P_H
+#endif // JREEN_CLIENT_P_H

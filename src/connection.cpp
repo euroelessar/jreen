@@ -2,7 +2,7 @@
 **
 ** Jreen
 **
-** Copyright © 2011 Ruslan Nigmatullin <euroelessar@yandex.ru>
+** Copyright © 2013 Ruslan Nigmatullin <euroelessar@yandex.ru>
 **
 *****************************************************************************
 **
@@ -23,26 +23,7 @@
 **
 ****************************************************************************/
 
-#ifndef JREEN_IQFACTORY_P_H
-#define JREEN_IQFACTORY_P_H
+// Force exporting of Jreen::Connection
 
-#include "stanzafactory_p.h"
-#include "iq.h"
+#include "connection.h"
 
-namespace Jreen
-{
-class JREEN_AUTOTEST_EXPORT IqFactory : public StanzaFactory
-{
-public:
-	IqFactory(Client *client);
-	int stanzaType();
-	Stanza::Ptr createStanza();
-	void serialize(Stanza *stanza, QXmlStreamWriter *writer);
-	bool canParse(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleStartElement(const QStringRef &name, const QStringRef &uri, const QXmlStreamAttributes &attributes);
-	void handleEndElement(const QStringRef &name, const QStringRef &uri);
-	void handleCharacterData(const QStringRef &name);
-};
-}
-
-#endif // JREEN_IQFACTORY_P_H

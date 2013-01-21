@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRIVACYMANAGER_H
-#define PRIVACYMANAGER_H
+#ifndef JREEN_PRIVACYMANAGER_H
+#define JREEN_PRIVACYMANAGER_H
 
 #include "jid.h"
 
@@ -128,4 +128,4 @@ private:
 };
 }
 
-#endif // PRIVACYMANAGER_H
+#endif // JREEN_PRIVACYMANAGER_H

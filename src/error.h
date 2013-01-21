@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef JREEN_ERROR_H
+#define JREEN_ERROR_H
 
 #include "stanzaextension.h"
 #include "langmap.h"
@@ -170,4 +170,4 @@ private:
 
 }
 
-#endif // ERROR_H
+#endif // JREEN_ERROR_H

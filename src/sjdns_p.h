@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef QJDNS_P_H
-#define QJDNS_P_H
+#ifndef JREEN_SJDNS_P_H
+#define JREEN_SJDNS_P_H
 
 #include <qglobal.h>
 
@@ -117,4 +117,4 @@ typedef DnsServiceRecord QDnsServiceRecord;
 
 }
 
-#endif // QJDNS_P_H
+#endif // JREEN_SJDNS_P_H

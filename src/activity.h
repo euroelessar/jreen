@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef ACTIVITY_H
-#define ACTIVITY_H
+#ifndef JREEN_ACTIVITY_H
+#define JREEN_ACTIVITY_H
 #include "stanzaextension.h"
 
 namespace Jreen {
@@ -148,4 +148,4 @@ private:
 
 } // namespace Jreen
 
-#endif // ACTIVITY_H
+#endif // JREEN_ACTIVITY_H

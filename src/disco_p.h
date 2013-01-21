@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DISCO_P_H
-#define DISCO_P_H
+#ifndef JREEN_DISCO_P_H
+#define JREEN_DISCO_P_H
 
 #include "disco.h"
 #include "dataformfactory_p.h"
@@ -88,4 +88,4 @@ private:
 
 }
 
-#endif // DISCO_P_H
+#endif // JREEN_DISCO_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STANZA_P_H
-#define STANZA_P_H
+#ifndef JREEN_STANZA_P_H
+#define JREEN_STANZA_P_H
 
 #include <QHash>
 #include <QMap>
@@ -122,4 +122,4 @@ public:
 
 }
 
-#endif // STANZA_P_H
+#endif // JREEN_STANZA_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef TUNEFACTORY_P_H
-#define TUNEFACTORY_P_H
+#ifndef JREEN_TUNEFACTORY_P_H
+#define JREEN_TUNEFACTORY_P_H
 
 #include "tune.h"
 #include <QVector>
@@ -49,4 +49,4 @@ namespace Jreen
 	};
 }
 
-#endif // TUNEFACTORY_P_H
+#endif // JREEN_TUNEFACTORY_P_H

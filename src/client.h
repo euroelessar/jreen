@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef JREEN_CLIENT_H
+#define JREEN_CLIENT_H
 
 #include <QObject>
 #include <QSet>
@@ -176,4 +176,4 @@ private:
 
 }
 
-#endif // CLIENT_H
+#endif // JREEN_CLIENT_H

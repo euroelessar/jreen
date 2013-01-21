@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DATASTREAM_H
-#define DATASTREAM_H
+#ifndef JREEN_DATASTREAM_H
+#define JREEN_DATASTREAM_H
 
 #include <QIODevice>
 #include "jreen.h"
@@ -49,4 +49,4 @@ private:
 
 }
 
-#endif // DATASTREAM_H
+#endif // JREEN_DATASTREAM_H

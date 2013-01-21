@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef JREEN_UTIL_H
+#define JREEN_UTIL_H
 
 #include "jreen.h"
 #include <QDateTime>
@@ -67,4 +67,4 @@ inline void writeTextElement(QXmlStreamWriter *writer,
 
 }
 
-#endif // UTIL_H
+#endif // JREEN_UTIL_H

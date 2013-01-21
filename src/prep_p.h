@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PREP_H
-#define PREP_H
+#ifndef JREEN_PREP_P_H
+#define JREEN_PREP_P_H
 
 #include "jreen.h"
 
@@ -42,4 +42,4 @@ public:
 
 }
 
-#endif // PREP_H
+#endif // JREEN_PREP_P_H

@@ -37,7 +37,7 @@ Product {
     ]
     cpp.defines: [
         "J_BUILD_LIBRARY",
-        "QT_DISABLE_DEPRECATED_BEFORE=" + ((4 << 16) + (0 << 8) + (0)).toString()
+        "QT_DISABLE_DEPRECATED_BEFORE=0"
     ]
     cpp.positionIndependentCode: true
     cpp.visibility: ["hidden"]

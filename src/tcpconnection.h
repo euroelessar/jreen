@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef TCPCONNECTION_H
-#define TCPCONNECTION_H
+#ifndef JREEN_TCPCONNECTION_H
+#define JREEN_TCPCONNECTION_H
 
 #include "directconnection.h"
 
@@ -41,4 +41,4 @@ public:
 
 }
 
-#endif // TCPCONNECTION_H
+#endif // JREEN_TCPCONNECTION_H

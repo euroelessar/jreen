@@ -23,8 +23,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MUCROOM_H
-#define MUCROOM_H
+#ifndef JREEN_MUCROOM_H
+#define JREEN_MUCROOM_H
 
 #include <QObject>
 #include <QDateTime>
@@ -174,4 +174,4 @@ protected:
 };
 }
 
-#endif // MUCROOM_H
+#endif // JREEN_MUCROOM_H

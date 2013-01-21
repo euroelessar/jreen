@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ENTITYTIME_H
-#define ENTITYTIME_H
+#ifndef JREEN_ENTITYTIME_H
+#define JREEN_ENTITYTIME_H
 
 #include "stanzaextension.h"
 #include <QDateTime>
@@ -50,4 +50,4 @@ namespace Jreen
 	};
 }
 
-#endif // ENTITYTIME_H
+#endif // JREEN_ENTITYTIME_H

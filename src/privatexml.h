@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PRIVATEXML_H
-#define PRIVATEXML_H
+#ifndef JREEN_PRIVATEXML_H
+#define JREEN_PRIVATEXML_H
 
 #include <QObject>
 #include "stanzaextension.h"
@@ -64,4 +64,4 @@ private:
 
 }
 
-#endif // PRIVATEXML_H
+#endif // JREEN_PRIVATEXML_H

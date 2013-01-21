@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DELAYEDDELIVERY_H
-#define DELAYEDDELIVERY_H
+#ifndef JREEN_DELAYEDDELIVERY_H
+#define JREEN_DELAYEDDELIVERY_H
 
 #include "stanzaextension.h"
 #include "jid.h"
@@ -55,4 +55,4 @@ private:
 
 }
 
-#endif // DELAYEDDELIVERY_H
+#endif // JREEN_DELAYEDDELIVERY_H

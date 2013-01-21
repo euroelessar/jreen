@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef TUNE_H
-#define TUNE_H
+#ifndef JREEN_TUNE_H
+#define JREEN_TUNE_H
 
 #include "stanzaextension.h"
 
@@ -58,4 +58,4 @@ namespace Jreen
 	};
 }
 
-#endif // TUNE_H
+#endif // JREEN_TUNE_H

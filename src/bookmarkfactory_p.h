@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef BOOKMARKFACTORY_H
-#define BOOKMARKFACTORY_H
+#ifndef JREEN_BOOKMARKFACTORY_P_H
+#define JREEN_BOOKMARKFACTORY_P_H
 #include "bookmark.h"
 
 namespace Jreen {
@@ -51,4 +51,4 @@ private:
 
 } // namespace Jreen
 
-#endif // BOOKMARKFACTORY_H
+#endif // JREEN_BOOKMARKFACTORY_P_H

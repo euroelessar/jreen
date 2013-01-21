@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef STREAMFEATURE_H
-#define STREAMFEATURE_H
+#ifndef JREEN_STREAMFEATURE_P_H
+#define JREEN_STREAMFEATURE_P_H
 
 #include <QObject>
 #include "jid.h"
@@ -99,4 +99,4 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::StreamInfo::CompletedFlags)
 Q_DECLARE_INTERFACE(Jreen::StreamFeature, "org.qutim.Jreen.StreamFeature")
 
-#endif // STREAMFEATURE_H
+#endif // JREEN_STREAMFEATURE_P_H

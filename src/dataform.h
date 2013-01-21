@@ -24,8 +24,8 @@
 **
 ****************************************************************************/
 
-#ifndef DATAFORM_H
-#define DATAFORM_H
+#ifndef JREEN_DATAFORM_H
+#define JREEN_DATAFORM_H
 
 #include "jid.h"
 #include "stanzaextension.h"
@@ -403,4 +403,4 @@ Q_INLINE_TEMPLATE DataFormOptionContainer DataFormField::cast() const
 
 }
 
-#endif // DATAFORM_H
+#endif // JREEN_DATAFORM_H

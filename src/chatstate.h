@@ -22,8 +22,8 @@
 ** $JREEN_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CHATSTATE_H
-#define CHATSTATE_H
+#ifndef JREEN_CHATSTATE_H
+#define JREEN_CHATSTATE_H
 #include "stanzaextension.h"
 
 namespace Jreen {
@@ -55,4 +55,4 @@ private:
 } // namespace Jreen
 Q_ENUMS(Jreen::ChatState::State)
 
-#endif // CHATSTATE_H
+#endif // JREEN_CHATSTATE_H

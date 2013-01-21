@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef JREEN_PARSER_H
+#define JREEN_PARSER_H
 
 #include "stanza.h"
 #include <QXmlStreamReader>

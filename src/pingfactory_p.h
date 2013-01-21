@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef PINGFACTORY_P_H
-#define PINGFACTORY_P_H
+#ifndef JREEN_PINGFACTORY_P_H
+#define JREEN_PINGFACTORY_P_H
 #include "ping.h"
 
 namespace Jreen {
@@ -46,4 +46,4 @@ public:
 
 } // namespace Jreen
 
-#endif // PINGFACTORY_P_H
+#endif // JREEN_PINGFACTORY_P_H

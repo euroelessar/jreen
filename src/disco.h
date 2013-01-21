@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef DISCO_H
-#define DISCO_H
+#ifndef JREEN_DISCO_H
+#define JREEN_DISCO_H
 
 #include <QObject>
 #include <QString>
@@ -206,4 +206,4 @@ Q_DECLARE_METATYPE(Jreen::Disco::Item)
 Q_DECLARE_METATYPE(Jreen::Disco::ItemList)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Jreen::Disco::Item::Actions)
 
-#endif // DISCO_H
+#endif // JREEN_DISCO_H

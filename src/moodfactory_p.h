@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MOODFACTORY_P_H
-#define MOODFACTORY_P_H
+#ifndef JREEN_MOODFACTORY_P_H
+#define JREEN_MOODFACTORY_P_H
 #include "stanzaextension.h"
 #include "mood.h"
 #include "langmap.h"
@@ -54,4 +54,4 @@ private:
 
 } // namespace Jreen
 
-#endif // MOODFACTORY_P_H
+#endif // JREEN_MOODFACTORY_P_H

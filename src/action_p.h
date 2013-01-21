@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef ACTION_H
-#define ACTION_H
+#ifndef JREEN_ACTION_P_H
+#define JREEN_ACTION_P_H
 
 #include <QObject>
 #include <QMap>
@@ -51,4 +51,4 @@ private:
 
 }
 
-#endif // ACTION_H
+#endif // JREEN_ACTION_P_H

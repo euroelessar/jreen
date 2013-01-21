@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef SESSIONFEATURE_P_H
-#define SESSIONFEATURE_P_H
+#ifndef JREEN_SESSIONFEATURE_P_H
+#define JREEN_SESSIONFEATURE_P_H
 
 #include "streamfeature_p.h"
 
@@ -54,4 +54,4 @@ namespace Jreen
 	};
 }
 
-#endif // SESSIONFEATURE_P_H
+#endif // JREEN_SESSIONFEATURE_P_H

@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef VCARDMANAGER_H
-#define VCARDMANAGER_H
+#ifndef JREEN_VCARDMANAGER_H
+#define JREEN_VCARDMANAGER_H
 
 #include "vcard.h"
 #include "vcardupdate.h"
@@ -86,4 +86,4 @@ private:
 };
 }
 
-#endif // VCARDMANAGER_H
+#endif // JREEN_VCARDMANAGER_H

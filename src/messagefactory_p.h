@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef MESSAGEFACTORY_P_H
-#define MESSAGEFACTORY_P_H
+#ifndef JREEN_MESSAGEFACTORY_P_H
+#define JREEN_MESSAGEFACTORY_P_H
 
 #include "stanzafactory_p.h"
 #include "message.h"
@@ -49,4 +49,4 @@ private:
 
 } // namespace  Jreen
 
-#endif // MESSAGEFACTORY_P_H
+#endif // JREEN_MESSAGEFACTORY_P_H
