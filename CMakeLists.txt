@@ -1,7 +1,7 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
-PROJECT(Jreen)
+cmake_minimum_required(VERSION 2.8.6)
+project(Jreen)
 
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_JREEN_VERSION_MAJOR 1 CACHE INT "Major Jreen version number" FORCE)
 set(CMAKE_JREEN_VERSION_MINOR 1 CACHE INT "Minor Jreen version number" FORCE)
@@ -9,22 +9,21 @@ set(CMAKE_JREEN_VERSION_PATCH 1 CACHE INT "Release Jreen version number" FORCE)
 set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSION_MINOR}.${CMAKE_JREEN_VERSION_PATCH}" CACHE STRING "Jreen version string" FORCE)
 
 # Search for source and headers in source directory (non-recursive)
-FILE(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-FILE(GLOB_RECURSE HDR "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 # Require QT 4.6
 SET(QT_MIN_VERSION "4.6.0")
 
 # Search for QT4
-FIND_PACKAGE(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtNetwork REQUIRED)
 INCLUDE(${QT_USE_FILE})
 INCLUDE(jreenMacros)
 
 if( JREEN_BUILD_INTERNAL )
 	add_definitions( "-DJ_BUILD_INTERNAL" )
 endif()
-FIND_PACKAGE(PkgConfig)
-FIND_PACKAGE(GSASL REQUIRED)
+find_package(PkgConfig)
+find_package(GSASL REQUIRED)
 
 #pkg_search_module(NICE nice)
 #if(NOT NICE_FOUND)
@@ -38,42 +37,40 @@ FIND_PACKAGE(GSASL REQUIRED)
 pkg_search_module(SPEEX speex)
 if(NOT SPEEX_FOUND)
 	message(STATUS "Could not find speex library.")
-else(NOT SPEEX_FOUND)
+else()
 	message(STATUS "Speex library is found.")
 	include_directories(${SPEEX_INCLUDE_DIRS})
-	ADD_DEFINITIONS("-DJREEN_HAVE_SPEEX=1")
-endif(NOT SPEEX_FOUND)
+        add_definitions("-DJREEN_HAVE_SPEEX=1")
+endif()
 
 # FindZLIB is broken on Ubuntu, so find the library using pkg-config
 if(LINUX)
-	find_package(PkgConfig)
-	pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
-	find_path(ZLIB_INCLUDE_DIR
-	  NAMES zlib.h
-	  PATHS ${ZLIB_PKGCONF_INCLUDE_DIRS}
-	)
-	find_library(ZLIB_LIBRARIES
-	  NAMES z
-	  PATHS ${ZLIB_PKGCONF_LIBRARY_DIRS}
-	)
-	if(NOT ZLIB_INCLUDE_DIR)
-	  message(SEND_ERROR "Could not find zlib includes.")
-	endif(NOT ZLIB_INCLUDE_DIR)
-	if(NOT ZLIB_LIBRARIES)
-	  message(SEND_ERROR "Could not find zlib library.")
-	endif(NOT ZLIB_LIBRARIES)
+    find_package(PkgConfig)
+    pkg_search_module(ZLIB_PKGCONF REQUIRED zlib)
 
+    find_path(ZLIB_INCLUDE_DIR
+        NAMES zlib.h
+        PATHS ${ZLIB_PKGCONF_INCLUDE_DIRS}
+    )
 
+    find_library(ZLIB_LIBRARIES
+        NAMES z
+        PATHS ${ZLIB_PKGCONF_LIBRARY_DIRS}
+    )
+
+    if(NOT ZLIB_INCLUDE_DIR)
+        message(SEND_ERROR "Could not find zlib includes.")
+    endif(NOT ZLIB_INCLUDE_DIR)
+
+    if(NOT ZLIB_LIBRARIES)
+        message(SEND_ERROR "Could not find zlib library.")
+    endif(NOT ZLIB_LIBRARIES)
 else()
-	find_package(ZLIB REQUIRED)
+    find_package(ZLIB REQUIRED)
 endif()
 
-#add_subdirectory(3rdparty)
-
-#spike
-
 # Add include directories
-INCLUDE_DIRECTORIES(.
+include_directories(.
 	${CMAKE_CURRENT_BINARY_DIR}
 	3rdparty
 	${GSASL_INCLUDE_DIRS}
@@ -82,17 +79,14 @@ INCLUDE_DIRECTORIES(.
 
 LIST(APPEND SRC ${3RD_PARTY_SRC_C})
 LIST(APPEND SRC ${3RD_PARTY_SRC})
-LIST(APPEND HDR ${3RD_PARTY_HDR})
 
 # Ice support
 option(JREEN_USE_IRISICE "Use ICE from IRIS" OFF)
 if (JREEN_USE_IRISICE)
 	file(GLOB_RECURSE ICESUPPORT_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.cpp")
-	file(GLOB_RECURSE ICESUPPORT_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.c")
-	file(GLOB_RECURSE ICESUPPORT_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.h")
+        file(GLOB_RECURSE ICESUPPORT_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icesupport/*.c")
 	list(APPEND SRC ${ICESUPPORT_SRC})
-	list(APPEND SRC ${ICESUPPORT_SRC_C})
-	list(APPEND HDR ${ICESUPPORT_HDR})
+        list(APPEND SRC ${ICESUPPORT_SRC_C})
 	add_definitions("-DHAVE_IRISICE")
 endif()
 
@@ -100,37 +94,32 @@ if(JREEN_USE_SIMPLESASL)
 	message("Using simple sasl auth instead cyrus sasl")
 	add_definitions("-DHAVE_SIMPLESASL")
 	file(GLOB_RECURSE SIMPLESASL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.cpp")
-	file(GLOB_RECURSE SIMPLESASL_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.c")
-	file(GLOB_RECURSE SIMPLESASL_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.h")
+        file(GLOB_RECURSE SIMPLESASL_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/simplesasl/*.c")
 	list(APPEND SRC ${SIMPLESASL_SRC})
-	list(APPEND SRC ${SIMPLESASL_SRC_C})
-	list(APPEND HDR ${SIMPLESASL_HDR})
+        list(APPEND SRC ${SIMPLESASL_SRC_C})
 endif()
 
 option(JREEN_USE_SYSTEM_JDNS "Use system JDNS" OFF)
+
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns")
 	set(JREEN_USE_SYSTEM_JDNS ON)
 endif()
+
 if(JREEN_USE_SYSTEM_JDNS)
 	# For Linux it was found already before at line 29
 	if(NOT LINUX)
-		find_package(PkgConfig)
+                find_package(PkgConfig)
 	endif()
 	pkg_search_module(JDNS REQUIRED qjdns)
 	include_directories(${JDNS_INCLUDE_DIR})
 	list(APPEND EXTRA_LIBS ${JDNS_LIBRARIES})
 else()
 	file(GLOB_RECURSE JDNS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.cpp")
-	file(GLOB_RECURSE JDNS_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.c")
-	file(GLOB_RECURSE JDNS_HDR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.h")
+        file(GLOB_RECURSE JDNS_SRC_C "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jdns/*.c")
 	list(APPEND SRC ${JDNS_SRC})
-	list(APPEND SRC ${JDNS_SRC_C})
-	list(APPEND HDR ${JDNS_HDR})
+        list(APPEND SRC ${JDNS_SRC_C})
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")
 endif()
-
-# Generate moc files
-JREEN_WRAP_CPP(MOC_SRC ${HDR})
 
 # This project will generate library
 
@@ -140,7 +129,7 @@ else()
 set(JREEN_BUILD_TYPE SHARED)
 endif()
 
-ADD_LIBRARY(jreen ${JREEN_BUILD_TYPE} ${SRC} ${MOC_SRC} ${HDR} )
+ADD_LIBRARY(jreen ${JREEN_BUILD_TYPE} ${SRC} ${MOC_SRC})
 
 #compiler flags
 #fixme add macro to clang
@@ -166,6 +155,7 @@ set_target_properties(jreen PROPERTIES
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/jreen" )
 file(GLOB_RECURSE JREEN_INCLUDE_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+
 foreach(header ${JREEN_INCLUDE_HEADERS})
 	if(NOT ${header} MATCHES ".*_p\\.h")
 		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
@@ -185,27 +175,22 @@ endforeach(header)
 set(JREEN_LIBRARIES jreen CACHE INTERNAL "" )
 set(JREEN_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include" CACHE INTERNAL "")
 
-IF(WIN32)
-	LIST(APPEND EXTRA_LIBS ws2_32)
-ENDIF()
-#IF(NICE_FOUND)
-#	LIST(APPEND EXTRA_LIBS ${NICE_LIBRARIES})
-#ENDIF(NICE_FOUND)
-IF(SPEEX_FOUND)
-	LIST(APPEND EXTRA_LIBS ${SPEEX_LIBRARIES})
-ENDIF(SPEEX_FOUND)
+if(WIN32)
+    list(APPEND EXTRA_LIBS ws2_32)
+endif()
 
-# Link with Qt
-#IF(SYMBIAN)
-#ENDIF()
+if(SPEEX_FOUND)
+    list(APPEND EXTRA_LIBS ${SPEEX_LIBRARIES} )
+endif()
 
-JREEN_TARGET_LINK_LIBRARIES(jreen
-	${QT_LIBRARIES}
-	${GSASL_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${EXTRA_LIBS}
-gsasl
+target_link_libraries(jreen
+    ${QT_LIBRARIES}
+    ${GSASL_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${EXTRA_LIBS}
 )
+
+set_target_properties(jreen PROPERTIES AUTOMOC TRUE)
 
 # Install package config file
 if(NOT WIN32)
@@ -215,7 +200,7 @@ if(NOT WIN32)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libjreen.pc
 	DESTINATION lib${LIB_SUFFIX}/pkgconfig
 )
-endif(NOT WIN32)
+endif()
 
 install( TARGETS jreen
 	RUNTIME DESTINATION bin
