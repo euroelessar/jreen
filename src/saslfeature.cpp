@@ -37,9 +37,13 @@ namespace Jreen
 #ifdef USE_GSASL
 static Gsasl *sasl_context = NULL;
 
-static int callback_function(Gsasl *, Gsasl_session *session, Gsasl_property prop)
+static int callback_function(Gsasl *context, Gsasl_session *session, Gsasl_property prop)
 {
 	StreamInfo *info = reinterpret_cast<StreamInfo*>(gsasl_session_hook_get(session));
+	if (!info) {
+		jreenDebug() << Q_FUNC_INFO << context << session << prop;
+		return;
+	}
 	Q_ASSERT(info);
 	switch (prop) {
 	case GSASL_SERVICE:
