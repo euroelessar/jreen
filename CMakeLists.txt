@@ -11,7 +11,12 @@ set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSI
 # Search for source and headers in source directory (non-recursive)
 file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-find_package(Qt5Core QUIET)
+option(JREEN_FORCE_QT4 "Force using of Qt4 in Jreen" off)
+
+if(NOT JREEN_FORCE_QT4)
+	find_package(Qt5Core QUIET)
+endif()
+
 if(Qt5Core_DIR)
     find_package(Qt5Network QUIET)
     message(STATUS "Found Qt5!")

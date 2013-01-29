@@ -1,3 +1,6 @@
+import qbs.base 1.0
+import qbs.fileinfo 1.0 as FileInfo
+
 Product {
     name: "jreen"
 
@@ -41,7 +44,7 @@ Product {
     ]
     cpp.positionIndependentCode: true
     cpp.visibility: ["hidden"]
-    cpp.dynamicLibraries: ["sasl2", "gsasl"]
+    cpp.dynamicLibraries: ["gsasl"]
 
     Properties {
         condition: useSimpleSasl
@@ -90,17 +93,39 @@ Product {
     }
 
     Group {
-        //public headers
-        qbs.installDir: "include/jreen"
+        files: "*.h"
+        excludeFiles: "*_p.h"
+        fileTags: ["hpp", "devheader"]
         overrideTags: false
-        fileTags: ["install"]
-        files: [
-            "*[^_][a-z].h",
-        ]
     }
 
     ProductModule {
         Depends { name: "cpp" }
-        cpp.includePaths: product.buildDirectory + "/include/vreen"
+        cpp.includePaths: [
+            product.buildDirectory + "/GeneratedFiles/jreen/include",
+            product.buildDirectory + "/GeneratedFiles/jreen/include/jreen"
+        ]
+    }
+
+    Rule {
+        inputs: [ "devheader" ]
+        Artifact {
+            fileTags: [ "hpp" ]
+            fileName: "GeneratedFiles/jreen/include/jreen/" + input.fileName
+        }
+
+        prepare: {
+            var cmd = new JavaScriptCommand();
+            cmd.sourceCode = function() {
+                var inputFile = new TextFile(input.fileName, TextFile.ReadOnly);
+                var file = new TextFile(output.fileName, TextFile.WriteOnly);
+                file.truncate();
+                file.write("#include \"" + input.fileName + "\"\n");
+                file.close();
+            }
+            cmd.description = "generating " + FileInfo.fileName(output.fileName);
+            cmd.highlight = "filegen";
+            return cmd;
+        }
     }
 }
