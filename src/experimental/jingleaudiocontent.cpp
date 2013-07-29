@@ -158,15 +158,16 @@ qint64 JingleAudioDevice::writeData(const char *data, qint64 len)
 	return len;
 }
 
-static inline void init_factories(QList<JingleAudioCodecFactory*> &factories)
+static QList<JingleAudioCodecFactory*> init_factories()
 {
-	Q_UNUSED(factories);
+    QList<JingleAudioCodecFactory*> factories;
 #ifdef JREEN_HAVE_SPEEX
 	factories << new JingleSpeexCodecFactory;
 #endif
+    return factories;
 }
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QList<JingleAudioCodecFactory*>, factories, init_factories(*x))
+Q_GLOBAL_STATIC_WITH_ARGS(QList<JingleAudioCodecFactory*>, factories, (init_factories()))
 
 JingleAudioContent::JingleAudioContent(JingleSession *session)
     : JingleContent(session, *new JingleAudioContentPrivate(this))

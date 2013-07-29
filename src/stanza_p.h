@@ -87,7 +87,7 @@ public:
 	{
 		ref = 1;
 	}
-	~StanzaPrivate()
+	virtual ~StanzaPrivate()
 	{
 		qDeleteAll(tokens);
 	}

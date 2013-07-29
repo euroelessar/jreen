@@ -1,5 +1,6 @@
-import qbs.base 1.0
-import qbs.fileinfo 1.0 as FileInfo
+import qbs
+import qbs.FileInfo
+import qbs.TextFile
 
 Product {
     name: "jreen"
@@ -11,7 +12,7 @@ Product {
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
     property bool useIrisIce: false
 
-    destination: {
+    destinationDirectory: {
         if (qbs.targetOS === 'windows')
             return "bin";
         else
@@ -23,10 +24,7 @@ Product {
     //Depends { name: "headers" }
     Depends { name: "Qt.core" }
     Depends { name: "Qt.network" }
-    Depends { name: "zlib" }
-    Depends { name: "speex"; required: false }
-    Depends { name: "windows.ws2_32"; condition: qbs.targetOS === 'windows' }
-    Depends { name: "windows.advapi32"; condition: qbs.targetOS === 'windows' }
+//    Depends { name: "zlib" }
 
     //cpp.warningLevel: "all"
     cpp.includePaths: [
@@ -44,7 +42,7 @@ Product {
     ]
     cpp.positionIndependentCode: true
     cpp.visibility: ["hidden"]
-    cpp.dynamicLibraries: ["gsasl"]
+    cpp.dynamicLibraries: ["gsasl", "z"]
 
     Properties {
         condition: useSimpleSasl
@@ -63,10 +61,10 @@ Product {
         "*.cpp",
         "*_p.h"
     ]
-    excludeFiles: qt.core.versionMajor < 5 ? undefined : "sjdns*"
+    excludeFiles: Qt.core.versionMajor < 5 ? undefined : "sjdns*"
 
     Group {
-        condition: qt.core.versionMajor < 5
+        condition: Qt.core.versionMajor < 5
         prefix: "../3rdparty/jdns/"
         files: [
             "*.h",
@@ -99,7 +97,7 @@ Product {
         overrideTags: false
     }
 
-    ProductModule {
+    Export {
         Depends { name: "cpp" }
         cpp.includePaths: [
             product.buildDirectory + "/GeneratedFiles/jreen/include",
