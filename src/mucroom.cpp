@@ -390,7 +390,6 @@ void MUCRoom::leave(const QString &message)
 	Q_D(MUCRoom);
 	if (d->currentPresence.subtype() == Presence::Unavailable)
 		return;
-	d->isJoined = false;
 	Presence pres(Presence::Unavailable, d->jid, message);
 	d->currentPresence = pres;
 	d->client->send(pres);
@@ -589,7 +588,7 @@ void MUCRoom::onDisconnected()
 {
 	Q_D(MUCRoom);
 	d->startedJoining = false;
-	if (d->currentPresence.subtype() != Presence::Unavailable) {
+	if (d->isJoined) {
 		d->participantsHash.clear();
 		d->isJoined = false;
 		emit leaved();
