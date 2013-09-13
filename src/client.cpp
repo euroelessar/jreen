@@ -487,8 +487,10 @@ void Client::setPresence()
 void Client::setPresence(Presence::Type type, const QString &text, int priority)
 {
 	Q_D(Client);
-	if(d->presence.subtype() == type || type == Presence::Error || type == Presence::Invalid || type == Presence::Probe)
+	if((d->presence.subtype() == type && d->presence.status() == text && d->presence.priority() == priority)
+	        || type == Presence::Error || type == Presence::Invalid || type == Presence::Probe) {
 		return;
+	}
 	d->presence.setSubtype(type);
 	d->presence.addStatus(text);
 	d->presence.setPriority(priority);
