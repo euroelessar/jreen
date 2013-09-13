@@ -150,8 +150,10 @@ void DirectConnectionPrivate::stateChanged(QAbstractSocket::SocketState ss)
 		break;
 	}
 
-	socket_state = socket->state();
-	emit parent->stateChanged(static_cast<Connection::SocketState>(socket_state));
+	if (socket_state != socket->state()) {
+		socket_state = socket->state();
+		emit parent->stateChanged(static_cast<Connection::SocketState>(socket_state));
+	}
 }
 
 void DirectConnectionPrivate::error(QAbstractSocket::SocketError se)
