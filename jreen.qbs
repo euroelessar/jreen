@@ -2,7 +2,7 @@ import qbs.base 1.0
 
 Project {
 
-    moduleSearchPaths: "qbs/modules"
+    qbsSearchPaths: "qbs/modules"
 
     references: "src/src.qbs"
 }
