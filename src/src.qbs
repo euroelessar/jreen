@@ -1,8 +1,9 @@
 import qbs
+import qbs.base 1.0
 import qbs.FileInfo
 import qbs.TextFile
 
-Product {
+DynamicLibrary {
     name: "jreen"
 
     property bool useSimpleSasl: true
@@ -19,6 +20,11 @@ Product {
             return "lib";
     }
     type: ["dynamiclibrary", "installed_content"]
+    Group {
+        fileTagsFilter: product.type.concat('dynamiclibrary_symlink')
+        qbs.install: true
+        qbs.installDir: qutim_libexec_path
+    }
 
     Depends { name: "cpp" }
     //Depends { name: "headers" }
