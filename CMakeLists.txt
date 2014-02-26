@@ -21,6 +21,7 @@ if(Qt5Core_DIR)
     find_package(Qt5Network QUIET)
     message(STATUS "Found Qt5!")
 
+    set(QT_VERSION_PC 5)
     add_definitions("-DQT_DISABLE_DEPRECATED_BEFORE=0")
     list(REMOVE_ITEM SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/sjdns.cpp")
 else()
