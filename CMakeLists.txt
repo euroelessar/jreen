@@ -12,7 +12,7 @@ set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSI
 file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 option(JREEN_FORCE_QT4 "Force using of Qt4 in Jreen" off)
-option(JREEN_SUFFIX "Suffix for jreen library's name, should be used to resolve conflicts connected with different Qt versions" "")
+set(JREEN_SUFFIX "")
 
 if(NOT JREEN_FORCE_QT4)
 	find_package(Qt5Core QUIET)
@@ -21,6 +21,7 @@ endif()
 if(Qt5Core_DIR)
     find_package(Qt5Network QUIET)
     message(STATUS "Found Qt5!")
+    set(JREEN_SUFFIX "-qt5")
 
     add_definitions("-DQT_DISABLE_DEPRECATED_BEFORE=0")
     list(REMOVE_ITEM SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/sjdns.cpp")
