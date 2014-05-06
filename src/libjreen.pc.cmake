@@ -5,7 +5,7 @@ includedir=${CMAKE_INSTALL_PREFIX}/include/${JREEN_INCLUDE_PATH}/
 
 Name: libjreen${JREEN_SUFFIX}
 Description: Qt Jabber/XMPP extensible library
-Requires: QtCore QtNetwork
+Requires: Qt${JREEN_QT_MIDDLE}Core Qt${JREEN_QT_MIDDLE}Network
 Version: ${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSION_MINOR}.${CMAKE_JREEN_VERSION_PATCH}
 Libs: -L${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} -ljreen${JREEN_SUFFIX}
 Cflags: -I${CMAKE_INSTALL_PREFIX}/include/${JREEN_INCLUDE_PATH}/
