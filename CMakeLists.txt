@@ -13,6 +13,7 @@ file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 option(JREEN_FORCE_QT4 "Force using of Qt4 in Jreen" off)
 set(JREEN_SUFFIX "")
+set(JREEN_INCLUDE_PATH "")
 
 if(NOT JREEN_FORCE_QT4)
 	find_package(Qt5Core QUIET)
@@ -22,11 +23,13 @@ if(Qt5Core_DIR)
     find_package(Qt5Network QUIET)
     message(STATUS "Found Qt5!")
     set(JREEN_SUFFIX "-qt5")
+    set(JREEN_INCLUDE_PATH "jreen-qt5")
 
     add_definitions("-DQT_DISABLE_DEPRECATED_BEFORE=0")
     list(REMOVE_ITEM SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/sjdns.cpp")
 else()
     message(STATUS "Could not find Qt5, so let's use Qt4...")
+    set(JREEN_INCLUDE_PATH "jreen-qt4")
 
     find_package(Qt4 4.6.0 COMPONENTS QtCore QtNetwork REQUIRED)
 
@@ -167,7 +170,7 @@ foreach(header ${JREEN_INCLUDE_HEADERS})
                 endif(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/jreen/${header}")
 		get_filename_component(headerPath ${header} PATH)
 		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/${header}"
-				DESTINATION include/jreen/${headerPath}
+				DESTINATION include/${JREEN_INCLUDE_PATH}/jreen/${headerPath}
 				COMPONENT jreenDevel
 		)
     endif(NOT ${header} MATCHES ".*_p\\.h")
