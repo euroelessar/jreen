@@ -12,6 +12,7 @@ set(CMAKE_JREEN_VERSION_STRING "${CMAKE_JREEN_VERSION_MAJOR}.${CMAKE_JREEN_VERSI
 file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 option(JREEN_FORCE_QT4 "Force using of Qt4 in Jreen" off)
+option(JREEN_SUFFIX "Suffix for jreen library's name, should be used to resolve conflicts connected with different Qt versions" "")
 
 if(NOT JREEN_FORCE_QT4)
 	find_package(Qt5Core QUIET)
@@ -128,7 +129,7 @@ else()
 set(JREEN_BUILD_TYPE SHARED)
 endif()
 
-ADD_LIBRARY(jreen ${JREEN_BUILD_TYPE} ${SRC} ${MOC_SRC})
+ADD_LIBRARY(jreen${JREEN_SUFFIX} ${JREEN_BUILD_TYPE} ${SRC} ${MOC_SRC})
 
 #compiler flags
 #fixme add macro to clang
@@ -146,7 +147,7 @@ elseif(MSVC)
 	ADD_DEFINITIONS("/W3" )
 endif()
 
-set_target_properties(jreen PROPERTIES
+set_target_properties(jreen${JREEN_SUFFIX} PROPERTIES
 	VERSION ${CMAKE_JREEN_VERSION_STRING}
 	SOVERSION ${CMAKE_JREEN_VERSION_MAJOR}
 	DEFINE_SYMBOL J_BUILD_LIBRARY
@@ -171,7 +172,7 @@ foreach(header ${JREEN_INCLUDE_HEADERS})
     endif(NOT ${header} MATCHES ".*_p\\.h")
 endforeach(header)
 
-set(JREEN_LIBRARIES jreen CACHE INTERNAL "" )
+set(JREEN_LIBRARIES jreen${JREEN_SUFFIX} CACHE INTERNAL "" )
 set(JREEN_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include" CACHE INTERNAL "")
 
 if(WIN32)
@@ -182,27 +183,27 @@ if(SPEEX_FOUND)
     list(APPEND EXTRA_LIBS ${SPEEX_LIBRARIES} )
 endif()
 
-target_link_libraries(jreen
+target_link_libraries(jreen${JREEN_SUFFIX}
     ${QT_LIBRARIES}
     ${GSASL_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${EXTRA_LIBS}
 )
 
-set_target_properties(jreen PROPERTIES AUTOMOC TRUE)
-qt5_use_modules(jreen Core Network)
+set_target_properties(jreen${JREEN_SUFFIX} PROPERTIES AUTOMOC TRUE)
+qt5_use_modules(jreen${JREEN_SUFFIX} Core Network)
 
 # Install package config file
 if(NOT WIN32)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/libjreen.pc.cmake
-		${CMAKE_CURRENT_BINARY_DIR}/libjreen.pc
+		${CMAKE_CURRENT_BINARY_DIR}/libjreen${JREEN_SUFFIX}.pc
 	)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libjreen.pc
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libjreen${JREEN_SUFFIX}.pc
 	DESTINATION lib${LIB_SUFFIX}/pkgconfig
 )
 endif()
 
-install( TARGETS jreen
+install( TARGETS jreen${JREEN_SUFFIX}
 	RUNTIME DESTINATION bin
 		COMPONENT jreen
 	LIBRARY DESTINATION lib${LIB_SUFFIX}
