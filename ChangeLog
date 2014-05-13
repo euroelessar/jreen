@@ -1,3 +1,10 @@
+Version 1.2.0
+	* Added Qt5 support with -qt5 suffix
+	* Fixed compilation with >=cmake-2.8
+	* Fixed MUCRoom::leave logic
+	* Replaced QCA usage by GSASL
+	* Replaced QCA usage by Qt's built-in TLS
+
 Version 1.1.1
 	* Added support for XEP-224: Attentions
 	* Fixed roster update receiving on some servers
