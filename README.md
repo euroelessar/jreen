@@ -16,6 +16,7 @@ Dependencies
 * CMake 2.8.0 - http://www.cmake.org/
 * Qt 4.6.0 - http://qt.nokia.com/
 * GSASL - https://www.gnu.org/software/gsasl/
+* zlib - http://zlib.net/
 
 The following dependencies are optional, but recommended:
 
