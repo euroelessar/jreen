@@ -17,6 +17,7 @@ Dependencies
 * Qt 4.6.0 - http://qt.nokia.com/
 * GSASL - https://www.gnu.org/software/gsasl/
 * zlib - http://zlib.net/
+* Speex - http://www.speex.org/
 
 The following dependencies are optional, but recommended:
 
