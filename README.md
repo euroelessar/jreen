@@ -13,14 +13,14 @@ Compiling Jreen
 Dependencies
 ------------
 
-  CMake 2.8.0 - http://www.cmake.org/
-  Qt 4.6.0 - http://qt.nokia.com/
-  QCA 2.0 - http://delta.affinix.com/qca/
+* CMake 2.8.0 - http://www.cmake.org/
+* Qt 4.6.0 - http://qt.nokia.com/
+* QCA 2.0 - http://delta.affinix.com/qca/
 
- The following dependencies are optional, but recommended:
+The following dependencies are optional, but recommended:
 
-  libidn 1.11 - http://www.gnu.org/software/libidn/
+* libidn 1.11 - http://www.gnu.org/software/libidn/
 
- Third party libraries that we ship with our source:
+Third party libraries that we ship with our source:
 
-  jdns - http://delta.affinix.com/jdns/
+* jdns - http://delta.affinix.com/jdns/
