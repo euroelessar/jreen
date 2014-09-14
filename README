@@ -14,12 +14,13 @@ Dependencies
 ------------
 
   CMake 2.8.0 - http://www.cmake.org/
-  Qt 4.6.0 - http://qt.nokia.com/
-  QCA 2.0 - http://delta.affinix.com/qca/
+  Libgsasl - https://www.gnu.org/software/gsasl/
+  Qt 4.6.0 or 5.0.0 - http://qt-project.org/
+  zlib - http://www.zlib.net/
 
  The following dependencies are optional, but recommended:
 
-  libidn 1.11 - http://www.gnu.org/software/libidn/
+  Speex - http://www.speex.org/
 
  Third party libraries that we ship with our source:
 
