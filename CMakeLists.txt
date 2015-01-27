@@ -87,6 +87,7 @@ include_directories(.
     ${CMAKE_CURRENT_BINARY_DIR}
     3rdparty
     ${GSASL_INCLUDE_DIRS}
+    ${GSASL_INCLUDEDIR}
     ${ZLIB_INCLUDE_DIR}
 )
 
