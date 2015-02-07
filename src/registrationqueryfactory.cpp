@@ -87,7 +87,7 @@ void RegistrationQueryFactory::handleStartElement(const QStringRef &name, const 
 			m_state = AtInstructions;
 		} else {
 			RegistrationDataPrivate::Flag flag = strToFlag<RegistrationDataPrivate::Flag>(name, emptyNames);
-			if (flag != -1) {
+			if (flag != static_cast<RegistrationDataPrivate::Flag>(-1)) {
 				m_query->data->flags |= flag;
 				return;
 			} 
