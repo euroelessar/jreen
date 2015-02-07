@@ -69,7 +69,7 @@ namespace Jreen
 	{
 		Q_D(const EntityTime);
 		QDateTime dateTime = d->utc;
-		dateTime.addSecs(60 * d->tzo);
+		dateTime = dateTime.addSecs(60 * d->tzo);
 		dateTime.setTimeSpec(Qt::LocalTime);
 		return dateTime;
 	}
