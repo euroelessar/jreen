@@ -100,7 +100,7 @@ void TLSFeature::handleEndElement(const QStringRef &name, const QStringRef &uri)
 		Q_ASSERT(socket);
 		m_socket = socket;
 
-		socket->setProtocol(QSsl::TlsV1);
+		socket->setProtocol(QSsl::SecureProtocols);
 		socket->setPeerVerifyMode(QSslSocket::VerifyNone);
 
 		connect(socket, SIGNAL(encrypted()), this, SLOT(onHandshaken()));
