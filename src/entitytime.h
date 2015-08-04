@@ -32,7 +32,7 @@
 namespace Jreen
 {
 	class EntityTimePrivate;
-	class EntityTime : public Payload
+	class JREEN_EXPORT EntityTime : public Payload
 	{
 		J_PAYLOAD(Jreen::EntityTime)
 		Q_DECLARE_PRIVATE(EntityTime)
