@@ -454,7 +454,9 @@ void MUCRoom::invite(const JID &jid, const QString &reason, const QString &threa
 	Q_D(MUCRoom);
 	if (!d->isJoined || !d->client)
 		return;
-	Message message(Message::Normal, jid);
+	// According to XEP-0045, we should use mediated invites
+	// so we should send message with invite to the conference
+	Message message(Message::Normal, id());
 	message.addExtension(new MUCRoomUserQuery(MUCRoomUserQuery::Invite, jid, reason, thread));
 	d_func()->client->send(message);
 }
