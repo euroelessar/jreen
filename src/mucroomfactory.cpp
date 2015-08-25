@@ -316,7 +316,7 @@ void MUCRoomUserQueryFactory::handleCharacterData(const QStringRef &text)
 void MUCRoomUserQueryFactory::serialize(Payload *extension, QXmlStreamWriter *writer)
 {
 	MUCRoomUserQuery *query = se_cast<MUCRoomUserQuery*>(extension);
-	writer->writeStartElement(QLatin1String("query"));
+	writer->writeStartElement(QLatin1String("x"));
 	writer->writeDefaultNamespace(NS_MUCUSER);
 	if (query->operation > 0) {
 		if (query->operation == MUCRoomUserQuery::Invite)
