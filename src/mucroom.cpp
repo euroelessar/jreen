@@ -258,9 +258,7 @@ void MUCRoomPrivate::handleMessage(const Message &msg)
 		emit q->subjectChanged(subject, msg.from().resource());
 		nice = true;
 	}
-	// We want to receive "service" messages like chat states for private sessions
-	// && (isPrivate || !msg.body().isEmpty())
-	// But why we don't want chat states for groupchats?
+
 	if (!nice) {
 		emit q->messageReceived(msg, isPrivate);
 	}
