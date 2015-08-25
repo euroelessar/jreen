@@ -78,6 +78,12 @@ namespace Jreen
 #define TIME_STAMP_STR QLatin1String("hh:mm")
 #define DATE_STAMP_STR QLatin1String("yyyy-MM-dd")
 
+/**
+ * This method used to parse datetimes, described in XEP-0082.
+ *
+ * @param stamp — DateTime formatted as described in XEP-0082
+ * @return QDateTime
+ */
 QDateTime Util::fromStamp(const QString &stamp)
 {
 	QDateTime date_time;
@@ -85,15 +91,20 @@ QDateTime Util::fromStamp(const QString &stamp)
 		if (stamp.size() == 10)
 			return QDateTime::fromString(stamp, DATE_STAMP_STR);
 		int num = stamp.indexOf(QLatin1Char('Z'));
-		if(num < 0)
+		if(num < 0) {
 			num = stamp.lastIndexOf(QLatin1Char('-'));
+			num = std::max(num, stamp.lastIndexOf(QLatin1Char('+')));
+		}
+
 		QString time = stamp;
 		time.truncate(num);
 		if(num == 19)
 			date_time = QDateTime::fromString(time, DATE_TIME_STAMP_STR);
 		else
 			date_time = QDateTime::fromString(time, FULL_STAMP_STR);
-		if(num > 19) {
+
+		// This way we parse +/-hh:mm suffix
+		if(num > 19 && !stamp.endsWith(QLatin1Char('Z'))) {
 			QTime delta = QTime::fromString(stamp.right(5), TIME_STAMP_STR);
 			int multi = 1;
 			if(stamp.at(stamp.length() - 6) == QLatin1Char('+'))
