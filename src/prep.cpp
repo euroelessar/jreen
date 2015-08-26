@@ -29,18 +29,6 @@
 
 #define JID_PORTION_SIZE 1023
 
-#ifdef HAVE_IDN
-#include <stringprep.h>
-
-#define Jreen_idn_stringprep                   stringprep
-#define Jreen_idn_stringprep_nameprep          stringprep_nameprep
-#define Jreen_idn_stringprep_xmpp_nodeprep     stringprep_xmpp_nodeprep
-#define Jreen_idn_stringprep_xmpp_resourceprep stringprep_xmpp_resourceprep
-namespace Jreen
-{
-	static bool loadLibIDN() { return true; }
-}
-#else
 namespace Jreen
 {
 	typedef void Stringprep_profile;
@@ -86,7 +74,6 @@ namespace Jreen
 		return true;
 	}
 }
-#endif // HAVE_IDN
 
 namespace Jreen
 {
