@@ -596,4 +596,27 @@ void MUCRoom::onDisconnected()
 		emit leaved();
 	}
 }
+
+bool MUCRoom::Invite::isInvite(const Message &msg)
+{
+	return msg.containsPayload<MUCRoomUserQuery>()
+			&& msg.payload<MUCRoomUserQuery>()->operation == MUCRoomUserQuery::Invite;
+}
+
+JID MUCRoom::Invite::getFrom(const Message &msg)
+{
+	if(!isInvite(msg))
+		return JID();
+
+	return msg.payload<MUCRoomUserQuery>()->item.jid;
+}
+
+QString MUCRoom::Invite::getReason(const Message &msg)
+{
+	if(!isInvite(msg))
+		return QString();
+
+	return msg.payload<MUCRoomUserQuery>()->item.reason;
+}
+
 }
