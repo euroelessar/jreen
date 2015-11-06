@@ -127,7 +127,7 @@ public:
 		* valid for the stream (e.g., the stanza does not include a 'from'
 		* address when multiple resources are bound to the stream); the
 		* associated error type SHOULD be "modify".*/
-		Undefined            /**< No stanza error occured. */
+		Undefined            /**< No stanza error occurred. */
 	};
 	//	enum Condition
 	//	{
