@@ -28,7 +28,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
-#include <QMetaTypeId>
+#include <QMetaType>
 #include "jreen.h"
 
 class QXmlStreamWriter;
