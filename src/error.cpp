@@ -146,7 +146,7 @@ QString Error::conditionText() const
 		errorText = QCoreApplication::translate("Jreen::Error", "The stanza 'from' address specified by a connected client is not valid for the stream.");
 		break;
 	case Jreen::Error::Undefined:
-		errorText = QCoreApplication::translate("Jreen::Error", "No stanza error occured. You're just sleeping.");
+		errorText = QCoreApplication::translate("Jreen::Error", "No stanza error occurred. You're just sleeping.");
 		break;
 	}
 	return errorText;
