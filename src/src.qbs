@@ -49,6 +49,18 @@ DynamicLibrary {
     cpp.positionIndependentCode: true
     cpp.visibility: ["hidden"]
     cpp.dynamicLibraries: ["gsasl", "z"]
+    cpp.objcxxFlags: {
+        var flags = base.concat("-std=c++11");
+        if (qbs.toolchain.contains("clang"))
+            flags = flags.concat("-stdlib=libc++");
+        return flags;
+    }
+    cpp.cxxFlags: {
+        var flags = base.concat("-std=c++11");
+        if (qbs.toolchain.contains("clang"))
+            flags = flags.concat("-stdlib=libc++");
+        return flags;
+    }
 
     Properties {
         condition: useSimpleSasl
