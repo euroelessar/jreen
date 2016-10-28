@@ -13,6 +13,11 @@ DynamicLibrary {
     property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
     property bool useIrisIce: false
 
+    /**
+     * Property to disable rpaths entirely (useful for linux distros like Fedora)
+     */
+    property bool useRPaths: true
+
     destinationDirectory: {
         if (qbs.targetOS === 'windows')
             return "bin";
@@ -61,6 +66,8 @@ DynamicLibrary {
             flags = flags.concat("-stdlib=libc++");
         return flags;
     }
+
+    cpp.useRPaths: useRPaths
 
     Properties {
         condition: useSimpleSasl
