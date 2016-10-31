@@ -8,9 +8,9 @@ DynamicLibrary {
 
     property bool useSimpleSasl: true
     property string versionMajor: '1'
-    property string versionMinor: '2'
-    property string versionRelease: '1'
-    property string version: versionMajor+'.'+versionMinor+'.'+versionRelease
+    property string versionMinor: '3'
+    property string versionRelease: '0'
+    property string version: versionMajor + '.' + versionMinor + '.' + versionRelease
     property bool useIrisIce: false
 
     /**
