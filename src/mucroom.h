@@ -100,6 +100,14 @@ public:
 	};
 	typedef QList<Item> ItemList;
 
+	class JREEN_EXPORT Invite
+	{
+	public:
+		static bool isInvite(const Message& msg);
+		static JID getFrom(const Message& msg);
+		static QString getReason(const Message& msg);
+	};
+
 	MUCRoom(Client *client, const JID &jid);
 	virtual ~MUCRoom();
 
