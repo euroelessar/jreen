@@ -52,7 +52,7 @@ DynamicLibrary {
         "QT_DISABLE_DEPRECATED_BEFORE=0"
     ]
     cpp.positionIndependentCode: true
-    cpp.visibility: ["hidden"]
+    cpp.visibility: "hidden"
     cpp.dynamicLibraries: ["gsasl", "z"]
     cpp.objcxxFlags: {
         var flags = base.concat("-std=c++11");
