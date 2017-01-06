@@ -28,7 +28,7 @@ DynamicLibrary {
     Group {
         fileTagsFilter: product.type.concat('dynamiclibrary_symlink')
         qbs.install: true
-        qbs.installDir: qutim_libexec_path
+        qbs.installDir: project.qutim_libexec_path
     }
 
     Depends { name: "cpp" }
